@@ -6,11 +6,11 @@
 ## Current milestone
 **M2 — Chapter 1 (started 2026-09-06).** Outline written, research note in progress (`research/ch01-cost-gap-lifecycle.md`). Waiting on gate 1.
 
-M1 — Repo scaffold: COMPLETE (2026-09-06). CI green on main (examples → PDF+HTML render → Pages deploy). Web edition live at https://mayurkubavat.github.io/dv-textbook (PDF at /Design-Verification-draft.pdf). Next: M2 = Chapter 1.
+M1 — Repo scaffold: COMPLETE (2026-09-06). CI green on main (examples → PDF+HTML render → Pages deploy). Web edition live at https://mayurkubavat.github.io/dv-handbook (PDF at /Design-Verification-draft.pdf). Next: M2 = Chapter 1.
 
 ### Next three actions
 1. Review `research/*.md` outputs; read `research/dv-adaptation-synthesis.md` once produced.
-2. Finish design doc section 6 (writing workflow + AI assistance) using the synthesis note in `docs/specs/2026-09-05-dv-textbook-design.md`.
+2. Finish design doc section 6 (writing workflow + AI assistance) using the synthesis note in `docs/specs/2026-09-05-dv-handbook-design.md`.
 3. Write implementation plan for M1 (repo scaffold: Quarto skeleton, AGENTS.md, CI, first chapter) → `docs/plans/`.
 
 ## Chapter status
@@ -30,7 +30,7 @@ Edition 1 target: Parts I–III + appendices A–D, F, G. See design doc §4.
 - 2026-09-05 — Examples: SV/UVM primary; cocotb, pyuvm, SystemC, UVM-SystemC, future tech as secondary tracks. Language-open.
 - 2026-09-05 — Blog: companion posts only (not full chapters) + PDF copy; reuse `DV/.claude/commands/format-blogger.md`.
 - 2026-09-05 — License CC BY-NC-SA 4.0; hosting GitHub + Pages + Releases; free/open publishing.
-- 2026-09-05 — Structure: monorepo at `DV/Book` → github.com/mayurkubavat/dv-textbook (not yet initialized).
+- 2026-09-05 — Structure: monorepo at `DV/Book` → github.com/mayurkubavat/dv-handbook (not yet initialized).
 - 2026-09-06 — Title: *Design Verification: From First Principles to Agentic AI*.
 - 2026-09-06 — Style: 7×10 trim; Source Serif 4 / Source Sans 3 / JetBrains Mono; silicon-blue palette; 6 callout types; WaveDrom+Mermaid+draw.io figures. See design doc §4a.
 - 2026-09-05 — Agent memory: `AGENTS.md` (stable) + `STATUS.md` (living) + `research/`.
@@ -61,11 +61,12 @@ See `research/README.md` for the index. Active notes:
 - Bare `ls` in this shell hangs (aliased to an interactive tool); use `/bin/ls`.
 
 ## Session log
+- 2026-09-06 — Attribution rules added (AGENTS.md, review skill). Research subagent for Ch.1 still running; it has begun appending BibTeX entries to `refs.bib`. Next: fill the 15 `[NEEDS SOURCE]` markers from `research/ch01-cost-gap-lifecycle.md`, re-render, run review-chapter, then push.
 - 2026-09-06 — Ch.1 drafted: examples (FIFO with early-full bug; directed passes, random SV + cocotb fail as intended), `EXPECT := fail` added to build system + checker + Appendix F, `figures/ch01-lifecycle.svg` (generator in `figures/`), chapter registered in `_quarto.yml`, PDF renders at 42 pages. Committed locally, NOT pushed until sources are filled. Verilator: `$fatal`/`$stop`/`$error` all abort (exit 134); `sv.mk` maps that to exit 1.
 - 2026-09-06 — M2 started: Chapter 1 outline (`chapters/ch01-what-is-dv.qmd`, 9 sections, 4 planned examples, 6 exercises); research subagent dispatched for cost/gap/lifecycle figures + BibTeX. Skills were followed by hand (new project skills load on the next session start).
 - 2026-09-06 — CI fixed twice (static fonts only; HTML rendered to `_site` so the PDF render does not wipe it). Run green; Pages live. M1 closed.
 - 2026-09-06 — Pushed to GitHub (public). Publication rule enforced by commit-msg + pre-commit hooks; attribution trailers off. The agent stub file and the `.claude/` directory (skills, hooks, settings) are local-only, ignored, and purged from history. First CI: examples pass on Ubuntu; PDF render failed on fonts (xdvipdfmx invalid font), fix pushed: static font instances only.
-- 2026-09-06 — Wrote `AGENTS.md` (constitution; a one-line stub imports it for the agent runtime), `.claude/settings.json` hooks (Stop → STATUS.md check; PreToolUse guard on research/ + docs/specs while `.claude/state/drafting` exists), `.githooks/pre-commit` (check changed examples), six skills in `.claude/skills/`, `.github/workflows/book.yml` (examples → render → Pages deploy on main → PDF on v* tags), LICENSE (CC BY-NC-SA text, MIT code), README. `git init`, first commit, repo github.com/mayurkubavat/dv-textbook.
+- 2026-09-06 — Wrote `AGENTS.md` (constitution; a one-line stub imports it for the agent runtime), `.claude/settings.json` hooks (Stop → STATUS.md check; PreToolUse guard on research/ + docs/specs while `.claude/state/drafting` exists), `.githooks/pre-commit` (check changed examples), six skills in `.claude/skills/`, `.github/workflows/book.yml` (examples → render → Pages deploy on main → PDF on v* tags), LICENSE (CC BY-NC-SA text, MIT code), README. `git init`, first commit, repo github.com/mayurkubavat/dv-handbook.
 - 2026-09-06 — Fixed PDF code wrapping: fvextra `breaklines` in `theme/preamble.tex` (Quarto's `code-overflow: wrap` is HTML-only), tabs→4 spaces in `theme/include-code.lua`, all included sources kept ≤80 cols. House rule added below.
 - 2026-09-06 — M1 started: wrote `examples/common.mk` + `mk/{sv,cocotb,systemc}.mk`, six counter examples, `scripts/check-examples.sh` (→ `examples/status.json`), Quarto skeleton (`_quarto.yml`, `theme/preamble.tex`, `theme/include-code.lua`, highlight theme), Appendix F, `scripts/build-book.sh`. Installed Quarto, Icarus, SystemC, conda env dvbook. PDF: 24 pages incl. cover.
 - 2026-09-06 — Synthesis note delivered; approved design §6 (writing workflow). Design doc complete pending review.

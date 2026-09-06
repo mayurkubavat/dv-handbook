@@ -15,7 +15,7 @@ TITLE = ("Design", "Verification")
 SUBTITLE = "From First Principles to Agentic AI"
 AUTHOR = "Mayur Kubavat"
 EYEBROW = "OPEN EDITION  ·  v0.1"
-FOOT = "Free, open textbook  ·  CC BY-NC-SA 4.0  ·  mayurkubavat.github.io/dv-textbook"
+FOOT = "Free, open textbook  ·  CC BY-NC-SA 4.0  ·  mayurkubavat.github.io/dv-handbook"
 BLURB = ("Verification is where silicon meets reality. Every chip that ships has been proven right, or wrong, "
          "by an engineer who asked the question the designer did not. This book teaches that discipline from the "
          "ground up: how simulators actually schedule events, how to turn a specification into a plan you can "
@@ -34,7 +34,7 @@ INSIDE = [
 BIO = ("Mayur Kubavat is a design verification engineer whose work spans high-speed interconnect "
        "verification, including PCIe 6.0 verification IP, and open-source verification tooling.")
 VERSION = "Open edition  ·  Version 0.1  ·  2026"
-REPO = "Source, examples and errata: github.com/mayurkubavat/dv-textbook"
+REPO = "Source, examples and errata: github.com/mayurkubavat/dv-handbook"
 
 SANS = "font-family=\"'Source Sans 3', 'Helvetica Neue', Arial, sans-serif\""
 SERIF = "font-family=\"'Source Serif 4', Georgia, 'Times New Roman', serif\""

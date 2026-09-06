@@ -3,8 +3,8 @@
 An open textbook for engineers who verify silicon. Written in public with
 Quarto; every listing is a runnable file that CI compiles before a release.
 
-- **Read online:** https://mayurkubavat.github.io/dv-textbook
-- **PDF:** attached to each [release](https://github.com/mayurkubavat/dv-textbook/releases)
+- **Read online:** https://mayurkubavat.github.io/dv-handbook
+- **PDF:** attached to each [release](https://github.com/mayurkubavat/dv-handbook/releases)
 - **License:** CC BY-NC-SA 4.0 for the text, MIT for the code (see `LICENSE.md`)
 
 ## Build locally

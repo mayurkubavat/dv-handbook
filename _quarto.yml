@@ -10,11 +10,11 @@ book:
   date-format: "MMMM YYYY"
   chapters:
     - index.qmd
-    - chapters/ch01-what-is-dv.qmd
+    # - chapters/ch01-what-is-dv.qmd   # re-enable when sources are filled
   appendices:
     - appendices/appF-building-examples.qmd
-  repo-url: https://github.com/mayurkubavat/dv-textbook
-  site-url: https://mayurkubavat.github.io/dv-textbook
+  repo-url: https://github.com/mayurkubavat/dv-handbook
+  site-url: https://mayurkubavat.github.io/dv-handbook
   license: "CC BY-NC-SA 4.0"
 
 bibliography: refs.bib

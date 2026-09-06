@@ -24,3 +24,150 @@
   year   = {2026},
   url    = {https://github.com/olofk/fusesoc}
 }
+
+% --- Chapter 1: cost of bugs, verification gap, lifecycle (research-agent, 2026-09-06) ---
+@techreport{foster2020wrg,
+  title       = {2020 Wilson Research Group Functional Verification Study: IC/ASIC Functional Verification Trend Report},
+  author      = {Harry Foster},
+  institution = {Siemens Digital Industries Software},
+  year        = {2020},
+  url         = {https://uobdv.github.io/Design-Verification/WilsonResearchGroupFunctionalVerificationStudy/2020-WRGFV-Study/ic-asic-trend-report_2020-wilson-research-verification-study_hfoster.pdf},
+  note        = {Industry survey commissioned by Siemens EDA. First-silicon success 32\%, 68\% of projects behind schedule. Accessed 2026-09-06}
+}
+@techreport{foster2024wrg,
+  title       = {2024 Wilson Research Group Functional Verification Study: IC/ASIC Functional Verification Trend Report},
+  author      = {Harry Foster},
+  institution = {Siemens Digital Industries Software},
+  year        = {2025},
+  url         = {https://resources.sw.siemens.com/en-US/white-paper-2024-wilson-research-group-ic-asic-functional-verification-trend-report/},
+  note        = {Industry survey, n = 597. First-silicon success 14\%, 75\% of projects behind schedule. Registration required for the PDF. Accessed 2026-09-06}
+}
+@misc{foster2025firstsilicon,
+  title        = {Why First-Silicon Success Is Getting Harder for System Companies},
+  author       = {Harry Foster},
+  howpublished = {Verification Horizons blog, Siemens EDA},
+  year         = {2025},
+  month        = sep,
+  url          = {https://blogs.sw.siemens.com/verificationhorizons/2025/09/03/why-first-silicon-success-is-getting-harder-for-system-companies/},
+  note         = {Accessed 2026-09-06}
+}
+@misc{intel1995fdiv,
+  title        = {Form 8-K: Intel 1994 Revenue, Earnings Per Share Set Records; Q4 Results Impacted by a \$475 Million Charge},
+  author       = {{Intel Corporation}},
+  howpublished = {U.S. Securities and Exchange Commission, EDGAR filing 0000050863-95-000001},
+  year         = {1995},
+  month        = jan,
+  url          = {https://www.sec.gov/Archives/edgar/data/0000050863/000005086395000001/0000050863-95-000001.txt},
+  note         = {Pre-tax charge of \$475 million for the Pentium floating point divide problem. Accessed 2026-09-06}
+}
+@techreport{pratt1995fdiv,
+  title       = {Anatomy of the {Pentium} Bug},
+  author      = {Vaughan Pratt},
+  institution = {Stanford University, Department of Computer Science},
+  year        = {1995},
+  note        = {Presented at TAPSOFT 1995; revised 2005-07-26. Mirror: https://www5.in.tum.de/~huckle/anapentium. Accessed 2026-09-06}
+}
+@techreport{sharangpani1994fdiv,
+  title       = {Statistical Analysis of Floating Point Flaw in the {Pentium} Processor},
+  author      = {H. P. Sharangpani and M. L. Barton},
+  institution = {Intel Corporation},
+  year        = {1994},
+  month       = nov,
+  url         = {https://www.ardent-tool.com/CPU/Intel/fdiv/white11.pdf},
+  note        = {Accessed 2026-09-06}
+}
+@misc{intel2011cougarpoint,
+  title        = {Form 10-K for fiscal year 2011, Note 20: Chipset Design Issue},
+  author       = {{Intel Corporation}},
+  howpublished = {U.S. Securities and Exchange Commission, EDGAR filing 0001193125-12-075534},
+  year         = {2012},
+  month        = feb,
+  url          = {https://www.sec.gov/Archives/edgar/data/50863/000119312512075534/d302695d10k.htm},
+  note         = {Total repair and replacement cost for the Intel 6 Series (Cougar Point) SATA design issue estimated at \$733 million. Initial estimate of \$700 million plus \$300 million revenue impact in the press release of 2011-01-31. Accessed 2026-09-06}
+}
+@misc{intel2024raptorlake,
+  title        = {Intel Core 13th and 14th Gen Desktop Instability Root Cause Update},
+  author       = {{Intel Corporation}},
+  howpublished = {Intel Community blog},
+  year         = {2024},
+  month        = sep,
+  url          = {https://community.intel.com/t5/Blogs/Tech-Innovation/Client/Intel-Core-13th-and-14th-Gen-Desktop-Instability-Root-Cause/post/1633239},
+  note         = {Vmin Shift Instability localized to a clock tree circuit subject to reliability aging under elevated voltage; microcode 0x12B. Accessed 2026-09-06}
+}
+@misc{holschuh2017skl150,
+  title        = {[WARNING] Intel Skylake/Kaby Lake processors: broken hyper-threading},
+  author       = {Henrique de Moraes Holschuh},
+  howpublished = {debian-devel mailing list},
+  year         = {2017},
+  month        = jun,
+  url          = {https://lists.debian.org/debian-devel/2017/06/msg00308.html},
+  note         = {Errata SKZ7/SKW144/SKL150/SKX150/KBL095/KBW095. Accessed 2026-09-06}
+}
+@techreport{itrs2007design,
+  title       = {International Technology Roadmap for Semiconductors, 2007 Edition: Design},
+  author      = {{ITRS}},
+  institution = {Semiconductor Industry Association},
+  year        = {2007},
+  url         = {https://www.semiconductors.org/wp-content/uploads/2018/08/2007Design.pdf},
+  note        = {``verification, which is a bottleneck that has now reached crisis proportions''. Accessed 2026-09-06}
+}
+@inproceedings{foster2013gap,
+  title     = {Why the design productivity gap never happened},
+  author    = {Harry Foster},
+  booktitle = {Proceedings of the IEEE/ACM International Conference on Computer-Aided Design (ICCAD)},
+  year      = {2013},
+  pages     = {581--584},
+  doi       = {10.1109/ICCAD.2013.6691175}
+}
+@article{mishra2017postsilicon,
+  title   = {Post-Silicon Validation in the {SoC} Era: A Tutorial Introduction},
+  author  = {Prabhat Mishra and Ronny Morad and Avi Ziv and Sandip Ray},
+  journal = {IEEE Design \& Test},
+  volume  = {34},
+  number  = {3},
+  pages   = {68--92},
+  year    = {2017},
+  doi     = {10.1109/MDAT.2017.2691348}
+}
+@misc{ieee1012-2024,
+  title        = {IEEE Std 1012-2024: IEEE Standard for System, Software, and Hardware Verification and Validation},
+  author       = {{IEEE}},
+  howpublished = {IEEE Standards Association},
+  year         = {2024},
+  url          = {https://standards.ieee.org/ieee/1012/7324/},
+  note         = {Approved 2024-11-12. Accessed 2026-09-06}
+}
+@misc{goering2004seventy,
+  title        = {Is verification really 70 percent?},
+  author       = {Richard Goering},
+  howpublished = {EE Times},
+  year         = {2004},
+  month        = jun,
+  url          = {https://www.eetimes.com/is-verification-really-70-percent/},
+  note         = {EE Times survey of 662 designers put functional verification at 22\% of the design cycle. Accessed 2026-09-06}
+}
+@misc{sperling2025plummets,
+  title        = {First-Time Silicon Success Plummets},
+  author       = {Ed Sperling},
+  howpublished = {Semiconductor Engineering},
+  year         = {2025},
+  month        = mar,
+  url          = {https://semiengineering.com/first-time-silicon-success-plummets/},
+  note         = {Quotes Harry Foster on the 2024 Wilson Research Group study. Accessed 2026-09-06}
+}
+@book{bergeron2003testbenches,
+  title     = {Writing Testbenches: Functional Verification of {HDL} Models},
+  author    = {Janick Bergeron},
+  edition   = {2},
+  publisher = {Kluwer Academic Publishers},
+  year      = {2003},
+  isbn      = {978-1-4020-7401-1},
+  doi       = {10.1007/978-1-4615-0302-6}
+}
+@book{wile2005cfv,
+  title     = {Comprehensive Functional Verification: The Complete Industry Cycle},
+  author    = {Bruce Wile and John C. Goss and Wolfgang Roesner},
+  publisher = {Morgan Kaufmann},
+  year      = {2005},
+  isbn      = {978-0-12-751803-9}
+}

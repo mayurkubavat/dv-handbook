@@ -11,7 +11,7 @@ The living state is in `STATUS.md`.
    `STATUS.md` did not.
 
 ## Map
-- `docs/specs/2026-09-05-dv-textbook-design.md` design doc (the spec)
+- `docs/specs/2026-09-05-dv-handbook-design.md` design doc (the spec)
 - `chapters/`, `appendices/` Quarto `.qmd` sources; `index.qmd` preface
 - `examples/<chNN-slug>/<lang>/` runnable listings; `examples/common.mk` +
   `examples/mk/*.mk` build system (targets `lint`, `run`, `clean`)

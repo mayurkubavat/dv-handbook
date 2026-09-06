@@ -35,7 +35,7 @@
 <rect x="180" y="2670" width="520" height="110" rx="10" fill="none" stroke="#F3F7FA" stroke-width="4"/>
 <text x="440" y="2742" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="46" font-weight="700" text-anchor="middle" fill="#F3F7FA">CC BY-NC-SA 4.0</text>
 <text x="180" y="2850" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="40" fill="#AED6F1">Open edition  ·  Version 0.1  ·  2026</text>
-<text x="180" y="2920" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="34" fill="#6FA3C7">Source, examples and errata: github.com/mayurkubavat/dv-textbook</text>
+<text x="180" y="2920" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="34" fill="#6FA3C7">Source, examples and errata: github.com/mayurkubavat/dv-handbook</text>
 <rect x="1620" y="2640" width="300" height="300" rx="8" fill="#F3F7FA"/>
 <rect x="1644" y="2664" width="60" height="60" fill="none" stroke="#1B4F72" stroke-width="10"/>
 <rect x="1664" y="2684" width="20" height="20" fill="#1B4F72"/>

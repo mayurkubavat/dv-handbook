@@ -4,7 +4,7 @@
 **Date:** 2026-09-05
 **Author:** Mayur Kubavat
 **Title:** *Design Verification: From First Principles to Agentic AI*
-**Repo (planned):** github.com/mayurkubavat/dv-textbook, rooted at `DV/Book`
+**Repo (planned):** github.com/mayurkubavat/dv-handbook, rooted at `DV/Book`
 
 ## 1. Goal
 
@@ -38,7 +38,7 @@ non-git `DV/` agents tree (public book needs its own clean history).
 ## 3. Section 1 — Repo layout and agent memory (APPROVED)
 
 ```
-DV/Book/                          ← git repo → github.com/mayurkubavat/dv-textbook
+DV/Book/                          ← git repo → github.com/mayurkubavat/dv-handbook
 ├── AGENTS.md                     # STABLE: conventions, commands, style rules; points to STATUS.md
 ├── STATUS.md                     # LIVING: zero-time memory (see 3.1)
 ├── research/                     # one file per topic: sources, spec refs, papers, links
