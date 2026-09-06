@@ -56,9 +56,14 @@ jobs:
           curl -sSL -o sf.zip https://github.com/adobe-fonts/source-serif/releases/download/4.005R/source-serif-4.005_Desktop.zip
           curl -sSL -o jb.zip https://github.com/JetBrains/JetBrainsMono/releases/download/v2.304/JetBrainsMono-2.304.zip
           for z in ss sf jb; do unzip -q -o $z.zip -d $z; done
-          find . -name '*.otf' -o -name '*.ttf' | grep -v -i 'NL' | xargs -I{} cp {} .
+          # Static instances only: variable fonts ("[wght]" in the name) and the
+          # NL (no-ligature) family confuse xdvipdfmx and fontconfig selection.
+          find ss sf -name '*.otf' | grep -viE 'variable|\[' | xargs -I{} cp {} .
+          find jb -path '*fonts/ttf/*' -name 'JetBrainsMono-*.ttf' | xargs -I{} cp {} .
+          rm -rf ss sf jb *.zip
           fc-cache -f
-          fc-list : family | grep -E 'Source Sans 3|Source Serif 4|JetBrains Mono' | sort -u
+          echo "installed font files: $(/bin/ls *.otf *.ttf | wc -l)"
+          fc-list : family style | grep -E 'Source Sans 3|Source Serif 4|JetBrains Mono' | sort -u | head -40
       - name: Render HTML and PDF
         run: |
           quarto render --to html
