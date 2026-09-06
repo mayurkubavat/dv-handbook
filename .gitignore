@@ -21,3 +21,7 @@ theme/cover/*.png
 
 # local-only agent import stub (kept out of the public repo)
 /*LAUDE.md
+
+/.quarto/
+**/*.quarto_ipynb
+_site/

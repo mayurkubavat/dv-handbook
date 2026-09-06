@@ -64,13 +64,17 @@ jobs:
           fc-cache -f
           echo "installed font files: $(/bin/ls *.otf *.ttf | wc -l)"
           fc-list : family style | grep -E 'Source Sans 3|Source Serif 4|JetBrains Mono' | sort -u | head -40
-      - name: Render HTML and PDF
+      - name: Render PDF (with cover) and web edition
         run: |
-          quarto render --to html
           scripts/build-book.sh
           cp _book/Design-Verification-draft.pdf _book/Design-Verification-${{ github.ref_name }}.pdf
+          # The web edition goes to its own directory: a second render into
+          # _book would delete the other format's output.
+          quarto render --to html --output-dir _site
+          cp _book/Design-Verification-draft.pdf _site/Design-Verification-draft.pdf
+          test -f _site/index.html
       - uses: actions/upload-pages-artifact@v3
-        with: { path: _book }
+        with: { path: _site }
       - uses: actions/upload-artifact@v4
         with:
           name: book-pdf
