@@ -61,6 +61,7 @@ See `research/README.md` for the index. Active notes:
 - Bare `ls` in this shell hangs (aliased to an interactive tool); use `/bin/ls`.
 
 ## Session log
+- 2026-09-06 — Project renamed: repo github.com/mayurkubavat/dv-handbook, site mayurkubavat.github.io/dv-handbook (old Pages URL does not redirect; old repo URL does). All links, cover, design doc filename updated. Ch.1 held out of `_quarto.yml` until sourced. First research subagent for Ch.1 hit a usage limit after saving 17 bib entries; relaunched.
 - 2026-09-06 — Attribution rules added (AGENTS.md, review skill). Research subagent for Ch.1 still running; it has begun appending BibTeX entries to `refs.bib`. Next: fill the 15 `[NEEDS SOURCE]` markers from `research/ch01-cost-gap-lifecycle.md`, re-render, run review-chapter, then push.
 - 2026-09-06 — Ch.1 drafted: examples (FIFO with early-full bug; directed passes, random SV + cocotb fail as intended), `EXPECT := fail` added to build system + checker + Appendix F, `figures/ch01-lifecycle.svg` (generator in `figures/`), chapter registered in `_quarto.yml`, PDF renders at 42 pages. Committed locally, NOT pushed until sources are filled. Verilator: `$fatal`/`$stop`/`$error` all abort (exit 134); `sv.mk` maps that to exit 1.
 - 2026-09-06 — M2 started: Chapter 1 outline (`chapters/ch01-what-is-dv.qmd`, 9 sections, 4 planned examples, 6 exercises); research subagent dispatched for cost/gap/lifecycle figures + BibTeX. Skills were followed by hand (new project skills load on the next session start).
