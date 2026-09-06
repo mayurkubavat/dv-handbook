@@ -66,6 +66,9 @@ for d in $DIRS; do
   if [[ "$lint" == "fail" || "$run" == fail* ]]; then ((fail++))
   else ((pass++)); fi
   printf '%-38s lint=%-7s run=%s\n' "$rel" "$lint" "$run"
+  # Show why, so a failure is readable in CI without downloading logs.
+  [[ "$lint" == "fail" ]] && sed 's/^/    | /' "$d/lint.log" | tail -12
+  [[ "$run" == fail* ]] && sed 's/^/    | /' "$d/run.log" | tail -12
   row="{\"dir\": \"$rel\", \"lint\": \"$lint\", \"run\": \"$run\","
   rows+=("$row \"requires\": \"$requires\", \"expect\": \"$expect\"}")
 done
