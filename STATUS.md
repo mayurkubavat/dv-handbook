@@ -51,6 +51,7 @@ See `research/README.md` for the index. Active notes:
 - Cover tooling: rsvg-convert (librsvg), pdfinfo/pdffonts (poppler)
 
 ## House rules learned
+- Run `research-topic` BEFORE `draft-chapter`, never during: the drafting lock blocks research writes (a research subagent had to park its note in scratch on 2026-09-06). Sequence is research → outline → draft.
 - Attribution: primary sources for every fact, short attributed quotations only, redraw never reproduce, credit discoverers of named bugs (author, 2026-09-06). Written into AGENTS.md.
 - Agent configuration (`.claude/` and the one-line stub that imports AGENTS.md) never goes to the remote; it is gitignored. Keep a private backup if it matters.
 - No mention of AI assistance, its vendor, or its tooling anywhere in the repo, including commit messages (decided 2026-09-06). Factual references to AI models as book subject matter are fine.

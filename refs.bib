@@ -171,3 +171,85 @@
   year      = {2005},
   isbn      = {978-0-12-751803-9}
 }
+
+% --- Chapter 1 additions (research-agent, 2026-09-06, second pass) ---
+@misc{ormandy2023zenbleed,
+  title        = {Zenbleed},
+  author       = {Tavis Ormandy},
+  howpublished = {Google Information Security, lock.cmpxchg8b.com},
+  year         = {2023},
+  month        = jul,
+  url          = {https://lock.cmpxchg8b.com/zenbleed.html},
+  note         = {CVE-2023-20593. Reported to AMD 2023-05-15, published 2023-07-24. Found by fuzzing real silicon with performance-counter feedback and a serialized oracle; leak rate about 30 kB/s per core; mitigation via microcode or chicken bit DE\_CFG[9]. Accessed 2026-09-06}
+}
+@misc{amd2023sb7008,
+  title        = {Cross-Process Information Leak, Bulletin ID AMD-SB-7008},
+  author       = {{Advanced Micro Devices}},
+  howpublished = {AMD Product Security bulletin},
+  year         = {2023},
+  month        = jul,
+  url          = {https://www.amd.com/en/resources/product-security/bulletin/amd-sb-7008.html},
+  note         = {CVE-2023-20593, severity Medium. Initial publication 2023-07-24; EPYC 7002 microcode 0x0830107B (2023-06-06); AGESA fixes for client parts 2023-11 to 2024-04. Accessed 2026-09-06}
+}
+@techreport{amd2007tlb,
+  title       = {Revision Guide for {AMD} Family 10h Processors, Publication 41322, Rev. 3.92},
+  author      = {{Advanced Micro Devices}},
+  institution = {Advanced Micro Devices, Inc.},
+  year        = {2012},
+  month       = mar,
+  url         = {https://web.archive.org/web/2019/https://www.amd.com/system/files/TechDocs/41322_10h_Rev_Gd.pdf},
+  note        = {Erratum 298, ``L2 Eviction May Occur During Processor Operation To Set Accessed or Dirty Bit'' (the 2007 Barcelona/Phenom TLB erratum): non-atomic accessed/dirty-bit update can install a stale page-table entry in L3; workaround HWCR[TlbCacheDis]. Erratum first published 2007; archived copy of the 2012 revision used. Accessed 2026-09-06}
+}
+@misc{foster2022wrg,
+  title        = {The 2022 Wilson Research Group Functional Verification Study (blog series, Parts 8--12 and Epilogue)},
+  author       = {Harry Foster},
+  howpublished = {Verification Horizons blog, Siemens EDA},
+  year         = {2022},
+  month        = dec,
+  url          = {https://blogs.sw.siemens.com/verificationhorizons/2023/01/09/part-12-the-2022-wilson-research-group-functional-verification-study/},
+  note         = {Part 8 (2022-12-12): verification engineer demand 6.2\% CAGR vs 2.7\% design, 2007--2022; about 1:1 verifier:designer, up to 5:1 for processors; designers spend 49\% of time in verification. Part 12 (2023-01-09): first-silicon success about 24\%, 66\% of projects behind schedule, logic/functional flaws the leading respin cause. Accessed 2026-09-06}
+}
+@techreport{nist2002testing,
+  title       = {The Economic Impacts of Inadequate Infrastructure for Software Testing},
+  author      = {{RTI International}},
+  institution = {National Institute of Standards and Technology},
+  number      = {Planning Report 02-3},
+  year        = {2002},
+  month       = may,
+  url         = {https://www.nist.gov/system/files/documents/director/planning/report02-3.pdf},
+  note        = {Table 5-1 (``Example Only''): relative cost to repair a defect 1X at requirements/design, 5X at coding/unit test, 10X at integration/system test, 15X at beta, 30X post-release; cites Boehm (1976) and Baziuk (1995). Software, not silicon. Accessed 2026-09-06}
+}
+@misc{lapedus2018bigtrouble,
+  title        = {Big Trouble At 3nm},
+  author       = {Mark LaPedus},
+  howpublished = {Semiconductor Engineering},
+  year         = {2018},
+  month        = jun,
+  url          = {https://semiengineering.com/big-trouble-at-3nm/},
+  note         = {IBS design-cost figures: \$51.3M at 28nm, \$297.8M at 7nm, \$542.2M at 5nm, \$500M--\$1.5B at 3nm. Published 2018-06-21. Accessed 2026-09-06}
+}
+
+@inproceedings{ye2025uvm2,
+  title     = {From Concept to Practice: an Automated {LLM}-aided {UVM} Machine for {RTL} Verification},
+  author    = {Ye, Junhao and Hu, Yuchen and Xu, Ke and Pan, Dingrong and Chen, Qichun and Zhou, Jie and Zhao, Shuai and Fang, Xinwei and Wang, Xi and Guan, Nan and Jiang, Zhe},
+  booktitle = {Proceedings of the IEEE/ACM International Conference on Computer-Aided Design (ICCAD)},
+  year      = {2025},
+  url       = {https://arxiv.org/abs/2504.19959},
+  note      = {arXiv:2504.19959. Accessed 2026-09-06}
+}
+
+@misc{meng2026haven,
+  title  = {{HAVEN}: Hybrid Automated Verification {ENgine} for {UVM} Testbench Synthesis with {LLMs}},
+  author = {Meng, Chang-Chih and Lu, Yu-Ren and Lin, Guan-Yu and Yeh, Tsung Tai and Wu, Kai-Chiang and Wu, I-Chen},
+  year   = {2026},
+  url    = {https://arxiv.org/abs/2604.27643},
+  note   = {arXiv preprint 2604.27643, 2026-04-30. Accessed 2026-09-06}
+}
+
+@misc{va-coverage-cookbook,
+  title  = {Coverage Cookbook},
+  author = {{Siemens Verification Academy}},
+  year   = {2026},
+  url    = {https://verificationacademy.com/cookbook/coverage/},
+  note   = {Accessed 2026-09-06}
+}

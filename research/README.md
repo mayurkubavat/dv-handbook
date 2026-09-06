@@ -9,6 +9,7 @@ Link every note from `STATUS.md` → "Research references" with what it feeds.
 | `sw-engineering-ai-era.md` | Modern SW engineering practices, AI era | done (2026-09-05, ~3.1k words) | Ch. 27–29, 32, 34 |
 | `ai-in-dv-state-of-the-art.md` | AI/ML/LLM/agents applied to DV & EDA | done (2026-09-06, ~3.4k words) | Ch. 33–35 |
 | `dv-adaptation-synthesis.md` | Synthesis: adapting SW/GenAI practice to DV | done (2026-09-06, ~4.3k words) | Ch. 34, book workflow |
+| `ch01-cost-gap-lifecycle.md` | Survey figures, cost of bugs, escapes, definitions, lifecycle, sign-off | done (2026-09-06, ~3k words) | Ch. 1 |
 
 ## Conventions
 - Cite as `[Source, YYYY-MM-DD](URL)`; separate vendor claims from peer-reviewed results.
