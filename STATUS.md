@@ -19,7 +19,7 @@ States: planned → outlined → drafting → examples-verified → reviewed →
 | # | Chapter | State | Words | Last touched |
 |---|---|---|---|---|
 | F | Building and Running the Examples (`appendices/appF-building-examples.qmd`) | examples-verified (4 run, 2 skipped: UVM needs commercial sim, UVM-SystemC needs library) | ~2,600 | 2026-09-06 |
-| 1 | What Is Design Verification? (`chapters/ch01-what-is-dv.qmd`) | drafting (outline approved 2026-09-06; opener: a recent escape) | 0 | 2026-09-06 |
+| 1 | What Is Design Verification? (`chapters/ch01-what-is-dv.qmd`) | drafting: full prose written, 4 examples verified (2 EXPECT=fail), lifecycle figure; 15 `[NEEDS SOURCE]` markers await `research/ch01-cost-gap-lifecycle.md` | ~4,600 | 2026-09-06 |
 | — | chapters 2–35 + appendices A–E, G, H | planned | 0 | 2026-09-05 |
 
 Edition 1 target: Parts I–III + appendices A–D, F, G. See design doc §4.
@@ -60,6 +60,7 @@ See `research/README.md` for the index. Active notes:
 - Bare `ls` in this shell hangs (aliased to an interactive tool); use `/bin/ls`.
 
 ## Session log
+- 2026-09-06 — Ch.1 drafted: examples (FIFO with early-full bug; directed passes, random SV + cocotb fail as intended), `EXPECT := fail` added to build system + checker + Appendix F, `figures/ch01-lifecycle.svg` (generator in `figures/`), chapter registered in `_quarto.yml`, PDF renders at 42 pages. Committed locally, NOT pushed until sources are filled. Verilator: `$fatal`/`$stop`/`$error` all abort (exit 134); `sv.mk` maps that to exit 1.
 - 2026-09-06 — M2 started: Chapter 1 outline (`chapters/ch01-what-is-dv.qmd`, 9 sections, 4 planned examples, 6 exercises); research subagent dispatched for cost/gap/lifecycle figures + BibTeX. Skills were followed by hand (new project skills load on the next session start).
 - 2026-09-06 — CI fixed twice (static fonts only; HTML rendered to `_site` so the PDF render does not wipe it). Run green; Pages live. M1 closed.
 - 2026-09-06 — Pushed to GitHub (public). Publication rule enforced by commit-msg + pre-commit hooks; attribution trailers off. The agent stub file and the `.claude/` directory (skills, hooks, settings) are local-only, ignored, and purged from history. First CI: examples pass on Ubuntu; PDF render failed on fonts (xdvipdfmx invalid font), fix pushed: static font instances only.

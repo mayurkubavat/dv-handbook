@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 470" width="1400" height="470" role="img" aria-label="Silicon lifecycle with the verification span">
+<rect width="1400" height="470" fill="white"/>
+<rect x="20" y="80" width="1202" height="224" rx="14" fill="#F4F6F8" stroke="#1B4F72" stroke-width="2" stroke-dasharray="8 6"/>
+<text x="34" y="106" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="20" font-weight="700" fill="#1B4F72">Verification span</text>
+<text x="34" y="128" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" fill="#1C1C1C">plan → testbench alongside RTL → sign-off → learn from escapes</text>
+<rect x="30" y="150" width="150" height="84" rx="8" fill="white" stroke="#1B4F72" stroke-width="2"/>
+<text x="105.0" y="198.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="17" font-weight="400" text-anchor="middle" fill="#1C1C1C">Specification</text>
+<path d="M183,192.0 H194" stroke="#7FA3C0" stroke-width="2.5"/>
+<path d="M192,186.0 L200,192.0 L192,198.0 Z" fill="#7FA3C0"/>
+<rect x="202" y="150" width="150" height="84" rx="8" fill="white" stroke="#1B4F72" stroke-width="2"/>
+<text x="277.0" y="198.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="17" font-weight="400" text-anchor="middle" fill="#1C1C1C">Architecture</text>
+<path d="M355,192.0 H366" stroke="#7FA3C0" stroke-width="2.5"/>
+<path d="M364,186.0 L372,192.0 L364,198.0 Z" fill="#7FA3C0"/>
+<rect x="374" y="150" width="150" height="84" rx="8" fill="white" stroke="#1B4F72" stroke-width="2"/>
+<text x="449.0" y="198.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="17" font-weight="400" text-anchor="middle" fill="#1C1C1C">RTL design</text>
+<path d="M527,192.0 H538" stroke="#7FA3C0" stroke-width="2.5"/>
+<path d="M536,186.0 L544,192.0 L536,198.0 Z" fill="#7FA3C0"/>
+<rect x="546" y="150" width="150" height="84" rx="8" fill="#1B4F72" stroke="#1B4F72" stroke-width="2"/>
+<text x="621.0" y="188.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="17" font-weight="700" text-anchor="middle" fill="white">Functional</text>
+<text x="621.0" y="208.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="17" font-weight="700" text-anchor="middle" fill="white">verification</text>
+<path d="M699,192.0 H710" stroke="#7FA3C0" stroke-width="2.5"/>
+<path d="M708,186.0 L716,192.0 L708,198.0 Z" fill="#7FA3C0"/>
+<rect x="718" y="150" width="150" height="84" rx="8" fill="white" stroke="#1B4F72" stroke-width="2"/>
+<text x="793.0" y="188.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="17" font-weight="400" text-anchor="middle" fill="#1C1C1C">Synthesis and</text>
+<text x="793.0" y="208.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="17" font-weight="400" text-anchor="middle" fill="#1C1C1C">physical design</text>
+<path d="M871,192.0 H882" stroke="#7FA3C0" stroke-width="2.5"/>
+<path d="M880,186.0 L888,192.0 L880,198.0 Z" fill="#7FA3C0"/>
+<rect x="890" y="150" width="150" height="84" rx="8" fill="white" stroke="#1B4F72" stroke-width="2"/>
+<text x="965.0" y="198.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="17" font-weight="400" text-anchor="middle" fill="#1C1C1C">Tapeout</text>
+<path d="M1043,192.0 H1054" stroke="#7FA3C0" stroke-width="2.5"/>
+<path d="M1052,186.0 L1060,192.0 L1052,198.0 Z" fill="#7FA3C0"/>
+<rect x="1062" y="150" width="150" height="84" rx="8" fill="white" stroke="#1B4F72" stroke-width="2"/>
+<text x="1137.0" y="188.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="17" font-weight="400" text-anchor="middle" fill="#1C1C1C">Post-silicon</text>
+<text x="1137.0" y="208.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="17" font-weight="400" text-anchor="middle" fill="#1C1C1C">validation</text>
+<path d="M1215,192.0 H1226" stroke="#7FA3C0" stroke-width="2.5"/>
+<path d="M1224,186.0 L1232,192.0 L1224,198.0 Z" fill="#7FA3C0"/>
+<rect x="1234" y="150" width="150" height="84" rx="8" fill="white" stroke="#1B4F72" stroke-width="2"/>
+<text x="1309.0" y="188.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="17" font-weight="400" text-anchor="middle" fill="#1C1C1C">Production</text>
+<text x="1309.0" y="208.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="17" font-weight="400" text-anchor="middle" fill="#1C1C1C">test</text>
+<line x1="879.0" y1="142" x2="879.0" y2="242" stroke="#B7791F" stroke-width="4"/>
+<text x="879.0" y="264" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="700" text-anchor="middle" fill="#B7791F">sign-off</text>
+<path d="M1137.0,234 V296 H621.0 V248" stroke="#2E7D32" stroke-width="2.5" fill="none"/>
+<path d="M615.0,252 L621.0,240 L627.0,252 Z" fill="#2E7D32"/>
+<text x="879.0" y="318" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" fill="#2E7D32" text-anchor="middle">escapes come back as questions: why did the testbench not find this?</text>
+<text x="30" y="430" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" fill="#1C1C1C">Verification receives: specification, RTL drops, firmware.  Verification delivers: plan, testbench, regressions, coverage, bug reports, sign-off evidence.</text>
+</svg>
