@@ -1,10 +1,8 @@
 {
-  "checked": "2026-09-06T18:46:06Z",
-  "pass": 3, "fail": 0,
+  "checked": "2026-09-06T23:31:09Z",
+  "pass": 1, "fail": 0,
   "skipped_run": 0,
   "examples": [
-    {"dir": "examples/ch01-what-is-dv/cocotb", "lint": "pass", "run": "pass (failed as expected)", "requires": "", "expect": "fail"},
-    {"dir": "examples/ch01-what-is-dv/sv-directed", "lint": "pass", "run": "pass", "requires": "", "expect": "pass"},
-    {"dir": "examples/ch01-what-is-dv/sv-random", "lint": "pass", "run": "pass (failed as expected)", "requires": "", "expect": "fail"}
+    {"dir": "examples/ch01-what-is-dv/sv-directed", "lint": "pass", "run": "pass", "requires": "", "expect": "pass"}
   ]
 }

@@ -24,7 +24,7 @@ module tb_fifo_directed;
     for (int i = 0; i < 8; i++) begin
       @(negedge clk);
       wr_en   = 1;
-      wr_data = 8'(8'hA0 + i);
+      wr_data = (8'hA0 + 8'(i));
     end
     @(negedge clk);
     wr_en = 0;
@@ -33,10 +33,10 @@ module tb_fifo_directed;
     for (int i = 0; i < 8; i++) begin
       @(negedge clk);
       rd_en = 1;
-      if (rd_data !== 8'(8'hA0 + i)) begin
+      if (rd_data !== (8'hA0 + 8'(i))) begin
         errors++;
         $display("MISMATCH entry %0d: got %02h expected %02h",
-                 i, rd_data, 8'(8'hA0 + i));
+                 i, rd_data, (8'hA0 + 8'(i)));
       end
     end
     @(negedge clk);
