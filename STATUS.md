@@ -4,7 +4,7 @@
 > Stable conventions live in `AGENTS.md`; this file holds the living state.
 
 ## Current milestone
-**M2 — Chapter 1 (started 2026-09-06).** Outline approved, prose drafted, examples verified, sources filled from `research/ch01-cost-gap-lifecycle.md`. Independent review running; then gate 2 (author review) and push.
+**M2 — Chapter 1 (started 2026-09-06).** Drafted, sourced, independently reviewed, revised, pushed and live. Waiting on gate 2: the author reads the chapter and the review findings.
 
 M1 — Repo scaffold: COMPLETE (2026-09-06). CI green on main (examples → PDF+HTML render → Pages deploy). Web edition live at https://mayurkubavat.github.io/dv-handbook (PDF at /Design-Verification-draft.pdf). Next: M2 = Chapter 1.
 
@@ -19,7 +19,7 @@ States: planned → outlined → drafting → examples-verified → reviewed →
 | # | Chapter | State | Words | Last touched |
 |---|---|---|---|---|
 | F | Building and Running the Examples (`appendices/appF-building-examples.qmd`) | examples-verified (4 run, 2 skipped: UVM needs commercial sim, UVM-SystemC needs library) | ~2,600 | 2026-09-06 |
-| 1 | What Is Design Verification? (`chapters/ch01-what-is-dv.qmd`) | examples-verified; all sources filled (27+3 bib entries); independent review in progress (`docs/reviews/ch01-review-2026-09-06.md`) → gate 2 | ~5,300 | 2026-09-06 |
+| 1 | What Is Design Verification? (`chapters/ch01-what-is-dv.qmd`) | examples-verified; reviewed by subagent (57 findings, `docs/reviews/ch01-review-2026-09-06.md`) and revised; **awaiting gate 2 (author review)** | ~5,400 | 2026-09-06 |
 | — | chapters 2–35 + appendices A–E, G, H | planned | 0 | 2026-09-05 |
 
 Edition 1 target: Parts I–III + appendices A–D, F, G. See design doc §4.
@@ -62,6 +62,7 @@ See `research/README.md` for the index. Active notes:
 - Bare `ls` in this shell hangs (aliased to an interactive tool); use `/bin/ls`.
 
 ## Session log
+- 2026-09-06 — Ch.1 second pass from review: uncited details cut or hedged (Cougar Point transistor claim, lost-revenue clause, Zen 2 launch, sim speed), CAGR citation corrected to 2022 edition, Ormandy's method described correctly and quoted with marks, American spelling, run output included from `run.out` (new checker output), coverage-model gap taught + exercise 7, references page added (bibliography now renders). Checker now merges `status.json` across filtered runs. House-rule decisions recorded in AGENTS.md: Part numbers exempt from the label rule; Learning-objectives box is the opener; output always included from `run.out`. Not done from the review: mini-TOC per chapter (theme work, later); H-3 theme styling of callouts (later).
 - 2026-09-06 — Ch.1 research note delivered (2nd run; 1st hit a usage limit); 15 markers filled with citations; 3 bib entries added (UVM2, HAVEN, Coverage Cookbook); chapter re-enabled in `_quarto.yml`; PDF 47 pages; review subagent dispatched.
 - 2026-09-06 — CI: chapter-1 directed test failed lint only on Ubuntu's older Verilator (WIDTHEXPAND on `8'hA0 + i`); fixed with an explicit cast. Checker now prints failing lint/run logs so CI failures are readable. Watching the run; research note for Ch.1 still pending.
 - 2026-09-06 — Project renamed: repo github.com/mayurkubavat/dv-handbook, site mayurkubavat.github.io/dv-handbook (old Pages URL does not redirect; old repo URL does). All links, cover, design doc filename updated. Ch.1 held out of `_quarto.yml` until sourced. First research subagent for Ch.1 hit a usage limit after saving 17 bib entries; relaunched.
