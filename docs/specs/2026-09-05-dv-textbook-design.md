@@ -183,7 +183,7 @@ The book is written the way it says verification should be done: a spec, separat
 **Memory and rules.** `STATUS.md` chapter states advance only via these skills with evidence attached. `AGENTS.md` constitution: read STATUS first; citation format; no unsourced numbers; vendor claims labelled; examples must run; house style. Hooks: Stop hook flags unchanged `STATUS.md`; pre-commit hook runs example checks for touched chapters.
 
 ## 5. Pending design sections
-- None. M1 (repo scaffold) started 2026-09-06 directly at the user's request: examples build system, Appendix F, Quarto skeleton and PDF build are done; CLAUDE.md/hooks/skills, git+GitHub, CI remain.
+- None. M1 (repo scaffold) started 2026-09-06 directly at the user's request: examples build system, Appendix F, Quarto skeleton and PDF build are done; AGENTS.md/hooks/skills, git+GitHub, CI remain.
 - Implementation note: appendix lettering is forced with `\setcounter{chapter}{5}` in the PDF until appendices A–E exist; HTML will show it as A until then.
 
 ## 6. Research track (completed 2026-09-06)
