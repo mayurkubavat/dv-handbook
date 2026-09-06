@@ -11,6 +11,7 @@ book:
   chapters:
     - index.qmd
     - chapters/ch01-what-is-dv.qmd
+    - references.qmd
   appendices:
     - appendices/appF-building-examples.qmd
   repo-url: https://github.com/mayurkubavat/dv-handbook
