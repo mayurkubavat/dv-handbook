@@ -252,6 +252,8 @@ The book's repository contains a script that walks every example directory, runs
 ```{.bash include="scripts/check-examples.sh"}
 ```
 
+Some examples exist to *find* a bug, and for them a clean exit would be the failure. Their Makefile says so with `EXPECT := fail`, and the script then counts a non-zero `make run` as the correct outcome and reports it as "failed as expected". Chapter 1's random FIFO test is the first such example.
+
 The output is one line per example and a JSON file, `examples/status.json`, that records the result of every run with a timestamp. When this appendix was built, the file recorded four examples passing and two, the UVM and UVM-SystemC ones, skipped because they need a commercial simulator or a library this machine does not have. The book's status page reads the same file, so a chapter cannot be called verified by hand; the script has to say so.
 
 ## Beyond Makefiles {#sec-appF-beyond}

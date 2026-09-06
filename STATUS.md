@@ -19,7 +19,7 @@ States: planned → outlined → drafting → examples-verified → reviewed →
 | # | Chapter | State | Words | Last touched |
 |---|---|---|---|---|
 | F | Building and Running the Examples (`appendices/appF-building-examples.qmd`) | examples-verified (4 run, 2 skipped: UVM needs commercial sim, UVM-SystemC needs library) | ~2,600 | 2026-09-06 |
-| 1 | What Is Design Verification? (`chapters/ch01-what-is-dv.qmd`) | outlined (awaiting gate-1 approval; not in `_quarto.yml` until drafted) | 0 | 2026-09-06 |
+| 1 | What Is Design Verification? (`chapters/ch01-what-is-dv.qmd`) | drafting (outline approved 2026-09-06; opener: a recent escape) | 0 | 2026-09-06 |
 | — | chapters 2–35 + appendices A–E, G, H | planned | 0 | 2026-09-05 |
 
 Edition 1 target: Parts I–III + appendices A–D, F, G. See design doc §4.

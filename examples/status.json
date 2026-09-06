@@ -1,13 +1,10 @@
 {
-  "checked": "2026-09-06T07:06:02Z",
-  "pass": 6, "fail": 0,
-  "skipped_run": 2,
+  "checked": "2026-09-06T18:46:06Z",
+  "pass": 3, "fail": 0,
+  "skipped_run": 0,
   "examples": [
-    {"dir": "examples/appF-counter/cocotb", "lint": "pass", "run": "pass", "requires": ""},
-    {"dir": "examples/appF-counter/pyuvm", "lint": "pass", "run": "pass", "requires": ""},
-    {"dir": "examples/appF-counter/sv", "lint": "pass", "run": "pass", "requires": ""},
-    {"dir": "examples/appF-counter/systemc", "lint": "pass", "run": "pass", "requires": ""},
-    {"dir": "examples/appF-counter/uvm", "lint": "skipped", "run": "skipped (commercial)", "requires": "commercial"},
-    {"dir": "examples/appF-counter/uvm-systemc", "lint": "skipped", "run": "skipped (uvm-systemc)", "requires": "uvm-systemc"}
+    {"dir": "examples/ch01-what-is-dv/cocotb", "lint": "pass", "run": "pass (failed as expected)", "requires": "", "expect": "fail"},
+    {"dir": "examples/ch01-what-is-dv/sv-directed", "lint": "pass", "run": "pass", "requires": "", "expect": "pass"},
+    {"dir": "examples/ch01-what-is-dv/sv-random", "lint": "pass", "run": "pass (failed as expected)", "requires": "", "expect": "fail"}
   ]
 }

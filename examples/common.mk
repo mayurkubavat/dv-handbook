@@ -23,6 +23,9 @@
 #      PLUSARGS       extra +args passed to the simulation (SV / UVM)
 #      UVM            1 to compile the UVM library and pass +UVM_TESTNAME
 #      UVM_TEST       name of the uvm_test to run (when UVM=1)
+#      EXPECT         pass (default) or fail. A teaching example whose point
+#                     is to find a bug sets EXPECT := fail; the checker then
+#                     treats a non-zero `make run` as the correct outcome.
 #
 #  Layout assumed by the paths below:
 #      examples/common.mk            <- this file
@@ -47,6 +50,7 @@ endif
 
 # Defaults that every language may use.
 REQUIRES ?=
+EXPECT   ?= pass
 PLUSARGS ?=
 UVM      ?= 0
 UVM_TEST ?=
@@ -68,6 +72,7 @@ help:
 	@echo "top              : $(TOP)"
 	@echo "sources          : $(SOURCES)"
 	@echo "requires         : $(if $(REQUIRES),$(REQUIRES),nothing special)"
+	@echo "expected outcome : $(EXPECT)"
 	@echo "targets          : lint | run | clean | help"
 
 clean::

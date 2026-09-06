@@ -52,8 +52,10 @@ else
 	    --top-module $(TOP)
 endif
 
+# A failing test ends with $fatal, which Verilator turns into an abort
+# signal; the `|| exit 1` turns that into an ordinary non-zero exit.
 run: $(VERILATOR_BIN)
-	$(VERILATOR_BIN) $(UVM_RUNARGS) $(PLUSARGS)
+	$(VERILATOR_BIN) $(UVM_RUNARGS) $(PLUSARGS) || exit 1
 
 $(VERILATOR_BIN): $(SOURCES) $(UVM_SOURCE)
 	$(VERILATOR) --binary $(VERILATOR_FLAGS) \

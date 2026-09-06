@@ -42,8 +42,11 @@ pass=0; fail=0; skip=0; rows=()
 for d in $DIRS; do
   [[ -f "$d/Makefile" ]] || continue
   rel="${d#$ROOT/}"
-  requires=$(grep -E '^REQUIRES\s*:?=' "$d/Makefile" \
-             | sed -E 's/.*=\s*//' | tr -d ' ')
+  # Makefile variables may carry a trailing comment; strip it first.
+  mkvar() { grep -E "^$1\s*:?=" "$d/Makefile" | sed -E 's/#.*//; s/.*=\s*//' \
+            | tr -d ' '; }
+  requires=$(mkvar REQUIRES)
+  expect=$(mkvar EXPECT); expect=${expect:-pass}
   lint="pass"; run="pass"
   if ! (cd "$d" && $RUN make -s lint >"$d/lint.log" 2>&1); then
     lint="fail"
@@ -52,14 +55,19 @@ for d in $DIRS; do
   fi
   if [[ -n "$requires" ]]; then
     run="skipped ($requires)"; ((skip++))
-  elif ! (cd "$d" && $RUN make -s run >"$d/run.log" 2>&1); then
-    run="fail"
+  else
+    (cd "$d" && $RUN make -s run >"$d/run.log" 2>&1); rc=$?
+    if [[ "$expect" == "fail" ]]; then
+      # The example exists to expose a bug: a clean exit would mean it missed.
+      if [[ $rc -eq 0 ]]; then run="fail (expected to fail, but passed)"
+      else run="pass (failed as expected)"; fi
+    elif [[ $rc -ne 0 ]]; then run="fail"; fi
   fi
-  if [[ "$lint" == "fail" || "$run" == "fail" ]]; then ((fail++))
+  if [[ "$lint" == "fail" || "$run" == fail* ]]; then ((fail++))
   else ((pass++)); fi
   printf '%-38s lint=%-7s run=%s\n' "$rel" "$lint" "$run"
   row="{\"dir\": \"$rel\", \"lint\": \"$lint\", \"run\": \"$run\","
-  rows+=("$row \"requires\": \"$requires\"}")
+  rows+=("$row \"requires\": \"$requires\", \"expect\": \"$expect\"}")
 done
 
 {
