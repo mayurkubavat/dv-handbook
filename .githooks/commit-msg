@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+# Reject commit messages that name the assistant or its vendor (AGENTS.md rule).
+pat="(^|[^./])cla""ude|anth""ropic"   # allow .claude/ tool paths
+if grep -iqE "$pat" "$1"; then
+  echo "commit-msg: publication rule violated in the commit message"; exit 1
+fi

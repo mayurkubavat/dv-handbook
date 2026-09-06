@@ -1,5 +1,14 @@
 #!/usr/bin/env bash
-# Verify examples touched by this commit before it lands.
+# Verify examples touched by this commit before it lands, and enforce the
+# publication rule in AGENTS.md: staged files outside research/ must not name
+# the assistant or its vendor. The pattern is assembled from fragments so this
+# file does not trip its own check.
+pat="(^|[^./])cla""ude|anth""ropic"   # allow .claude/ tool paths
+hits=$(git diff --cached --name-only --diff-filter=AM | grep -v '^research/' \
+       | xargs -I{} sh -c "git show :{} | grep -il -E '$pat' >/dev/null && echo {}" 2>/dev/null)
+if [[ -n "$hits" ]]; then
+  echo "pre-commit: publication rule violated in:"; echo "$hits"; exit 1
+fi
 if git diff --cached --name-only -- examples | grep -q .; then
   echo "pre-commit: checking changed examples"
   scripts/check-examples.sh --changed || { echo "pre-commit: example check failed"; exit 1; }
