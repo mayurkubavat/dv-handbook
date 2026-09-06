@@ -66,6 +66,9 @@ for d in $DIRS; do
   if [[ "$lint" == "fail" || "$run" == fail* ]]; then ((fail++))
   else ((pass++)); fi
   printf '%-38s lint=%-7s run=%s\n' "$rel" "$lint" "$run"
+  # A trimmed copy of the run output for the book to include verbatim:
+  # simulator banners, make chatter and abort traces removed.
+  [[ -f "$d/run.log" ]] && grep -vE '^- |^%Fatal|^%Error|^Aborting|^make:|^\[[0-9]+\] %Fatal|^V e r i l a t i o n|Verilated|Abort trap|conda\.cli|^/bin/sh|^$' "$d/run.log" > "$d/run.out"
   # Show why, so a failure is readable in CI without downloading logs.
   [[ "$lint" == "fail" ]] && sed 's/^/    | /' "$d/lint.log" | tail -12
   [[ "$run" == fail* ]] && sed 's/^/    | /' "$d/run.log" | tail -12
@@ -73,18 +76,23 @@ for d in $DIRS; do
   rows+=("$row \"requires\": \"$requires\", \"expect\": \"$expect\"}")
 done
 
-{
-  echo "{"
-  echo "  \"checked\": \"$(date -u +%Y-%m-%dT%H:%M:%SZ)\","
-  echo "  \"pass\": $pass, \"fail\": $fail,"
-  echo "  \"skipped_run\": $skip,"
-  echo "  \"examples\": ["
-  for i in "${!rows[@]}"; do
-    sep=","; [[ $i -eq $((${#rows[@]}-1)) ]] && sep=""
-    echo "    ${rows[$i]}$sep"
-  done
-  echo "  ]"
-  echo "}"
-} > "$STATUS"
+# Merge this run's rows into the status file, so a filtered run (one chapter)
+# updates its own examples without erasing the record of the others.
+python3 - "$STATUS" "${rows[@]}" <<'PY'
+import json, sys, pathlib, datetime
+path = pathlib.Path(sys.argv[1]); rows = [json.loads(r) for r in sys.argv[2:]]
+old = {}
+if path.exists():
+    try: old = {e["dir"]: e for e in json.loads(path.read_text())["examples"]}
+    except Exception: old = {}
+for r in rows: old[r["dir"]] = r
+allrows = [old[k] for k in sorted(old)]
+summary = {"checked": datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+           "pass": sum(1 for e in allrows if e["lint"] != "fail" and not e["run"].startswith("fail")),
+           "fail": sum(1 for e in allrows if e["lint"] == "fail" or e["run"].startswith("fail")),
+           "skipped_run": sum(1 for e in allrows if e["run"].startswith("skipped")),
+           "examples": allrows}
+path.write_text(json.dumps(summary, indent=2) + "\n")
+PY
 echo "wrote $STATUS  (pass=$pass fail=$fail skipped_run=$skip)"
 [[ $fail -eq 0 ]]

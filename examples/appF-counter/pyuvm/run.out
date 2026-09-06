@@ -1,0 +1,18 @@
+     -.--ns INFO     gpi                                ../gpi/GpiCommon.cpp:242  in gpi_load_users                  Loaded entry library: '/opt/miniconda3/envs/dvbook/lib/libpython3.12.dylib'
+     -.--ns INFO     gpi                                ../gpi/GpiCommon.cpp:234  in gpi_load_users                  Running entry func 'initialize' from loaded library '/opt/miniconda3/envs/dvbook/lib/python3.12/site-packages/cocotb/simulator.cpython-312-darwin.so'
+     -.--ns INFO     pygpi                              ..ib/pygpi/embed.cpp:115  in initialize                      Using Python 3.12.10 interpreter at /opt/miniconda3/envs/dvbook/bin/python3.12
+     -.--ns INFO     gpi                                ../gpi/GpiCommon.cpp:74   in gpi_print_registered_impl       GPI: VPI support registered
+     0.00ns INFO     cocotb.initialize                  Seeding Python random module with 1788738681
+     0.00ns INFO     cocotb.initialize                  Initialized cocotb v2.1.0 from /opt/miniconda3/envs/dvbook/lib/python3.12/site-packages/cocotb
+     0.00ns INFO     cocotb.initialize                  Running on Icarus Verilog version 13.0 (stable)
+     0.00ns INFO     cocotb.regression                  Running tests
+     0.00ns INFO     cocotb.regression                  running test_counter_pyuvm.run_uvm_test (1/1)
+   120.00ns INFO     ../pyuvm/test_counter_pyuvm.py(32) [uvm_test_top]: PASS: count = 10
+   120.00ns INFO     cocotb.regression                  test_counter_pyuvm.run_uvm_test passed
+   120.00ns INFO     cocotb.regression                  *****************************************************************************************
+                                                        ** TEST                             STATUS  SIM TIME (ns)  REAL TIME (s)  RATIO (ns/s) **
+                                                        *****************************************************************************************
+                                                        ** test_counter_pyuvm.run_uvm_test   PASS         120.00           0.01      13508.63  **
+                                                        *****************************************************************************************
+                                                        ** TESTS=1 PASS=1 FAIL=0 SKIP=0                   120.00           0.01      13094.42  **
+                                                        *****************************************************************************************

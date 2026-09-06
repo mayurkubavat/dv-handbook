@@ -1,0 +1,4 @@
+FAIL cycle 21, write 22: full=1 with 15 entries
+     spec says full only at 16 entries
+coverage: 15 of 17 occupancy levels reached, max 15
+FAIL: stopped after 1 error(s)

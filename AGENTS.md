@@ -51,7 +51,15 @@ Never hand-edit a state to look further along than the evidence supports.
   ```` ```{.lang include="examples/..."} ```` ````. No code typed into prose.
 - Included source files stay at 80 columns or less; comment rulers are 72.
 - Makefile recipes use real tabs.
-- Cross-reference by label (`@sec-...`, `@tbl-...`), never by hard-coded number.
+- Cross-reference by label (`@sec-...`, `@tbl-...`), never by hard-coded chapter,
+  section, figure or table number. Part numbers ("Part II") are exempt: parts are
+  fixed structure and Quarto cannot label them.
+- Every chapter opens with a one-line epigraph, then a `callout-note` titled
+  "Learning objectives". That box is the template's opener, not a seventh
+  callout kind.
+- Simulator output shown in a chapter is included from the example's `run.out`
+  (written by `scripts/check-examples.sh`), never typed by hand, so it cannot
+  drift from what the code prints.
 - British or American spelling: American, consistently.
 
 ## Attribution and originality (applies to every chapter)

@@ -1,0 +1,16 @@
+MISMATCH at 26000: count=2 expected=1
+MISMATCH at 36000: count=3 expected=2
+MISMATCH at 46000: count=4 expected=3
+MISMATCH at 56000: count=5 expected=4
+MISMATCH at 66000: count=6 expected=5
+MISMATCH at 76000: count=7 expected=6
+MISMATCH at 86000: count=8 expected=7
+MISMATCH at 96000: count=9 expected=8
+MISMATCH at 106000: count=10 expected=9
+MISMATCH at 116000: count=11 expected=10
+MISMATCH at 156000: count=13 expected=11
+MISMATCH at 166000: count=14 expected=12
+MISMATCH at 176000: count=15 expected=13
+MISMATCH at 186000: count=16 expected=14
+MISMATCH at 196000: count=17 expected=15
+FAIL: 15 mismatches

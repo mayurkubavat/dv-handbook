@@ -1,8 +1,71 @@
 {
-  "checked": "2026-09-06T23:31:09Z",
-  "pass": 1, "fail": 0,
-  "skipped_run": 0,
+  "checked": "2026-09-06T23:52:00Z",
+  "pass": 9,
+  "fail": 0,
+  "skipped_run": 2,
   "examples": [
-    {"dir": "examples/ch01-what-is-dv/sv-directed", "lint": "pass", "run": "pass", "requires": "", "expect": "pass"}
+    {
+      "dir": "examples/appF-counter/cocotb",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/appF-counter/pyuvm",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/appF-counter/sv",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/appF-counter/systemc",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/appF-counter/uvm",
+      "lint": "skipped",
+      "run": "skipped (commercial)",
+      "requires": "commercial",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/appF-counter/uvm-systemc",
+      "lint": "skipped",
+      "run": "skipped (uvm-systemc)",
+      "requires": "uvm-systemc",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch01-what-is-dv/cocotb",
+      "lint": "pass",
+      "run": "pass (failed as expected)",
+      "requires": "",
+      "expect": "fail"
+    },
+    {
+      "dir": "examples/ch01-what-is-dv/sv-directed",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch01-what-is-dv/sv-random",
+      "lint": "pass",
+      "run": "pass (failed as expected)",
+      "requires": "",
+      "expect": "fail"
+    }
   ]
 }
