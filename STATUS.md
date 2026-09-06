@@ -4,7 +4,9 @@
 > Stable conventions live in `AGENTS.md`; this file holds the living state.
 
 ## Current milestone
-**M1 — Repo scaffold: COMPLETE (2026-09-06).** CI green on main (examples → PDF+HTML render → Pages deploy). Web edition live at https://mayurkubavat.github.io/dv-textbook (PDF at /Design-Verification-draft.pdf). Next: M2 = Chapter 1.
+**M2 — Chapter 1 (started 2026-09-06).** Outline written, research note in progress (`research/ch01-cost-gap-lifecycle.md`). Waiting on gate 1.
+
+M1 — Repo scaffold: COMPLETE (2026-09-06). CI green on main (examples → PDF+HTML render → Pages deploy). Web edition live at https://mayurkubavat.github.io/dv-textbook (PDF at /Design-Verification-draft.pdf). Next: M2 = Chapter 1.
 
 ### Next three actions
 1. Review `research/*.md` outputs; read `research/dv-adaptation-synthesis.md` once produced.
@@ -17,7 +19,8 @@ States: planned → outlined → drafting → examples-verified → reviewed →
 | # | Chapter | State | Words | Last touched |
 |---|---|---|---|---|
 | F | Building and Running the Examples (`appendices/appF-building-examples.qmd`) | examples-verified (4 run, 2 skipped: UVM needs commercial sim, UVM-SystemC needs library) | ~2,600 | 2026-09-06 |
-| — | all 35 chapters + appendices A–E, G, H | planned | 0 | 2026-09-05 |
+| 1 | What Is Design Verification? (`chapters/ch01-what-is-dv.qmd`) | outlined (awaiting gate-1 approval; not in `_quarto.yml` until drafted) | 0 | 2026-09-06 |
+| — | chapters 2–35 + appendices A–E, G, H | planned | 0 | 2026-09-05 |
 
 Edition 1 target: Parts I–III + appendices A–D, F, G. See design doc §4.
 
@@ -57,6 +60,7 @@ See `research/README.md` for the index. Active notes:
 - Bare `ls` in this shell hangs (aliased to an interactive tool); use `/bin/ls`.
 
 ## Session log
+- 2026-09-06 — M2 started: Chapter 1 outline (`chapters/ch01-what-is-dv.qmd`, 9 sections, 4 planned examples, 6 exercises); research subagent dispatched for cost/gap/lifecycle figures + BibTeX. Skills were followed by hand (new project skills load on the next session start).
 - 2026-09-06 — CI fixed twice (static fonts only; HTML rendered to `_site` so the PDF render does not wipe it). Run green; Pages live. M1 closed.
 - 2026-09-06 — Pushed to GitHub (public). Publication rule enforced by commit-msg + pre-commit hooks; attribution trailers off. The agent stub file and the `.claude/` directory (skills, hooks, settings) are local-only, ignored, and purged from history. First CI: examples pass on Ubuntu; PDF render failed on fonts (xdvipdfmx invalid font), fix pushed: static font instances only.
 - 2026-09-06 — Wrote `AGENTS.md` (constitution; a one-line stub imports it for the agent runtime), `.claude/settings.json` hooks (Stop → STATUS.md check; PreToolUse guard on research/ + docs/specs while `.claude/state/drafting` exists), `.githooks/pre-commit` (check changed examples), six skills in `.claude/skills/`, `.github/workflows/book.yml` (examples → render → Pages deploy on main → PDF on v* tags), LICENSE (CC BY-NC-SA text, MIT code), README. `git init`, first commit, repo github.com/mayurkubavat/dv-textbook.

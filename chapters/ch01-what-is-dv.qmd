@@ -1,0 +1,77 @@
+<!-- OUTLINE: not yet approved -->
+
+# What Is Design Verification? {#sec-ch01}
+
+*Chapter intent: by the end, a reader with a digital-design background can explain what verification is (and is not), why it is the largest single cost in a silicon project, where it sits in the lifecycle, and what the rest of this book will teach them to do about it.*
+
+## Learning objectives
+
+*Boxed list, five items: define verification, validation and test and tell them apart; explain why exhaustive verification is impossible and what replaces it; quantify the cost of a bug by the stage at which it is found; place verification activities in the silicon lifecycle and say what sign-off means; recognise the stimulus, checker, coverage triad in a testbench.*
+
+## The test that passed
+
+*Motivation section, 500 to 700 words, a true story. Preferred: one from the author's own experience (see the note at gate 1). Fallback: the Pentium FDIV escape. The point the story must land: a passing test is a statement about the test, not about the design.*
+
+## 1.1 Verification, validation and test {#sec-ch01-definitions}
+
+*Three words engineers use loosely and this book will not. Verification asks "does the design do what the specification says, and nothing else?" Validation asks "is the specification the right one?" Test asks "did this particular die come out of the fab correctly?" Functional, formal, physical and post-silicon verification are placed on one map. Ends with a Definition callout.*
+
+## 1.2 Why verification is hard {#sec-ch01-hard}
+
+*State space, and why simulation samples it rather than covers it. Specification ambiguity: the spec is prose, the design is logic, and the gap between them is where bugs live. Controllability and observability: reaching a state versus knowing you reached it. Concurrency and the combinatorics of interacting features. Closes with the bug funnel: where bugs are injected versus where they are found.*
+
+## 1.3 The cost of a bug {#sec-ch01-cost}
+
+*Cost by the stage at which a bug is found: RTL simulation, gate-level, emulation, first silicon, the field. Mask-set and respin economics at recent process nodes, with sourced figures. Three famous escapes, each stated precisely as functional or not: Pentium FDIV, the 2011 chipset SATA bug, one recent example. An In Practice callout on time-to-market cost dwarfing engineering cost.*
+
+## 1.4 The verification gap {#sec-ch01-gap}
+
+*What the industry surveys actually measure: share of project effort in verification, verifier-to-designer ratios, first-silicon success rates, share of respins caused by logic bugs, and how those numbers have moved across survey editions. Why designer productivity (reuse, synthesis, IP) outran verifier productivity, and what closed part of the gap: constrained-random, coverage, methodology, formal. A Pitfall callout on quoting "70 percent" without a source.*
+
+## 1.5 Verification in the silicon lifecycle {#sec-ch01-lifecycle}
+
+*A lifecycle diagram (draw.io, SVG): specification, architecture, RTL, verification, synthesis and physical design, tapeout, post-silicon validation, production test. Where DV starts (before RTL exists), what it hands to whom, and what it receives. What sign-off comprises: coverage closure, regression health, bug convergence, open-issue review. Interfaces with design, DFT, firmware and validation teams.*
+
+## 1.6 The verification toolbox, at a glance {#sec-ch01-toolbox}
+
+*One-page map of the book: simulation and testbench languages (Part II), methodology and UVM (Part III), formal, emulation, structural checks and portable stimulus (Part IV), alternative flows (Part V), practice (Part VI), the future (Part VII). Each tool named with the question it answers best. No detail; the reader should know where to go, not how it works.*
+
+## 1.7 Worked example: the test that passed and the bug that shipped {#sec-ch01-example}
+
+*A 16-entry FIFO whose `full` flag is off by one. A directed test writes eight entries and reads them back: passes. A second test adds random write and read pressure and a checker that models the FIFO independently: fails on the seventeenth write, and reports why. The example introduces, in miniature and by name, stimulus, checker and coverage, which the rest of the book builds out. Shown in SystemVerilog; the cocotb version is provided and referenced for Part V readers.*
+
+## 1.8 Future directions {#sec-ch01-future}
+
+*Future Directions callout only, 200 words: what changes when an agent writes the stimulus and what does not (the checker and the coverage model are still the value), pointing to Part VII, with every claim labelled as measured or vendor-claimed.*
+
+## Summary
+
+*Eight bullets, one per section, each a sentence a reader could repeat.*
+
+## Exercises
+
+1. *Classify ten one-line scenarios as verification, validation or test.*
+2. *Given a bug found at each of four stages, estimate the relative cost using the chapter's figures and state the assumptions.*
+3. *Run the directed FIFO test, then make it fail without changing the checker. What did you have to change and why?*
+4. *Run the random FIFO test with three different seeds; record which write exposes the bug each time and explain the variation.*
+5. *Fix the FIFO bug, re-run both tests, then break the checker instead of the design. Which test notices, and what does that tell you?*
+6. *Read one survey edition cited in the chapter and write a paragraph on one number that surprised you and why.*
+
+## Further reading
+
+*Bergeron, "Writing Testbenches"; Wile, Goss and Roesner, "Comprehensive Functional Verification"; the latest Wilson Research Group functional verification study; one primary account of the FDIV bug.*
+
+## Planned examples
+
+| Directory | Language | Demonstrates |
+|---|---|---|
+| `examples/ch01-what-is-dv/rtl/` | SystemVerilog | `fifo.sv`, 16-entry FIFO with an off-by-one `full` flag (the bug is deliberate and marked in a comment the reader sees only after 1.7) |
+| `examples/ch01-what-is-dv/sv-directed/` | SystemVerilog, Verilator | Directed test: write 8, read 8, PASS |
+| `examples/ch01-what-is-dv/sv-random/` | SystemVerilog, Verilator | Random write/read pressure with an independent reference model: FAIL on the 17th write, with a message naming the cycle |
+| `examples/ch01-what-is-dv/cocotb/` | Python, Icarus | The random test again in cocotb, for Part V readers |
+
+## Sources
+
+- `research/ch01-cost-gap-lifecycle.md` (in progress): survey figures, cost-by-stage, escapes with dates, definitions, lifecycle and sign-off, and the "commonly repeated but unsourced" list.
+- `refs.bib` keys to be added by that note: the survey editions, the FDIV primary account, Bergeron, Wile/Goss/Roesner.
+- `research/dv-adaptation-synthesis.md` §1 for the Future Directions callout.
