@@ -68,7 +68,8 @@ for d in $DIRS; do
   printf '%-38s lint=%-7s run=%s\n' "$rel" "$lint" "$run"
   # A trimmed copy of the run output for the book to include verbatim:
   # simulator banners, make chatter and abort traces removed.
-  [[ -f "$d/run.log" ]] && grep -vE '^- |^%Fatal|^%Error|^Aborting|^make:|^\[[0-9]+\] %Fatal|^V e r i l a t i o n|Verilated|Abort trap|conda\.cli|^/bin/sh|^$' "$d/run.log" > "$d/run.out"
+  [[ -f "$d/run.log" ]] && grep -vE '^- |^%Fatal|^%Error|^Aborting|^make:|^\[[0-9]+\] %Fatal|^V e r i l a t i o n|Verilated|Abort trap|conda\.cli|^/bin/sh|Seeding Python random|^$' "$d/run.log" \
+    | sed -E 's/(\*\* .*[0-9]+\.[0-9]{2}) +[0-9]+\.[0-9]{2} +[0-9]+\.[0-9]{2} +\*\*$/\1  **/' > "$d/run.out"
   # Show why, so a failure is readable in CI without downloading logs.
   [[ "$lint" == "fail" ]] && sed 's/^/    | /' "$d/lint.log" | tail -12
   [[ "$run" == fail* ]] && sed 's/^/    | /' "$d/run.log" | tail -12

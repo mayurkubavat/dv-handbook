@@ -34,6 +34,9 @@ endif
 
 # Make the test module importable no matter where make was invoked from.
 export PYTHONPATH := $(CURDIR):$(PYTHONPATH)
+# A fixed seed for cocotb's own random module keeps runs reproducible; the
+# book's tests seed Python's `random` themselves as well.
+export COCOTB_RANDOM_SEED ?= 1
 
 # Where cocotb's makefiles live (from the active Python environment).
 COCOTB_MAKEFILES := $(shell cocotb-config --makefiles 2>/dev/null)
