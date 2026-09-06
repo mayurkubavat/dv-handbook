@@ -54,6 +54,23 @@ Never hand-edit a state to look further along than the evidence supports.
 - Cross-reference by label (`@sec-...`, `@tbl-...`), never by hard-coded number.
 - British or American spelling: American, consistently.
 
+## Attribution and originality (applies to every chapter)
+- Cite the primary source for every fact, figure and quotation: `[@key]` with a
+  full `refs.bib` entry (author, title, venue or publisher, year, URL, access
+  date). Surveys are cited by edition. Secondary retellings are not sources.
+- Write in the book's own words. Paraphrase from understanding, never by
+  rewording a passage sentence by sentence. Direct quotation is limited to a
+  sentence or two, in quotation marks, with the citation on the same line.
+- Never reproduce a figure, table, code listing or dataset from a copyrighted
+  source. Redraw figures from the underlying data with a "data from [@key]"
+  credit; write code from scratch. Open-licensed material may be adapted only
+  with its license and attribution stated in the caption.
+- Named bugs, products and people are described from public primary accounts
+  (vendor advisories, CVE records, the discoverer's own write-up) and credited
+  to them. Trademarks are used descriptively.
+- Further-reading entries name the work, its authors and, where relevant, the
+  edition; they do not summarise the work's text.
+
 ## Separation of drafting and judging
 While `draft-chapter` runs, a local marker file exists and a tool hook denies
 edits under `research/` and `docs/specs/`. The drafter
