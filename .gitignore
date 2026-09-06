@@ -1,0 +1,21 @@
+# Quarto / LaTeX output
+_book/
+.quarto/
+*.aux *.log *.toc *.out *.fls *.fdb_latexmk
+# example build products
+examples/**/build/
+examples/**/sim_build/
+examples/**/obj_dir/
+examples/**/__pycache__/
+examples/**/results.xml
+examples/**/*.log
+examples/**/*.vcd
+examples/**/*.fst
+# cover renders (rebuilt by theme/cover/build_cover.sh)
+theme/cover/*.png
+# editor / OS
+.DS_Store
+.vscode/
+# agent runtime state
+.claude/state/
+.claude/settings.local.json

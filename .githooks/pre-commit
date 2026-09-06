@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+# Verify examples touched by this commit before it lands.
+if git diff --cached --name-only -- examples | grep -q .; then
+  echo "pre-commit: checking changed examples"
+  scripts/check-examples.sh --changed || { echo "pre-commit: example check failed"; exit 1; }
+  git add examples/status.json 2>/dev/null || true
+fi

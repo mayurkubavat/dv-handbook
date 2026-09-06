@@ -1,0 +1,38 @@
+% theme/preamble.tex -- LaTeX customisation for the PDF edition.
+% Palette from the design doc (docs/specs/...-design.md, section 4a).
+\usepackage{xcolor}
+\definecolor{siliconblue}{HTML}{1B4F72}
+\definecolor{assertionamber}{HTML}{B7791F}
+\definecolor{coveragegreen}{HTML}{2E7D32}
+\definecolor{formalviolet}{HTML}{5B3E8E}
+\definecolor{inkblack}{HTML}{1C1C1C}
+\definecolor{codeground}{HTML}{F4F6F8}
+\definecolor{rulegrey}{HTML}{CBD2D9}
+
+% Headings in the sans face, coloured silicon blue.
+\addtokomafont{disposition}{\color{siliconblue}}
+\addtokomafont{chapter}{\fontsize{26}{30}\selectfont}
+\addtokomafont{section}{\fontsize{14}{17}\selectfont}
+\addtokomafont{subsection}{\fontsize{11.5}{14}\selectfont}
+\renewcommand*{\chapterformat}{%
+  {\fontsize{60}{60}\selectfont\color{siliconblue!70}\thechapter}\hspace{0.6em}}
+\RedeclareSectionCommand[beforeskip=-1.2\baselineskip, afterskip=0.6\baselineskip]{section}
+
+% Captions: sans, small, label in bold blue.
+\usepackage{caption}
+\captionsetup{font={small,sf}, labelfont={bf,color=siliconblue}, labelsep=period}
+
+% Slightly tighter code blocks and a hair more paragraph air.
+\setlength{\parskip}{0.35\baselineskip}
+\setlength{\parindent}{0pt}
+\setlength{\emergencystretch}{2em}
+\usepackage{microtype}
+
+% Code blocks: wrap long lines inside the shaded box instead of overflowing
+% the margin, show a small hook where a line was broken, and set a size that
+% fits about 80 columns in the 7 x 10 in trim.
+\usepackage{fvextra}
+\fvset{breaklines=true, breakanywhere=true, breakindent=1.5em,
+       breaksymbolleft={\color{rulegrey}\tiny$\hookrightarrow$},
+       breaksymbolsepleft=0.4em, tabsize=4, fontsize=\small}
+\RecustomVerbatimEnvironment{verbatim}{Verbatim}{breaklines=true, breakanywhere=true, fontsize=\small}

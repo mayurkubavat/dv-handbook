@@ -1,0 +1,266 @@
+# Building and Running the Examples {#sec-appF}
+
+Every chapter in this book ends with code you can run. This appendix is the one place that explains *how*, so that the chapters can spend their pages on verification rather than on build systems. It covers the three language families the book uses, SystemVerilog with UVM, Python with cocotb and pyuvm, and C++ with SystemC and UVM-SystemC, and it shows what a passing and a failing run look like for each.
+
+If you only read one section, read @sec-appF-pattern. Everything else is detail you can return to when a specific tool misbehaves.
+
+## The pattern {#sec-appF-pattern}
+
+Every example directory in the companion repository answers to the same three commands:
+
+```bash
+make lint     # compile or syntax-check only; no simulation
+make run      # build and simulate (or execute) the example
+make clean    # remove generated files
+```
+
+That uniformity is deliberate. A reader who has run the SystemVerilog example in Chapter 5 already knows how to run the cocotb example in Chapter 23, and the continuous-integration script that checks every listing in this book (@sec-appF-checking) needs no knowledge of which language it is building.
+
+The uniformity comes from layering. An example's `Makefile` sets a handful of variables and includes one shared file. That file loads a language-specific recipe file. The layout looks like this:
+
+```
+examples/
+├── common.mk                  entry point every example includes
+├── mk/
+│   ├── sv.mk                  SystemVerilog and UVM recipes
+│   ├── cocotb.mk              cocotb and pyuvm recipes
+│   └── systemc.mk             SystemC and UVM-SystemC recipes
+└── appF-counter/              this appendix's examples
+    ├── rtl/counter.sv         the design under test, shared by all
+    ├── sv/                    plain SystemVerilog testbench
+    ├── uvm/                   UVM smoke test
+    ├── cocotb/                cocotb test
+    ├── pyuvm/                 pyuvm test
+    ├── systemc/               SystemC model and testbench
+    └── uvm-systemc/           UVM-SystemC smoke test
+```
+
+::: {.callout-note title="Definition"}
+In `make` vocabulary, a **target** is a name you can ask for (`lint`, `run`), a **recipe** is the shell commands that produce it, and a **variable** is text substituted into recipes. An **include** splices another makefile in place, which is how one set of recipes can serve every example.
+:::
+
+### An example's Makefile
+
+Here is the complete Makefile for the plain SystemVerilog example. Every example in the book is this small.
+
+```{.makefile include="examples/appF-counter/sv/Makefile"}
+```
+
+Three variables are required. `EXAMPLE_LANG` chooses the recipe file. `TOP` names the top-level module (or, for SystemC, the executable). `SOURCES` lists the files, relative to the example's own directory. The last line hands everything to the shared entry point.
+
+### The shared entry point
+
+`common.mk` validates the variables, sets defaults, loads the recipe file, and defines the targets that are the same everywhere.
+
+```{.makefile include="examples/common.mk"}
+```
+
+::: {.callout-warning title="Pitfall"}
+Every recipe line in a Makefile must begin with a tab character, not spaces. The listings in this book show recipes indented by four spaces because a tab has no fixed width on a page; if you retype a recipe rather than copy the file from the repository, use a real tab or `make` will stop with "missing separator".
+:::
+
+Two details are worth noticing. The `$(error ...)` guards turn a forgotten variable into a one-line message instead of a cryptic failure deep inside a recipe. And `clean::` uses a double colon, which lets each recipe file, and cocotb's own build system, add its own clean-up actions without overriding one another.
+
+### The design under test
+
+All of this appendix's examples verify the same design: an 8-bit counter with an asynchronous active-low reset and a count enable. It is small enough to hold in your head, which is the point. When the build works, you know it worked because the counter counted.
+
+```{.systemverilog include="examples/appF-counter/rtl/counter.sv"}
+```
+
+## SystemVerilog and UVM {#sec-appF-sv}
+
+The SystemVerilog recipe file selects a simulator with one variable, `SIM`. Verilator is the default because it is free, fast, and installed on the machine this book is written on. The three commercial simulators most readers will meet at work are supported through the same targets.
+
+```bash
+make run                 # Verilator (default)
+make run SIM=questa      # Siemens Questa or ModelSim
+make run SIM=vcs         # Synopsys VCS
+make run SIM=xcelium     # Cadence Xcelium
+```
+
+```{.makefile include="examples/mk/sv.mk"}
+```
+
+### How the recipes differ
+
+Each simulator has its own vocabulary, and the recipe file is a translation table. The table below lists the same four steps in each dialect, which is also a useful thing to know when you move between companies.
+
+| Step | Verilator | Questa | VCS | Xcelium |
+|---|---|---|---|---|
+| Compile | `verilator --binary` | `vlog` | `vcs` | `xrun` |
+| Elaborate | (with compile) | `vsim` | (with compile) | (with compile) |
+| Run | `./build/Vtop` | `vsim -c -do "run -all"` | `./simv` | (with compile) |
+| Lint only | `--lint-only` | `vlog -lint` | `vlogan` | `xrun -compile` |
+
+: The same four steps in four simulators. Xcelium's `xrun` does all of them in one command; Verilator and VCS produce an executable you run separately. {#tbl-appF-sims}
+
+### UVM examples
+
+UVM examples set `UVM := 1` and name the test in `UVM_TEST`. The recipe then adds the UVM library to the compile and passes `+UVM_TESTNAME` at run time. Where the library comes from depends on one more variable:
+
+- With `UVM_HOME` unset, the commercial simulators use the UVM library they ship with. Questa's `-L mtiUvm`, VCS's `-ntb_opts uvm-1.2`, and Xcelium's `-uvm` switch each do exactly that.
+- With `UVM_HOME` pointing at a UVM source tree, the recipe compiles `src/uvm_pkg.sv` from there instead. This is how you pin a UVM version, and the only way to use UVM with Verilator.
+
+The UVM example's Makefile is the plain one plus three lines:
+
+```{.makefile include="examples/appF-counter/uvm/Makefile"}
+```
+
+The `REQUIRES := commercial` marker tells the checking script that `make run` needs a commercial simulator, so continuous integration runs `make lint` only. The listing caption of every such example says so.
+
+::: {.callout-warning title="Pitfall"}
+Verilator compiles UVM, but only recent releases run it, and only with the `--timing` switch and a long list of lint waivers. The recipe file adds those waivers automatically when `UVM=1`. Do not copy them into plain SystemVerilog examples; the whole value of `-Wall` on Verilator is that it catches the sloppy code a commercial simulator would silently accept.
+:::
+
+::: {.callout-tip title="In Practice"}
+Real projects rarely pass source lists on the command line. They keep a file list, conventionally `files.f`, and pass it with `-f files.f`, which every simulator in the table understands. The book's examples are small enough to list sources inline, but when an example grows past a handful of files, the `SOURCES` variable is where a `-f` file would go.
+:::
+
+## cocotb and pyuvm {#sec-appF-cocotb}
+
+cocotb ships its own makefiles, and the right thing to do with a good build system is to use it. The book's cocotb recipe file translates the book's variables into cocotb's, then includes cocotb's `Makefile.sim`. Every simulator cocotb supports works unchanged, selected with the same `SIM` variable as the SystemVerilog examples.
+
+```{.makefile include="examples/mk/cocotb.mk"}
+```
+
+A cocotb example's Makefile is the plain one with the test module named:
+
+```{.makefile include="examples/appF-counter/cocotb/Makefile"}
+```
+
+The Python test file lives next to the Makefile. cocotb finds it through `PYTHONPATH`, which the recipe file sets to the example directory so the example runs from anywhere.
+
+### pyuvm rides on the same recipe
+
+pyuvm reproduces the UVM class library in Python on top of cocotb, so a pyuvm example is an ordinary cocotb example whose test module builds a `uvm_test`. The only difference in the Makefile is the module name:
+
+```{.makefile include="examples/appF-counter/pyuvm/Makefile"}
+```
+
+Nothing in the recipe file knows or cares that pyuvm is involved. That is a good sign for a build system: a new library did not need a new recipe.
+
+::: {.callout-tip title="In Practice"}
+Keep cocotb in its own Python environment. The examples in this book were run in a conda environment named `dvbook` created with `conda create -n dvbook python=3.12` followed by `pip install cocotb pyuvm`. Activate it before typing `make`, or prefix the command with `conda run -n dvbook --no-capture-output`. The checking script in @sec-appF-checking does the latter automatically.
+:::
+
+## SystemC and UVM-SystemC {#sec-appF-systemc}
+
+SystemC examples are C++ programs linked against `libsystemc`. There is no simulator to select; the compiler is the simulator. The recipe file needs to know where SystemC is installed and, for UVM-SystemC, where that library is installed too.
+
+```{.makefile include="examples/mk/systemc.mk"}
+```
+
+The `SYSTEMC_HOME` default asks Homebrew for its prefix, which is where `brew install systemc` puts the library on macOS. If you built SystemC from the Accellera source, set `SYSTEMC_HOME` to your install prefix; the recipe looks in both `lib` and the `lib-<arch>` directory that Accellera's installer uses.
+
+A SystemC example's Makefile names the executable and the source file:
+
+```{.makefile include="examples/appF-counter/systemc/Makefile"}
+```
+
+### UVM-SystemC
+
+UVM-SystemC is Accellera's C++ port of the UVM class library. It is distributed as source and built with the usual `configure`, `make`, `make install` sequence against an existing SystemC installation. Once installed, set `UVM_SYSTEMC_HOME` to its prefix and the recipe adds the include path and links `libuvm-systemc`. The example's Makefile carries a `REQUIRES := uvm-systemc` marker so the checking script skips `make run` on machines without it.
+
+```{.makefile include="examples/appF-counter/uvm-systemc/Makefile"}
+```
+
+::: {.callout-important title="Future Directions"}
+The three build styles in this appendix, simulator command lines, cocotb's makefiles, and a C++ compile, are converging. cocotb 2 added a Python runner that replaces its makefiles entirely, and Verilator's `--binary` mode already makes a SystemVerilog build feel like a C++ one. Expect the recipe files to shrink over the life of this book, and expect the three targets on the surface to stay exactly as they are.
+:::
+
+## Reading the output {#sec-appF-output}
+
+A build system that only tells you whether a command exited zero is not enough. This section shows what each tool prints when an example passes and when it fails, so that you recognise both on sight.
+
+### Verilator
+
+A passing run of the plain SystemVerilog example ends like this. The testbench prints its own verdict, then Verilator reports where and when `$finish` was called.
+
+```
+PASS: counter reached 15 as expected
+- tb_counter.sv:31: Verilog $finish
+- S i m u l a t i o n   R e p o r t: Verilator 5.030 2024-10-27
+- Verilator: $finish at 200ns; walltime 0.000 s; speed 578.035 us/s
+```
+
+Verilator's lint is strict on purpose, and `-Wall` treats warnings as errors. During the writing of this appendix the first version of the testbench failed lint with two warnings:
+
+```
+%Warning-TIMESCALEMOD: ../rtl/counter.sv:3:8: Timescale missing on this module
+                       as other modules have it (IEEE 1800-2023 3.14.2.3)
+%Warning-BLKSEQ: tb_counter.sv:12:17: Blocking assignment '=' in sequential
+                 logic process
+%Error: Exiting due to 2 warning(s)
+```
+
+Both are legitimate. The first is why the recipe passes `--timescale` explicitly: the RTL has no `` `timescale `` directive, the testbench does, and Verilator refuses to guess. The second was a clock generator written `clk = ~clk` inside an `always` block, which Verilator classifies as sequential logic and expects to use a non-blocking assignment. The fix was one character. Read Verilator's warnings as free code review; the `-Wno-` waivers in the recipe file are for library code you did not write.
+
+### cocotb
+
+cocotb prints a table at the end of every run. The `TESTS=` line is the verdict.
+
+```
+   200.00ns INFO  cocotb.counter     PASS: counter reached 15
+   200.00ns INFO  cocotb.regression  test_counter.counts_when_enabled passed
+   ** test_counter.counts_when_enabled   PASS   200.00   0.00   242927.48 **
+   ** TESTS=1 PASS=1 FAIL=0 SKIP=0        200.00   0.00   177233.00 **
+```
+
+A failing assertion in a cocotb test shows the Python traceback, the assertion message you wrote, and `FAIL` in the table. cocotb also writes `results.xml` in JUnit format, which continuous-integration systems read directly.
+
+The pyuvm example's output is the same table wrapped around UVM-style report lines. Note the component path in square brackets, which is UVM's hierarchy naming coming through Python unchanged:
+
+```
+   120.00ns INFO  ../pyuvm/test_counter_pyuvm.py(32) [uvm_test_top]: PASS: count = 10
+   ** test_counter_pyuvm.run_uvm_test   PASS   120.00   0.01   14898.04 **
+   ** TESTS=1 PASS=1 FAIL=0 SKIP=0       120.00   0.01   14368.68 **
+```
+
+### SystemC
+
+A SystemC executable prints the library banner and then whatever the testbench prints. The example returns a non-zero exit status on failure, which is what `make` and the checking script look at.
+
+```
+        SystemC 3.0.1-Accellera --- Dec 30 2024 16:21:11
+        Copyright (c) 1996-2024 by all Contributors,
+        ALL RIGHTS RESERVED
+PASS: counter reached 15
+```
+
+### UVM report summaries
+
+Every UVM simulation, in SystemVerilog or in UVM-SystemC, ends with a report summary. The lines to read are the counts:
+
+```
+--- UVM Report Summary ---
+** Report counts by severity
+UVM_INFO    :    4
+UVM_WARNING :    0
+UVM_ERROR   :    0
+UVM_FATAL   :    0
+```
+
+::: {.callout-warning title="Pitfall"}
+A UVM simulation with `UVM_ERROR : 0` can still have failed. If a test raised no objection, `run_phase` ends at time zero and nothing was checked. If a scoreboard never received a transaction, it never compared anything. Chapter 13 builds checks for both conditions into the scoreboard; until then, read the `UVM_INFO` count too and be suspicious of a test that finishes suspiciously fast.
+:::
+
+## Checking every example at once {#sec-appF-checking}
+
+The book's repository contains a script that walks every example directory, runs `make lint` and `make run`, and writes a status file. It is what continuous integration runs on every commit, and it is what decides whether a chapter may be marked as verified.
+
+```{.bash include="scripts/check-examples.sh"}
+```
+
+The output is one line per example and a JSON file, `examples/status.json`, that records the result of every run with a timestamp. When this appendix was built, the file recorded four examples passing and two, the UVM and UVM-SystemC ones, skipped because they need a commercial simulator or a library this machine does not have. The book's status page reads the same file, so a chapter cannot be called verified by hand; the script has to say so.
+
+## Beyond Makefiles {#sec-appF-beyond}
+
+The pattern in this appendix scales to a few hundred files. Past that, real projects reach for a tool that manages *dependencies between cores* and *tool-specific configuration* rather than just recipes. Four are worth knowing:
+
+- **FuseSoC** describes each block of RTL and its testbenches as a *core* with a small YAML file, resolves dependencies between cores, and drives many simulators and synthesis tools through **Edalize**, its backend library [@fusesoc]. It is the most common choice in open-source silicon projects.
+- **dvsim**, from the OpenTitan project, is a regression manager rather than a build tool: it launches thousands of seeds across a compute farm, merges coverage, and produces the dashboards that Chapter 29 discusses.
+- **CMake** is the natural choice when the verification environment is mostly C++, which describes SystemC projects and Verilator-heavy flows. Verilator ships CMake support.
+- **Bazel** appears in large companies that want one hermetic, cached build for firmware, RTL, and verification together. Its learning curve is the steepest of the four.
+
+None of them removes the need to understand what the underlying simulator command does, which is why this appendix showed the commands rather than hiding them. When a FuseSoC or dvsim flow fails, the error message is still `vlog`'s or `xrun`'s, and the table in @sec-appF-sv is still the decoder ring.

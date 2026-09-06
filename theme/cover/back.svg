@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2100 3000" width="7in" height="10in" role="img" aria-label="Back cover">
+<rect width="2100" height="3000" fill="#1B4F72"/>
+<rect y="2580" width="2100" height="420" fill="#123A56"/>
+<text x="180" y="270" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="44" font-weight="600" letter-spacing="8" fill="#AED6F1">DESIGN VERIFICATION  ·  FROM FIRST PRINCIPLES TO AGENTIC AI</text>
+<text x="180" y="420" font-family="'Source Serif 4', Georgia, 'Times New Roman', serif" font-size="56" fill="#F3F7FA">Verification is where silicon meets reality. Every chip that</text>
+<text x="180" y="498" font-family="'Source Serif 4', Georgia, 'Times New Roman', serif" font-size="56" fill="#F3F7FA">ships has been proven right, or wrong, by an engineer who</text>
+<text x="180" y="576" font-family="'Source Serif 4', Georgia, 'Times New Roman', serif" font-size="56" fill="#F3F7FA">asked the question the designer did not. This book teaches</text>
+<text x="180" y="654" font-family="'Source Serif 4', Georgia, 'Times New Roman', serif" font-size="56" fill="#F3F7FA">that discipline from the ground up: how simulators actually</text>
+<text x="180" y="732" font-family="'Source Serif 4', Georgia, 'Times New Roman', serif" font-size="56" fill="#F3F7FA">schedule events, how to turn a specification into a plan you</text>
+<text x="180" y="810" font-family="'Source Serif 4', Georgia, 'Times New Roman', serif" font-size="56" fill="#F3F7FA">can measure, how to build SystemVerilog and UVM environments</text>
+<text x="180" y="888" font-family="'Source Serif 4', Georgia, 'Times New Roman', serif" font-size="56" fill="#F3F7FA">that scale from a block to an SoC, and when to reach for</text>
+<text x="180" y="966" font-family="'Source Serif 4', Georgia, 'Times New Roman', serif" font-size="56" fill="#F3F7FA">formal, emulation, or portable stimulus instead. It then</text>
+<text x="180" y="1044" font-family="'Source Serif 4', Georgia, 'Times New Roman', serif" font-size="56" fill="#F3F7FA">looks forward, to Python and SystemC flows, to the</text>
+<text x="180" y="1122" font-family="'Source Serif 4', Georgia, 'Times New Roman', serif" font-size="56" fill="#F3F7FA">open-source toolchain, and to the machine learning and</text>
+<text x="180" y="1200" font-family="'Source Serif 4', Georgia, 'Times New Roman', serif" font-size="56" fill="#F3F7FA">agentic AI that are reshaping how verification gets done.</text>
+<text x="180" y="1278" font-family="'Source Serif 4', Georgia, 'Times New Roman', serif" font-size="56" fill="#F3F7FA">Every listing is runnable, every chapter ends with</text>
+<text x="180" y="1356" font-family="'Source Serif 4', Georgia, 'Times New Roman', serif" font-size="56" fill="#F3F7FA">exercises, and the whole book is free to read.</text>
+<text x="180" y="1494" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="48" font-weight="700" letter-spacing="6" fill="#AED6F1">INSIDE THIS BOOK</text>
+<rect x="180" y="1550" width="18" height="18" fill="#E0A83A"/>
+<text x="240" y="1584" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="52" fill="#F3F7FA">Foundations: planning, coverage models and simulator internals</text>
+<rect x="180" y="1634" width="18" height="18" fill="#E0A83A"/>
+<text x="240" y="1668" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="52" fill="#F3F7FA">SystemVerilog, assertions and UVM, from first principles to</text>
+<text x="240" y="1738" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="52" fill="#F3F7FA">SoC-scale reuse</text>
+<rect x="180" y="1788" width="18" height="18" fill="#E0A83A"/>
+<text x="240" y="1822" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="52" fill="#F3F7FA">Formal, emulation, low-power, CDC and portable stimulus</text>
+<rect x="180" y="1872" width="18" height="18" fill="#E0A83A"/>
+<text x="240" y="1906" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="52" fill="#F3F7FA">cocotb, pyuvm, SystemC and the open-source toolchain</text>
+<rect x="180" y="1956" width="18" height="18" fill="#E0A83A"/>
+<text x="240" y="1990" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="52" fill="#F3F7FA">Machine learning and agentic AI applied to real verification</text>
+<text x="240" y="2060" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="52" fill="#F3F7FA">work</text>
+<line x1="180" y1="2184" x2="1920" y2="2184" stroke="#6FA3C7" stroke-width="3"/>
+<text x="180" y="2284" font-family="'Source Serif 4', Georgia, 'Times New Roman', serif" font-size="44" fill="#AED6F1">Mayur Kubavat is a design verification engineer whose work spans high-speed</text>
+<text x="180" y="2346" font-family="'Source Serif 4', Georgia, 'Times New Roman', serif" font-size="44" fill="#AED6F1">interconnect verification, including PCIe 6.0 verification IP, and open-source</text>
+<text x="180" y="2408" font-family="'Source Serif 4', Georgia, 'Times New Roman', serif" font-size="44" fill="#AED6F1">verification tooling.</text>
+<rect x="180" y="2670" width="520" height="110" rx="10" fill="none" stroke="#F3F7FA" stroke-width="4"/>
+<text x="440" y="2742" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="46" font-weight="700" text-anchor="middle" fill="#F3F7FA">CC BY-NC-SA 4.0</text>
+<text x="180" y="2850" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="40" fill="#AED6F1">Open edition  ·  Version 0.1  ·  2026</text>
+<text x="180" y="2920" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="34" fill="#6FA3C7">Source, examples and errata: github.com/mayurkubavat/dv-textbook</text>
+<rect x="1620" y="2640" width="300" height="300" rx="8" fill="#F3F7FA"/>
+<rect x="1644" y="2664" width="60" height="60" fill="none" stroke="#1B4F72" stroke-width="10"/>
+<rect x="1664" y="2684" width="20" height="20" fill="#1B4F72"/>
+<rect x="1860" y="2664" width="60" height="60" fill="none" stroke="#1B4F72" stroke-width="10"/>
+<rect x="1880" y="2684" width="20" height="20" fill="#1B4F72"/>
+<rect x="1644" y="2880" width="60" height="60" fill="none" stroke="#1B4F72" stroke-width="10"/>
+<rect x="1664" y="2900" width="20" height="20" fill="#1B4F72"/>
+<text x="1770.0" y="2804.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="34" font-weight="600" text-anchor="middle" fill="#1B4F72">web edition</text>
+</svg>

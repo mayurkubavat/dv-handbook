@@ -1,0 +1,64 @@
+project:
+  type: book
+  output-dir: _book
+
+book:
+  title: "Design Verification"
+  subtitle: "From First Principles to Agentic AI"
+  author: "Mayur Kubavat"
+  date: today
+  date-format: "MMMM YYYY"
+  chapters:
+    - index.qmd
+  appendices:
+    - appendices/appF-building-examples.qmd
+  repo-url: https://github.com/mayurkubavat/dv-textbook
+  site-url: https://mayurkubavat.github.io/dv-textbook
+  license: "CC BY-NC-SA 4.0"
+
+bibliography: refs.bib
+
+filters:
+  - theme/include-code.lua
+
+format:
+  pdf:
+    documentclass: scrbook
+    classoption: [oneside, open=any]
+    pdf-engine: xelatex
+    geometry:
+      - paperwidth=7in
+      - paperheight=10in
+      - top=0.9in
+      - bottom=0.95in
+      - inner=0.9in
+      - outer=1.0in
+    mainfont: "Source Serif 4"
+    sansfont: "Source Sans 3"
+    monofont: "JetBrains Mono"
+    monofontoptions:
+      - Scale=0.82
+    fontsize: 10pt
+    linestretch: 1.12
+    include-in-header: theme/preamble.tex
+    colorlinks: true
+    linkcolor: siliconblue
+    urlcolor: siliconblue
+    citecolor: siliconblue
+    highlight-style: theme/dv-highlight.theme
+    code-block-bg: "#F4F6F8"
+    code-block-border-left: "#1B4F72"
+    code-overflow: wrap
+    toc: true
+    toc-depth: 2
+    number-sections: true
+    number-depth: 2
+    lof: false
+    keep-tex: false
+  html:
+    theme:
+      light: [cosmo, theme/book.scss]
+    toc: true
+    number-sections: true
+    code-copy: true
+    highlight-style: theme/dv-highlight.theme

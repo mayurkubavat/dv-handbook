@@ -1,0 +1,97 @@
+name: book
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: book-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  examples:
+    name: Check examples
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install simulators
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y -q verilator iverilog make g++
+          sudo apt-get install -y -q libsystemc-dev || echo "no libsystemc-dev; SystemC examples will be skipped"
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.12' }
+      - name: Install cocotb and pyuvm
+        run: pip install cocotb pyuvm
+      - name: Lint and run every example
+        env:
+          SYSTEMC_HOME: /usr
+        run: scripts/check-examples.sh
+      - uses: actions/upload-artifact@v4
+        with: { name: examples-status, path: examples/status.json }
+
+  build:
+    name: Render book
+    needs: examples
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: quarto-dev/quarto-actions/setup@v2
+        with:
+          tinytex: true
+      - name: Install librsvg, poppler and the book fonts
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y -q librsvg2-bin poppler-utils fontconfig unzip
+          mkdir -p ~/.fonts && cd ~/.fonts
+          curl -sSL -o ss.zip https://github.com/adobe-fonts/source-sans/releases/download/3.052R/OTF-source-sans-3.052R.zip
+          curl -sSL -o sf.zip https://github.com/adobe-fonts/source-serif/releases/download/4.005R/source-serif-4.005_Desktop.zip
+          curl -sSL -o jb.zip https://github.com/JetBrains/JetBrainsMono/releases/download/v2.304/JetBrainsMono-2.304.zip
+          for z in ss sf jb; do unzip -q -o $z.zip -d $z; done
+          find . -name '*.otf' -o -name '*.ttf' | grep -v -i 'NL' | xargs -I{} cp {} .
+          fc-cache -f
+          fc-list : family | grep -E 'Source Sans 3|Source Serif 4|JetBrains Mono' | sort -u
+      - name: Render HTML and PDF
+        run: |
+          quarto render --to html
+          scripts/build-book.sh
+          cp _book/Design-Verification-draft.pdf _book/Design-Verification-${{ github.ref_name }}.pdf
+      - uses: actions/upload-pages-artifact@v3
+        with: { path: _book }
+      - uses: actions/upload-artifact@v4
+        with:
+          name: book-pdf
+          path: _book/Design-Verification-*.pdf
+
+  deploy:
+    name: Deploy web edition
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
+
+  release:
+    name: Attach PDF to release
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with: { name: book-pdf, path: pdf }
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: pdf/Design-Verification-*.pdf
+          generate_release_notes: true

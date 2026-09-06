@@ -1,0 +1,7 @@
+# Preface {.unnumbered}
+
+This is a working draft of *Design Verification: From First Principles to Agentic AI*, an open textbook for engineers who verify silicon. The book is being written in public: every listing is a file in the companion repository, every example is compiled and run before a chapter is released, and the full text is free to read under the CC BY-NC-SA 4.0 license.
+
+This build contains the front matter and the appendix *Building and Running the Examples* (@sec-appF). The appendix comes first because every chapter that follows leans on it: rather than repeating build instructions, each chapter says "run with `make run`, as described in @sec-appF," and gets on with verification.
+
+The chapters, in the order they will appear, are listed in the project's design document. Corrections and suggestions are welcome as issues on the repository.

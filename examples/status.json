@@ -1,0 +1,13 @@
+{
+  "checked": "2026-09-06T07:06:02Z",
+  "pass": 6, "fail": 0,
+  "skipped_run": 2,
+  "examples": [
+    {"dir": "examples/appF-counter/cocotb", "lint": "pass", "run": "pass", "requires": ""},
+    {"dir": "examples/appF-counter/pyuvm", "lint": "pass", "run": "pass", "requires": ""},
+    {"dir": "examples/appF-counter/sv", "lint": "pass", "run": "pass", "requires": ""},
+    {"dir": "examples/appF-counter/systemc", "lint": "pass", "run": "pass", "requires": ""},
+    {"dir": "examples/appF-counter/uvm", "lint": "skipped", "run": "skipped (commercial)", "requires": "commercial"},
+    {"dir": "examples/appF-counter/uvm-systemc", "lint": "skipped", "run": "skipped (uvm-systemc)", "requires": "uvm-systemc"}
+  ]
+}
