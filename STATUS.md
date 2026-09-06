@@ -48,6 +48,7 @@ See `research/README.md` for the index. Active notes:
 - Cover tooling: rsvg-convert (librsvg), pdfinfo/pdffonts (poppler)
 
 ## House rules learned
+- Agent configuration (`.claude/` and the one-line stub that imports AGENTS.md) never goes to the remote; it is gitignored. Keep a private backup if it matters.
 - No mention of AI assistance, its vendor, or its tooling anywhere in the repo, including commit messages (decided 2026-09-06). Factual references to AI models as book subject matter are fine.
 - Keep every included source file ≤ 80 columns (≈ 83 fit at `\small` mono in the 7×10 trim); comment rulers exactly 72 cols. `breaklines` is only the safety net.
 - Makefile recipes need real tabs; listings show 4 spaces (Pitfall callout in the build appendix explains this).
@@ -56,6 +57,7 @@ See `research/README.md` for the index. Active notes:
 - Bare `ls` in this shell hangs (aliased to an interactive tool); use `/bin/ls`.
 
 ## Session log
+- 2026-09-06 — Pushed to GitHub (public). Publication rule enforced by commit-msg + pre-commit hooks; attribution trailers off. The agent stub file and the `.claude/` directory (skills, hooks, settings) are local-only, ignored, and purged from history. First CI: examples pass on Ubuntu; PDF render failed on fonts (xdvipdfmx invalid font), fix pushed: static font instances only.
 - 2026-09-06 — Wrote `AGENTS.md` (constitution; a one-line stub imports it for the agent runtime), `.claude/settings.json` hooks (Stop → STATUS.md check; PreToolUse guard on research/ + docs/specs while `.claude/state/drafting` exists), `.githooks/pre-commit` (check changed examples), six skills in `.claude/skills/`, `.github/workflows/book.yml` (examples → render → Pages deploy on main → PDF on v* tags), LICENSE (CC BY-NC-SA text, MIT code), README. `git init`, first commit, repo github.com/mayurkubavat/dv-textbook.
 - 2026-09-06 — Fixed PDF code wrapping: fvextra `breaklines` in `theme/preamble.tex` (Quarto's `code-overflow: wrap` is HTML-only), tabs→4 spaces in `theme/include-code.lua`, all included sources kept ≤80 cols. House rule added below.
 - 2026-09-06 — M1 started: wrote `examples/common.mk` + `mk/{sv,cocotb,systemc}.mk`, six counter examples, `scripts/check-examples.sh` (→ `examples/status.json`), Quarto skeleton (`_quarto.yml`, `theme/preamble.tex`, `theme/include-code.lua`, highlight theme), Appendix F, `scripts/build-book.sh`. Installed Quarto, Icarus, SystemC, conda env dvbook. PDF: 24 pages incl. cover.

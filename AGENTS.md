@@ -30,7 +30,7 @@ conda run -n dvbook --no-capture-output make run   # cocotb/pyuvm example
 ```
 Quarto is at `~/.local/bin/quarto`. Use `/bin/ls`; bare `ls` hangs here.
 
-## Chapter workflow (skills in `.claude/skills/`)
+## Chapter workflow (agent skills, kept locally and not in this repository)
 research-topic → outline-chapter → **[gate 1: outline approved by author]** →
 draft-chapter → verify-examples → review-chapter → **[gate 2: author review]**
 → release → book-blog-post. **[gate 3: author tags the release]**
@@ -55,8 +55,8 @@ Never hand-edit a state to look further along than the evidence supports.
 - British or American spelling: American, consistently.
 
 ## Separation of drafting and judging
-While `draft-chapter` runs, a marker file `.claude/state/drafting` exists and a
-PreToolUse hook denies edits under `research/` and `docs/specs/`. The drafter
+While `draft-chapter` runs, a local marker file exists and a tool hook denies
+edits under `research/` and `docs/specs/`. The drafter
 reads the evidence; it does not rewrite it. `review-chapter` always runs in a
 fresh subagent that never sees the drafting conversation.
 
