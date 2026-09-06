@@ -16,9 +16,8 @@ theme/cover/*.png
 # editor / OS
 .DS_Store
 .vscode/
-# agent runtime state
-.claude/state/
-.claude/settings.local.json
+# agent configuration (skills, hooks, settings) stays local
+.claude/
 
 # local-only agent import stub (kept out of the public repo)
 /*LAUDE.md
