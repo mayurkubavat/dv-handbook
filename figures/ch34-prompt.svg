@@ -1,58 +1,58 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 440" width="1400" height="440" role="img" aria-label="Prompt anatomy, the instruction file, and the verification plan">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 820" width="1000" height="820" role="img" aria-label="Prompt anatomy, the instruction file, and the verification plan">
 <defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#7FA3C0"/></marker><marker id="ahj" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#5B3E8E"/></marker></defs>
-<rect width="1400" height="440" fill="white"/>
-<rect x="20" y="20" width="800" height="400" rx="12" fill="none" stroke="#7FA3C0" stroke-width="1.5" stroke-dasharray="6 5"/>
-<text x="32" y="40.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="700" text-anchor="start" fill="#7FA3C0">The parts of a prompt</text>
-<path d="M50,120 A85.0,10 0 0 1 220,120 V176 A85.0,10 0 0 1 50,176 Z" fill="#F4F6F8" stroke="#1B4F72" stroke-width="2"/>
-<path d="M50,120 A85.0,10 0 0 0 220,120" fill="none" stroke="#1B4F72" stroke-width="2"/>
-<text x="135.0" y="147.9" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="600" text-anchor="middle" fill="#1C1C1C">Instruction</text>
-<text x="135.0" y="166.6" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="600" text-anchor="middle" fill="#1C1C1C">what to do</text>
-<path d="M240,120 A85.0,10 0 0 1 410,120 V176 A85.0,10 0 0 1 240,176 Z" fill="#F4F6F8" stroke="#1B4F72" stroke-width="2"/>
-<path d="M240,120 A85.0,10 0 0 0 410,120" fill="none" stroke="#1B4F72" stroke-width="2"/>
-<text x="325.0" y="147.9" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="600" text-anchor="middle" fill="#1C1C1C">Examples</text>
-<text x="325.0" y="166.6" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="600" text-anchor="middle" fill="#1C1C1C">what good looks like</text>
-<path d="M430,120 A85.0,10 0 0 1 600,120 V176 A85.0,10 0 0 1 430,176 Z" fill="#F4F6F8" stroke="#1B4F72" stroke-width="2"/>
-<path d="M430,120 A85.0,10 0 0 0 600,120" fill="none" stroke="#1B4F72" stroke-width="2"/>
-<text x="515.0" y="147.9" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="600" text-anchor="middle" fill="#1C1C1C">Constraints</text>
-<text x="515.0" y="166.6" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="600" text-anchor="middle" fill="#1C1C1C">what not to do</text>
-<path d="M620,120 A85.0,10 0 0 1 790,120 V176 A85.0,10 0 0 1 620,176 Z" fill="#F4F6F8" stroke="#1B4F72" stroke-width="2"/>
-<path d="M620,120 A85.0,10 0 0 0 790,120" fill="none" stroke="#1B4F72" stroke-width="2"/>
-<text x="705.0" y="147.9" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="600" text-anchor="middle" fill="#1C1C1C">Output format</text>
-<text x="705.0" y="166.6" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="600" text-anchor="middle" fill="#1C1C1C">what shape to return</text>
-<rect x="300" y="250" width="240" height="64" rx="6" fill="white" stroke="#1B4F72" stroke-width="2"/>
-<text x="420.0" y="279.2" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="600" text-anchor="middle" fill="#1C1C1C">Assembled prompt</text>
-<text x="420.0" y="300.2" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="400" text-anchor="middle" fill="#7FA3C0">one call&#x27;s context</text>
-<path d="M135.0,186 L420.0,250" fill="none" stroke="#7FA3C0" stroke-width="2.2" marker-end="url(#ah)"/>
-<path d="M325.0,186 L420.0,250" fill="none" stroke="#7FA3C0" stroke-width="2.2" marker-end="url(#ah)"/>
-<path d="M515.0,186 L420.0,250" fill="none" stroke="#7FA3C0" stroke-width="2.2" marker-end="url(#ah)"/>
-<path d="M705.0,186 L420.0,250" fill="none" stroke="#7FA3C0" stroke-width="2.2" marker-end="url(#ah)"/>
-<rect x="600" y="250" width="160" height="64" rx="32.0" fill="#1B4F72" stroke="#123A56" stroke-width="2"/>
-<text x="680.0" y="287.6" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" text-anchor="middle" fill="white">Model</text>
-<path d="M540,282.0 L600,282.0" fill="none" stroke="#7FA3C0" stroke-width="2.2" marker-end="url(#ah)"/>
-<path d="M50,310 A95.0,10 0 0 1 240,310 V360 A95.0,10 0 0 1 50,360 Z" fill="#F4F6F8" stroke="#1B4F72" stroke-width="2"/>
-<path d="M50,310 A95.0,10 0 0 0 240,310" fill="none" stroke="#1B4F72" stroke-width="2"/>
-<text x="145.0" y="337.2" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="600" text-anchor="middle" fill="#1C1C1C">Instruction file</text>
-<text x="145.0" y="357.2" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" text-anchor="middle" fill="#7FA3C0">versioned, checked in</text>
-<path d="M145.0,300 L135.0,186" fill="none" stroke="#7FA3C0" stroke-width="2.2" marker-end="url(#ah)"/>
-<text x="140.0" y="239.2" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" text-anchor="middle" fill="#1C1C1C">feeds every call</text>
-<text x="50" y="400.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="400" text-anchor="start" fill="#7FA3C0">A prompt is a specification, with every problem a specification has: ambiguity, omission, the reader&#x27;s assumptions.</text>
-<rect x="840" y="20" width="540" height="400" rx="12" fill="none" stroke="#7FA3C0" stroke-width="1.5" stroke-dasharray="6 5"/>
-<text x="852" y="40.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="700" text-anchor="start" fill="#7FA3C0">The verification counterpart</text>
-<path d="M870,120 A100.0,10 0 0 1 1070,120 V176 A100.0,10 0 0 1 870,176 Z" fill="#F4F6F8" stroke="#1B4F72" stroke-width="2"/>
-<path d="M870,120 A100.0,10 0 0 0 1070,120" fill="none" stroke="#1B4F72" stroke-width="2"/>
-<text x="970.0" y="150.2" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="600" text-anchor="middle" fill="#1C1C1C">Verification plan</text>
-<text x="970.0" y="170.2" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" text-anchor="middle" fill="#7FA3C0">machine-readable, versioned</text>
-<rect x="1130" y="110" width="200" height="76" rx="6" fill="white" stroke="#1B4F72" stroke-width="2"/>
-<text x="1230.0" y="145.2" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="600" text-anchor="middle" fill="#1C1C1C">Testbench</text>
-<text x="1230.0" y="166.2" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="400" text-anchor="middle" fill="#7FA3C0">stimulus, checker, coverage</text>
-<path d="M1070,148.0 L1130,148.0" fill="none" stroke="#7FA3C0" stroke-width="2.2" marker-end="url(#ah)"/>
-<text x="1100.0" y="136.7" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" text-anchor="middle" fill="#1C1C1C">what to verify,</text>
-<text x="1100.0" y="151.7" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" text-anchor="middle" fill="#1C1C1C">how, and when done</text>
-<rect x="1130" y="260" width="200" height="64" rx="6" fill="white" stroke="#1B4F72" stroke-width="2"/>
-<text x="1230.0" y="297.2" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="600" text-anchor="middle" fill="#1C1C1C">Regression</text>
-<path d="M1230.0,186 L1230.0,260" fill="none" stroke="#7FA3C0" stroke-width="2.2" marker-end="url(#ah)"/>
-<path d="M1130,292.0 Q1010.0,299.0 970.0,186" fill="none" stroke="#5B3E8E" stroke-width="2.2" stroke-dasharray="7 5" marker-end="url(#ahj)"/>
-<text x="1030.0" y="257.7" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" text-anchor="middle" fill="#5B3E8E">results reported</text>
-<text x="1030.0" y="272.7" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" text-anchor="middle" fill="#5B3E8E">against the plan</text>
-<text x="870" y="400.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="400" text-anchor="start" fill="#7FA3C0">The plan is the testbench&#x27;s instruction file.</text>
+<rect width="1000" height="820" fill="white"/>
+<rect x="20" y="20" width="960" height="420" rx="12" fill="none" stroke="#7FA3C0" stroke-width="1.5" stroke-dasharray="6 5"/>
+<text x="32" y="42.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" text-anchor="start" fill="#7FA3C0">The parts of a prompt</text>
+<path d="M50,100 A105.0,10 0 0 1 260,100 V160 A105.0,10 0 0 1 50,160 Z" fill="#F4F6F8" stroke="#1B4F72" stroke-width="2"/>
+<path d="M50,100 A105.0,10 0 0 0 260,100" fill="none" stroke="#1B4F72" stroke-width="2"/>
+<text x="155.0" y="128.8" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="600" text-anchor="middle" fill="#1C1C1C">Instruction</text>
+<text x="155.0" y="152.5" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="600" text-anchor="middle" fill="#1C1C1C">what to do</text>
+<path d="M282,100 A105.0,10 0 0 1 492,100 V160 A105.0,10 0 0 1 282,160 Z" fill="#F4F6F8" stroke="#1B4F72" stroke-width="2"/>
+<path d="M282,100 A105.0,10 0 0 0 492,100" fill="none" stroke="#1B4F72" stroke-width="2"/>
+<text x="387.0" y="128.8" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="600" text-anchor="middle" fill="#1C1C1C">Examples</text>
+<text x="387.0" y="152.5" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="600" text-anchor="middle" fill="#1C1C1C">what good looks like</text>
+<path d="M514,100 A105.0,10 0 0 1 724,100 V160 A105.0,10 0 0 1 514,160 Z" fill="#F4F6F8" stroke="#1B4F72" stroke-width="2"/>
+<path d="M514,100 A105.0,10 0 0 0 724,100" fill="none" stroke="#1B4F72" stroke-width="2"/>
+<text x="619.0" y="128.8" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="600" text-anchor="middle" fill="#1C1C1C">Constraints</text>
+<text x="619.0" y="152.5" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="600" text-anchor="middle" fill="#1C1C1C">what not to do</text>
+<path d="M746,100 A105.0,10 0 0 1 956,100 V160 A105.0,10 0 0 1 746,160 Z" fill="#F4F6F8" stroke="#1B4F72" stroke-width="2"/>
+<path d="M746,100 A105.0,10 0 0 0 956,100" fill="none" stroke="#1B4F72" stroke-width="2"/>
+<text x="851.0" y="128.8" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="600" text-anchor="middle" fill="#1C1C1C">Output format</text>
+<text x="851.0" y="152.5" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="600" text-anchor="middle" fill="#1C1C1C">what shape to return</text>
+<rect x="300" y="250" width="270" height="64" rx="6" fill="white" stroke="#1B4F72" stroke-width="2"/>
+<text x="435.0" y="279.6" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="600" text-anchor="middle" fill="#1C1C1C">Assembled prompt</text>
+<text x="435.0" y="303.9" font-family="'JetBrains Mono', Menlo, monospace" font-size="14" font-weight="400" text-anchor="middle" fill="#7FA3C0">one call&#x27;s context</text>
+<path d="M155.0,170 L435.0,250" fill="none" stroke="#7FA3C0" stroke-width="2.2" marker-end="url(#ah)"/>
+<path d="M387.0,170 L435.0,250" fill="none" stroke="#7FA3C0" stroke-width="2.2" marker-end="url(#ah)"/>
+<path d="M619.0,170 L435.0,250" fill="none" stroke="#7FA3C0" stroke-width="2.2" marker-end="url(#ah)"/>
+<path d="M851.0,170 L435.0,250" fill="none" stroke="#7FA3C0" stroke-width="2.2" marker-end="url(#ah)"/>
+<rect x="650" y="250" width="200" height="64" rx="32.0" fill="#1B4F72" stroke="#123A56" stroke-width="2"/>
+<text x="750.0" y="289.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="20" font-weight="700" text-anchor="middle" fill="white">Model</text>
+<path d="M570,282.0 L650,282.0" fill="none" stroke="#7FA3C0" stroke-width="2.2" marker-end="url(#ah)"/>
+<path d="M50,340 A105.0,10 0 0 1 260,340 V396 A105.0,10 0 0 1 50,396 Z" fill="#F4F6F8" stroke="#1B4F72" stroke-width="2"/>
+<path d="M50,340 A105.0,10 0 0 0 260,340" fill="none" stroke="#1B4F72" stroke-width="2"/>
+<text x="155.0" y="370.6" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="600" text-anchor="middle" fill="#1C1C1C">Instruction file</text>
+<text x="155.0" y="392.9" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="400" text-anchor="middle" fill="#7FA3C0">versioned, checked in</text>
+<path d="M155.0,330 L155.0,170" fill="none" stroke="#7FA3C0" stroke-width="2.2" marker-end="url(#ah)"/>
+<text x="155.0" y="247.2" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="400" text-anchor="middle" fill="#1C1C1C">feeds every call</text>
+<text x="300" y="400.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="400" text-anchor="start" fill="#7FA3C0">A prompt is a specification, with a specification&#x27;s problems:</text>
+<text x="300" y="419.5" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="400" text-anchor="start" fill="#7FA3C0">ambiguity, omission, the reader&#x27;s assumptions.</text>
+<rect x="20" y="460" width="960" height="340" rx="12" fill="none" stroke="#7FA3C0" stroke-width="1.5" stroke-dasharray="6 5"/>
+<text x="32" y="482.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" text-anchor="start" fill="#7FA3C0">The verification counterpart</text>
+<path d="M50,550 A130.0,10 0 0 1 310,550 V610 A130.0,10 0 0 1 50,610 Z" fill="#F4F6F8" stroke="#1B4F72" stroke-width="2"/>
+<path d="M50,550 A130.0,10 0 0 0 310,550" fill="none" stroke="#1B4F72" stroke-width="2"/>
+<text x="180.0" y="582.6" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="600" text-anchor="middle" fill="#1C1C1C">Verification plan</text>
+<text x="180.0" y="604.9" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="400" text-anchor="middle" fill="#7FA3C0">machine-readable, versioned</text>
+<rect x="400" y="540" width="260" height="80" rx="6" fill="white" stroke="#1B4F72" stroke-width="2"/>
+<text x="530.0" y="577.6" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="600" text-anchor="middle" fill="#1C1C1C">Testbench</text>
+<text x="530.0" y="601.9" font-family="'JetBrains Mono', Menlo, monospace" font-size="14" font-weight="400" text-anchor="middle" fill="#7FA3C0">stimulus, checker, coverage</text>
+<rect x="750" y="540" width="200" height="80" rx="6" fill="white" stroke="#1B4F72" stroke-width="2"/>
+<text x="850.0" y="586.6" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="600" text-anchor="middle" fill="#1C1C1C">Regression</text>
+<path d="M310,580.0 L400,580.0" fill="none" stroke="#7FA3C0" stroke-width="2.2" marker-end="url(#ah)"/>
+<text x="355.0" y="547.9" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="400" text-anchor="middle" fill="#1C1C1C">what to verify, how,</text>
+<text x="355.0" y="566.6" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="400" text-anchor="middle" fill="#1C1C1C">and when done</text>
+<path d="M660,580.0 L750,580.0" fill="none" stroke="#7FA3C0" stroke-width="2.2" marker-end="url(#ah)"/>
+<path d="M850.0,620 Q515.0,730.0 180.0,620" fill="none" stroke="#5B3E8E" stroke-width="2.2" stroke-dasharray="7 5" marker-end="url(#ahj)"/>
+<text x="515.0" y="710.2" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="400" text-anchor="middle" fill="#5B3E8E">results reported against the plan</text>
+<text x="50" y="770.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="400" text-anchor="start" fill="#7FA3C0">The plan is the testbench&#x27;s instruction file.</text>
 </svg>

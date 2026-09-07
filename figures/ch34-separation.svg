@@ -1,47 +1,46 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 520" width="1400" height="520" role="img" aria-label="Separation of generator and judge">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 860" width="1100" height="860" role="img" aria-label="Separation of generator and judge">
 <defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#7FA3C0"/></marker><marker id="ahj" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#5B3E8E"/></marker></defs>
-<rect width="1400" height="520" fill="white"/>
-<rect x="20" y="20" width="600" height="330" rx="12" fill="none" stroke="#1B4F72" stroke-width="1.5" stroke-dasharray="6 5"/>
-<text x="32" y="40.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="700" text-anchor="start" fill="#1B4F72">Stimulus context</text>
-<rect x="50" y="80" width="200" height="64" rx="32.0" fill="#1B4F72" stroke="#123A56" stroke-width="2"/>
-<text x="150.0" y="109.6" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" text-anchor="middle" fill="white">Stimulus agent</text>
-<text x="150.0" y="130.2" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" text-anchor="middle" fill="#DCE9F3">writes tests, sequences</text>
-<path d="M320,90 A100.0,10 0 0 1 520,90 V140 A100.0,10 0 0 1 320,140 Z" fill="#F4F6F8" stroke="#1B4F72" stroke-width="2"/>
-<path d="M320,90 A100.0,10 0 0 0 520,90" fill="none" stroke="#1B4F72" stroke-width="2"/>
-<text x="420.0" y="117.2" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="600" text-anchor="middle" fill="#1C1C1C">Stimulus</text>
-<text x="420.0" y="137.2" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" text-anchor="middle" fill="#7FA3C0">tests, constraints</text>
-<path d="M250,112.0 L320,115.0" fill="none" stroke="#7FA3C0" stroke-width="2.2" marker-end="url(#ah)"/>
-<rect x="50" y="190" width="470" height="63" rx="6" fill="#F4F6F8" stroke="#CBD2D9"/>
-<text x="60" y="210.4" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" text-anchor="start" fill="#1C1C1C">May read: specification, plan, RTL,</text>
-<text x="60" y="226.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" text-anchor="start" fill="#1C1C1C">coverage report, failures.</text>
-<text x="60" y="241.6" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" text-anchor="start" fill="#1C1C1C">May write: stimulus only.</text>
-<rect x="780" y="20" width="600" height="330" rx="12" fill="none" stroke="#5B3E8E" stroke-width="1.5" stroke-dasharray="6 5"/>
-<text x="792" y="40.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="700" text-anchor="start" fill="#5B3E8E">Oracle context</text>
-<rect x="810" y="80" width="200" height="64" rx="32.0" fill="#1B4F72" stroke="#123A56" stroke-width="2"/>
-<text x="910.0" y="109.6" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" text-anchor="middle" fill="white">Checker author</text>
-<text x="910.0" y="130.2" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" text-anchor="middle" fill="#DCE9F3">human, or a separate agent</text>
-<path d="M1080,90 A130.0,10 0 0 1 1340,90 V140 A130.0,10 0 0 1 1080,140 Z" fill="#F4F6F8" stroke="#1B4F72" stroke-width="2"/>
-<path d="M1080,90 A130.0,10 0 0 0 1340,90" fill="none" stroke="#1B4F72" stroke-width="2"/>
-<text x="1210.0" y="117.2" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="600" text-anchor="middle" fill="#1C1C1C">Oracle</text>
-<text x="1210.0" y="129.7" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" text-anchor="middle" fill="#7FA3C0">checker, reference model,</text>
-<text x="1210.0" y="144.7" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" text-anchor="middle" fill="#7FA3C0">assertions, coverage model</text>
-<path d="M1010,112.0 L1080,115.0" fill="none" stroke="#7FA3C0" stroke-width="2.2" marker-end="url(#ah)"/>
-<rect x="810" y="190" width="470" height="63" rx="6" fill="#F4F6F8" stroke="#CBD2D9"/>
-<text x="820" y="210.4" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" text-anchor="start" fill="#1C1C1C">Written from the specification,</text>
-<text x="820" y="226.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" text-anchor="start" fill="#1C1C1C">with the stimulus closed.</text>
-<text x="820" y="241.6" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" text-anchor="start" fill="#1C1C1C">Approved at a human gate.</text>
-<rect x="676" y="30" width="48" height="310" fill="#F4F6F8" stroke="#B7791F" stroke-width="3"/>
-<text x="690" y="185" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="700" fill="#6B4A0E" text-anchor="middle" transform="rotate(-90 690 185)">no write access</text>
-<text x="700" y="185" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="700" fill="#6B4A0E" text-anchor="middle" transform="rotate(-90 700 185)">enforced by harness and repository</text>
-<text x="710" y="185" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="700" fill="#6B4A0E" text-anchor="middle" transform="rotate(-90 710 185)">never by the prompt</text>
-<rect x="540" y="400" width="520" height="64" rx="6" fill="white" stroke="#1B4F72" stroke-width="2"/>
-<text x="800.0" y="429.2" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="600" text-anchor="middle" fill="#1C1C1C">Toolchain: simulator, formal engine, coverage database</text>
-<text x="800.0" y="450.2" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="400" text-anchor="middle" fill="#7FA3C0">the only judge</text>
-<path d="M420.0,150 L800.0,400" fill="none" stroke="#7FA3C0" stroke-width="2.2" marker-end="url(#ah)"/>
-<path d="M1210.0,150 L800.0,400" fill="none" stroke="#7FA3C0" stroke-width="2.2" marker-end="url(#ah)"/>
-<path d="M540,432.0 Q225.0,328.0 150.0,144" fill="none" stroke="#5B3E8E" stroke-width="2.2" stroke-dasharray="7 5" marker-end="url(#ahj)"/>
-<text x="285.0" y="304.2" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" text-anchor="middle" fill="#5B3E8E">pass, fail, coverage</text>
-<path d="M1060,432.0 Q1105.0,328.0 910.0,144" fill="none" stroke="#5B3E8E" stroke-width="2.2" stroke-dasharray="7 5" marker-end="url(#ahj)"/>
-<text x="1045.0" y="304.2" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" text-anchor="middle" fill="#5B3E8E">proven, refuted, vacuous</text>
-<text x="40" y="500.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="400" text-anchor="start" fill="#7FA3C0">Whatever generates must not own what judges. In software the agent deleted the failing test when it could; here it cannot reach it.</text>
+<rect width="1100" height="860" fill="white"/>
+<rect x="110" y="20" width="960" height="250" rx="12" fill="none" stroke="#1B4F72" stroke-width="1.5" stroke-dasharray="6 5"/>
+<text x="122" y="42.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" text-anchor="start" fill="#1B4F72">Stimulus context</text>
+<rect x="140" y="80" width="250" height="64" rx="32.0" fill="#1B4F72" stroke="#123A56" stroke-width="2"/>
+<text x="265.0" y="110.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="20" font-weight="700" text-anchor="middle" fill="white">Stimulus agent</text>
+<text x="265.0" y="133.9" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="400" text-anchor="middle" fill="#DCE9F3">writes tests, sequences</text>
+<path d="M450,90 A110.0,10 0 0 1 670,90 V140 A110.0,10 0 0 1 450,140 Z" fill="#F4F6F8" stroke="#1B4F72" stroke-width="2"/>
+<path d="M450,90 A110.0,10 0 0 0 670,90" fill="none" stroke="#1B4F72" stroke-width="2"/>
+<text x="560.0" y="117.7" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="600" text-anchor="middle" fill="#1C1C1C">Stimulus</text>
+<text x="560.0" y="139.9" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="400" text-anchor="middle" fill="#7FA3C0">tests, constraints</text>
+<path d="M390,112.0 L450,115.0" fill="none" stroke="#7FA3C0" stroke-width="2.2" marker-end="url(#ah)"/>
+<rect x="710" y="70" width="340" height="75" rx="6" fill="#F4F6F8" stroke="#CBD2D9"/>
+<text x="720" y="92.5" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="400" text-anchor="start" fill="#1C1C1C">May read: specification, plan,</text>
+<text x="720" y="112.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="400" text-anchor="start" fill="#1C1C1C">RTL, coverage report, failures.</text>
+<text x="720" y="131.5" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="400" text-anchor="start" fill="#1C1C1C">May write: stimulus only.</text>
+<rect x="120" y="280" width="940" height="52" fill="#F4F6F8" stroke="#B7791F" stroke-width="3"/>
+<text x="590" y="312.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" text-anchor="middle" fill="#6B4A0E">no write access across this line: enforced by the harness and the repository, never by the prompt</text>
+<rect x="110" y="340" width="960" height="250" rx="12" fill="none" stroke="#5B3E8E" stroke-width="1.5" stroke-dasharray="6 5"/>
+<text x="122" y="362.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" text-anchor="start" fill="#5B3E8E">Oracle context</text>
+<rect x="140" y="400" width="250" height="64" rx="32.0" fill="#1B4F72" stroke="#123A56" stroke-width="2"/>
+<text x="265.0" y="430.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="20" font-weight="700" text-anchor="middle" fill="white">Checker author</text>
+<text x="265.0" y="453.9" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="400" text-anchor="middle" fill="#DCE9F3">human, or a separate agent</text>
+<path d="M450,410 A110.0,10 0 0 1 670,410 V466 A110.0,10 0 0 1 450,466 Z" fill="#F4F6F8" stroke="#1B4F72" stroke-width="2"/>
+<path d="M450,410 A110.0,10 0 0 0 670,410" fill="none" stroke="#1B4F72" stroke-width="2"/>
+<text x="560.0" y="440.6" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="600" text-anchor="middle" fill="#1C1C1C">Oracle</text>
+<text x="560.0" y="454.1" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="400" text-anchor="middle" fill="#7FA3C0">checker, reference model,</text>
+<text x="560.0" y="471.6" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="400" text-anchor="middle" fill="#7FA3C0">assertions, coverage model</text>
+<path d="M390,432.0 L450,438.0" fill="none" stroke="#7FA3C0" stroke-width="2.2" marker-end="url(#ah)"/>
+<rect x="710" y="390" width="340" height="75" rx="6" fill="#F4F6F8" stroke="#CBD2D9"/>
+<text x="720" y="412.5" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="400" text-anchor="start" fill="#1C1C1C">Written from the specification,</text>
+<text x="720" y="432.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="400" text-anchor="start" fill="#1C1C1C">with the stimulus closed.</text>
+<text x="720" y="451.5" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="400" text-anchor="start" fill="#1C1C1C">Approved at a human gate.</text>
+<rect x="250" y="680" width="600" height="70" rx="6" fill="white" stroke="#1B4F72" stroke-width="2"/>
+<text x="550.0" y="712.6" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="600" text-anchor="middle" fill="#1C1C1C">Toolchain: simulator, formal engine, coverage database</text>
+<text x="550.0" y="736.9" font-family="'JetBrains Mono', Menlo, monospace" font-size="14" font-weight="400" text-anchor="middle" fill="#7FA3C0">the only judge</text>
+<path d="M670,115.0 Q1160.0,475.0 850,715.0" fill="none" stroke="#7FA3C0" stroke-width="2.2" marker-end="url(#ah)"/>
+<path d="M560.0,476 L550.0,680" fill="none" stroke="#7FA3C0" stroke-width="2.2" marker-end="url(#ah)"/>
+<path d="M250,715.0 Q-125.0,413.5 140,112.0" fill="none" stroke="#5B3E8E" stroke-width="2.2" stroke-dasharray="7 5" marker-end="url(#ahj)"/>
+<text x="35.0" y="258.8" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="400" text-anchor="middle" fill="#5B3E8E">pass, fail, coverage</text>
+<path d="M250,715.0 Q-5.0,573.5 140,432.0" fill="none" stroke="#5B3E8E" stroke-width="2.2" stroke-dasharray="7 5" marker-end="url(#ahj)"/>
+<text x="95.0" y="609.4" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="400" text-anchor="middle" fill="#5B3E8E">proven, refuted,</text>
+<text x="95.0" y="628.1" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="400" text-anchor="middle" fill="#5B3E8E">vacuous</text>
+<text x="130" y="830.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="400" text-anchor="start" fill="#7FA3C0">Whatever generates must not own what judges.</text>
 </svg>

@@ -65,42 +65,42 @@ class Diagram:
             self.parts.append(f'<text x="{x}" y="{y + i*size*1.3:.1f}" {font} font-size="{size}" font-weight="{weight}" '
                               f'text-anchor="{anchor}" fill="{fill}">{html.escape(ln)}</text>')
 
-    def caption(self, x, y, text, size=13, fill=DIM):
+    def caption(self, x, y, text, size=16, fill=DIM):
         self.label(x, y, text, size=size, fill=fill)
 
     # ---- the four shapes ------------------------------------------------
     def model(self, x, y, text, w=160, h=64, sub=None):
         self.parts.append(f'<rect x="{x}" y="{y}" width="{w}" height="{h}" rx="{h/2}" fill="{BLUE}" stroke="{DEEP}" stroke-width="2"/>')
-        self._lines(x + w/2, y + h/2 - (8 if sub else 0), text, 16, "white", "700")
+        self._lines(x + w/2, y + h/2 - (9 if sub else 0), text, 20, "white", "700")
         if sub:
-            self._lines(x + w/2, y + h/2 + 14, sub, 12, TRACE)
+            self._lines(x + w/2, y + h/2 + 17, sub, 14, TRACE)
         return Box(x, y, w, h)
 
     def tool(self, x, y, text, w=160, h=64, sub=None, fill="white"):
         self.parts.append(f'<rect x="{x}" y="{y}" width="{w}" height="{h}" rx="6" fill="{fill}" stroke="{BLUE}" stroke-width="2"/>')
-        self._lines(x + w/2, y + h/2 - (8 if sub else 0), text, 15, INK, "600")
+        self._lines(x + w/2, y + h/2 - (9 if sub else 0), text, 19, INK, "600")
         if sub:
-            self._lines(x + w/2, y + h/2 + 14, sub, 12, DIM, font=MONO)
+            self._lines(x + w/2, y + h/2 + 17, sub, 14, DIM, font=MONO)
         return Box(x, y, w, h)
 
     def store(self, x, y, text, w=150, h=70, sub=None):
         ry = 10
         self.parts.append(f'<path d="M{x},{y+ry} A{w/2},{ry} 0 0 1 {x+w},{y+ry} V{y+h-ry} A{w/2},{ry} 0 0 1 {x},{y+h-ry} Z" fill="{GROUND}" stroke="{BLUE}" stroke-width="2"/>')
         self.parts.append(f'<path d="M{x},{y+ry} A{w/2},{ry} 0 0 0 {x+w},{y+ry}" fill="none" stroke="{BLUE}" stroke-width="2"/>')
-        self._lines(x + w/2, y + h/2 + 4 - (7 if sub else 0), text, 15, INK, "600")
+        self._lines(x + w/2, y + h/2 + 4 - (8 if sub else 0), text, 19, INK, "600")
         if sub:
-            self._lines(x + w/2, y + h/2 + 18, sub, 12, DIM)
+            self._lines(x + w/2, y + h/2 + 20, sub, 14, DIM)
         return Box(x, y, w, h)
 
     def gate(self, x, y, text, w=150, h=80):
         cx, cy = x + w/2, y + h/2
         self.parts.append(f'<path d="M{cx},{y} L{x+w},{cy} L{cx},{y+h} L{x},{cy} Z" fill="#FBF1DC" stroke="{AMBER}" stroke-width="2.5"/>')
-        self._lines(cx, cy, text, 13, "#6B4A0E", "700")
+        self._lines(cx, cy, text, 16, "#6B4A0E", "700")
         return Box(x, y, w, h)
 
     def region(self, x, y, w, h, title, stroke=DIM):
         self.parts.append(f'<rect x="{x}" y="{y}" width="{w}" height="{h}" rx="12" fill="none" stroke="{stroke}" stroke-width="1.5" stroke-dasharray="6 5"/>')
-        self.label(x + 12, y + 20, title, size=13, fill=stroke, weight="700")
+        self.label(x + 12, y + 22, title, size=16, fill=stroke, weight="700")
 
     # ---- arrows -------------------------------------------------------------
     def arrow(self, a, b, label=None, kind="data", sides=None, bend=None, label_dy=-8):
@@ -120,9 +120,9 @@ class Diagram:
             self.parts.append(f'<path d="M{x1},{y1} L{x2},{y2}" fill="none" stroke="{col}" stroke-width="2.2"{dash} marker-end="url(#{mk})"/>')
             lx, ly = (x1 + x2)/2, (y1 + y2)/2
         if label:
-            self._lines(lx, ly + label_dy, label, 12, col if kind == "judgment" else INK, font=SANS)
+            self._lines(lx, ly + label_dy, label, 15, col if kind == "judgment" else INK, font=SANS)
 
-    def note(self, x, y, text, w=260, size=12):
+    def note(self, x, y, text, w=260, size=15):
         """A small explanatory note in a light box."""
         lines = text.split("\n"); h = 14 + len(lines) * size * 1.35
         self.parts.append(f'<rect x="{x}" y="{y}" width="{w}" height="{h:.0f}" rx="6" fill="{GROUND}" stroke="{RULE}"/>')
@@ -132,15 +132,15 @@ class Diagram:
     def failure_mark(self, x, y, n):
         """A numbered amber marker for a failure point."""
         self.parts.append(f'<circle cx="{x}" cy="{y}" r="12" fill="{AMBER}"/>')
-        self._lines(x, y, str(n), 13, "white", "700")
+        self._lines(x, y, str(n), 15, "white", "700")
 
     def legend(self, x, y):
-        self.parts.append(f'<rect x="{x}" y="{y}" width="44" height="22" rx="11" fill="{BLUE}"/>'); self.label(x + 52, y + 16, "model", 12)
-        self.parts.append(f'<rect x="{x+120}" y="{y}" width="44" height="22" rx="4" fill="white" stroke="{BLUE}" stroke-width="1.5"/>'); self.label(x + 172, y + 16, "tool", 12)
-        self.parts.append(f'<path d="M{x+230},{y+5} A22,5 0 0 1 {x+274},{y+5} V{y+17} A22,5 0 0 1 {x+230},{y+17} Z" fill="{GROUND}" stroke="{BLUE}" stroke-width="1.5"/>'); self.label(x + 282, y + 16, "evidence store", 12)
-        self.parts.append(f'<path d="M{x+402},{y} L{x+424},{y+11} L{x+402},{y+22} L{x+380},{y+11} Z" fill="#FBF1DC" stroke="{AMBER}" stroke-width="1.5"/>'); self.label(x + 432, y + 16, "human gate", 12)
-        self.parts.append(f'<path d="M{x+520},{y+11} H{x+560}" stroke="{DIM}" stroke-width="2" marker-end="url(#ah)"/>'); self.label(x + 568, y + 16, "data", 12)
-        self.parts.append(f'<path d="M{x+610},{y+11} H{x+650}" stroke="{VIOLET}" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#ahj)"/>'); self.label(x + 658, y + 16, "judgment", 12)
+        self.parts.append(f'<rect x="{x}" y="{y}" width="44" height="22" rx="11" fill="{BLUE}"/>'); self.label(x + 52, y + 16, "model", 14)
+        self.parts.append(f'<rect x="{x+120}" y="{y}" width="44" height="22" rx="4" fill="white" stroke="{BLUE}" stroke-width="1.5"/>'); self.label(x + 172, y + 16, "tool", 14)
+        self.parts.append(f'<path d="M{x+230},{y+5} A22,5 0 0 1 {x+274},{y+5} V{y+17} A22,5 0 0 1 {x+230},{y+17} Z" fill="{GROUND}" stroke="{BLUE}" stroke-width="1.5"/>'); self.label(x + 282, y + 16, "evidence store", 14)
+        self.parts.append(f'<path d="M{x+402},{y} L{x+424},{y+11} L{x+402},{y+22} L{x+380},{y+11} Z" fill="#FBF1DC" stroke="{AMBER}" stroke-width="1.5"/>'); self.label(x + 432, y + 16, "human gate", 14)
+        self.parts.append(f'<path d="M{x+520},{y+11} H{x+560}" stroke="{DIM}" stroke-width="2" marker-end="url(#ah)"/>'); self.label(x + 568, y + 16, "data", 14)
+        self.parts.append(f'<path d="M{x+610},{y+11} H{x+650}" stroke="{VIOLET}" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#ahj)"/>'); self.label(x + 658, y + 16, "judgment", 14)
 
     def save(self, name):
         body = "\n".join(self.parts)

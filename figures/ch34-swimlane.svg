@@ -2,52 +2,52 @@
 <defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#7FA3C0"/></marker><marker id="ahj" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#5B3E8E"/></marker></defs>
 <rect width="1600" height="620" fill="white"/>
 <rect x="20" y="40" width="1560" height="88" fill="white" stroke="#7FA3C0" stroke-width="1"/>
-<text x="30" y="89.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="700" text-anchor="start" fill="#1C1C1C">Human gates</text>
+<text x="30" y="89.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" text-anchor="start" fill="#1C1C1C">Human gates</text>
 <rect x="20" y="128" width="1560" height="88" fill="#F4F6F8" stroke="#7FA3C0" stroke-width="1"/>
-<text x="30" y="177.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="700" text-anchor="start" fill="#1C1C1C">Planner</text>
+<text x="30" y="177.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" text-anchor="start" fill="#1C1C1C">Planner</text>
 <rect x="20" y="216" width="1560" height="88" fill="white" stroke="#7FA3C0" stroke-width="1"/>
-<text x="30" y="265.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="700" text-anchor="start" fill="#1C1C1C">Stimulus agent</text>
+<text x="30" y="265.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" text-anchor="start" fill="#1C1C1C">Stimulus agent</text>
 <rect x="20" y="304" width="1560" height="88" fill="#F4F6F8" stroke="#7FA3C0" stroke-width="1"/>
-<text x="30" y="353.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="700" text-anchor="start" fill="#1C1C1C">Checker author (human)</text>
+<text x="30" y="353.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" text-anchor="start" fill="#1C1C1C">Checker author (human)</text>
 <rect x="20" y="392" width="1560" height="88" fill="white" stroke="#7FA3C0" stroke-width="1"/>
-<text x="30" y="441.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="700" text-anchor="start" fill="#1C1C1C">Simulator</text>
+<text x="30" y="441.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" text-anchor="start" fill="#1C1C1C">Simulator</text>
 <rect x="20" y="480" width="1560" height="88" fill="#F4F6F8" stroke="#7FA3C0" stroke-width="1"/>
-<text x="30" y="529.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="700" text-anchor="start" fill="#1C1C1C">Debug agent</text>
+<text x="30" y="529.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" text-anchor="start" fill="#1C1C1C">Debug agent</text>
 <rect x="240" y="140" width="200" height="64" rx="32.0" fill="#1B4F72" stroke="#123A56" stroke-width="2"/>
-<text x="340.0" y="167.6" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" text-anchor="middle" fill="white">FIFO-005: full only</text>
-<text x="340.0" y="187.6" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" text-anchor="middle" fill="white">at 16 entries</text>
+<text x="340.0" y="166.5" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="20" font-weight="700" text-anchor="middle" fill="white">FIFO-005: full only</text>
+<text x="340.0" y="191.5" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="20" font-weight="700" text-anchor="middle" fill="white">at 16 entries</text>
 <path d="M545.0,52 L620,84.0 L545.0,116 L470,84.0 Z" fill="#FBF1DC" stroke="#B7791F" stroke-width="2.5"/>
-<text x="545.0" y="80.4" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="700" text-anchor="middle" fill="#6B4A0E">Gate 1: item</text>
-<text x="545.0" y="96.7" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="700" text-anchor="middle" fill="#6B4A0E">approved</text>
+<text x="545.0" y="79.6" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" text-anchor="middle" fill="#6B4A0E">Gate 1: item</text>
+<text x="545.0" y="99.6" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" text-anchor="middle" fill="#6B4A0E">approved</text>
 <rect x="700" y="228" width="200" height="64" rx="32.0" fill="#1B4F72" stroke="#123A56" stroke-width="2"/>
-<text x="800.0" y="255.6" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" text-anchor="middle" fill="white">Random test with</text>
-<text x="800.0" y="275.6" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" text-anchor="middle" fill="white">write pressure</text>
+<text x="800.0" y="254.5" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="20" font-weight="700" text-anchor="middle" fill="white">Random test with</text>
+<text x="800.0" y="279.5" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="20" font-weight="700" text-anchor="middle" fill="white">write pressure</text>
 <path d="M700,326 A100.0,10 0 0 1 900,326 V370 A100.0,10 0 0 1 700,370 Z" fill="#F4F6F8" stroke="#1B4F72" stroke-width="2"/>
 <path d="M700,326 A100.0,10 0 0 0 900,326" fill="none" stroke="#1B4F72" stroke-width="2"/>
-<text x="800.0" y="347.9" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="600" text-anchor="middle" fill="#1C1C1C">Model: full ==</text>
-<text x="800.0" y="366.6" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="600" text-anchor="middle" fill="#1C1C1C">(occupancy == 16)</text>
+<text x="800.0" y="346.8" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="600" text-anchor="middle" fill="#1C1C1C">Model: full ==</text>
+<text x="800.0" y="370.5" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="600" text-anchor="middle" fill="#1C1C1C">(occupancy == 16)</text>
 <path d="M1005.0,52 L1080,84.0 L1005.0,116 L930,84.0 Z" fill="#FBF1DC" stroke="#B7791F" stroke-width="2.5"/>
-<text x="1005.0" y="80.4" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="700" text-anchor="middle" fill="#6B4A0E">Gate 2: checker</text>
-<text x="1005.0" y="96.7" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="700" text-anchor="middle" fill="#6B4A0E">approved</text>
+<text x="1005.0" y="79.6" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" text-anchor="middle" fill="#6B4A0E">Gate 2: checker</text>
+<text x="1005.0" y="99.6" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" text-anchor="middle" fill="#6B4A0E">approved</text>
 <rect x="1160" y="404" width="200" height="64" rx="6" fill="white" stroke="#1B4F72" stroke-width="2"/>
-<text x="1260.0" y="431.9" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="600" text-anchor="middle" fill="#1C1C1C">Run seed 1:</text>
-<text x="1260.0" y="450.6" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="600" text-anchor="middle" fill="#1C1C1C">full=1 at 15</text>
+<text x="1260.0" y="430.8" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="600" text-anchor="middle" fill="#1C1C1C">Run seed 1:</text>
+<text x="1260.0" y="454.5" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="600" text-anchor="middle" fill="#1C1C1C">full=1 at 15</text>
 <rect x="1390" y="492" width="200" height="64" rx="32.0" fill="#1B4F72" stroke="#123A56" stroke-width="2"/>
-<text x="1490.0" y="519.6" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" text-anchor="middle" fill="white">Hypothesis: counter</text>
-<text x="1490.0" y="539.6" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" text-anchor="middle" fill="white">width off by one</text>
+<text x="1490.0" y="518.5" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="20" font-weight="700" text-anchor="middle" fill="white">Hypothesis: counter</text>
+<text x="1490.0" y="543.5" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="20" font-weight="700" text-anchor="middle" fill="white">width off by one</text>
 <path d="M1465.0,52 L1540,84.0 L1465.0,116 L1390,84.0 Z" fill="#FBF1DC" stroke="#B7791F" stroke-width="2.5"/>
-<text x="1465.0" y="80.4" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="700" text-anchor="middle" fill="#6B4A0E">Human confirms;</text>
-<text x="1465.0" y="96.7" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="700" text-anchor="middle" fill="#6B4A0E">bug filed</text>
+<text x="1465.0" y="79.6" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" text-anchor="middle" fill="#6B4A0E">Human confirms;</text>
+<text x="1465.0" y="99.6" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" text-anchor="middle" fill="#6B4A0E">bug filed</text>
 <path d="M440,172.0 L470,84.0" fill="none" stroke="#7FA3C0" stroke-width="2.2" marker-end="url(#ah)"/>
 <path d="M545.0,116 L800.0,228" fill="none" stroke="#7FA3C0" stroke-width="2.2" marker-end="url(#ah)"/>
 <path d="M545.0,116 Q672.5,296.0 800.0,316" fill="none" stroke="#7FA3C0" stroke-width="2.2" marker-end="url(#ah)"/>
 <path d="M900,348.0 Q952.5,172.0 1005.0,116" fill="none" stroke="#7FA3C0" stroke-width="2.2" marker-end="url(#ah)"/>
 <path d="M800.0,292 L1260.0,404" fill="none" stroke="#7FA3C0" stroke-width="2.2" marker-end="url(#ah)"/>
 <path d="M800.0,380 L1260.0,404" fill="none" stroke="#5B3E8E" stroke-width="2.2" stroke-dasharray="7 5" marker-end="url(#ahj)"/>
-<text x="1030.0" y="388.2" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" text-anchor="middle" fill="#5B3E8E">compares</text>
+<text x="1030.0" y="389.2" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="400" text-anchor="middle" fill="#5B3E8E">compares</text>
 <path d="M1260.0,468 L1490.0,492" fill="none" stroke="#5B3E8E" stroke-width="2.2" stroke-dasharray="7 5" marker-end="url(#ahj)"/>
-<text x="1375.0" y="476.2" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" text-anchor="middle" fill="#5B3E8E">failure</text>
+<text x="1375.0" y="477.2" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="400" text-anchor="middle" fill="#5B3E8E">failure</text>
 <path d="M1490.0,492 L1465.0,116" fill="none" stroke="#5B3E8E" stroke-width="2.2" stroke-dasharray="7 5" marker-end="url(#ahj)"/>
-<rect x="240" y="570" width="1300" height="32" rx="6" fill="#F4F6F8" stroke="#CBD2D9"/>
-<text x="250" y="591.1" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="400" text-anchor="start" fill="#1C1C1C">The stimulus agent reached the state. The checker, which it could not touch, found the bug. A stimulus agent measured on coverage alone would have reported success.</text>
+<rect x="240" y="570" width="1300" height="34" rx="6" fill="#F4F6F8" stroke="#CBD2D9"/>
+<text x="250" y="592.5" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="400" text-anchor="start" fill="#1C1C1C">The stimulus agent reached the state. The checker, which it could not touch, found the bug. A stimulus agent measured on coverage alone would have reported success.</text>
 </svg>

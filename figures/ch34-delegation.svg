@@ -2,51 +2,51 @@
 <defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#7FA3C0"/></marker><marker id="ahj" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#5B3E8E"/></marker></defs>
 <rect width="1600" height="1000" fill="white"/>
 <rect x="20" y="20" width="1560" height="120" rx="12" fill="none" stroke="#7FA3C0" stroke-width="1.5" stroke-dasharray="6 5"/>
-<text x="32" y="40.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="700" text-anchor="start" fill="#7FA3C0">Grounding sources (read-only)</text>
+<text x="32" y="42.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" text-anchor="start" fill="#7FA3C0">Grounding sources (read-only)</text>
 <path d="M60,65 A110.0,10 0 0 1 280,65 V109 A110.0,10 0 0 1 60,109 Z" fill="#F4F6F8" stroke="#1B4F72" stroke-width="2"/>
 <path d="M60,65 A110.0,10 0 0 0 280,65" fill="none" stroke="#1B4F72" stroke-width="2"/>
-<text x="170.0" y="96.2" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="600" text-anchor="middle" fill="#1C1C1C">Specification</text>
+<text x="170.0" y="97.7" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="600" text-anchor="middle" fill="#1C1C1C">Specification</text>
 <path d="M420,65 A110.0,10 0 0 1 640,65 V109 A110.0,10 0 0 1 420,109 Z" fill="#F4F6F8" stroke="#1B4F72" stroke-width="2"/>
 <path d="M420,65 A110.0,10 0 0 0 640,65" fill="none" stroke="#1B4F72" stroke-width="2"/>
-<text x="530.0" y="89.2" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="600" text-anchor="middle" fill="#1C1C1C">Verification plan</text>
-<text x="530.0" y="109.2" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" text-anchor="middle" fill="#7FA3C0">as code</text>
+<text x="530.0" y="89.7" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="600" text-anchor="middle" fill="#1C1C1C">Verification plan</text>
+<text x="530.0" y="111.9" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="400" text-anchor="middle" fill="#7FA3C0">as code</text>
 <path d="M780,65 A110.0,10 0 0 1 1000,65 V109 A110.0,10 0 0 1 780,109 Z" fill="#F4F6F8" stroke="#1B4F72" stroke-width="2"/>
 <path d="M780,65 A110.0,10 0 0 0 1000,65" fill="none" stroke="#1B4F72" stroke-width="2"/>
-<text x="890.0" y="96.2" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="600" text-anchor="middle" fill="#1C1C1C">RTL</text>
+<text x="890.0" y="97.7" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="600" text-anchor="middle" fill="#1C1C1C">RTL</text>
 <path d="M1140,65 A150.0,10 0 0 1 1440,65 V109 A150.0,10 0 0 1 1140,109 Z" fill="#F4F6F8" stroke="#1B4F72" stroke-width="2"/>
 <path d="M1140,65 A150.0,10 0 0 0 1440,65" fill="none" stroke="#1B4F72" stroke-width="2"/>
-<text x="1290.0" y="96.2" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="600" text-anchor="middle" fill="#1C1C1C">Logs, history</text>
+<text x="1290.0" y="97.7" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="600" text-anchor="middle" fill="#1C1C1C">Logs, history</text>
 <rect x="660" y="180" width="260" height="64" rx="32.0" fill="#1B4F72" stroke="#123A56" stroke-width="2"/>
-<text x="790.0" y="209.6" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" text-anchor="middle" fill="white">Planner</text>
-<text x="790.0" y="230.2" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" text-anchor="middle" fill="#DCE9F3">task graph, never code</text>
+<text x="790.0" y="210.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="20" font-weight="700" text-anchor="middle" fill="white">Planner</text>
+<text x="790.0" y="233.9" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="400" text-anchor="middle" fill="#DCE9F3">task graph, never code</text>
 <path d="M170.0,119 L790.0,180" fill="none" stroke="#7FA3C0" stroke-width="2.2" marker-end="url(#ah)"/>
 <path d="M530.0,119 L790.0,180" fill="none" stroke="#7FA3C0" stroke-width="2.2" marker-end="url(#ah)"/>
 <path d="M890.0,119 L790.0,180" fill="none" stroke="#7FA3C0" stroke-width="2.2" marker-end="url(#ah)"/>
 <path d="M790.0,275 L880,313.0 L790.0,351 L700,313.0 Z" fill="#FBF1DC" stroke="#B7791F" stroke-width="2.5"/>
-<text x="790.0" y="309.4" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="700" text-anchor="middle" fill="#6B4A0E">Gate 1</text>
-<text x="790.0" y="325.7" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="700" text-anchor="middle" fill="#6B4A0E">plan approval</text>
+<text x="790.0" y="308.6" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" text-anchor="middle" fill="#6B4A0E">Gate 1</text>
+<text x="790.0" y="328.6" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" text-anchor="middle" fill="#6B4A0E">plan approval</text>
 <path d="M790.0,244 L790.0,275" fill="none" stroke="#7FA3C0" stroke-width="2.2" marker-end="url(#ah)"/>
 <rect x="20" y="380" width="1560" height="200" rx="12" fill="none" stroke="#7FA3C0" stroke-width="1.5" stroke-dasharray="6 5"/>
-<text x="32" y="400.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="700" text-anchor="start" fill="#7FA3C0">Agent roles, each in an isolated context</text>
+<text x="32" y="402.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" text-anchor="start" fill="#7FA3C0">Agent roles, each in an isolated context</text>
 <rect x="50" y="430" width="220" height="76" rx="38.0" fill="#1B4F72" stroke="#123A56" stroke-width="2"/>
-<text x="160.0" y="465.6" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" text-anchor="middle" fill="white">Stimulus</text>
-<text x="160.0" y="486.2" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" text-anchor="middle" fill="#DCE9F3">tests, sequences</text>
+<text x="160.0" y="466.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="20" font-weight="700" text-anchor="middle" fill="white">Stimulus</text>
+<text x="160.0" y="489.9" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="400" text-anchor="middle" fill="#DCE9F3">tests, sequences</text>
 <rect x="308" y="430" width="220" height="76" rx="38.0" fill="#1B4F72" stroke="#123A56" stroke-width="2"/>
-<text x="418.0" y="465.6" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" text-anchor="middle" fill="white">Checker</text>
-<text x="418.0" y="486.2" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" text-anchor="middle" fill="#DCE9F3">scoreboards, SVA</text>
+<text x="418.0" y="466.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="20" font-weight="700" text-anchor="middle" fill="white">Checker</text>
+<text x="418.0" y="489.9" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="400" text-anchor="middle" fill="#DCE9F3">scoreboards, SVA</text>
 <rect x="566" y="430" width="220" height="76" rx="38.0" fill="#1B4F72" stroke="#123A56" stroke-width="2"/>
-<text x="676.0" y="455.6" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" text-anchor="middle" fill="white">Coverage</text>
-<text x="676.0" y="475.6" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" text-anchor="middle" fill="white">analyst</text>
-<text x="676.0" y="486.2" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" text-anchor="middle" fill="#DCE9F3">gaps, model</text>
+<text x="676.0" y="453.5" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="20" font-weight="700" text-anchor="middle" fill="white">Coverage</text>
+<text x="676.0" y="478.5" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="20" font-weight="700" text-anchor="middle" fill="white">analyst</text>
+<text x="676.0" y="489.9" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="400" text-anchor="middle" fill="#DCE9F3">gaps, model</text>
 <rect x="824" y="430" width="220" height="76" rx="38.0" fill="#1B4F72" stroke="#123A56" stroke-width="2"/>
-<text x="934.0" y="465.6" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" text-anchor="middle" fill="white">Debug</text>
-<text x="934.0" y="486.2" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" text-anchor="middle" fill="#DCE9F3">ranked hypotheses</text>
+<text x="934.0" y="466.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="20" font-weight="700" text-anchor="middle" fill="white">Debug</text>
+<text x="934.0" y="489.9" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="400" text-anchor="middle" fill="#DCE9F3">ranked hypotheses</text>
 <rect x="1082" y="430" width="220" height="76" rx="38.0" fill="#1B4F72" stroke="#123A56" stroke-width="2"/>
-<text x="1192.0" y="465.6" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" text-anchor="middle" fill="white">Formal</text>
-<text x="1192.0" y="486.2" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" text-anchor="middle" fill="#DCE9F3">prove, reject vacuous</text>
+<text x="1192.0" y="466.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="20" font-weight="700" text-anchor="middle" fill="white">Formal</text>
+<text x="1192.0" y="489.9" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="400" text-anchor="middle" fill="#DCE9F3">prove, reject vacuous</text>
 <rect x="1340" y="430" width="220" height="76" rx="38.0" fill="#1B4F72" stroke="#123A56" stroke-width="2"/>
-<text x="1450.0" y="465.6" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" text-anchor="middle" fill="white">Reviewer</text>
-<text x="1450.0" y="486.2" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" text-anchor="middle" fill="#DCE9F3">mutants, held-out</text>
+<text x="1450.0" y="466.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="20" font-weight="700" text-anchor="middle" fill="white">Reviewer</text>
+<text x="1450.0" y="489.9" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="400" text-anchor="middle" fill="#DCE9F3">mutants, held-out</text>
 <path d="M790.0,351 L160.0,430" fill="none" stroke="#7FA3C0" stroke-width="2.2" marker-end="url(#ah)"/>
 <path d="M790.0,351 L418.0,430" fill="none" stroke="#7FA3C0" stroke-width="2.2" marker-end="url(#ah)"/>
 <path d="M790.0,351 L676.0,430" fill="none" stroke="#7FA3C0" stroke-width="2.2" marker-end="url(#ah)"/>
@@ -54,50 +54,49 @@
 <path d="M790.0,351 L1192.0,430" fill="none" stroke="#7FA3C0" stroke-width="2.2" marker-end="url(#ah)"/>
 <path d="M790.0,351 L1450.0,430" fill="none" stroke="#7FA3C0" stroke-width="2.2" marker-end="url(#ah)"/>
 <path d="M1095.0,600 L1190,640.0 L1095.0,680 L1000,640.0 Z" fill="#FBF1DC" stroke="#B7791F" stroke-width="2.5"/>
-<text x="1095.0" y="636.4" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="700" text-anchor="middle" fill="#6B4A0E">Gate 2</text>
-<text x="1095.0" y="652.7" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="700" text-anchor="middle" fill="#6B4A0E">oracle approval</text>
+<text x="1095.0" y="635.6" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" text-anchor="middle" fill="#6B4A0E">Gate 2</text>
+<text x="1095.0" y="655.6" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" text-anchor="middle" fill="#6B4A0E">oracle approval</text>
 <path d="M418.0,506 Q876.5,553.0 1095.0,600" fill="none" stroke="#7FA3C0" stroke-width="2.2" marker-end="url(#ah)"/>
 <path d="M676.0,506 Q945.5,553.0 1095.0,600" fill="none" stroke="#7FA3C0" stroke-width="2.2" marker-end="url(#ah)"/>
 <path d="M1192.0,506 L1095.0,600" fill="none" stroke="#5B3E8E" stroke-width="2.2" stroke-dasharray="7 5" marker-end="url(#ahj)"/>
-<text x="1143.5" y="549.2" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" text-anchor="middle" fill="#5B3E8E">proven, refuted, vacuous</text>
+<text x="1143.5" y="550.2" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="400" text-anchor="middle" fill="#5B3E8E">proven, refuted, vacuous</text>
 <rect x="20" y="700" width="1560" height="130" rx="12" fill="none" stroke="#7FA3C0" stroke-width="1.5" stroke-dasharray="6 5"/>
-<text x="32" y="720.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="700" text-anchor="start" fill="#7FA3C0">Tool layer, sandboxed</text>
+<text x="32" y="722.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" text-anchor="start" fill="#7FA3C0">Tool layer, sandboxed</text>
 <rect x="50" y="740" width="220" height="64" rx="6" fill="white" stroke="#1B4F72" stroke-width="2"/>
-<text x="160.0" y="777.2" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="600" text-anchor="middle" fill="#1C1C1C">Simulator</text>
+<text x="160.0" y="778.6" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="600" text-anchor="middle" fill="#1C1C1C">Simulator</text>
 <rect x="308" y="740" width="220" height="64" rx="6" fill="white" stroke="#1B4F72" stroke-width="2"/>
-<text x="418.0" y="777.2" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="600" text-anchor="middle" fill="#1C1C1C">Coverage DB</text>
+<text x="418.0" y="778.6" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="600" text-anchor="middle" fill="#1C1C1C">Coverage DB</text>
 <rect x="566" y="740" width="220" height="64" rx="6" fill="white" stroke="#1B4F72" stroke-width="2"/>
-<text x="676.0" y="777.2" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="600" text-anchor="middle" fill="#1C1C1C">Waveform</text>
+<text x="676.0" y="778.6" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="600" text-anchor="middle" fill="#1C1C1C">Waveform</text>
 <rect x="824" y="740" width="220" height="64" rx="6" fill="white" stroke="#1B4F72" stroke-width="2"/>
-<text x="934.0" y="777.2" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="600" text-anchor="middle" fill="#1C1C1C">Formal engine</text>
+<text x="934.0" y="778.6" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="600" text-anchor="middle" fill="#1C1C1C">Formal engine</text>
 <rect x="1082" y="740" width="220" height="64" rx="6" fill="white" stroke="#1B4F72" stroke-width="2"/>
-<text x="1192.0" y="777.2" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="600" text-anchor="middle" fill="#1C1C1C">Lint</text>
+<text x="1192.0" y="778.6" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="600" text-anchor="middle" fill="#1C1C1C">Lint</text>
 <rect x="1340" y="740" width="220" height="64" rx="6" fill="white" stroke="#1B4F72" stroke-width="2"/>
-<text x="1450.0" y="769.2" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="600" text-anchor="middle" fill="#1C1C1C">Repository</text>
-<text x="1450.0" y="790.2" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="400" text-anchor="middle" fill="#7FA3C0">worktree per agent</text>
+<text x="1450.0" y="769.6" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="600" text-anchor="middle" fill="#1C1C1C">Repository</text>
+<text x="1450.0" y="793.9" font-family="'JetBrains Mono', Menlo, monospace" font-size="14" font-weight="400" text-anchor="middle" fill="#7FA3C0">worktree per agent</text>
 <path d="M160.0,506 L160.0,740" fill="none" stroke="#7FA3C0" stroke-width="2.2" marker-end="url(#ah)"/>
 <path d="M160.0,506 Q876.0,563.0 1192.0,740" fill="none" stroke="#7FA3C0" stroke-width="2.2" marker-end="url(#ah)"/>
 <path d="M270,772.0 L308,772.0" fill="none" stroke="#7FA3C0" stroke-width="2.2" marker-end="url(#ah)"/>
 <path d="M418.0,740 L676.0,506" fill="none" stroke="#5B3E8E" stroke-width="2.2" stroke-dasharray="7 5" marker-end="url(#ahj)"/>
 <path d="M676.0,430 Q418.0,360.0 160.0,430" fill="none" stroke="#5B3E8E" stroke-width="2.2" stroke-dasharray="7 5" marker-end="url(#ahj)"/>
-<text x="418.0" y="369.2" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" text-anchor="middle" fill="#5B3E8E">gap report</text>
+<text x="418.0" y="370.2" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="400" text-anchor="middle" fill="#5B3E8E">gap report</text>
 <path d="M160.0,740 Q647.0,623.0 934.0,506" fill="none" stroke="#5B3E8E" stroke-width="2.2" stroke-dasharray="7 5" marker-end="url(#ahj)"/>
-<text x="597.0" y="619.2" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" text-anchor="middle" fill="#5B3E8E">failures</text>
+<text x="597.0" y="620.2" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="400" text-anchor="middle" fill="#5B3E8E">failures</text>
 <path d="M934.0,506 L676.0,740" fill="none" stroke="#7FA3C0" stroke-width="2.2" marker-end="url(#ah)"/>
 <path d="M1192.0,506 L934.0,740" fill="none" stroke="#7FA3C0" stroke-width="2.2" marker-end="url(#ah)"/>
 <path d="M1450.0,506 L1450.0,740" fill="none" stroke="#7FA3C0" stroke-width="2.2" marker-end="url(#ah)"/>
 <path d="M1450.0,506 Q505.0,743.0 160.0,740" fill="none" stroke="#7FA3C0" stroke-width="2.2" marker-end="url(#ah)"/>
 <path d="M1440.0,870 L1540,912.0 L1440.0,954 L1340,912.0 Z" fill="#FBF1DC" stroke="#B7791F" stroke-width="2.5"/>
-<text x="1440.0" y="908.4" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="700" text-anchor="middle" fill="#6B4A0E">Gate 3</text>
-<text x="1440.0" y="924.7" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="700" text-anchor="middle" fill="#6B4A0E">sign-off</text>
+<text x="1440.0" y="907.6" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" text-anchor="middle" fill="#6B4A0E">Gate 3</text>
+<text x="1440.0" y="927.6" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" text-anchor="middle" fill="#6B4A0E">sign-off</text>
 <path d="M1450.0,506 Q1535.0,728.0 1440.0,870" fill="none" stroke="#5B3E8E" stroke-width="2.2" stroke-dasharray="7 5" marker-end="url(#ahj)"/>
-<text x="1490.0" y="642.2" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" text-anchor="middle" fill="#5B3E8E">mutation kill rate</text>
+<text x="1490.0" y="643.2" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="400" text-anchor="middle" fill="#5B3E8E">mutation kill rate</text>
 <path d="M1044,468.0 Q1392.0,900.0 1340,912.0" fill="none" stroke="#5B3E8E" stroke-width="2.2" stroke-dasharray="7 5" marker-end="url(#ahj)"/>
-<text x="1292.0" y="859.2" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" text-anchor="middle" fill="#5B3E8E">ranked hypotheses</text>
+<text x="1292.0" y="860.2" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="400" text-anchor="middle" fill="#5B3E8E">ranked hypotheses</text>
 <path d="M1095.0,680 Q1277.5,916.0 1340,912.0" fill="none" stroke="#5B3E8E" stroke-width="2.2" stroke-dasharray="7 5" marker-end="url(#ahj)"/>
-<text x="1247.5" y="900.2" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" text-anchor="middle" fill="#5B3E8E">coverage against plan</text>
-<rect x="1570" y="700" width="0" height="0"/>
-<path d="M270,468 H310" stroke="#B7791F" stroke-width="4"/><text x="290" y="500" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="700" fill="#6B4A0E" text-anchor="middle">no write</text>
+<text x="1247.5" y="901.2" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="400" text-anchor="middle" fill="#5B3E8E">coverage against plan</text>
+<path d="M270,468 H310" stroke="#B7791F" stroke-width="4"/><text x="290" y="500" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="700" fill="#6B4A0E" text-anchor="middle">no write</text>
 <rect x="40" y="420" width="240" height="96" rx="10" fill="#2E7D32" fill-opacity="0.10" stroke="#2E7D32" stroke-width="3"/>
 <rect x="810" y="420" width="248" height="96" rx="10" fill="#2E7D32" fill-opacity="0.10" stroke="#2E7D32" stroke-width="3"/>
 <rect x="1068" y="420" width="248" height="96" rx="10" fill="#2E7D32" fill-opacity="0.10" stroke="#2E7D32" stroke-width="3"/>
@@ -106,18 +105,18 @@
 <rect x="542" y="420" width="248" height="96" rx="10" fill="#B7791F" fill-opacity="0.10" stroke="#B7791F" stroke-width="3"/>
 <rect x="640" y="170" width="300" height="96" rx="10" fill="#B7791F" fill-opacity="0.10" stroke="#B7791F" stroke-width="3"/>
 <rect x="1320" y="856" width="240" height="112" rx="10" fill="#B7791F" fill-opacity="0.10" stroke="#B7791F" stroke-width="3"/>
-<text x="1200" y="200.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="700" text-anchor="start" fill="#2E7D32">Delegable today: the toolchain is the judge</text>
-<text x="1200" y="226.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="700" text-anchor="start" fill="#B7791F">Not yet: the output would become the judge</text>
+<text x="1150" y="200.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="18" font-weight="700" text-anchor="start" fill="#2E7D32">Delegable today: the toolchain is the judge</text>
+<text x="1150" y="228.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="18" font-weight="700" text-anchor="start" fill="#B7791F">Not yet: the output would become the judge</text>
 <rect x="60" y="970" width="44" height="22" rx="11" fill="#1B4F72"/>
-<text x="112" y="986.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" text-anchor="start" fill="#1C1C1C">model</text>
+<text x="112" y="986.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="400" text-anchor="start" fill="#1C1C1C">model</text>
 <rect x="180" y="970" width="44" height="22" rx="4" fill="white" stroke="#1B4F72" stroke-width="1.5"/>
-<text x="232" y="986.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" text-anchor="start" fill="#1C1C1C">tool</text>
+<text x="232" y="986.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="400" text-anchor="start" fill="#1C1C1C">tool</text>
 <path d="M290,975 A22,5 0 0 1 334,975 V987 A22,5 0 0 1 290,987 Z" fill="#F4F6F8" stroke="#1B4F72" stroke-width="1.5"/>
-<text x="342" y="986.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" text-anchor="start" fill="#1C1C1C">evidence store</text>
+<text x="342" y="986.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="400" text-anchor="start" fill="#1C1C1C">evidence store</text>
 <path d="M462,970 L484,981 L462,992 L440,981 Z" fill="#FBF1DC" stroke="#B7791F" stroke-width="1.5"/>
-<text x="492" y="986.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" text-anchor="start" fill="#1C1C1C">human gate</text>
+<text x="492" y="986.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="400" text-anchor="start" fill="#1C1C1C">human gate</text>
 <path d="M580,981 H620" stroke="#7FA3C0" stroke-width="2" marker-end="url(#ah)"/>
-<text x="628" y="986.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" text-anchor="start" fill="#1C1C1C">data</text>
+<text x="628" y="986.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="400" text-anchor="start" fill="#1C1C1C">data</text>
 <path d="M670,981 H710" stroke="#5B3E8E" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#ahj)"/>
-<text x="718" y="986.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" text-anchor="start" fill="#1C1C1C">judgment</text>
+<text x="718" y="986.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="400" text-anchor="start" fill="#1C1C1C">judgment</text>
 </svg>
