@@ -21,7 +21,7 @@ States: planned → outlined → drafting → examples-verified → reviewed →
 | F | Building and Running the Examples (`appendices/appF-building-examples.qmd`) | examples-verified (4 run, 2 skipped: UVM needs commercial sim, UVM-SystemC needs library) | ~2,600 | 2026-09-06 |
 | 1 | What Is Design Verification? (`chapters/ch01-what-is-dv.qmd`) | **reviewed** (gate 2 approved by author 2026-09-06 after subagent review + revision) | ~5,400 | 2026-09-06 |
 | 2 | Verification Planning (`chapters/ch02-verification-planning.qmd`) | **reviewed** (gate 2 approved by author 2026-09-06) | ~5,500 | 2026-09-06 |
-| 34 | Generative AI and Agentic DV (`chapters/ch34-generative-ai-agentic-dv.qmd`) | drafted (~7,400 words, 11 figures, 41 citations to concept primaries); independent review in progress | ~7,400 | 2026-09-06 |
+| 34 | Generative AI and Agentic DV (`chapters/ch34-generative-ai-agentic-dv.qmd`) | drafted (~7,400 words, 11 figures re-laid out for print, 41 citations); independent review in progress (2nd run; 1st hit usage limit unsaved) | ~7,400 | 2026-09-06 |
 | — | chapters 3–33, 35 + appendices A–E, G, H | planned | 0 | 2026-09-05 |
 
 Edition 1 target: Parts I–III + appendices A–D, F, G. See design doc §4.
@@ -65,6 +65,7 @@ See `research/README.md` for the index. Active notes:
 - Bare `ls` in this shell hangs (aliased to an interactive tool); use `/bin/ls`.
 
 ## Session log
+- 2026-09-07 — Ch.34 figures re-laid out: page-width figures ≤1000 px wide (type ≥7 pt in print), flow/delegation/swim-lane placed as sideways full-page figures (`rotating` package). PDF 100 pages. Reviewer relaunched (first run lost to a usage limit). Author requested: exhaustive AI-concept inventory for Ch.34 and an MCP/automation tooling catalogue for RTL, DV, debug, AST-based tools and SW-engineering analogues; two landscape-research subagents dispatched.
 - 2026-09-06 — Ch.34 drafted as a concept chapter: 11 sections + worked example on paper (walk table + swim-lane), 11 block diagrams via `figures/blocks.py` + `gen_ch34_figures.py`, 43 concept-primary bib entries from `research/ch34-concept-sources.md`. PDF 94 pages. Review subagent dispatched.
 - 2026-09-06 — Gate 1: Ch.34 outline rev. 2 approved. Research subagent dispatched for primary sources of the general concepts (no vendor blogs). Starting the block-diagram library.
 - 2026-09-06 — Author asked to deep-dive the generative-AI chapter next. First Ch.34 outline (code-heavy agent loops) rejected by author: they want mainly theory and block diagrams, concepts related to DV and to SW-development practice, original rather than a survey of DV articles. Outline revision 2 written on that basis (11 sections, 11 planned figures, worked example on paper, no runnable code; model choice deferred). Gate 2: Ch.2 approved as reviewed. Order: Ch.34 before Ch.3.
