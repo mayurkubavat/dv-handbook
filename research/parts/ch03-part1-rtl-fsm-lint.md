@@ -1,11 +1,10 @@
 # Chapter 3 research, part 1: RTL and synthesis, state machines, lint and X
 
-Note on source access: `sunburst-design.com/papers/` now issues a 301 to
-`paradigm-works.com`, whose library index requires registration and exposes no
-PDF links. The Cummings/Mills papers below were therefore read from Internet
-Archive captures of the original `sunburst-design.com` URLs; both the canonical
-URL and the capture timestamp are given. IEEE 1800 and IEEE 1364.1 clause text
-is paywalled and was **not** read directly — see §6.
+Source access: `sunburst-design.com/papers/` now 301-redirects to
+`paradigm-works.com`, whose index requires registration and exposes no PDF
+links. The Cummings/Mills papers were therefore read from Internet Archive
+captures of the original URLs; canonical URL and capture date are both given.
+IEEE 1800 and IEEE 1364.1 clause text is paywalled and was **not** read — §6.
 
 ---
 
@@ -175,17 +174,17 @@ current state before the `unique case` **[industry paper]**
 
 ### 2.2 Unreachable, illegal, deadlock: the verifier's reading
 
-Cummings 1998 names the three default next-state assignments and, crucially,
-when each is wrong **[primary]**: "(1) `next` is set to all x's, (2) `next` is
-set to a predetermined recovery state such as IDLE, or (3) `next` is just set to
-the value of the state register." The `x` default is a *debug* device — "pre-
+Cummings 1998 names the three default next-state assignments and when each is
+wrong **[primary]**: "(1) `next` is set to all x's, (2) `next` is set to a
+predetermined recovery state such as IDLE, or (3) `next` is just set to the
+value of the state register." The `x` default is a *debug* device — "pre-
 synthesis simulation models will cause the state machine outputs to go unknown
 if not all state transitions have been explicitly assigned" — but "the x's will
 be treated as 'don't cares' by the synthesis tool", i.e. it deliberately creates
-the §1.3 mismatch. He then names the domains where that is unacceptable:
-"Examples include: satellite applications, medical applications, designs that
-use the FSM flip-flops as part of a diagnostic scan chain and designs that are
-equivalence checked with formal verification tools."
+the §1.3 mismatch. He names the domains where that is unacceptable: "Examples
+include: satellite applications, medical applications, designs that use the FSM
+flip-flops as part of a diagnostic scan chain and designs that are equivalence
+checked with formal verification tools."
 
 The lowRISC guide's example marks the `default:` arm "may be empty or used to
 catch parasitic states", assigning `StIdle` **[industry paper]** (same URL).
@@ -215,10 +214,10 @@ An open-source tool implements exactly this pair: "With `--coverage` or
 report both state coverage (`fsm_state`) and transition coverage (`fsm_arc`)"
 **[vendor]**
 ([Verilator, Simulating, accessed 2026-09-07](https://verilator.org/guide/latest/simulating.html)).
-"Conservative subset" is the honest caveat, and it is enforced by a warning:
-`FSMMULTI` "Warns that the same always block contains multiple enum-typed case
-statements that look like FSM candidates ... Verilator's FSM coverage
-instruments only the first such candidate in source order" **[vendor]**
+"Conservative subset" is the caveat, enforced by a warning: `FSMMULTI` "Warns
+that the same always block contains multiple enum-typed case statements that
+look like FSM candidates ... Verilator's FSM coverage instruments only the first
+such candidate in source order" **[vendor]**
 ([Verilator warnings](https://verilator.org/guide/latest/warnings.html)).
 
 That formal, not simulation, is the tool for unreachability is stated plainly in
@@ -227,16 +226,13 @@ unreachable coverage objects automatically from simulation ... Instead of
 manually reviewing coverage reports to find unreachable code, we use VCS UNR to
 generate a UNR exclusion file" **[industry paper]** (OpenTitan DV methodology,
 same URL). The underlying algorithm is symbolic FSM reachability analysis
-**[research]** ([Coudert, Berthet & Madre, *Verification of synchronous
-sequential machines based on symbolic execution*, LNCS, Springer,
-1990](https://doi.org/10.1007/3-540-52148-8_30)), and the temporal-logic frame
-in which deadlock and liveness properties are expressed is model checking
-**[research]** ([Clarke & Emerson, *Design and synthesis of synchronization
-skeletons using branching time temporal logic*, LNCS 131,
-Springer-Verlag](https://doi.org/10.1007/BFb0025774)). For coverage metrics as a
-research subject, the standard survey is **[research]** ([Tasiran & Keutzer,
-*Coverage metrics for functional validation of hardware designs*, IEEE Design &
-Test of Computers, 2001](https://doi.org/10.1109/54.936247)).
+**[research]** ([Coudert, Berthet & Madre, LNCS, Springer,
+1990](https://doi.org/10.1007/3-540-52148-8_30)); the frame for deadlock and
+liveness properties is model checking **[research]** ([Clarke & Emerson, LNCS
+131, Springer-Verlag](https://doi.org/10.1007/BFb0025774)). For coverage metrics
+as a research subject, the standard survey is **[research]** ([Tasiran &
+Keutzer, IEEE Design & Test of Computers,
+2001](https://doi.org/10.1109/54.936247)).
 
 ## 3. Lint and X
 
@@ -271,10 +267,10 @@ warnings page):
 | `UNOPTFLAT` | "Warns that due to some construct, optimization of the specified signal is disabled ... Often UNOPTFLAT is caused by logic that isn't truly circular as viewed by synthesis, which analyzes interconnection per bit, but is circular to the IEEE event model which analyzes per-signal." |
 | `SYNCASYNCNET` | "Warns that the specified net is used in at least two different always statements with posedge/negedges ... Mixing sync and async resets is usually a mistake. Disabled by default as this is a code-style warning; it will simulate correctly." |
 
-Two of these entries cite Cummings' SNUG papers by URL in Verilator's own
-documentation (`CASEX` cites the `full_case parallel_case` paper; `COMBDLY`
-cites the nonblocking-assignments paper), which is a useful line for the chapter
-on how the primary literature became tool policy **[vendor]**.
+Two of these entries cite Cummings' SNUG papers by URL inside Verilator's own
+documentation (`CASEX` → the `full_case parallel_case` paper; `COMBDLY` → the
+nonblocking-assignments paper): a useful line on how the primary literature
+became tool policy **[vendor]**.
 
 ### 3.2 Verible rules
 
@@ -331,26 +327,25 @@ connectivity, syntax-tree pattern matching. The README also states the rules
 **Neither tool claims CDC checking.** Verible: no rule in the 61-rule list
 mentions clock domain crossing, synchronizers or metastability (grep over
 `lint.md` returns zero matches) **[vendor]**. Verilator once had a CDC option
-and removed it: `CDCRSTLOGIC` is documented as "Historical, never issued since
-version 5.008. Warned with a no longer supported clock domain crossing option
-that asynchronous flop reset terms came from other than primary inputs or
-flopped outputs, creating the potential for reset glitches" **[vendor]**; the
-sibling `CLKDATA` is likewise "Historical, never issued since version 5.000."
-`MULTIDRIVEN` and `SYNCASYNCNET` *mention* clock domain crossing as a possible
-consequence of a local pattern, but they are single-block structural checks, not
-domain analysis — and `SYNCASYNCNET` is off by default.
+and removed it: `CDCRSTLOGIC` is "Historical, never issued since version 5.008.
+Warned with a no longer supported clock domain crossing option that asynchronous
+flop reset terms came from other than primary inputs or flopped outputs,
+creating the potential for reset glitches" **[vendor]**; the sibling `CLKDATA`
+is likewise "Historical, never issued since version 5.000." `MULTIDRIVEN` and
+`SYNCASYNCNET` *mention* clock domain crossing as a possible consequence of a
+local pattern, but they are single-block structural checks, not domain analysis
+— and `SYNCASYNCNET` is off by default.
 
-The reason a linter cannot close this gap is physical rather than architectural:
-"In a multi-clock design, metastability cannot be avoided but the detrimental
-effects of metastability can be neutralized" **[primary]**
+The gap is physical, not architectural: "In a multi-clock design, metastability
+cannot be avoided but the detrimental effects of metastability can be
+neutralized" **[primary]**
 ([Cummings, *Clock Domain Crossing (CDC) Design & Verification Techniques Using
 SystemVerilog*, SNUG Boston 2008](http://www.sunburst-design.com/papers/CummingsSNUG2008Boston_CDC.pdf);
 capture 2009-08-24), quoting Dally and Poulton: "When sampling a changing data
 signal with a clock ... the order of the events determines the outcome ... the
 decision process can take longer than the time allotted, and a synchronization
-failure occurs." Cummings assumes dedicated tooling and still warns it can be
-misconfigured: "there is always the danger that the CDC analysis tool might not
-be setup correctly."
+failure occurs." Cummings assumes dedicated tooling and still warns that "there
+is always the danger that the CDC analysis tool might not be setup correctly."
 
 ### 3.4 X-propagation, X-optimism and X-pessimism
 
@@ -361,30 +356,28 @@ His framing sentence: "The semantics of X in Verilog RTL are extremely dangerous
 as RTL bugs can be masked, allowing RTL simulations to incorrectly pass where
 netlist simulations can fail."
 
-He separates the meanings X carries in different tools — synthesis: don't-care;
+He separates the meanings X carries per tool — synthesis: don't-care;
 simulation: unknown; `casex`/`casez`: wildcard; equivalence checking: 2-state
 consistency or strict 2-state equality; formal property checking: 2-state
-sequential (paper §2). The two effects, verbatim:
+sequential (§2). The two effects, verbatim:
 
 > 1. X-Pessimism: ambiguous results lead to more X-assignments than are really
 >    necessary
 > 2. X-Optimism: interpretation of X will take just one if/case branch when many
 >    should be considered
 
-His pessimism example is `assign b = a & ~a;`, which is identically zero in
-hardware but yields `X` in simulation because "the unary negation operator
-propagates the X, throwing away information that the new result should be a
-symbolic '~X'." His optimism example is a clock-enable: "According to the
-Verilog LRM the second branch is only executed if `CountEnable` is `1'b1`, so no
-update occurs when `CountEnable` is X." He also notes optimism "can also occur
-in a case default that terminates X's with a 2-state (i.e. 0 or 1) assignment",
-and that the effects corrupt code coverage (§4.3). His ideal semantics — "can be
-either 0 or 1" — is what formal tools use, and he attributes earlier description
-of the two effects to Lionel Bening.
-
-Turpin's remedies include enabling X-propagation modes, replacing X-insertion
-with assertions, and "Automatic formal proofs of unreachable (deadcode)
-assignments" (§6.5) — which ties X handling directly back to §2.3.
+His pessimism example is `assign b = a & ~a;`, identically zero in hardware but
+`X` in simulation because "the unary negation operator propagates the X,
+throwing away information that the new result should be a symbolic '~X'." His
+optimism example is a clock-enable: "According to the Verilog LRM the second
+branch is only executed if `CountEnable` is `1'b1`, so no update occurs when
+`CountEnable` is X." Optimism "can also occur in a case default that terminates
+X's with a 2-state (i.e. 0 or 1) assignment", and the effects corrupt code
+coverage (§4.3). His ideal semantics — "can be either 0 or 1" — is what formal
+tools use; he attributes earlier description of the two effects to Lionel
+Bening. His remedies include X-propagation modes, replacing X-insertion with
+assertions, and "Automatic formal proofs of unreachable (deadcode) assignments"
+(§6.5), tying X handling back to §2.3.
 
 The two-state counterexample matters for the chapter's tooling: "Verilator is
 mostly a two-state simulator, not a four-state simulator"; assigning X "will
@@ -393,7 +386,7 @@ runtime randomization; thus, if the value is used, the random value should cause
 downstream errors"; and "An `===` comparison to X will always be false"
 **[vendor]** ([Verilator, Language Limitations, accessed 2026-09-07](https://verilator.org/guide/latest/languages.html)).
 Randomized two-state initialization is a *different* technique from X
-propagation, and a chapter that runs its examples on Verilator must say so.
+propagation, and a chapter running its examples on Verilator must say so.
 
 ## 4. Commonly repeated but unsourced claims
 
@@ -438,34 +431,31 @@ propagation, and a chapter that runs its examples on Verilator must say so.
 ## 6. Confidence notes and gaps
 
 **High confidence.** Everything sourced to Verilator's and Verible's own
-documentation and repository (§3.1–§3.3, §2.3 coverage flags) was read directly
-at the URLs given, on 2026-09-07; the rule and warning counts were counted
-mechanically. Everything sourced to the Cummings/Mills/Turpin/Golson papers was
-read from the PDFs and quoted verbatim.
+documentation and repository (§2.3, §3.1–§3.3) was read at the URLs given on
+2026-09-07, and the rule and warning counts were counted mechanically.
+Everything sourced to the Cummings/Mills/Turpin/Golson papers was read from the
+PDFs and quoted verbatim.
 
 **Gaps the chapter must not assert without more work:**
 
-1. **IEEE 1800 clause language.** I could not read IEEE 1800-2017 or 1800-2023;
-   the standard is paywalled and no legitimate full text was reachable. The
-   chapter must not quote or paraphrase a clause number for `always_comb`,
-   `always_latch` or `always_ff`, and must not state "the LRM requires tools to
-   report X" until the author checks the actual clause. What *is* safely
-   sourceable today is Cummings 2016's characterization of the semantics and of
-   the optional-warning permission in 1800-2012. This is the single biggest gap.
-2. **IEEE 1364.1-2002.** Same problem, plus the IEEE record page 404s. The
-   chapter can say a Verilog RTL synthesis standard exists and name it, citing
-   Cummings 2016; it should not describe its contents.
-3. **Safety-critical illegal-state guidance.** ISO 26262 (all parts) and RTCA
-   DO-254 are paywalled and were not read. The chapter has good *industry*
-   sourcing for hardened FSMs (OpenTitan sparse encoding and Hamming distance;
-   Cummings 1998 on satellite/medical) but no normative-standard sourcing. Do
-   not write "ISO 26262 requires…".
+1. **IEEE 1800 clause language** — the biggest gap. IEEE 1800-2017/2023 is
+   paywalled and no legitimate full text was reachable. Do not quote or
+   paraphrase a clause number for `always_comb`, `always_latch` or `always_ff`,
+   and do not write "the LRM requires tools to report X" until the author checks
+   a copy. Safely sourceable today: Cummings 2016 on the semantics and on the
+   optional-warning permission in 1800-2012.
+2. **IEEE 1364.1-2002.** Same problem, and the IEEE record page 404s. Name the
+   standard (citing Cummings 2016); do not describe its contents.
+3. **Safety-critical illegal-state guidance.** ISO 26262 and RTCA DO-254 are
+   paywalled and were not read. The chapter has good *industry* sourcing
+   (OpenTitan sparse encoding and Hamming distance; Cummings 1998 on
+   satellite/medical) but no normative sourcing. Do not write "ISO 26262
+   requires…".
 4. **Verible's style-guide lineage.** Asserted everywhere, stated nowhere in the
    repository. Phrase as correspondence, not implementation.
-5. **Currency of the "simulators don't warn" claim.** Cummings' §8 finding is
-   from 2016. Ten years on it may be false for some simulators. If the chapter
-   uses it, date it explicitly.
-6. **Web search was unavailable for this note**, so source discovery was by
-   direct URL and archive index. There may be a better peer-reviewed source for
-   FSM state-space coverage than Tasiran & Keutzer 2001; that one is a survey
-   whose abstract I read via DOI metadata, not the full text.
+5. **Currency of "simulators don't warn."** Cummings' §8 finding is from 2016;
+   it may now be false for some simulators. Date it explicitly if used.
+6. **Web search was unavailable**, so discovery was by direct URL and archive
+   index. A better peer-reviewed source for FSM state-space coverage than
+   Tasiran & Keutzer 2001 may exist; only its DOI metadata was read, not the
+   full text.

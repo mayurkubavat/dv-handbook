@@ -9,8 +9,8 @@
 M1 — Repo scaffold: COMPLETE (2026-09-06). CI green on main (examples → PDF+HTML render → Pages deploy). Web edition live at https://mayurkubavat.github.io/dv-handbook (PDF at /Design-Verification-draft.pdf). Next: M2 = Chapter 1.
 
 ### Next three actions
-0. **Wait for research parts 1 and 2** (agents running). Part 3 is in. Do not `touch .claude/state/drafting` until all three land: the lock denies their writes to `research/`.
-1. Merge `research/parts/ch03-part{1,2,3}-*.md` into `research/ch03-digital-design-for-verifiers.md` (single header, renumbered sections, one unsourced-claims table, one confidence section); delete `research/parts/`; index it in `research/README.md`; add its BibTeX keys to `refs.bib`.
+0. **Wait for research part 2** (agent running, at §3.5 of 7). Parts 1 and 3 are in. Do not `touch .claude/state/drafting` until it lands: the lock denies its writes to `research/`.
+1. Merge `research/parts/ch03-part{1,2,3}-*.md` into `research/ch03-digital-design-for-verifiers.md` (single header, renumbered sections, one unsourced-claims table, one confidence section); delete `research/parts/`; index it in `research/README.md`. **The three parts suggest colliding keys for the same sources** (`lowrisc-verilogstyle`/`lowrisc2026style`, `ieee1800-2023`/`ieee2023sv`, `verilator-warnings`/`verilator2026manual`, `cummings2008cdc` in two parts), and `refs.bib` already holds `verilator-docs` and `opentitan-dv-methodology` — dedupe to one canonical key per source in a single pass before adding anything.
 2. Draft Ch.3: `touch .claude/state/drafting` FIRST (only after the research agents have finished, or the lock denies their writes), replace the eight outline intent lines with prose, splice the listings from `tools/dvh/` and `examples/ch03-digital-design/`, register the chapter in `_quarto.yml`, remove the `<!-- OUTLINE -->` line, build, then `rm .claude/state/drafting`.
 3. Dispatch a fresh-context review subagent for Ch.3, then take gate 2 to the author.
 
