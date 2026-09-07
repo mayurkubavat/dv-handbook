@@ -1,1 +1,3 @@
-verilator --lint-only -Wall: no warnings
+verilator --lint-only --timing --timescale 1ns/1ps -Wall 
+-Wwarn-SYNCASYNCNET -Wwarn-IMPERFECTSCH
+no warnings

@@ -4,8 +4,15 @@ netlist (see design.py).
 The walks follow a net backwards from a register's clock (or reset) pin to
 its source. A source is a top-level input port or a register output (a
 divided or generated clock). Buffers, inverters, gates and multiplexers are
-walked through and recorded, so a gated or muxed clock is reported with its
-gating logic rather than treated as a new domain.
+walked through and recorded.
+
+A clock walk has to tell a gate's clock input from its enable, or every
+gated register lands in a domain of its own and an ordinary synchronous path
+across a clock gate is reported as a crossing. It does that by first finding
+the primary clocks -- ports that drive some register's clock pin with no
+logic in between -- and then, at each gate, following only the inputs whose
+cone reaches one of them. The other inputs are gating control, and are
+recorded in `through` rather than in the domain name.
 """
 from __future__ import annotations
 
@@ -19,6 +26,13 @@ PASS_THROUGH = {"$not", "$and", "$or", "$xor", "$mux", "$pmux", "$logic_not",
                 "$logic_and", "$logic_or", "$_BUF_", "$_NOT_", "$_AND_",
                 "$_OR_", "$_MUX_", "$reduce_or", "$reduce_and", "$eq", "$ne"}
 
+# Latches are state elements, not combinational logic. Walking through one
+# would hide a crossing that lands on it, so both walks stop here instead.
+LATCH_TYPES = {"$dlatch", "$adlatch", "$dlatchsr", "$sr",
+               "$_DLATCH_P_", "$_DLATCH_N_", "$_SR_PP_", "$_SR_NN_"}
+
+MUX_TYPES = ("$mux", "$pmux", "$_MUX_")
+
 
 @dataclass
 class Source:
@@ -27,11 +41,35 @@ class Source:
     through: list = field(default_factory=list)   # cell types walked through
 
 
-def _walk_to_sources(mod: Module, bit, seen=None,
-                     any_comb=False) -> list[Source]:
+def primary_clocks(mod: Module) -> set:
+    """Ports that drive a register's clock pin with no logic in between.
+
+    These anchor the clock walk: at a gate or a multiplexer, an input whose
+    cone reaches one of these is carrying the clock, and the rest are
+    control."""
+    prim = set()
+    for _, cell in registers(mod):
+        bits = cell.conns.get("CLK", [])
+        if bits and isinstance(bits[0], int) and bits[0] in mod.port_of_bit:
+            prim.add(mod.port_of_bit[bits[0]])
+    return prim
+
+
+def _reaches(mod: Module, bit, roots, any_comb) -> bool:
+    """Does this net's cone reach one of the primary clocks?"""
+    return any(s.name in roots
+               for s in _walk_to_sources(mod, bit, set(), any_comb, None))
+
+
+def _walk_to_sources(mod: Module, bit, seen=None, any_comb=False,
+                     clock_roots=None) -> list[Source]:
     """All sources reachable backwards from `bit` through combinational logic.
-    With any_comb=True every non-register cell is walked through (data cones);
-    otherwise only the clock-tree pass-through set is (clock and reset nets)."""
+
+    With any_comb=True every combinational cell is walked (data cones);
+    otherwise only the clock-tree pass-through set is (clock and reset nets).
+    With clock_roots given, a gate or multiplexer follows only the inputs
+    whose cone reaches a primary clock, so a clock gate's enable does not
+    become part of the domain name."""
     seen = seen if seen is not None else set()
     if not isinstance(bit, int):
         return [Source(f"const {bit}", "constant")]
@@ -45,21 +83,40 @@ def _walk_to_sources(mod: Module, bit, seen=None,
         return [Source(mod.net(bit), "unknown")]
     cell = mod.cells[drv[0]]
     if cell.type in DFF_TYPES:
-        return [Source(mod.net(cell.conns["Q"][0]), "register")]
+        return [Source(mod.reg_of_bit.get(bit, mod.net(cell.conns["Q"][0])),
+                       "register")]
+    if cell.type in LATCH_TYPES:
+        return [Source(mod.net(bit), "latch")]
     combinational = (cell.type not in DFF_TYPES
+                     and cell.type not in LATCH_TYPES
                      and not cell.type.startswith("$mem"))
     if cell.type in PASS_THROUGH or (any_comb and combinational):
+        # A multiplexer's select is not a clock, so the clock walk skips it.
+        # A data cone must follow it: a foreign register steering a mux is a
+        # crossing like any other.
+        skip_select = not any_comb and cell.type in MUX_TYPES
+        ins = [(port, b) for port, bits in cell.conns.items()
+               if cell.dirs.get(port) == "input"
+               and not (skip_select and port == "S")
+               for b in bits]
+        control = []
+        if clock_roots:
+            carrying = [(p, b) for (p, b) in ins
+                        if _reaches(mod, b, clock_roots, any_comb)]
+            if carrying:        # else nothing here is a clock: keep them all
+                control = [mod.net(b) for (p, b) in ins
+                           if (p, b) not in carrying]
+                ins = carrying
         out = []
-        for port, bits in cell.conns.items():
-            if cell.dirs.get(port) == "input" and port not in ("S",):
-                for b in bits:
-                    for s in _walk_to_sources(mod, b, seen, any_comb):
-                        s.through = [cell.type] + s.through
-                        out.append(s)
-        # a mux's select is not a clock source, but note it
-        if cell.type in ("$mux", "$pmux", "$_MUX_"):
+        for port, b in ins:
+            for s in _walk_to_sources(mod, b, seen, any_comb, clock_roots):
+                s.through = [cell.type] + s.through
+                out.append(s)
+        if cell.type in MUX_TYPES:
             for s in out:
                 s.through = ["mux"] + s.through
+        for s in out:           # name the gating control we did not follow
+            s.through += [f"gated by {c}" for c in sorted(set(control))]
         return out
     return [Source(f"{mod.net(bit)} (driven by {cell.type})", "unknown")]
 
@@ -67,8 +124,9 @@ def _walk_to_sources(mod: Module, bit, seen=None,
 def clock_tree(mod: Module) -> dict:
     """Registers grouped by clock source; each register with its clock path."""
     regs = {}
+    prim = primary_clocks(mod)
     for name, cell in registers(mod):
-        srcs = _walk_to_sources(mod, cell.conns["CLK"][0])
+        srcs = _walk_to_sources(mod, cell.conns["CLK"][0], None, False, prim)
         roots = sorted({s.name for s in srcs})
         gated = any(s.through for s in srcs)
         regs[name] = {"clock_sources": roots, "gated_or_muxed": gated,
@@ -96,7 +154,10 @@ def reset_tree(mod: Module) -> dict:
         else:
             none.append(name)
             continue
-        srcs = _walk_to_sources(mod, cell.conns[pin][0])
+        prim = primary_clocks(mod)
+        srcs = []
+        for b in cell.conns[pin]:      # $dffsr's set/reset are per-bit vectors
+            srcs += _walk_to_sources(mod, b, None, False, prim)
         out[name] = {"kind": kind,
                      "active": "high" if str(pol).endswith("1") else "low",
                      "sources": sorted({s.name for s in srcs}),
@@ -109,10 +170,37 @@ def _data_cone_registers(mod: Module, cell) -> set[str]:
     found = set()
     for port in ("D", "EN"):
         for b in cell.conns.get(port, []):
-            for s in _walk_to_sources(mod, b, any_comb=True):
+            for s in _walk_to_sources(mod, b, None, True, None):
                 if s.kind == "register":
                     found.add(s.name)
     return found
+
+
+def _value_of(register_name: str) -> str:
+    """The declared value a register belongs to, without its bit index."""
+    return register_name.split("[")[0]
+
+
+def _flag_parallel_synchronizers(report: list) -> None:
+    """Demote a set of one-bit synchronizers carrying one multi-bit value.
+
+    Each chain is individually the right shape, which is why a purely
+    structural rule accepts them, and together they are the loss of data
+    that a multi-bit crossing must not be. The bits are resynchronized
+    independently, so they are not guaranteed to arrive in the same cycle.
+    """
+    groups = {}
+    for c in report:
+        if c["synchronized"]:
+            key = (_value_of(c["from"]), c["to_domain"])
+            groups.setdefault(key, []).append(c)
+    for (value, _), members in groups.items():
+        if len(members) > 1:
+            for c in members:
+                c["synchronized"] = False
+                c["reason"] = (f"{len(members)} parallel one-bit "
+                               f"synchronizers on {value}; the bits may "
+                               f"arrive in different cycles")
 
 
 def _feeds_directly(mod: Module, cell, source: str) -> bool:
@@ -121,7 +209,7 @@ def _feeds_directly(mod: Module, cell, source: str) -> bool:
     correct crossing structure starts with."""
     return any(s.kind == "register" and s.name == source and not s.through
                for b in cell.conns.get("D", [])
-               for s in _walk_to_sources(mod, b, any_comb=True))
+               for s in _walk_to_sources(mod, b, None, True, None))
 
 
 def crossings(mod: Module, tree: dict | None = None) -> dict:
@@ -137,7 +225,9 @@ def crossings(mod: Module, tree: dict | None = None) -> dict:
     for name, cell in by_name.items():
         mine = dom_of[name]
         for src in _data_cone_registers(mod, cell):
-            if dom_of.get(src, mine) == mine:
+            # An unresolvable clock is exactly what a verifier needs to see,
+            # so it gets its own domain name rather than the destination's.
+            if dom_of.get(src, "unresolved clock") == mine:
                 continue
             # direct connection (no logic) from src to this register's D?
             direct = _feeds_directly(mod, cell, src)
@@ -150,7 +240,9 @@ def crossings(mod: Module, tree: dict | None = None) -> dict:
             report.append({"to": name, "to_domain": mine, "from": src,
                            "from_domain": dom_of[src], "width": width,
                            "direct": direct, "second_stage": second_stage,
-                           "synchronized": synchronizer})
+                           "synchronized": synchronizer,
+                           "reason": "" if synchronizer else "no synchronizer"})
+    _flag_parallel_synchronizers(report)
     # collapse: a crossing that lands on a synchronizer's first stage is fine;
     # flag the rest
     flagged = [c for c in report if not c["synchronized"]]

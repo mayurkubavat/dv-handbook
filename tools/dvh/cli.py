@@ -35,7 +35,7 @@ def _report(tree, resets, xings, conn) -> str:
                     key=lambda c: (c["synchronized"], c["from"], c["to"])):
         mark = "ok  " if c["synchronized"] else "BUG "
         plural = "s" if c["width"] != 1 else ""
-        how = "synchronizer" if c["synchronized"] else "no synchronizer"
+        how = "synchronizer" if c["synchronized"] else c["reason"]
         lines.append(f"  {mark} {c['from']} ({c['from_domain']}) -> "
                      f"{c['to']} ({c['to_domain']}), "
                      f"{c['width']} bit{plural}, {how}")

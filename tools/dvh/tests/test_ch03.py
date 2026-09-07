@@ -44,7 +44,7 @@ def test_crossings_found_and_classified():
     assert sync[0]["from"] == "en_b" and sync[0]["width"] == 1
 
 
-def test_connection_graph_sees_parameterised_instance():
+def test_connection_graph_sees_parameterized_instance():
     mods = design.load_hier(TWO_CLOCK, "top")
     conn = graph.connections(mods, "top")
     assert set(conn["instances"]) == {"u_regs", "u_sync_en", "u_dp"}
@@ -105,3 +105,66 @@ def test_report_text_is_exactly_what_the_chapter_prints():
         "  ok   en_b (bclk) -> u_sync_en.meta (cclk), 1 bit, synchronizer",
         "instances: 3, connections: 15",
     ])
+
+
+# --------------------------------------------------------------------------
+# Limits the tools were once wrong about. Each of these designs defeated an
+# earlier version of the walks, so each keeps its own file under tests/rtl.
+# --------------------------------------------------------------------------
+FIXTURE = pathlib.Path(__file__).parent / "rtl"
+
+
+def test_clock_gate_does_not_create_a_domain():
+    """A gate's enable is control, not a clock source.
+
+    Treating it as a source puts the gated register in a domain of its own
+    and then reports the ordinary synchronous path into it as a crossing,
+    which would fail any real design that gates its clocks.
+    """
+    flat = design.load_flat([str(FIXTURE / "gated_clock.sv")], "gated_clock")
+    tree = clocks.clock_tree(flat)
+    assert list(tree["domains"]) == ["clk"]
+    assert sorted(tree["domains"]["clk"]) == ["q_free", "q_gated"]
+    assert "gated by en" in tree["registers"]["q_gated"]["through"]
+    assert clocks.crossings(flat, tree)["unsynchronized"] == []
+
+
+def test_crossing_through_a_mux_select_is_found():
+    """A foreign register steering a multiplexer is a control crossing.
+
+    The clock walk rightly ignores a select, because a select is not a
+    clock. A data cone must follow it, or this design reports as clean.
+    """
+    flat = design.load_flat([str(FIXTURE / "mux_select.sv")], "mux_select")
+    x = clocks.crossings(flat)
+    found = [(c["from"], c["to"]) for c in x["unsynchronized"]]
+    assert found == [("sel_b", "out")]
+
+
+def test_parallel_per_bit_synchronizers_are_rejected():
+    """Eight correct shapes are still a loss of data.
+
+    Each chain matches the synchronizer rule on its own, so a structural
+    test accepts all eight. The bits resolve independently, so the receiver
+    can see a value the sender never sent.
+    """
+    files = [str(FIXTURE / "per_bit_sync.sv")]
+    flat = design.load_flat(files, "per_bit_sync")
+    x = clocks.crossings(flat)
+    assert len(x["unsynchronized"]) == 8
+    assert all("parallel one-bit synchronizers" in c["reason"]
+               for c in x["unsynchronized"])
+
+
+def test_bit_blasted_registers_are_not_collapsed():
+    """Registers sharing a net must not overwrite each other by name.
+
+    Yosys emits this design's synchronizers as one-bit cells, several to a
+    net. Naming them all after the net would drop all but one, and the
+    reported domain sizes would be net counts rather than register counts.
+    """
+    files = [str(FIXTURE / "per_bit_sync.sv")]
+    flat = design.load_flat(files, "per_bit_sync")
+    names = [n for n, _ in design.registers(flat)]
+    assert len(names) == len(set(names))
+    assert len(names) == len(clocks.clock_tree(flat)["registers"])

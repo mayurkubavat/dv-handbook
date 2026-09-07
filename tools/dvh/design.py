@@ -47,7 +47,8 @@ class Module:
     netnames: dict       # net name -> {"bits": [...], "hide_name": 0/1}
     bit_names: dict = field(default_factory=dict)   # bit id -> best net name
     drivers: dict = field(default_factory=dict)    # bit id -> (cell, port)
-    port_of_bit: dict = field(default_factory=dict)  # bit id -> input port name
+    port_of_bit: dict = field(default_factory=dict)  # bit id -> input port
+    reg_of_bit: dict = field(default_factory=dict)   # Q bit -> register name
 
     def finish(self):
         for name, net in self.netnames.items():
@@ -101,6 +102,11 @@ def _parse(data: dict) -> dict:
                                 c.get("port_directions", {}))
         mod = Module(mname, m.get("ports", {}), cells, m.get("netnames", {}))
         mod.finish()
+        # One naming for registers, shared by every walk: a bit-blasted
+        # register must resolve to the same name registers() yields for it.
+        mod.reg_of_bit = {b: name for name, cell in registers(mod)
+                          for b in cell.conns.get("Q", [])
+                          if isinstance(b, int)}
         mods[mname] = mod
     return mods
 
@@ -116,9 +122,31 @@ def load_hier(files, top) -> dict:
 
 
 def registers(mod: Module):
-    """Yield (register name, Cell) for every flip-flop, named by its Q net."""
-    for cname, cell in mod.cells.items():
-        if cell.type in DFF_TYPES:
-            q = cell.conns.get("Q", [])
-            name = mod.net(q[0]) if q else cname
-            yield name, cell
+    """Yield (register name, Cell) for every flip-flop, named by its Q net.
+
+    Yosys may bit-blast one declared register into several one-bit cells
+    driving the same net. Naming them all after the net would collide, and a
+    caller building a dict would silently keep only the last, so a net with
+    more than one register on it has the bit position appended.
+    """
+    pos = {}                       # bit id -> its index within its own net
+    for net in mod.netnames.values():
+        for i, b in enumerate(net["bits"]):
+            if isinstance(b, int):
+                pos.setdefault(b, i)
+    cells = [(c, cell) for c, cell in mod.cells.items()
+             if cell.type in DFF_TYPES]
+    shared = {}
+    for cname, cell in cells:
+        q = cell.conns.get("Q", [])
+        shared[mod.net(q[0]) if q else cname] = \
+            shared.get(mod.net(q[0]) if q else cname, 0) + 1
+    used = set()
+    for cname, cell in cells:
+        q = cell.conns.get("Q", [])
+        base = mod.net(q[0]) if q else cname
+        name = base if shared[base] == 1 else f"{base}[{pos.get(q[0], 0)}]"
+        while name in used:        # last resort: never drop a register
+            name += "'"
+        used.add(name)
+        yield name, cell

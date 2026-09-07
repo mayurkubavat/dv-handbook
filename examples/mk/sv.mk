@@ -50,7 +50,8 @@ else
 	$(VERILATOR) --lint-only $(VERILATOR_FLAGS) \
 	    $(UVM_DEFINES) $(UVM_INCDIR) $(UVM_SOURCE) $(SOURCES) \
 	    --top-module $(TOP)
-	@echo "verilator --lint-only -Wall: no warnings"
+	@echo "verilator --lint-only $(VERILATOR_FLAGS)" | fold -sw 72
+	@echo "no warnings"
 endif
 
 # An example that is only a static check has no binary to build or run.
