@@ -4,7 +4,7 @@
 > Stable conventions live in `AGENTS.md`; this file holds the living state.
 
 ## Current milestone
-**M2 — Chapters 1–2.** Ch.1 REVIEWED and live. Ch.2 (Verification Planning): outline approved, drafting; research subagent running.
+**M2 — Chapters 1–2.** Ch.1 REVIEWED and live. Ch.2 (Verification Planning): drafted, reviewed, revised, pushed; awaiting gate 2.
 
 M1 — Repo scaffold: COMPLETE (2026-09-06). CI green on main (examples → PDF+HTML render → Pages deploy). Web edition live at https://mayurkubavat.github.io/dv-handbook (PDF at /Design-Verification-draft.pdf). Next: M2 = Chapter 1.
 
@@ -20,7 +20,7 @@ States: planned → outlined → drafting → examples-verified → reviewed →
 |---|---|---|---|---|
 | F | Building and Running the Examples (`appendices/appF-building-examples.qmd`) | examples-verified (4 run, 2 skipped: UVM needs commercial sim, UVM-SystemC needs library) | ~2,600 | 2026-09-06 |
 | 1 | What Is Design Verification? (`chapters/ch01-what-is-dv.qmd`) | **reviewed** (gate 2 approved by author 2026-09-06 after subagent review + revision) | ~5,400 | 2026-09-06 |
-| 2 | Verification Planning (`chapters/ch02-verification-planning.qmd`) | examples-verified; prose drafted (~5,500 words, traceability figure, 7 exercises); independent review in progress | ~5,500 | 2026-09-06 |
+| 2 | Verification Planning (`chapters/ch02-verification-planning.qmd`) | examples-verified; reviewed by subagent (`docs/reviews/ch02-review-2026-09-06.md`) and revised; **awaiting gate 2 (author review)** | ~5,500 | 2026-09-06 |
 | — | chapters 3–35 + appendices A–E, G, H | planned | 0 | 2026-09-05 |
 
 Edition 1 target: Parts I–III + appendices A–D, F, G. See design doc §4.
@@ -63,6 +63,7 @@ See `research/README.md` for the index. Active notes:
 - Bare `ls` in this shell hangs (aliased to an interactive tool); use `/bin/ls`.
 
 ## Session log
+- 2026-09-06 — Ch.2 second pass from review: report tool states renamed (tests pass / tests fail / unknown test / no test) with an evidence-only header line; prose no longer equates a passing test with closure; textbook/standards claims softened to the note's confidence; OpenTitan V2/V3 quoted directly; V2S acknowledged; Future Directions moved after the worked example; plan file folded to 80 cols, American spelling; figure matches the plan. Hook: `docs/reviews/` exempt from the mention check (evidence records). Pushed.
 - 2026-09-06 — Ch.2 research note delivered (2nd run; 15 bib entries) and indexed; chapter prose written with citations; `figures/ch02-traceability.svg`; 3 bib entries added (UART/HMAC testplans, EE Times); chapter registered; PDF 70 pages. Review subagent dispatched.
 - 2026-09-06 — Ch.2 examples: `examples/mk/python.mk` (lint = py_compile, run = python3 TOP), `fifo_plan.yaml` (12 items with stimulus/checking/coverage/closure), `plan_report.py` (reads `status.json`; treats EXPECT=fail examples as design failures; exits 1 while must-have items lack evidence), UART spec for exercises. Report: 3 passing / 4 failing / 5 no evidence. PyYAML added to dvbook env, CI and README.
 - 2026-09-06 — Gate 2: Ch.1 approved as reviewed. Gate 1: Ch.2 outline approved. Ch.2 drafting started with examples.
