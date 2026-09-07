@@ -1,20 +1,21 @@
 Verification plan report: fifo (revision 1)
-item      priority status       feature
+Evidence: test results only; coverage and closure not measured.
+item      priority state         feature
 ------------------------------------------------------------
-FIFO-001  must     passing      reset
-FIFO-002  must     passing      write
-FIFO-003  must     passing      read
-FIFO-004  must     failing      ordering
-FIFO-005  must     failing      full flag
-FIFO-006  must     failing      empty flag
-FIFO-007  must     no evidence  write when full
-FIFO-008  must     no evidence  read when empty
-FIFO-009  must     failing      simultaneous read and write
-FIFO-010  must     no evidence  no overflow
-FIFO-011  should   no evidence  parameterisation
-FIFO-012  should   no evidence  reset during traffic
+FIFO-001  must     tests pass    reset
+FIFO-002  must     tests pass    write
+FIFO-003  must     tests pass    read
+FIFO-004  must     tests fail    ordering
+FIFO-005  must     tests fail    full flag
+FIFO-006  must     tests fail    empty flag
+FIFO-007  must     no test       write when full
+FIFO-008  must     no test       read when empty
+FIFO-009  must     tests fail    simultaneous read and write
+FIFO-010  must     no test       no overflow
+FIFO-011  should   no test       parameterization
+FIFO-012  should   no test       reset during traffic
 ------------------------------------------------------------
-passing         3 of 12
-failing         4 of 12
-no evidence     5 of 12
-must-have items without passing evidence: FIFO-004, FIFO-005, FIFO-006, FIFO-007, FIFO-008, FIFO-009, FIFO-010
+tests pass       3 of 12
+tests fail       4 of 12
+no test          5 of 12
+must-have items without a passing test: FIFO-004, FIFO-005, FIFO-006, FIFO-007, FIFO-008, FIFO-009, FIFO-010

@@ -9,8 +9,8 @@ W, H = 1400, 400
 boxes = [("Specification", "requirement", "\"full shall be 1 when all\nDEPTH entries are occupied\""),
          ("Feature", "extracted", "full flag"),
          ("Plan item", "FIFO-005", "stimulus / checking /\ncoverage / closure"),
-         ("Tests and coverage", "named in the item", "sv-random\nfull_cg"),
-         ("Regression result", "joined by name", "failing")]
+         ("Tests and coverage", "named in the item", "sv-random, cocotb\ncoverage: prose intent"),
+         ("Regression result", "joined by name", "tests fail")]
 n=len(boxes); bw, bh, gap, x0, y0 = 232, 118, 56, 30, 110
 s=[f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {W} {H}" width="{W}" height="{H}" role="img" aria-label="Traceability chain from requirement to regression result">',
    f'<rect width="{W}" height="{H}" fill="white"/>']

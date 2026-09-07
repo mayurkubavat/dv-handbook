@@ -23,14 +23,14 @@
 <rect x="894" y="110" width="232" height="118" rx="8" fill="white" stroke="#1B4F72" stroke-width="2"/>
 <text x="1010.0" y="138" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="18" font-weight="700" text-anchor="middle" fill="#1C1C1C">Tests and coverage</text>
 <text x="1010.0" y="158" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" text-anchor="middle" fill="#7FA3C0">named in the item</text>
-<text x="1010.0" y="186" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" text-anchor="middle" fill="#1C1C1C">sv-random</text>
-<text x="1010.0" y="204" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" text-anchor="middle" fill="#1C1C1C">full_cg</text>
+<text x="1010.0" y="186" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" text-anchor="middle" fill="#1C1C1C">sv-random, cocotb</text>
+<text x="1010.0" y="204" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" text-anchor="middle" fill="#1C1C1C">coverage: prose intent</text>
 <path d="M1130,169.0 H1172" stroke="#7FA3C0" stroke-width="2.5"/>
 <path d="M1170,163.0 L1178,169.0 L1170,175.0 Z" fill="#7FA3C0"/>
 <rect x="1182" y="110" width="232" height="118" rx="8" fill="white" stroke="#1B4F72" stroke-width="2"/>
 <text x="1298.0" y="138" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="18" font-weight="700" text-anchor="middle" fill="#1C1C1C">Regression result</text>
 <text x="1298.0" y="158" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" text-anchor="middle" fill="#7FA3C0">joined by name</text>
-<text x="1298.0" y="186" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" text-anchor="middle" fill="#1C1C1C">failing</text>
+<text x="1298.0" y="186" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" text-anchor="middle" fill="#1C1C1C">tests fail</text>
 <text x="146.0" y="86" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="700" text-anchor="middle" fill="#B7791F">specification changes here</text>
 <path d="M146.0,96 V106" stroke="#B7791F" stroke-width="3"/>
 <rect x="310" y="254" width="1112" height="34" rx="6" fill="none" stroke="#B7791F" stroke-width="2" stroke-dasharray="7 5"/>

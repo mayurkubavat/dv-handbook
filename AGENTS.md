@@ -90,8 +90,8 @@ This is a public repository. Nothing in it names the AI assistant, its vendor, o
 AI assistance in authoring: not in prose, comments, docs, `STATUS.md`, or commit
 messages (no co-author or session trailers). Factual references to AI models as
 the *subject* of the book (benchmarks, vendors in Part VII) are fine. The
-pre-commit hook rejects a commit whose staged files (outside `research/`) or
-message mention them.
+pre-commit hook rejects a commit whose staged files (outside `research/` and
+`docs/reviews/`, which are evidence records) or message mention them.
 
 ## Git
 `main` is the release branch. Commit messages: imperative, one line, body

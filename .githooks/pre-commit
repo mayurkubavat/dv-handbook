@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
 # Verify examples touched by this commit before it lands, and enforce the
-# publication rule in AGENTS.md: staged files outside research/ must not name
-# the assistant or its vendor. The pattern is assembled from fragments so this
+# publication rule in AGENTS.md: staged files outside research/ and
+# docs/reviews/ (evidence records that may name AI models as subject matter)
+# must not name the assistant or its vendor. The pattern is assembled from fragments so this
 # file does not trip its own check.
 pat="(^|[^./])cla""ude|anth""ropic"   # allow .claude/ tool paths
-hits=$(git diff --cached --name-only --diff-filter=AM | grep -v '^research/' \
+hits=$(git diff --cached --name-only --diff-filter=AM | grep -vE '^(research|docs/reviews)/' \
        | xargs -I{} sh -c "git show :{} | grep -il -E '$pat' >/dev/null && echo {}" 2>/dev/null)
 if [[ -n "$hits" ]]; then
   echo "pre-commit: publication rule violated in:"; echo "$hits"; exit 1
