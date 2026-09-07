@@ -37,7 +37,7 @@ jobs:
         env:
           SYSTEMC_HOME: /usr
         run: scripts/check-examples.sh
-      - uses: actions/upload-artifact@v5
+      - uses: actions/upload-artifact@v7
         with: { name: examples-status, path: examples/status.json }
 
   build:
@@ -77,7 +77,7 @@ jobs:
           test -f _site/index.html
       - uses: actions/upload-pages-artifact@v4
         with: { path: _site }
-      - uses: actions/upload-artifact@v5
+      - uses: actions/upload-artifact@v7
         with:
           name: book-pdf
           path: _book/Design-Verification-*.pdf
@@ -100,7 +100,7 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/download-artifact@v5
+      - uses: actions/download-artifact@v8
         with: { name: book-pdf, path: pdf }
       - uses: softprops/action-gh-release@v3
         with:
