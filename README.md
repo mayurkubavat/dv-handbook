@@ -11,7 +11,7 @@ Quarto; every listing is a runnable file that CI compiles before a release.
 ```bash
 brew install librsvg poppler verilator icarus-verilog systemc
 brew install --cask font-source-sans-3 font-source-serif-4 font-jetbrains-mono
-conda create -n dvbook python=3.12 && conda run -n dvbook pip install cocotb pyuvm
+conda create -n dvbook python=3.12 && conda run -n dvbook pip install cocotb pyuvm pyyaml
 # Quarto: https://quarto.org/docs/get-started/  (any 1.6+)
 scripts/check-examples.sh      # lint + run every example
 scripts/build-book.sh          # _book/Design-Verification-draft.pdf

@@ -1,0 +1,133 @@
+# fifo_plan.yaml -- the verification plan the Chapter 1 FIFO never had.
+#
+# One item per behaviour the specification requires. Every item says what
+# must be driven (stimulus), what must be observed and compared (checking),
+# what must be measured to prove it happened (coverage), and what "done"
+# means (closure). The tests column names example directories under
+# examples/; the report tool looks them up in examples/status.json.
+
+block: fifo
+spec: "Synchronous FIFO, DEPTH entries of WIDTH bits (default 16 x 8)"
+owner: verification
+revision: 1
+
+items:
+  - id: FIFO-001
+    feature: reset
+    requirement: "After reset, empty shall be 1, full shall be 0 and count shall be 0."
+    stimulus: "Assert rst_n low for at least one clock, then release."
+    checking: "Flags and occupancy compared against the reference model after release."
+    coverage: "Reset observed at least once with the FIFO non-empty beforehand."
+    closure: "Test passes; coverage point hit."
+    priority: must
+    tests: [ch01-what-is-dv/sv-directed, ch01-what-is-dv/sv-random]
+
+  - id: FIFO-002
+    feature: write
+    requirement: "A write with wr_en high and full low shall store wr_data."
+    stimulus: "Single writes from empty; back-to-back writes."
+    checking: "Every accepted write appears at the read side in order."
+    coverage: "Writes at every occupancy from 0 to DEPTH-1."
+    closure: "Test passes; all DEPTH occupancy bins hit."
+    priority: must
+    tests: [ch01-what-is-dv/sv-directed, ch01-what-is-dv/sv-random]
+
+  - id: FIFO-003
+    feature: read
+    requirement: "A read with rd_en high and empty low shall present the oldest entry."
+    stimulus: "Single reads; back-to-back reads down to empty."
+    checking: "Read data compared against the reference model head."
+    coverage: "Reads at every occupancy from 1 to DEPTH."
+    closure: "Test passes; all DEPTH occupancy bins hit."
+    priority: must
+    tests: [ch01-what-is-dv/sv-directed, ch01-what-is-dv/sv-random]
+
+  - id: FIFO-004
+    feature: ordering
+    requirement: "Entries shall be read in the order they were written."
+    stimulus: "Random interleaved writes and reads with distinct data."
+    checking: "Reference-model queue; any out-of-order read is a failure."
+    coverage: "At least 100 accepted writes in one run."
+    closure: "Test passes."
+    priority: must
+    tests: [ch01-what-is-dv/sv-random, ch01-what-is-dv/cocotb]
+
+  - id: FIFO-005
+    feature: full flag
+    requirement: "full shall be 1 when all DEPTH entries are occupied, and only then."
+    stimulus: "Fill the FIFO completely; also hold at DEPTH-1 entries."
+    checking: "full compared against (occupancy == DEPTH) every cycle."
+    coverage: "Occupancy DEPTH reached; occupancy DEPTH-1 with full low observed."
+    closure: "Test passes; both coverage points hit."
+    priority: must
+    tests: [ch01-what-is-dv/sv-random, ch01-what-is-dv/cocotb]
+
+  - id: FIFO-006
+    feature: empty flag
+    requirement: "empty shall be 1 when no entries are occupied, and only then."
+    stimulus: "Drain to empty; also hold at one entry."
+    checking: "empty compared against (occupancy == 0) every cycle."
+    coverage: "Occupancy 0 reached after at least one write; occupancy 1 with empty low."
+    closure: "Test passes; both coverage points hit."
+    priority: must
+    tests: [ch01-what-is-dv/sv-random, ch01-what-is-dv/cocotb]
+
+  - id: FIFO-007
+    feature: write when full
+    requirement: "A write while full shall be ignored and shall not corrupt stored data."
+    stimulus: "Attempt writes while full; then drain and check contents."
+    checking: "Occupancy unchanged; drained data matches the model."
+    coverage: "wr_en high while full observed."
+    closure: "Test passes; coverage point hit."
+    priority: must
+    tests: []
+
+  - id: FIFO-008
+    feature: read when empty
+    requirement: "A read while empty shall be ignored and rd_data shall be don't-care."
+    stimulus: "Attempt reads while empty."
+    checking: "Occupancy unchanged; no model pop."
+    coverage: "rd_en high while empty observed."
+    closure: "Test passes; coverage point hit."
+    priority: must
+    tests: []
+
+  - id: FIFO-009
+    feature: simultaneous read and write
+    requirement: "A read and a write in the same cycle shall both take effect when neither flag blocks them."
+    stimulus: "Random traffic with both enables high in the same cycle."
+    checking: "Occupancy unchanged after the cycle; data order preserved."
+    coverage: "Simultaneous read and write at occupancy 1, mid-range and DEPTH-1."
+    closure: "Test passes; all three bins hit."
+    priority: must
+    tests: [ch01-what-is-dv/sv-random, ch01-what-is-dv/cocotb]
+
+  - id: FIFO-010
+    feature: no overflow
+    requirement: "Occupancy shall never exceed DEPTH."
+    stimulus: "n/a (property)"
+    checking: "Formal property: count <= DEPTH under all input sequences."
+    coverage: "Proof completes."
+    closure: "Property proven, not merely bounded."
+    priority: must
+    tests: []
+
+  - id: FIFO-011
+    feature: parameterisation
+    requirement: "WIDTH and DEPTH shall be settable at elaboration, DEPTH a power of two."
+    stimulus: "Elaborate with three (WIDTH, DEPTH) pairs."
+    checking: "Items 001 to 009 pass for each configuration."
+    coverage: "Each configuration run at least once."
+    closure: "Regression includes all three configurations."
+    priority: should
+    tests: []
+
+  - id: FIFO-012
+    feature: reset during traffic
+    requirement: "Reset asserted mid-traffic shall empty the FIFO within one clock."
+    stimulus: "Assert reset at random occupancy."
+    checking: "Flags and occupancy after reset match the reset state."
+    coverage: "Reset asserted at occupancy 0, mid-range and DEPTH."
+    closure: "Test passes; all three bins hit."
+    priority: should
+    tests: []
