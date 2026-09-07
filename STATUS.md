@@ -20,7 +20,7 @@ States: planned → outlined → drafting → examples-verified → reviewed →
 |---|---|---|---|---|
 | F | Building and Running the Examples (`appendices/appF-building-examples.qmd`) | examples-verified (4 run, 2 skipped: UVM needs commercial sim, UVM-SystemC needs library) | ~2,600 | 2026-09-06 |
 | 1 | What Is Design Verification? (`chapters/ch01-what-is-dv.qmd`) | **reviewed** (gate 2 approved by author 2026-09-06 after subagent review + revision) | ~5,400 | 2026-09-06 |
-| 2 | Verification Planning (`chapters/ch02-verification-planning.qmd`) | drafting (outline approved 2026-09-06); examples first, prose when `research/ch02-verification-planning.md` lands | 0 | 2026-09-06 |
+| 2 | Verification Planning (`chapters/ch02-verification-planning.qmd`) | drafting: examples verified (`plan/` FIFO plan + report tool, EXPECT=fail; `uart-spec/`); new `examples/mk/python.mk`; prose waits on `research/ch02-verification-planning.md` | 0 | 2026-09-06 |
 | — | chapters 3–35 + appendices A–E, G, H | planned | 0 | 2026-09-05 |
 
 Edition 1 target: Parts I–III + appendices A–D, F, G. See design doc §4.
@@ -63,6 +63,7 @@ See `research/README.md` for the index. Active notes:
 - Bare `ls` in this shell hangs (aliased to an interactive tool); use `/bin/ls`.
 
 ## Session log
+- 2026-09-06 — Ch.2 examples: `examples/mk/python.mk` (lint = py_compile, run = python3 TOP), `fifo_plan.yaml` (12 items with stimulus/checking/coverage/closure), `plan_report.py` (reads `status.json`; treats EXPECT=fail examples as design failures; exits 1 while must-have items lack evidence), UART spec for exercises. Report: 3 passing / 4 failing / 5 no evidence. PyYAML added to dvbook env, CI and README.
 - 2026-09-06 — Gate 2: Ch.1 approved as reviewed. Gate 1: Ch.2 outline approved. Ch.2 drafting started with examples.
 - 2026-09-06 — Ch.2 outline written (7 sections; worked example = machine-readable FIFO plan + plan-report tool; UART spec for exercises). Research subagent relaunched with save-early instructions after the first run hit a usage limit.
 - 2026-09-06 — Ch.1 live on Pages (CI green). Ch.2 started: research subagent dispatched (planning methodology, feature extraction, coverage model design, plan formats incl. OpenTitan testplans, sign-off, failure modes, AI-assisted planning).
