@@ -349,3 +349,86 @@ Merged from both surveys and ordered by leverage per unit of effort. The first f
 8. What is the minimum measurement plan (Chapter 34, section on measuring) a team must run before any of this is adopted?
 9. The message-signature convention (M.2) needs a transaction identifier to survive from sequence to monitor. Which mechanism does the book recommend: a sideband tag the monitor can read, ordering plus a sequence number, or a payload-derived hash? Each fails differently under reordering and drops.
 10. Should M.2 become the worked example of the debug chapter (Chapter 28), with the FIFO environment retrofitted to the convention, so that the four verdicts are demonstrated on a real log?
+
+## 6. Building the tools: designs, use cases, and where they go in the book
+
+Added 2026-09-07 in answer to the author's question. This section proposes how each tool in domain M and the top of the build order would actually be built with the open tools the surveys found, what a verification engineer or an agent would do with it, and which chapter it becomes a worked example of. One principle governs all of it: **the tools are deterministic programs, not agents.** They take a design, a testbench or a log and return JSON. They run in the book's continuous integration like every other example, need no model access, and are the tool layer that Chapter 34's agents would call. The agent loops that call them are a separate, later question; the tools are useful to a person on day one.
+
+### 6.1 One substrate, three doors
+
+Everything below is one Python package, working name `dvh` (for DV handbook), under `tools/dvh/` in the repository, with a command-line interface, JSON output, and an MCP server that exposes the same functions. Three thin layers, each a few hundred lines:
+
+| Layer | Provides | Built on |
+|---|---|---|
+| **Design model** | elaborated hierarchy, ports, parameters, symbols, drivers and loads; cached as JSON per top | pyslang (elaboration); Yosys `prep; write_json` (netlist for cone and clock walks); Verible CST JSON (syntax-level, error-tolerant) |
+| **Testbench model** | class hierarchy, `build_phase` construction sites, config-db keys, `connect_phase` edges, sequence bodies | pyslang's class and method AST; a small interpreter for the dozen UVM idioms that matter |
+| **Evidence model** | log records, transaction lifecycles, plan items, coverage bins, waveform windows | the UVM message convention (M.2); `plan_report.py`'s plan schema; `verilator_coverage --write-info` (lcov) and cocotb-coverage XML; pylibfst |
+
+Each tool is a pure function from these models to JSON, which makes it testable with pytest against small fixtures (the book's FIFO and counter), deterministic, and cheap to expose: the shell door is the CLI, the file-format door is the JSON it writes, and the protocol door is the MCP server generated from the same function signatures with the Python SDK.
+
+### 6.2 Tool designs
+
+**`rtl.clock_tree` and `rtl.reset_tree`.** Run Yosys `read_slang` (or `read_verilog -sv`), `prep`, `write_json`. Every sequential cell (`$dff`, `$adff`, `$sdff`, `$dffe` and friends) has a clock input and, for the reset variants, a reset input and polarity. Walk each clock net backwards through buffers, multiplexers, gates and inverters to its source: a top-level port, a PLL or divider model, or a register (a divided clock, which starts a new domain). Group registers by source net; the output is a tree per source and a table of registers with clock, reset, reset polarity and synchronicity. A crossing is a register whose data-input cone contains a register of a different clock domain; report each with the path. That last step is the first half of a CDC checker, and the second half (recognising synchronizer structures and waiving them) is a good exercise. The tool exposes what no open tool does today and what every debug question starts with.
+
+**`rtl.connections`.** From pyslang's elaborated instances, or from the Yosys JSON `netnames` and `cells`, build a graph whose nodes are instance ports and whose edges are nets, with `.*` and modport connections resolved. Output as JSON adjacency plus, optionally, an SVG block diagram drawn with the book's own `figures/blocks.py`, so the chapter's figures and the tool's output share one visual language.
+
+**`tb.topology` (static).** Walk every class that extends `uvm_component`. In its `build_phase`, collect `<Type>::type_id::create("<name>", this)` and `<Type>::new("<name>", this)` calls; record `set_type_override_by_type` and `set_inst_override_by_type` calls anywhere; record `uvm_config_db#(T)::set(...)` and `::get(...)` sites with their key strings and scope patterns. Resolve overrides, build the tree, and mark nodes whose type or name is computed at run time as unresolved. The dynamic counterpart parses `print_topology()` output, whose format is fixed by the reference implementation. The diff between the two is the tool's most useful output: a factory override that changed a component's type, a config-db key set with a scope pattern that matches nothing, a `get` with a type that no `set` provides.
+
+**`tb.tlm_graph`.** In every `connect_phase`, match `<a>.<port>.connect(<b>.<export>)` and its variants, resolve `a` and `b` against the topology, and emit edges. Report analysis exports with no producer and analysis ports with no consumer: a scoreboard nothing feeds is the classic silent-pass bug.
+
+**`tb.sequence_dry_run`.** Walk a sequence class's `body()`. slang expands the `uvm_do` macro family, so the walk looks for `start_item` and `finish_item` pairs, `randomize()` calls and explicit field assignments between them, `.start(<sequencer>)` calls on sub-sequences (recursed), and `grab`, `lock`, `p_sequencer` references. Loops with constant bounds are unrolled up to a limit and summarised as `×N` above it; loops with randomised bounds are summarised symbolically; both branches of a conditional are kept with the condition attached; randomised fields are printed as their constraint set rather than a value. The output is an expected transaction-order sketch: what the sequence will try to send, in what order, on which sequencer, before a simulator runs. Compared against the plan item's stimulus intent, it is a review of an agent-written or human-written sequence at zero simulation cost.
+
+**The message-signature convention (M.2), SystemVerilog side.** Three small pieces. A `dvh_txn` base class extending `uvm_sequence_item` with a `txn_id` field allocated from a global counter at creation. A set of macros, `` `dvh_info(ROLE, txn, STAGE, "key=value ...") ``, that wrap `uvm_info` and build the message ID from the grammar in M.2 so that the convention cannot be misspelt. A `dvh_report_server` extending `uvm_report_server` that, in addition to the text line, appends one JSON object per message to a `.jsonl` file: time, severity, scope, role, transaction id, stage, and the payload parsed into key-value pairs. The transaction id crosses the pin boundary by whichever mechanism the interface allows: a sideband tag when there is one, a sequence number when the stream is ordered (the FIFO), or a payload hash when neither, and the convention records which was used so the join's failure modes are known.
+
+**The message-signature convention, Python side.** `log.uvm_parse` reads either the JSON lines or the text log through the ID grammar. `log.txn_lifecycle` joins on the transaction id. `log.classify_failure` applies the four-verdict rule table: which stages are present for the failing transaction, whether the driven and observed payloads are equal, whether the model's expectation matches the specification (a question it can only flag, not answer). `log.first_failure_context` composes the bounded context in the fixed order. `log.compress` groups INFO lines by a signature made of role, stage and the message with numbers masked, keeps counts, transitions and every error, and is what a person or an agent reads first.
+
+**The coverage half of the plan report.** Plan items already carry a coverage intent in prose; the tool needs bins. Extend the plan schema with an optional `bins` list naming covergroups and bins (SystemVerilog) or cover points (cocotb-coverage). Read Verilator's lcov file for code coverage and cocotb-coverage's XML for functional bins, and report per item: bins named, bins hit, and closure as the conjunction of tests passing and bins hit. This is the missing half of Chapter 2's tool, and Chapter 8's natural worked example.
+
+**SARIF wrapper for Verible and svlint.** Both emit `file:line:col: message [rule]` lines. A converter to SARIF 2.1 (rules array, results with locations and rule ids, a fingerprint per finding) is small; `sarif-tools` then diffs against a baseline so an agent fixes only what it introduced. Verilator's native SARIF completes the set.
+
+**`repo.map`.** From Verible's CST JSON or pyslang: modules, ports, parameters, classes, tasks and functions, ranked by how often they are referenced, truncated to a token budget. The same idea as a software repository map, and the cheapest way to give an agent a block's shape without its text.
+
+**`test.shrink`.** Record the transaction stream of a failing random run (the convention's JSON lines already are that record). Replay subsets with the sequence replaced by a replay sequence, using the delta-debugging algorithm: halve, test, keep the failing half, refine. The output is the shortest transaction list that still fails, with its seed, which is what a person or a debug agent should be handed instead of the original run.
+
+**`triage.cluster`.** Signature per failing run: first error's role, stage, scope with instance indices masked, message with numbers masked, and the phase. Cluster by signature; one representative per cluster with the count of seeds. The software model is crash deduplication by stack signature.
+
+### 6.3 Use cases, as narratives
+
+1. **The block brief.** A new engineer, or an agent, is handed a block. One command produces a page: the hierarchy, the clock and reset domains and any crossings, the connection graph as a diagram, the testbench topology with its factory overrides, the TLM graph, the plan with each item's evidence state. Everything in it is derived, not written, so it is never stale.
+2. **Nightly triage.** A regression with forty failing seeds. Clustering reduces them to three signatures. For each, the lifecycle join produces the bounded context and a verdict: two clusters are reference-model suspects and go to the oracle owner; one is an RTL suspect with the monitor's time and signals, and `wave.first_divergence` against a passing seed gives the cycle. A person reads three contexts instead of forty logs.
+3. **Reviewing a sequence before running it.** An agent, or a colleague, submits a new sequence for plan item FIFO-007. The dry run shows it never attempts a write while full, because the loop bound is randomised between one and eight. The review catches it in seconds; the simulator would have reported a pass with the hole still open.
+4. **A CDC gate on every edit.** The clock-tree tool runs in the pre-commit hook. An edit that routes a signal from the bus-clock domain into the core-clock domain without a synchronizer fails the commit with the path printed.
+5. **Closing a plan item.** The coverage join reports item 005 with all tests passing and two bins unhit. The stimulus role is given exactly those bins as its target. When they are hit, the item closes by the plan's own criterion, not by anyone's impression.
+6. **A reviewer's mutation report.** The mutant set from Yosys mcy, run through the regression, yields a kill rate per plan item. The item whose tests kill no mutants is the item whose checker is not checking, and the report says which.
+7. **Retrofitting the convention.** An existing environment is converted in three steps: the base transaction class, the macro, the report server. The first day's log already supports the lifecycle join; the classifier follows once the stages are consistent.
+
+### 6.4 Where each lands in the book
+
+The tools are chapters' worked examples, built when the chapter is written, so that each tool exists because a chapter needed it.
+
+| Tool | Chapter | Role in the chapter |
+|---|---|---|
+| `rtl.clock_tree`, `rtl.reset_tree`, `rtl.connections` | Ch. 3, Digital Design for Verifiers | the worked example: read a design's clocks, resets and connections before writing a test |
+| `repo.map`, SARIF wrapper | Ch. 27, Testbench Infrastructure | lint as SARIF in CI; the map as the first thing a regression report links to |
+| Coverage half of the plan report | Ch. 8, Functional Coverage | the worked example: bins joined to plan items, closure by criterion |
+| `tb.topology` (static and dynamic), config-db checks | Ch. 11, UVM Architecture | the worked example: see the testbench the factory actually built |
+| `tb.sequence_dry_run` | Ch. 12, Sequences, Sequencers, Drivers | the worked example: review a sequence at zero simulation cost |
+| Message-signature convention, `dvh_txn`, report server, lifecycle join | Ch. 13, Monitors, Scoreboards, Checkers | introduced with the first scoreboard; the FIFO environment adopts it |
+| `tb.tlm_graph` | Ch. 13 | exercise: find the unfed scoreboard |
+| `log.classify_failure`, `log.first_failure_context`, `triage.cluster`, `test.shrink` | Ch. 28, Debug Methodology | the worked example: nightly triage on a seeded regression of the FIFO |
+| CDC crossing report from the clock tree | Ch. 20, Structural Verification | the worked example: a minimal open CDC checker, with its limits stated |
+| Mutation report | Ch. 29, Metrics and Closure | the worked example: kill rate per plan item |
+| `formal` tools, counterexample trace | Ch. 17, Formal Verification | counterexamples handed to the debug tools |
+| The MCP server over all of the above | New appendix, "An agent tool layer for this book's examples" | the protocol door; tool schemas as a published convention if the author chooses; agent loops that call it remain out of the book's runnable examples until the recorded-transcript question is settled |
+| The whole set, as concepts | Ch. 34 | already there: domains B, D, H, K of this catalogue are what Chapter 34's tool layer means in practice |
+
+Repository layout: `tools/dvh/` for the package with its own pytest suite run by the example checker (a fourth language recipe, `python.mk`, already exists); `examples/chNN-*/` directories that call it; `tools/dvh/mcp_server.py` for the protocol door; the SystemVerilog side (`dvh_txn`, macros, report server) under `examples/lib/dvh/` so every UVM example in Parts III and VI includes it.
+
+### 6.5 Sequence of work
+
+1. Chapter 3's tools first (clock, reset, connections), because Chapter 3 is next and the design model they need is the foundation for everything else.
+2. The message-signature convention next, retrofitted onto the appendix's UVM counter example and the future FIFO environment, because every later debug example depends on the log being joinable.
+3. The coverage join, when Chapter 8 is written.
+4. Topology, TLM graph and dry trace with Part III.
+5. Triage, shrinking and clustering with Chapter 28.
+6. The MCP server and the appendix last, once the functions exist and have a year of use behind them.
