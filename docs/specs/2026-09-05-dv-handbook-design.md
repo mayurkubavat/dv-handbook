@@ -129,7 +129,8 @@ independently draftable/verifiable/releasable.
 ### Appendices (GRM-style reference)
 A. SV quick reference · B. UVM class/macro reference · C. SVA cheat sheet ·
 D. UVM command-line/config reference · E. cocotb/pyuvm API reference ·
-F. Tool setup (macOS/Linux) · G. Glossary · H. Selected exercise solutions.
+F. Tool setup (macOS/Linux) · G. Glossary · H. Selected exercise solutions ·
+I. An agent tool layer and derived documentation for the book's examples (added 2026-09-07; see `docs/specs/2026-09-07-agentic-tooling-catalog.md`).
 Plus bibliography and index.
 
 ### 4.1 Chapter template
@@ -141,7 +142,7 @@ directions → summary → exercises → further reading.
 ~600–800 pages; 2–3 years at a sustainable pace.
 - **Edition 1 (v0.x → v1.0):** Parts I–III + appendices A–D, F, G
 - **Edition 2:** Parts IV–V + appendix E
-- **Edition 3:** Parts VI–VII + appendix H
+- **Edition 3:** Parts VI–VII + appendices H, I
 TOC is a plan, not a contract; `STATUS.md` tracks reality.
 
 ## 4a. Section 3 — Design style (APPROVED 2026-09-06)
@@ -184,6 +185,7 @@ The book is written the way it says verification should be done: a spec, separat
 
 ## 5. Pending design sections
 - None. M1 (repo scaffold) started 2026-09-06 directly at the user's request: examples build system, Appendix F, Quarto skeleton and PDF build are done; AGENTS.md/hooks/skills, git+GitHub, CI remain.
+- Decision 2026-09-07: the tool layer and documentation-agent material from the tooling catalogue becomes Appendix I, with three forward pointers from Ch.34; each individual tool is the worked example of the chapter that needs it (3, 8, 11, 12, 13, 20, 28, 30). Ch.34 stays conceptual.
 - Implementation note: appendix lettering is forced with `\setcounter{chapter}{5}` in the PDF until appendices A–E exist; HTML will show it as A until then.
 
 ## 6. Research track (completed 2026-09-06)

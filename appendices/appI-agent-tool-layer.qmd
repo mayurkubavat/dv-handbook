@@ -1,0 +1,16 @@
+<!-- OUTLINE: not yet approved; not registered in _quarto.yml until drafted -->
+
+# An Agent Tool Layer and Derived Documentation for the Book's Examples {#sec-appI}
+
+*Appendix intent: the runnable, versioned counterpart to the concepts of the generative-AI chapter. Four parts: the `tools/dvh` substrate (design, testbench and evidence models; CLI, JSON and tool-protocol doors); the tool set with role permissions and schemas; the derived-document types and the extract, narrate, verify, publish workflow, kit-neutral with one named example; and the knowledge-base retrieval design with its evaluation set. Every listing is a file under `tools/dvh/` or `examples/`, verified in CI. The narration step waits on the recorded-transcript decision; everything else is deterministic.*
+
+## I.1 The substrate: three models, three doors
+## I.2 The tool set and who may call what
+## I.3 Derived documents: types, evidence pointers, drift as a diff
+## I.4 The documentation workflow: extract, narrate, verify, publish
+## I.5 Retrieval and the evaluation set
+## I.6 Building it: sequence, tests, continuous integration
+
+## Sources
+- `docs/specs/2026-09-07-agentic-tooling-catalog.md` §1, §3, §6, §7
+- `research/tooling-landscape-hardware.md`, `research/tooling-landscape-software.md`
