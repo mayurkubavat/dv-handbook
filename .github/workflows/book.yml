@@ -21,7 +21,7 @@ jobs:
     name: Check examples
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Install simulators
         run: |
           sudo apt-get update -q
@@ -29,7 +29,7 @@ jobs:
           sudo apt-get install -y -q yosys
           sudo apt-get install -y -q libsystemc-dev || echo "no libsystemc-dev; SystemC examples will be skipped"
           yosys -V
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with: { python-version: '3.12' }
       - name: Install cocotb, pyuvm and pytest
         run: pip install cocotb pyuvm pyyaml pytest
@@ -37,7 +37,7 @@ jobs:
         env:
           SYSTEMC_HOME: /usr
         run: scripts/check-examples.sh
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         with: { name: examples-status, path: examples/status.json }
 
   build:
@@ -45,7 +45,7 @@ jobs:
     needs: examples
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: quarto-dev/quarto-actions/setup@v2
         with:
           tinytex: true
@@ -75,9 +75,9 @@ jobs:
           quarto render --to html --output-dir _site
           cp _book/Design-Verification-draft.pdf _site/Design-Verification-draft.pdf
           test -f _site/index.html
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/upload-pages-artifact@v4
         with: { path: _site }
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         with:
           name: book-pdf
           path: _book/Design-Verification-*.pdf
@@ -92,7 +92,7 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
 
   release:
     name: Attach PDF to release
@@ -100,9 +100,9 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v5
         with: { name: book-pdf, path: pdf }
-      - uses: softprops/action-gh-release@v2
+      - uses: softprops/action-gh-release@v3
         with:
           files: pdf/Design-Verification-*.pdf
           generate_release_notes: true
