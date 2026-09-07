@@ -20,7 +20,7 @@ States: planned → outlined → drafting → examples-verified → reviewed →
 |---|---|---|---|---|
 | F | Building and Running the Examples (`appendices/appF-building-examples.qmd`) | examples-verified (4 run, 2 skipped: UVM needs commercial sim, UVM-SystemC needs library) | ~2,600 | 2026-09-06 |
 | 1 | What Is Design Verification? (`chapters/ch01-what-is-dv.qmd`) | examples-verified; reviewed by subagent (57 findings, `docs/reviews/ch01-review-2026-09-06.md`) and revised; **awaiting gate 2 (author review)** | ~5,400 | 2026-09-06 |
-| 2 | Verification Planning (`chapters/ch02-verification-planning.qmd`) | research in progress (`research/ch02-verification-planning.md`); outline next | 0 | 2026-09-06 |
+| 2 | Verification Planning (`chapters/ch02-verification-planning.qmd`) | outlined (awaiting gate-1 approval); research note in progress (2nd run; 1st hit usage limit, saved nothing) | 0 | 2026-09-06 |
 | — | chapters 3–35 + appendices A–E, G, H | planned | 0 | 2026-09-05 |
 
 Edition 1 target: Parts I–III + appendices A–D, F, G. See design doc §4.
@@ -63,6 +63,7 @@ See `research/README.md` for the index. Active notes:
 - Bare `ls` in this shell hangs (aliased to an interactive tool); use `/bin/ls`.
 
 ## Session log
+- 2026-09-06 — Ch.2 outline written (7 sections; worked example = machine-readable FIFO plan + plan-report tool; UART spec for exercises). Research subagent relaunched with save-early instructions after the first run hit a usage limit.
 - 2026-09-06 — Ch.1 live on Pages (CI green). Ch.2 started: research subagent dispatched (planning methodology, feature extraction, coverage model design, plan formats incl. OpenTitan testplans, sign-off, failure modes, AI-assisted planning).
 - 2026-09-06 — `run.out` made deterministic: cocotb seed pinned (`COCOTB_RANDOM_SEED`) and timing columns stripped, so re-running examples no longer dirties the tree.
 - 2026-09-06 — Ch.1 second pass from review: uncited details cut or hedged (Cougar Point transistor claim, lost-revenue clause, Zen 2 launch, sim speed), CAGR citation corrected to 2022 edition, Ormandy's method described correctly and quoted with marks, American spelling, run output included from `run.out` (new checker output), coverage-model gap taught + exercise 7, references page added (bibliography now renders). Checker now merges `status.json` across filtered runs. House-rule decisions recorded in AGENTS.md: Part numbers exempt from the label rule; Learning-objectives box is the opener; output always included from `run.out`. Not done from the review: mini-TOC per chapter (theme work, later); H-3 theme styling of callouts (later).

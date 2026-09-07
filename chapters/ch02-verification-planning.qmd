@@ -1,0 +1,73 @@
+<!-- OUTLINE: not yet approved -->
+
+# Verification Planning {#sec-ch02}
+
+*Chapter intent: by the end, a reader can take a specification for a small block, turn it into a feature list, write a verification plan whose items are each answerable by a test and a coverage point, define what "done" means before any test exists, and keep the plan alive as a machine-readable file that the regression updates.*
+
+> The plan is the only verification document the design team will read.
+
+## Learning objectives
+
+*Five items: decompose a specification into features and the "shall" statements behind them; write a plan item with a test intent, a coverage intent and a closure criterion; distinguish code coverage from functional coverage and say what each proves; define sign-off criteria before RTL exists; maintain the plan as a living artifact that traces requirement to result.*
+
+## The plan nobody read
+
+*Motivation, 400 to 600 words. A plan written after the tests, to describe what the tests already did; coverage goals set to what was reached; a specification change that never reached the plan. Grounded in the survey evidence that specification changes and incomplete specifications are a leading cause of functional flaws [research note §6]. Ends with the chapter's claim: a plan is a contract with the design, written first, executed by machines, and read by people.*
+
+## 2.1 What a verification plan is {#sec-ch02-what}
+
+*Definition callout: a verification plan is the list of every behaviour the design must have, each paired with how it will be verified and how the verification will be measured. What the canonical sources say it contains (Bergeron; Wile, Goss and Roesner; the coverage cookbook), what IEEE 1012 calls a V&V plan, and why this book uses "plan" rather than "test plan": tests are one column of it.*
+
+## 2.2 From specification to features {#sec-ch02-features}
+
+*The reading discipline: every "shall", every table, every timing diagram is a feature or a constraint. Decomposition axes that work for any block: interfaces, protocol rules, registers and fields, modes and configurations, error and corner conditions, performance. Numbering and naming so items survive spec revisions. Worked on the FIFO from Chapter 1: its four-sentence contract becomes about a dozen features, including the one the chapter-1 bug violated. Pitfall callout: features that describe the implementation instead of the requirement.*
+
+## 2.3 From features to plan items {#sec-ch02-items}
+
+*The anatomy of a plan item: identifier, feature, description, stimulus intent (what must be driven), checking intent (what must be observed and compared), coverage intent (what must be measured to prove it happened), priority, and owner. Directed versus random intent. Negative features (what must never happen) and where formal belongs in the plan. In Practice callout: the plan review with the designer, and why the designer's disagreements are the most valuable output of the meeting.*
+
+## 2.4 The coverage model, designed from the plan {#sec-ch02-coverage}
+
+*Code coverage: what line, toggle, branch and FSM coverage measure, and the one thing they prove (that a line executed) and the many things they do not. Functional coverage: cover points, bins, crosses, assertion coverage, defined from plan items rather than from the RTL. Coverage goals: why "100 percent" is a statement about the model, not the design. Holes, exclusions and waivers, and who signs them. Forward pointers to Part II for the SystemVerilog constructs.*
+
+## 2.5 Sign-off criteria, written before the first test {#sec-ch02-signoff}
+
+*The criteria from Chapter 1's lifecycle section, now made concrete: coverage closure against the plan, regression health, bug convergence, open-issue review, waivers. OpenTitan's staged sign-off (its V1, V2, V3 stages and checklist) as an open, public example of a project that wrote the criteria down. Why the criteria belong in the plan: a goal set after the fact is not a goal.*
+
+## 2.6 The living plan {#sec-ch02-living}
+
+*Plans as files, not documents: spreadsheets, vendor planning tools, and open machine-readable formats, with OpenTitan's Hjson testplans as the open reference. Tests and coverage groups mapped to plan items by name, so the regression can report against the plan without a person transcribing. What a plan report looks like: per item, tests written, tests passing, coverage reached, status. Future Directions callout: language-model generation of feature lists and test plans from specifications, with the measured pass rates from the research note labelled as research results and the vendor claims labelled as claims.*
+
+## 2.7 Worked example: a plan for the FIFO {#sec-ch02-example}
+
+*The FIFO from Chapter 1 gets the plan it never had. A machine-readable plan file (YAML, chosen for readability; the same structure as OpenTitan's Hjson) with about a dozen items, each with stimulus, checking and coverage intent and a closure criterion. A small Python tool reads the plan and the example status file and prints a plan report: which items have a test, which pass, which have no evidence. The chapter-1 bug appears as the item whose "full asserted only at sixteen" criterion the directed test never covered. Listings: the plan file, the tool, and its report, all included from `examples/`.*
+
+## Summary
+
+*Eight bullets, one per section.*
+
+## Exercises
+
+1. *Take a one-page specification of a UART (provided) and produce a feature list using the six decomposition axes. Count the "shall" statements you found that the specification did not mark as such.*
+2. *Write plan items for three of those features, including a negative feature. State the closure criterion for each.*
+3. *For the FIFO plan, identify which items are better proved by formal than by simulation and say why.*
+4. *Run the plan report tool before and after adding a test for an uncovered item; explain what changed in the report and what did not.*
+5. *The specification changes: the FIFO gains a programmable almost-full threshold. Update the plan, and list every downstream artifact that must change with it.*
+6. *Find one plan item in OpenTitan's public testplans and trace it to its test and coverage group in the repository.*
+
+## Further reading
+
+*Bergeron, Writing Testbenches (planning chapter); Wile, Goss and Roesner (the verification plan and the cycle); the Verification Academy coverage cookbook; OpenTitan DV methodology documentation; UCIS standard.*
+
+## Planned examples
+
+| Directory | Language | Demonstrates |
+|---|---|---|
+| `examples/ch02-verification-planning/plan/` | YAML + Python | `fifo_plan.yaml`: the FIFO's verification plan, ~12 items; `plan_report.py`: reads the plan and `examples/status.json`, prints the plan report; `make run` prints the report |
+| `examples/ch02-verification-planning/uart-spec/` | Markdown | A one-page UART specification for exercises 1 and 2 (no build) |
+
+## Sources
+
+- `research/ch02-verification-planning.md` (in progress): canonical definitions, feature extraction and traceability, coverage-model design, plan formats (OpenTitan testplans), sign-off criteria, failure-mode evidence, AI-assisted planning results.
+- `research/ch01-cost-gap-lifecycle.md` §1 and §6 for the survey evidence on specification changes.
+- `research/dv-adaptation-synthesis.md` §2 (vPlan-as-code) and §4 (test-plan generation: not yet) for the living-plan and Future Directions sections.
