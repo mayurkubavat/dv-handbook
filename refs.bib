@@ -253,3 +253,168 @@
   url    = {https://verificationacademy.com/cookbook/coverage/},
   note   = {Accessed 2026-09-06}
 }
+
+% ---- Chapter 2: Verification Planning (added 2026-09-06 by research-agent) ----
+
+@book{piziali2004coverage,
+  author    = {Andrew Piziali},
+  title     = {Functional Verification Coverage Measurement and Analysis},
+  publisher = {Springer},
+  year      = {2004},
+  doi       = {10.1007/b117979},
+  url       = {https://link.springer.com/book/10.1007/b117979}
+}
+
+@inproceedings{ehlers2013planning,
+  author    = {Benjamin Ehlers and Carmen Vargas and Paul Carzola},
+  title     = {Best Practices in Verification Planning},
+  booktitle = {Proc. Design and Verification Conference (DVCon) US},
+  year      = {2013},
+  url       = {https://dvcon-proceedings.org/document/best-practices-in-verification-planning/},
+  note      = {Industry paper (Freescale Semiconductor / Cadence). PDF: https://dvcon-proceedings.org/wp-content/uploads/best-practices-in-verification-planning.pdf}
+}
+
+@inproceedings{kreisinger2024traceability,
+  author    = {Jan Kreisinger and Sanjay Chatterjee},
+  title     = {Verification Plan in Requirements Management Tool: Simple Traceability and Automated Interface to Regression Manager},
+  booktitle = {Proc. Design and Verification Conference (DVCon) US},
+  year      = {2024},
+  url       = {https://dvcon-proceedings.org/wp-content/uploads/1009.pdf},
+  note      = {Industry paper (Allegro Microsystems); Jama Connect to Cadence Verisium Manager traceability flow}
+}
+
+@techreport{ucis2012,
+  author      = {{Accellera Systems Initiative}},
+  title       = {Unified Coverage Interoperability Standard ({UCIS}), Version 1.0},
+  institution = {Accellera Systems Initiative},
+  year        = {2012},
+  month       = jun,
+  url         = {https://www.accellera.org/images/downloads/standards/ucis/UCIS_Version_1.0_Final_June-2012.pdf},
+  note        = {Dated 2012-06-02. Overview page: https://www.accellera.org/downloads/standards/ucis}
+}
+
+@misc{iso26262-2018,
+  author       = {{International Organization for Standardization}},
+  title        = {{ISO} 26262:2018, Road vehicles -- Functional safety (Parts 1--12)},
+  howpublished = {International standard, second edition},
+  year         = {2018},
+  url          = {https://www.iso.org/standard/68383.html},
+  note         = {Cited in the book via public summaries (e.g. https://en.wikipedia.org/wiki/ISO_26262); clause-level claims must be checked against the standard text}
+}
+
+@misc{do254-2000,
+  author       = {{RTCA}},
+  title        = {{DO-254}: Design Assurance Guidance for Airborne Electronic Hardware},
+  howpublished = {RTCA/EUROCAE guidance document; recognised by FAA AC 20-152 (2005)},
+  year         = {2000},
+  url          = {https://en.wikipedia.org/wiki/DO-254},
+  note         = {Cited via public summary; obtain the RTCA document for clause-level claims}
+}
+
+@misc{opentitan-dv-methodology,
+  author       = {{lowRISC contributors (OpenTitan project)}},
+  title        = {{OpenTitan} Design Verification Methodology},
+  howpublished = {OpenTitan documentation},
+  year         = {2026},
+  url          = {https://opentitan.org/book/doc/contributing/dv/methodology/index.html},
+  note         = {Source: https://github.com/lowRISC/opentitan/blob/master/doc/contributing/dv/methodology/README.md. Accessed 2026-09-06}
+}
+
+@misc{opentitan-testplanner,
+  author       = {{lowRISC contributors}},
+  title        = {Testplanner tool ({Hjson} testplan schema and report generation)},
+  howpublished = {dvsim documentation},
+  year         = {2026},
+  url          = {https://github.com/lowRISC/dvsim/blob/master/doc/testplanner.md},
+  note         = {Example plans: https://github.com/lowRISC/opentitan/blob/master/hw/ip/hmac/data/hmac_testplan.hjson and https://github.com/lowRISC/opentitan/blob/master/hw/dv/tools/dvsim/testplans/csr_testplan.hjson. Accessed 2026-09-06}
+}
+
+@misc{opentitan-checklist,
+  author       = {{lowRISC contributors (OpenTitan project)}},
+  title        = {{OpenTitan} Signoff Checklist},
+  howpublished = {OpenTitan project governance documentation},
+  year         = {2026},
+  url          = {https://opentitan.org/book/doc/project_governance/checklist/index.html},
+  note         = {DV items for stages V1, V2, V2S, V3. Accessed 2026-09-06}
+}
+
+@misc{opentitan-dev-stages,
+  author       = {{lowRISC contributors (OpenTitan project)}},
+  title        = {{OpenTitan} Hardware Development Stages},
+  howpublished = {OpenTitan project governance documentation},
+  year         = {2026},
+  url          = {https://opentitan.org/book/doc/project_governance/development_stages.html},
+  note         = {Defines verification stages V0--V3 and design stages D0--D3. Accessed 2026-09-06}
+}
+
+@misc{cadence-verisium-manager,
+  author       = {{Cadence Design Systems}},
+  title        = {Verisium Manager (formerly {vManager}) verification planning and management},
+  howpublished = {Vendor product page},
+  year         = {2026},
+  url          = {https://www.cadence.com/en_US/home/tools/system-design-and-verification/ai-driven-verification/verisium-manager.html},
+  note         = {Vendor documentation; page not fetchable in the 2026-09-06 research run (bot check)}
+}
+
+@misc{synopsys-verdi-vms,
+  author       = {{Synopsys}},
+  title        = {Verdi Verification Management System ({VMS}): planning, regression and coverage management},
+  howpublished = {Vendor product pages},
+  year         = {2026},
+  url          = {https://www.synopsys.com/verification/debug/verdi-vms.html},
+  note         = {Vendor documentation. See also https://www.synopsys.com/verification/debug/verdi.html. Accessed 2026-09-06}
+}
+
+@misc{siemens-questa-vm,
+  author       = {{Siemens Digital Industries Software}},
+  title        = {Questa One Verification {IQ}: verification management and Testplan Author},
+  howpublished = {Vendor product page},
+  year         = {2026},
+  url          = {https://eda.sw.siemens.com/en-US/ic/questa/simulation/verification-management/},
+  note         = {Vendor documentation. Accessed 2026-09-06}
+}
+
+@misc{kochar2026grpo,
+  author       = {Dimple Vijay Kochar and Nathaniel Pinckney and Guan-Ting Liu and Chia-Tung Ho and Chenhui Deng and Haoxing Ren and Brucek Khailany},
+  title        = {{GRPO} with State Mutations: Improving {LLM}-Based Hardware Test Plan Generation},
+  howpublished = {arXiv:2601.07593},
+  year         = {2026},
+  month        = jan,
+  url          = {https://arxiv.org/abs/2601.07593},
+  note         = {Preprint, submitted 2026-01-12}
+}
+
+@inproceedings{jain2024genai-fv-testplan,
+  author    = {Anshul Jain and Karan Rawat and Pradip Prajapati},
+  title     = {{GenAI} Leap in Formal Verification Testplanning},
+  booktitle = {Proc. Design and Verification Conference (DVCon) India},
+  year      = {2024},
+  url       = {https://dvcon-proceedings.org/wp-content/uploads/2B3-DVCon_India_2024_Final_Paper_1423.pdf},
+  note      = {Industry paper (Intel); self-reported minimum 80\% test-plan accuracy on three designs}
+}
+
+@misc{opentitan-uart-testplan,
+  title  = {{OpenTitan} {UART} {DV} testplan ({hw/ip/uart/data/uart\_testplan.hjson})},
+  author = {{lowRISC contributors}},
+  year   = {2026},
+  url    = {https://github.com/lowRISC/opentitan/blob/master/hw/ip/uart/data/uart_testplan.hjson},
+  note   = {Accessed 2026-09-06}
+}
+
+@misc{opentitan-hmac-testplan,
+  title  = {{OpenTitan} {HMAC} {DV} testplan ({hw/ip/hmac/data/hmac\_testplan.hjson})},
+  author = {{lowRISC contributors}},
+  year   = {2026},
+  url    = {https://github.com/lowRISC/opentitan/blob/master/hw/ip/hmac/data/hmac_testplan.hjson},
+  note   = {Accessed 2026-09-06}
+}
+
+@misc{eetimes2026chipstack,
+  title        = {Cadence Unveils {ChipStack} {AI} Agent for Agentic Chip Design and Verification},
+  author       = {{EE Times}},
+  howpublished = {EE Times},
+  year         = {2026},
+  month        = feb,
+  url          = {https://www.eetimes.com/cadence-unveils-chipstack-ai-agent-for-agentic-chip-design-and-verification/},
+  note         = {Published 2026-02-10. Vendor-supplied customer claims. Accessed 2026-09-06}
+}

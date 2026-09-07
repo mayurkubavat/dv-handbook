@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 400" width="1400" height="400" role="img" aria-label="Traceability chain from requirement to regression result">
+<rect width="1400" height="400" fill="white"/>
+<rect x="30" y="110" width="232" height="118" rx="8" fill="white" stroke="#1B4F72" stroke-width="2"/>
+<text x="146.0" y="138" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="18" font-weight="700" text-anchor="middle" fill="#1C1C1C">Specification</text>
+<text x="146.0" y="158" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" text-anchor="middle" fill="#7FA3C0">requirement</text>
+<text x="146.0" y="186" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" text-anchor="middle" fill="#1C1C1C">&quot;full shall be 1 when all</text>
+<text x="146.0" y="204" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" text-anchor="middle" fill="#1C1C1C">DEPTH entries are occupied&quot;</text>
+<path d="M266,169.0 H308" stroke="#7FA3C0" stroke-width="2.5"/>
+<path d="M306,163.0 L314,169.0 L306,175.0 Z" fill="#7FA3C0"/>
+<rect x="318" y="110" width="232" height="118" rx="8" fill="white" stroke="#1B4F72" stroke-width="2"/>
+<text x="434.0" y="138" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="18" font-weight="700" text-anchor="middle" fill="#1C1C1C">Feature</text>
+<text x="434.0" y="158" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" text-anchor="middle" fill="#7FA3C0">extracted</text>
+<text x="434.0" y="186" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" text-anchor="middle" fill="#1C1C1C">full flag</text>
+<path d="M554,169.0 H596" stroke="#7FA3C0" stroke-width="2.5"/>
+<path d="M594,163.0 L602,169.0 L594,175.0 Z" fill="#7FA3C0"/>
+<rect x="606" y="110" width="232" height="118" rx="8" fill="#1B4F72" stroke="#1B4F72" stroke-width="2"/>
+<text x="722.0" y="138" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="18" font-weight="700" text-anchor="middle" fill="white">Plan item</text>
+<text x="722.0" y="158" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" text-anchor="middle" fill="#DCE9F3">FIFO-005</text>
+<text x="722.0" y="186" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" text-anchor="middle" fill="white">stimulus / checking /</text>
+<text x="722.0" y="204" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" text-anchor="middle" fill="white">coverage / closure</text>
+<path d="M842,169.0 H884" stroke="#7FA3C0" stroke-width="2.5"/>
+<path d="M882,163.0 L890,169.0 L882,175.0 Z" fill="#7FA3C0"/>
+<rect x="894" y="110" width="232" height="118" rx="8" fill="white" stroke="#1B4F72" stroke-width="2"/>
+<text x="1010.0" y="138" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="18" font-weight="700" text-anchor="middle" fill="#1C1C1C">Tests and coverage</text>
+<text x="1010.0" y="158" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" text-anchor="middle" fill="#7FA3C0">named in the item</text>
+<text x="1010.0" y="186" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" text-anchor="middle" fill="#1C1C1C">sv-random</text>
+<text x="1010.0" y="204" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" text-anchor="middle" fill="#1C1C1C">full_cg</text>
+<path d="M1130,169.0 H1172" stroke="#7FA3C0" stroke-width="2.5"/>
+<path d="M1170,163.0 L1178,169.0 L1170,175.0 Z" fill="#7FA3C0"/>
+<rect x="1182" y="110" width="232" height="118" rx="8" fill="white" stroke="#1B4F72" stroke-width="2"/>
+<text x="1298.0" y="138" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="18" font-weight="700" text-anchor="middle" fill="#1C1C1C">Regression result</text>
+<text x="1298.0" y="158" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" text-anchor="middle" fill="#7FA3C0">joined by name</text>
+<text x="1298.0" y="186" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" text-anchor="middle" fill="#1C1C1C">failing</text>
+<text x="146.0" y="86" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="700" text-anchor="middle" fill="#B7791F">specification changes here</text>
+<path d="M146.0,96 V106" stroke="#B7791F" stroke-width="3"/>
+<rect x="310" y="254" width="1112" height="34" rx="6" fill="none" stroke="#B7791F" stroke-width="2" stroke-dasharray="7 5"/>
+<text x="866.0" y="277" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" text-anchor="middle" fill="#B7791F">every downstream link is suspect until re-examined; closure requires none left</text>
+<path d="M1298.0,290 V328 H722.0 V290" stroke="#2E7D32" stroke-width="2.5" fill="none"/>
+<path d="M716.0,298 L722.0,286 L728.0,298 Z" fill="#2E7D32"/>
+<text x="1010.0" y="350" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" fill="#2E7D32" text-anchor="middle">results are reported against the item, not the test</text>
+</svg>
