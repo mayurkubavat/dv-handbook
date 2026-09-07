@@ -4,7 +4,7 @@
 > Stable conventions live in `AGENTS.md`; this file holds the living state.
 
 ## Current milestone
-**M2 — Chapters 1, 2 reviewed and live; Ch.34 drafted, reviewed, revised, live; awaiting gate 2.** In parallel: AI-concept inventory delivered; MCP/automation tooling catalogue in research (two landscape subagents). Ch.3 after.
+**M2 — Chapters 1, 2, 34 reviewed and live.** Tooling catalogue (`docs/specs/2026-09-07-agentic-tooling-catalog.md`, §1–7) written; placement decision (appendix vs chapter) pending with the author. Ch.3 next.
 
 M1 — Repo scaffold: COMPLETE (2026-09-06). CI green on main (examples → PDF+HTML render → Pages deploy). Web edition live at https://mayurkubavat.github.io/dv-handbook (PDF at /Design-Verification-draft.pdf). Next: M2 = Chapter 1.
 
@@ -21,7 +21,7 @@ States: planned → outlined → drafting → examples-verified → reviewed →
 | F | Building and Running the Examples (`appendices/appF-building-examples.qmd`) | examples-verified (4 run, 2 skipped: UVM needs commercial sim, UVM-SystemC needs library) | ~2,600 | 2026-09-06 |
 | 1 | What Is Design Verification? (`chapters/ch01-what-is-dv.qmd`) | **reviewed** (gate 2 approved by author 2026-09-06 after subagent review + revision) | ~5,400 | 2026-09-06 |
 | 2 | Verification Planning (`chapters/ch02-verification-planning.qmd`) | **reviewed** (gate 2 approved by author 2026-09-06) | ~5,500 | 2026-09-06 |
-| 34 | Generative AI and Agentic DV (`chapters/ch34-generative-ai-agentic-dv.qmd`) | examples n/a (concept chapter); reviewed by subagent (`docs/reviews/ch34-review-2026-09-07.md`) and revised; pushed; **awaiting gate 2 (author review)** | ~7,600 | 2026-09-06 |
+| 34 | Generative AI and Agentic DV (`chapters/ch34-generative-ai-agentic-dv.qmd`) | **reviewed** (gate 2 approved by author 2026-09-07; concept chapter, no runnable examples by design) | ~7,600 | 2026-09-06 |
 | — | chapters 3–33, 35 + appendices A–E, G, H | planned | 0 | 2026-09-05 |
 
 Edition 1 target: Parts I–III + appendices A–D, F, G. See design doc §4.
@@ -66,6 +66,7 @@ See `research/README.md` for the index. Active notes:
 - Bare `ls` in this shell hangs (aliased to an interactive tool); use `/bin/ls`.
 
 ## Session log
+- 2026-09-07 — Gate 2: Ch.34 approved as reviewed (author referred to it by its current rendered number, chapter 3).
 - 2026-09-07 — Catalogue §7 added: documentation agents producing a maintained knowledge base of derived design documents (hierarchy map, clock/reset domains with crossing inventory, CSR access paths, life of a packet per protocol via structural paths + tagged simulation, interrupt paths, reset sequence, testbench observation coverage); extract → narrate → verify → publish workflow on an agent development kit (vendor-neutral, Google's ADK as one example); retrieval design with stable page ids and an evaluation set; chapter placement (Ch.3, 13, 15, 27, 28, 30, 34); 4 more discussion questions.
 - 2026-09-07 — Catalogue §6 added: build designs for each domain-M tool and the top of the build order (one Python substrate `tools/dvh/` with design, testbench and evidence models; CLI + JSON + MCP doors), seven use-case narratives, a chapter-by-chapter placement table, and a work sequence starting with Ch.3's clock/reset/connection tools. Principle: tools are deterministic programs, testable in CI; agent loops stay separate.
 - 2026-09-07 — Catalogue extended with domain M (testbench understanding + logs as context): clock/reset trees, connection graph, static and dynamic UVM topology, TLM graph, dry sequence trace; a UVM message-signature convention (role, TXN id, stage, key=value payload) with a JSON emitter, lifecycle join, bounded failure context and a four-way DV-versus-RTL verdict; 10 new tools, 3 new build-order items (5a–5c), 2 new discussion questions. Prompted by the author's question.
