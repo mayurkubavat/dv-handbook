@@ -11,6 +11,7 @@ Link every note from `STATUS.md` → "Research references" with what it feeds.
 | `dv-adaptation-synthesis.md` | Synthesis: adapting SW/GenAI practice to DV | done (2026-09-06, ~4.3k words) | Ch. 34, book workflow |
 | `ch01-cost-gap-lifecycle.md` | Survey figures, cost of bugs, escapes, definitions, lifecycle, sign-off | done (2026-09-06, ~3k words) | Ch. 1 |
 | `ch02-verification-planning.md` | Plan definitions, feature extraction, traceability, coverage model, OpenTitan plan format + sign-off stages, failure modes, AI-generated plans | done (2026-09-06, ~4.5k words) | Ch. 2 |
+| `ch34-concept-sources.md` | Primary sources for generative-AI concepts, SW-practice parallels, governance | done (2026-09-06, 43 bib entries) | Ch. 34 |
 
 ## Conventions
 - Cite as `[Source, YYYY-MM-DD](URL)`; separate vendor claims from peer-reviewed results.

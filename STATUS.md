@@ -21,7 +21,7 @@ States: planned → outlined → drafting → examples-verified → reviewed →
 | F | Building and Running the Examples (`appendices/appF-building-examples.qmd`) | examples-verified (4 run, 2 skipped: UVM needs commercial sim, UVM-SystemC needs library) | ~2,600 | 2026-09-06 |
 | 1 | What Is Design Verification? (`chapters/ch01-what-is-dv.qmd`) | **reviewed** (gate 2 approved by author 2026-09-06 after subagent review + revision) | ~5,400 | 2026-09-06 |
 | 2 | Verification Planning (`chapters/ch02-verification-planning.qmd`) | **reviewed** (gate 2 approved by author 2026-09-06) | ~5,500 | 2026-09-06 |
-| 34 | Generative AI and Agentic DV (`chapters/ch34-generative-ai-agentic-dv.qmd`) | drafting (outline rev. 2 approved 2026-09-06): concept-sources research running; figure library + 11 diagrams in progress; prose when sources land | 0 | 2026-09-06 |
+| 34 | Generative AI and Agentic DV (`chapters/ch34-generative-ai-agentic-dv.qmd`) | drafted (~7,400 words, 11 figures, 41 citations to concept primaries); independent review in progress | ~7,400 | 2026-09-06 |
 | — | chapters 3–33, 35 + appendices A–E, G, H | planned | 0 | 2026-09-05 |
 
 Edition 1 target: Parts I–III + appendices A–D, F, G. See design doc §4.
@@ -65,6 +65,7 @@ See `research/README.md` for the index. Active notes:
 - Bare `ls` in this shell hangs (aliased to an interactive tool); use `/bin/ls`.
 
 ## Session log
+- 2026-09-06 — Ch.34 drafted as a concept chapter: 11 sections + worked example on paper (walk table + swim-lane), 11 block diagrams via `figures/blocks.py` + `gen_ch34_figures.py`, 43 concept-primary bib entries from `research/ch34-concept-sources.md`. PDF 94 pages. Review subagent dispatched.
 - 2026-09-06 — Gate 1: Ch.34 outline rev. 2 approved. Research subagent dispatched for primary sources of the general concepts (no vendor blogs). Starting the block-diagram library.
 - 2026-09-06 — Author asked to deep-dive the generative-AI chapter next. First Ch.34 outline (code-heavy agent loops) rejected by author: they want mainly theory and block diagrams, concepts related to DV and to SW-development practice, original rather than a survey of DV articles. Outline revision 2 written on that basis (11 sections, 11 planned figures, worked example on paper, no runnable code; model choice deferred). Gate 2: Ch.2 approved as reviewed. Order: Ch.34 before Ch.3.
 - 2026-09-06 — Ch.2 second pass from review: report tool states renamed (tests pass / tests fail / unknown test / no test) with an evidence-only header line; prose no longer equates a passing test with closure; textbook/standards claims softened to the note's confidence; OpenTitan V2/V3 quoted directly; V2S acknowledged; Future Directions moved after the worked example; plan file folded to 80 cols, American spelling; figure matches the plan. Hook: `docs/reviews/` exempt from the mention check (evidence records). Pushed.
