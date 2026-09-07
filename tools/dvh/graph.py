@@ -54,11 +54,15 @@ def connections(mods: dict, top: str) -> dict:
 # ---------------------------------------------------------------- layout ---
 # Drawing constants, in SVG units. Changing these is the only way the block
 # diagram's proportions change; nothing below hard-codes a position.
-BOX_W, BOX_H = 210, 76           # an instance
-STORE_W, STORE_H = 150, 72       # the top-level port cylinders
-COL_GAP, ROW_GAP = 120, 44       # between columns, between stacked instances
-MARGIN = 34
-CLEAR = 62                       # vertical room reserved for bent arrows
+# The diagram flows top to bottom, not left to right. A book page is
+# portrait: a wide drawing is scaled down until its type is unreadable, so
+# dataflow rank runs down the page and instances sharing a rank sit side by
+# side. Ranks become rows; the drawing stays narrow however deep it gets.
+BOX_W, BOX_H = 210, 74           # an instance
+STORE_W, STORE_H = 150, 66       # the top-level port cylinders
+ROW_GAP, COL_GAP = 76, 40        # between ranks, between peers in one rank
+MARGIN = 26
+CLEAR = 116                      # side room reserved for routed arrows
 
 
 def _merge_edges(conn: dict) -> dict:
@@ -97,9 +101,9 @@ def _label(nets, limit=2) -> str:
 
 def draw(conn: dict, out_svg: str, title: str = "connections") -> None:
     """Block diagram: instances as tool boxes, top ports as stores, nets as
-    arrows. Instances are placed in columns by dataflow rank, so boxes never
-    overlap each other or the port cylinders however many there are, and an
-    edge that skips a column is routed clear of the boxes it passes."""
+    arrows, flowing down the page. Instances are placed in rows by dataflow
+    rank, so boxes never overlap and an edge that skips a rank is routed
+    clear of the boxes it passes."""
     here = os.path.dirname(os.path.abspath(__file__))
     sys.path.insert(0, os.path.join(here, "..", "..", "figures"))
     from blocks import Diagram, DIM                 # noqa: E402
@@ -107,53 +111,51 @@ def draw(conn: dict, out_svg: str, title: str = "connections") -> None:
     merged = _merge_edges(conn)
     inst = sorted(conn["instances"])
     rank = _ranks(inst, merged)
-    columns = {}
+    rows = {}
     for name in inst:
-        columns.setdefault(rank[name], []).append(name)
-    ncols = max(columns) + 1 if columns else 0
+        rows.setdefault(rank[name], []).append(name)
+    nrows = max(rows) + 1 if rows else 0
 
-    def col_x(c):
-        return MARGIN + STORE_W + COL_GAP + c * (BOX_W + COL_GAP)
+    widest = max((len(v) for v in rows.values()), default=1)
+    band = widest * BOX_W + (widest - 1) * COL_GAP
+    width = CLEAR + band + CLEAR
+    mid = CLEAR + band / 2
 
-    out_x = col_x(ncols - 1) + BOX_W + COL_GAP if ncols else col_x(0)
-    width = out_x + STORE_W + MARGIN
-    tallest = max((len(v) for v in columns.values()), default=1)
-    body_h = max(tallest * BOX_H + (tallest - 1) * ROW_GAP, STORE_H)
+    def row_y(r):
+        return MARGIN + STORE_H + ROW_GAP + r * (BOX_H + ROW_GAP)
+
+    out_y = row_y(nrows - 1) + BOX_H + ROW_GAP if nrows else row_y(0)
 
     ins = sorted({e["from_port"] for e in conn["edges"] if e["from"] == "top"})
     outs = sorted({e["to_port"] for e in conn["edges"] if e["to"] == "top"})
-    # Port names go under their cylinder, not inside it, so the list can grow
-    # without ever colliding with the cylinder's own label.
-    caption_h = 15 * 1.3 * max(len(_stack(ins).split("\n")),
-                               len(_stack(outs).split("\n")))
-
-    mid = MARGIN + CLEAR + body_h / 2
-    # Below the boxes, the routed arrows and the port captions share one band.
-    height = mid + body_h / 2 + max(CLEAR, 14 + caption_h) + MARGIN
+    # Port names sit beside the cylinders, so only the deeper of the two lists
+    # can push the drawing past the bottom store.
+    tail_text = (len(_stack(outs).split("\n")) - 2) * 18
+    height = out_y + STORE_H + max(0, tail_text) + MARGIN
 
     d = Diagram(width, height, title)
     boxes = {}
-    for c, names in sorted(columns.items()):
-        span = len(names) * BOX_H + (len(names) - 1) * ROW_GAP
-        y0 = mid - span / 2
+    for r, names in sorted(rows.items()):
+        span = len(names) * BOX_W + (len(names) - 1) * COL_GAP
+        x0 = mid - span / 2
         for k, name in enumerate(names):
-            y = y0 + k * (BOX_H + ROW_GAP)
-            boxes[name] = d.tool(col_x(c), y, name, w=BOX_W, h=BOX_H,
+            x = x0 + k * (BOX_W + COL_GAP)
+            boxes[name] = d.tool(x, row_y(r), name, w=BOX_W, h=BOX_H,
                                  sub=conn["instances"][name])
 
-    store_y = mid - STORE_H / 2
-    boxes["top"] = d.store(MARGIN, store_y, "inputs", w=STORE_W, h=STORE_H)
-    tout = d.store(out_x, store_y, "outputs", w=STORE_W, h=STORE_H)
-    for x, ports in ((MARGIN, ins), (out_x, outs)):
-        d.label(x + STORE_W / 2, store_y + STORE_H + 22, _stack(ports),
-                size=14, fill=DIM, anchor="middle")
+    store_x = mid - STORE_W / 2
+    boxes["top"] = d.store(store_x, MARGIN, "inputs", w=STORE_W, h=STORE_H)
+    tout = d.store(store_x, out_y, "outputs", w=STORE_W, h=STORE_H)
+    # Port names sit beside their cylinder, so the list can grow without ever
+    # colliding with the cylinder's own label.
+    d.label(store_x + STORE_W + 16, MARGIN + 22, _stack(ins), size=14, fill=DIM)
+    d.label(store_x + STORE_W + 16, out_y + 22, _stack(outs), size=14, fill=DIM)
 
-    # An edge that skips a column, or joins two instances in the same column,
-    # is bent clear of the boxes between its ends. A quadratic curve reaches
-    # only half its control offset, so the control point is set to twice the
-    # clearance actually wanted. The side alternates so two routed arrows do
-    # not land their labels in the same place.
-    clearance = 2 * (body_h / 2 + 30)
+    # An edge that skips a rank, or joins two instances in the same rank, is
+    # bent clear of the boxes between its ends. A quadratic curve reaches only
+    # half its control offset, so the control point is twice the clearance
+    # wanted. The side alternates so two routed arrows do not overlap.
+    clearance = 2 * (band / 2 + 52)
     side = 1
     for (src, dst), nets in sorted(merged.items()):
         a = boxes.get(src)
@@ -161,16 +163,16 @@ def draw(conn: dict, out_svg: str, title: str = "connections") -> None:
         if a is None or b is None or src == dst:
             continue
         ra = -1 if src == "top" else rank[src]
-        rb = ncols if dst == "top" else rank[dst]
+        rb = nrows if dst == "top" else rank[dst]
         skips = rb - ra > 1
-        same_column = src != "top" and dst != "top" and rank[src] == rank[dst]
-        bend = (0, side * clearance) if (skips or same_column) else None
+        peers = src != "top" and dst != "top" and rank[src] == rank[dst]
+        bend = (side * clearance, 0) if (skips or peers) else None
         if bend:
             side = -side
-        d.arrow(a, b, label=_label(nets), bend=bend,
-                label_dy=-8 if not bend or bend[1] < 0 else 18)
+        d.arrow(a, b, label=_label(nets), bend=bend, label_dy=-10)
 
-    d.caption(MARGIN, height - 12, title, size=15, fill=DIM)
+    # No title is drawn inside the drawing: where this is used as a book
+    # figure the caption sits outside it, and two titles read as a mistake.
     _save_to(d, out_svg)
 
 

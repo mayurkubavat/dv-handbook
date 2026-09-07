@@ -1,80 +1,290 @@
-<!-- OUTLINE: not yet approved -->
-
 # Digital Design for Verifiers {#sec-ch03}
-
-*Chapter intent: by the end, a reader who can write RTL reads it the way a verifier must: as a set of claims about clocks, resets, state, timing and interfaces that a specification made and the RTL may or may not honor. The chapter teaches the structures every block is built from (clocks and resets, registers and state machines, pipelines and handshakes, interfaces) and, for each, the question a verifier asks that a designer does not. Its worked example builds the first tools of the book's tool layer: extracting a design's clock tree, reset tree and connection graph from the RTL itself, so that "reading a design" becomes something a program can do and a person can check.*
 
 > The designer reads RTL to see how the block works. The verifier reads it to see what the block assumes.
 
-## Learning objectives
+::: {.callout-note title="Learning objectives"}
+After this chapter you will be able to:
 
-*Five items: explain what synthesis makes of RTL and why simulation and synthesis can disagree; identify every clock and reset domain in a design and name the crossings; read a state machine for its unreachable, illegal and deadlock states; read a pipeline or handshake for its back-pressure, hazard and off-by-one risks; extract a design's clock tree, reset tree and connection graph with a tool and check them against the specification.*
+1. Explain what synthesis makes of RTL, and name the coding styles where the simulator and the synthesized netlist disagree.
+2. Identify every clock and reset domain in a design and classify each crossing between them as safe, waived, or a bug.
+3. Read a state machine for its unreachable states, its illegal encodings, and the transitions the RTL added that the specification never named.
+4. Read a pipeline, handshake or queue for its back-pressure, its occupancy invariant, and its off-by-one.
+5. Extract a design's clock tree, reset tree and connection graph with a program, and check what it reports against the specification.
+:::
 
 ## The assumption that shipped
 
-*Motivation, 400 to 600 words. A block whose designer assumed a synchronous reset and whose integrator supplied an asynchronous one; or the FIFO of @sec-ch01, whose four-bit counter was a correct implementation of a wrong assumption about capacity. The point: bugs of this class are not coding errors and no lint finds them; they are assumptions the RTL makes about its environment, and the verifier's first job is to enumerate the assumptions. Sourced from the research note's escape examples or the book's own FIFO.*
+A block is delivered. It has been simulated for weeks, its coverage is closed, its lint is clean, and it works. Eighteen months later, in a system nobody on the original team ever saw, it fails about once a day.
 
-## 3.1 What RTL is, and what synthesis makes of it {#sec-ch03-rtl}
+Nothing in that block was coded wrongly. Its registers were written the way its author intended, its tests checked what its author meant to check, and every tool that looked at it approved. What failed was an assumption. The block assumed something about the world it would be placed in, that assumption was never written down, and the integrator supplied a world in which it was false.
 
-*Register-transfer level as a description of registers and the combinational logic between them; `always_ff`, `always_comb`, `always_latch` as statements of intent that synthesis checks; the synthesizable subset; why simulation semantics (event-driven, four-state, delta cycles) and synthesis semantics (netlist) can disagree, with the classic cases: incomplete sensitivity, latches from incomplete assignments, blocking versus non-blocking in sequential blocks, initial values that synthesis ignores. Definition callout: register, combinational cloud, netlist. Pitfall callout: "it simulated correctly" as a claim about the simulator, not the silicon; forward pointer to gate-level simulation in Part IV.*
+This is the single most important thing separating how a designer reads RTL from how a verifier must. The designer reads the code as an implementation and asks whether it does what was intended. The verifier reads the same code as a set of claims about its environment and asks which of those claims anybody has ever checked. The FIFO of @sec-ch01 is an instance. Its counter was four bits wide, which is a correct implementation of the assumption that sixteen entries fit in four bits. The assumption was wrong. No lint tool objects to a four-bit counter.
 
-## 3.2 Clocks {#sec-ch03-clocks}
+Bugs of this class share three properties that make them expensive. They are not coding errors, so style checking does not find them. They are not visible at the block boundary in ordinary traffic, so the block's own tests pass. And several of them, the ones involving asynchronous clocks in particular, are not reproducible in simulation at all, because the simulator is modeling a different circuit from the one that will be built.
 
-*Clock sources, dividers, gates and multiplexers; what a clock domain is and why it is the first thing a verifier maps; multi-clock designs and the crossing as the single most common source of escapes that simulation cannot reproduce; metastability in one paragraph with a primary source; synchronizers as structures a tool can recognize. The verifier's questions: how many clocks, which registers are on which, where do they meet, and what does the specification say about the relationship (synchronous, asynchronous, ratio). Forward pointer to the CDC chapter in Part IV.*
+This chapter is the reading that finds them. It walks the structures every synchronous block is made of, and for each one gives the question a verifier asks that a designer does not. It ends by making the reading executable: a program that extracts a design's clocks, resets and connections from the RTL itself, so that "read the design" becomes something you can run, review, and put in a regression.
 
-## 3.3 Resets {#sec-ch03-resets}
+## What RTL is, and what synthesis makes of it {#sec-ch03-rtl}
 
-*Synchronous versus asynchronous reset: what each costs and what each assumes; reset synchronizers and reset release; reset domains; registers with no reset and why they exist; reset values as part of the specification. The verifier's questions: what is the reset sequence, in what order do domains release, which registers are defined after reset and which are X, and does the testbench's reset match the integrator's. In Practice callout: the reset test every block needs and the two it usually lacks (reset mid-traffic, reset with a clock stopped).*
+::: {.callout-note title="Definition"}
+**Register-transfer level** describes hardware as a set of state elements and the combinational logic that computes each element's next value from the current ones. A **register** holds a value between clock edges. A **combinational cloud** is the logic between registers, which has no memory and whose output is a function of its inputs alone. A **netlist** is what synthesis produces: the same behavior expressed as instances of library cells and the wires between them.
+:::
 
-## 3.4 State machines {#sec-ch03-fsm}
+RTL is not a program. It is a description that two very different tools read for two different purposes, and the whole discipline of writing synthesizable code exists because those two readings can differ. Mills and Cummings put the governing principle in one sentence: any coding style that tells the simulator something about the design which cannot be passed on to the synthesis tool is a bad coding style, and so is any synthesis switch that tells the synthesis tool something the simulator cannot see [@millscummings1999mismatch]. The consequence is not untidiness. In their words, these mismatches are frequently not discovered until after silicon has been generated, and then require a second spin.
 
-*Coding styles and encodings, briefly; the verifier's reading: the state graph, reachable and unreachable states, illegal encodings and what happens on one, deadlock and livelock, the transitions the specification names and the ones the RTL adds. Coverage of states and transitions as the natural coverage model; formal as the natural tool for unreachability and deadlock (forward pointer). Worked on a small FSM from the FIFO's environment or a bus interface.*
+The synthesizable subset is fixed by its own standard, IEEE 1364.1, separate from the simulation language [@ieee1364.1-2002; @cummings2016logicprocs]. Its existence is the first thing worth internalizing: the language a testbench is written in is much larger than the language a design may be written in.
 
-## 3.5 Pipelines, handshakes and queues {#sec-ch03-pipelines}
+SystemVerilog added three process keywords to make the designer's intent machine-checkable. Cummings, who was on the working group, describes them as intended to show designer intent and to let tools identify problems earlier [@cummings2016logicprocs]. An `always_comb` block builds its own sensitivity list, one better than `always @*` because it is also sensitive to changes inside a function it calls, and it triggers once at the end of time zero. An `always_ff` block, notably, does *not* build its own sensitivity list, because the information needed is not in the block's body. A variable assigned in an `always_comb` block may not also be assigned from another process.
 
-*The valid/ready handshake and its rules (the source rule, the sink rule, no combinational dependence of valid on ready), back-pressure, skid buffers, hazards; queues and their occupancy invariants; the FIFO of @sec-ch01 revisited as an instance of the general off-by-one: a counter's width is an assumption about capacity. The verifier's questions: what stalls, what drains, what happens at full and at empty, what happens at both ends in the same cycle. Pitfall callout: testing a pipeline only at low occupancy.*
+Two limits on those keywords matter more to a verifier than the keywords themselves, and both come from the same source.
 
-## 3.6 Interfaces {#sec-ch03-interfaces}
+The first is that these are simulator checks, not synthesis contracts. Synthesis behavior for the `always_*` processes is not defined by any IEEE standard [@cummings2016logicprocs]. The keyword records an intention; it does not oblige the synthesis tool to honor it.
 
-*The block boundary as the verifier's contract: ports, protocols, timing, and what the specification says versus what the RTL implements; SystemVerilog interfaces and modports as the language's way of naming a contract; a canonical bus family (APB, AXI-Lite) as examples of what a boundary specification contains. The verifier's questions at a boundary: who drives what when, what is optional, what is undefined. Forward pointer to Part III's agents and Part VI's protocol chapter.*
+The second is that where the tools could catch the mismatch, they mostly do not. IEEE 1800-2012 permits a simulator to warn when a coding style would not infer the logic the process asked for, but the permission is optional, and Cummings reported in 2016 that there were no known simulators issuing those warnings [@cummings2016logicprocs]. He argued the warnings should be errors. Verilator does implement one half of the pair: its `NOLATCH` warning fires when no latch was detected in an `always_latch` block [@verilator-warnings].
 
-## 3.7 The verifier's reading, as a procedure {#sec-ch03-reading}
+::: {.callout-warning title="Pitfall"}
+"It simulated correctly" is a claim about the simulator, not about the silicon. The classic mismatches are all cases where the two readings of the same text diverge, and in every one of them the RTL simulation is the one that looks fine. An incomplete sensitivity list synthesizes as though the list were complete while simulating quite differently; an empty one can lock the simulator into an infinite loop while the synthesized result is still an AND gate. A `casex` treats an unknown as a don't-care before synthesis and propagates it through the gate-level model afterwards, and Mills and Cummings report a design that erroneously initialized itself into a working state in RTL simulation exactly this way. An `X` assigned in RTL is an unknown to the simulator and a don't-care to synthesis. Using a function to model combinational logic is dangerous, they note, precisely because there is no synthesis warning when the function's code simulates latch behavior [@millscummings1999mismatch]. Gate-level simulation, in @sec-ch03-reading and again in Part IV, exists because of this gap.
+:::
 
-*The chapter's synthesis: a fixed order for reading a new block: boundary first, then clocks and resets, then state, then datapaths and queues, then everything the RTL assumes about its environment; lint as the first automated reading (what Verilator and Verible warnings mean to a verifier); X-propagation and initialization as the assumptions most often left implicit. Output of the reading: a list of assumptions, each of which is a plan item candidate for @sec-ch02. Future Directions callout: the reading as something a tool does and a person checks, pointing to the worked example and the tool-layer appendix.*
+The blocking versus non-blocking rules belong to the same family. Cummings' eight guidelines are the canonical statement: non-blocking assignments for sequential logic and for latches, blocking for combinational logic, non-blocking when a single block models both, never mixed in one block, and never two blocks assigning the same variable [@cummings2000nba]. A race condition, in his definition, occurs when two or more statements scheduled in the same simulation time step would give different results depending on their order. He estimates that following the guidelines removes ninety to a hundred percent of the race conditions most designers meet; that figure is his expert judgment rather than a measurement, and it is worth knowing which of the two it is.
 
-## 3.8 Worked example: reading a design with a tool {#sec-ch03-example}
+The `full_case` and `parallel_case` directives deserve a verifier's specific suspicion. They frequently make designs larger and slower, can obscure the fact that latches have been inferred, and can change a design's functionality so that pre-synthesis and post-synthesis simulation disagree [@cummings1999fullparallel]. Cummings' summary is the sentence to remember: these directives are always most dangerous when they work.
 
-*The first tools of the book's tool layer, built here because this chapter needs them. Three programs over an elaborated design: `rtl.clock_tree` walks every sequential element's clock back to its source through buffers, gates, multiplexers and dividers and groups registers into domains; `rtl.reset_tree` does the same for resets with polarity and synchronicity, and lists registers with none; `rtl.connections` builds the instance connection graph and draws it with the book's own diagram library. Run on a small two-clock design written for the chapter (a bus-clocked register block feeding a core-clocked datapath through a synchronizer, with one deliberate missing synchronizer), the tools report the domains, the crossings, the one register without a reset, and a block diagram, and the chapter reads their output against the specification. Everything they find is an assumption; the missing synchronizer is the one the specification did not permit. Listings included from `tools/dvh/` and `examples/ch03-digital-design/`; output included from `run.out`.*
+## Clocks {#sec-ch03-clocks}
+
+::: {.callout-note title="Definition"}
+A **clock** is a periodic binary signal that marks the sampling point of the sequential elements it drives, characterized by a period, a duty cycle and a phase. A **primary clock** is a primary input of the design or the output of an analog block such as a phase-locked loop treated as a black box. A **derived clock** is any signal produced from another clock by the network in between. A **clock domain** is the set of registers sampled by one such clock [@plassan2018cdc].
+:::
+
+Mapping the clocks is the first thing a verifier does with a new block, before reading a line of functional logic, because everything else in the reading depends on knowing which registers move together.
+
+Between the primary clocks and the flip-flops sits a network performing exactly four operations, in Plassan's decomposition: *selection*, choosing to propagate one clock or another; *blending*, combining two clocks to generate a new one; *gating*, propagating or stopping a clock; and *shaping*, modifying the period, duty cycle or phase [@plassan2018cdc]. It is worth noting that this network is conventionally called a clock tree and is not one. Its formal representation is a directed graph, as the same source points out, which is why the tool later in this chapter walks a graph rather than a tree.
+
+Gating and selection are worth separating carefully, because they have different consequences for the domain map. A clock gate is normally built with a latch so that the clock can only be disabled while it is low, which avoids emitting a glitch on the gated output [@plassan2018cdc]. A gated clock only propagates or stops one source, so its period and phase remain that source's, and the registers behind it stay in the source's domain. A multiplexed clock can hand the same node the timing of either input, so it may genuinely create a new domain. That distinction is this book's reading of the definitions above rather than a sentence quoted from either source, and you should treat it as reasoning to check rather than a rule to apply blindly. The gating enable is itself a crossing: gating signals are synchronized precisely to eliminate clock glitches when a domain switches clocks [@ginosar2011metastability].
+
+The relationship between two domains is a property of the specification, not of the RTL, and a verifier must extract it from the specification explicitly. Ginosar names the categories. Two *mesochronous* domains run at the same frequency with a relative phase unknown in advance; *multisynchronous* domains run at the same frequency with slowly changing relative phase; *rational* clocks have frequencies related by a ratio fixed at design time; *periodic* clocks are unrelated, neither mesochronous nor integer multiples of one another [@ginosar2011metastability]. Each category admits a different correct synchronizer, which is why "the two clocks are asynchronous" is not a sufficient answer.
+
+::: {.callout-tip title="In Practice"}
+Ask for a number, not an adjective, and ask early. For every pair of domains that exchange a signal, the specification should say which of Ginosar's categories applies, and for rational clocks it should give the ratio. If the specification does not say, the answer is being invented by whoever writes the synchronizer, and the verifier is the last person who will find out what they chose. The practitioner partitioning guideline that makes this tractable is one clock per module, with the top level, which naturally sees every clock, as the stated exception [@cummings2008cdc].
+:::
+
+The reason this matters is that a crossing between domains is the most expensive kind of bug this chapter covers. To see why, the physics is worth one section of its own.
+
+### Metastability, in the amount a verifier needs {#sec-ch03-metastability}
+
+Metastability is indecision, not oscillation: in a flip-flop it means indecision as to whether the output should be zero or one, and a common working definition is that a flip-flop was metastable if its output changed later than the nominal clock-to-Q delay [@ginosar2011metastability]. The folk picture of two nodes stuck halfway and escaping by some random process should, in Ginosar's words, be taken lightly. The real behavior is exponential: if a latch is metastable at time zero, the probability it is still metastable at time $t$ is $e^{-t/\tau}$.
+
+There is a window $T_W$ around the sampling edge in which a data change can drive the latch metastable. If the clock runs at $F_C$ and the data changes at rate $F_D$, the rate of entering metastability is $F_D \cdot F_C \cdot T_W$. Failure means entering metastability and still being metastable a resolution time $S$ later, and because the two events are independent their probabilities multiply, giving the mean time between failures [@ginosar2011metastability]:
+
+$$\mathrm{MTBF} = \frac{e^{S/\tau}}{T_W \cdot F_C \cdot F_D}$$
+
+Here $T_W$ is the window around the sampling edge, $F_C$ the sampling clock frequency, $F_D$ the rate at which the data input changes, $S$ the resolution time allowed before the value is sampled again, and $\tau$ the resolution time constant of the latch, which depends on the capacitive load on the master-latch nodes and the gain of its inverters.
+
+The number that formula produces is the reason a verifier cannot accept "we used two flip-flops" as an answer. For a 28 nm high-performance process with $\tau$ of 10 ps, $T_W$ of 20 ps, a 1 GHz clock and data changing every ten cycles, Ginosar computes an MTBF of $4 \times 10^{29}$ years, and remarks that the universe is believed to be only $10^{10}$ years old. For the same two-flop structure at low voltage and high temperature, with $\tau$ of 100 ps and $T_W$ of 200 ps, he computes an MTBF of about one minute [@ginosar2011metastability]. Same circuit. The difference is entirely in the technology and the operating point.
+
+Two consequences follow directly, and both are things to check rather than to assume. The resolution time is not the whole clock period: any logic or wire delay along the path from the first flip-flop to the second is subtracted from it, which is why the two flip-flops must be placed near each other, and why, as Ginosar notes, missing this apparently minor detail has made quite a few synchronizers fail unexpectedly. And the budget is a system budget, because MTBF falls roughly linearly with the number of synchronizers; a design with a thousand of them needs each one designed for an MTBF three orders of magnitude above the target for the whole system [@ginosar2011metastability].
+
+### Crossings and the structures that make them safe {#sec-ch03-cdc}
+
+A two-flop synchronizer samples the incoming signal into the receiving domain and then waits a full clock period before sampling the first stage into a second [@cummings2008cdc]. What it buys is precise: the second stage's output is never metastable, except perhaps once every MTBF years, and the circuit has exchanged the analog uncertainty of metastability for a digital uncertainty about whether the output appears one cycle later or two [@ginosar2011metastability]. That residual uncertainty never goes away, and it is the reason a verifier should expect a correct design to tolerate variable latency across every crossing.
+
+The rule that catches most designs is that this structure synchronizes control, not data. Ginosar is emphatic:
+
+> "Note that the synchronizer doesn't synchronize the data --- rather, it synchronizes the control signals. Attempts to synchronize the data bit by bit usually lead to catastrophic results; even if all data lines toggle simultaneously, some bits might pass through after one cycle, while others might take two cycles because of metastability. Beware: that's a complete loss of data." [@ginosar2011metastability]
+
+Stated structurally, separate synchronizers on the bits of a bus cannot be guaranteed to have identical latency, so the receiving domain can observe a value the sender never sent [@plassan2018cdc]. Cummings puts the practical version plainly: simply using synchronizers on all of the crossing bits is not always good enough [@cummings2008cdc].
+
+The correct structures for a multi-bit crossing are a short list, and a verifier should be able to name which one a design claims to use [@cummings2008cdc]. Consolidate several signals into one bit in the sending domain before crossing. Use a multi-cycle-path formulation, sending the data unsynchronized alongside a synchronized control signal, so the data has settled on the destination register's inputs before the load arrives. Use a full request-acknowledge handshake, where the sender may not change the request until the acknowledgment has come back, a round trip that Ginosar identifies as the key to correct synchronization and which costs several cycles in each direction [@ginosar2011metastability]. Or use an asynchronous FIFO with Gray-coded pointers, since a Gray code changes only one bit per transition and so removes the multi-bit problem at the source [@cummings2008cdc; @gisselquist2018afifo].
+
+One hazard survives correct per-signal synchronization and is worth knowing by name. When two synchronized signals converge on a combinational gate, a transient glitch may appear; on a synchronous path static timing analysis guarantees it resolves within the period, but after a crossing the glitch can be captured and propagated [@plassan2018cdc].
+
+::: {.callout-warning title="Pitfall"}
+This is the class of bug that ordinary RTL simulation does not find, and understanding why is more useful than the rule. The effects are analog effects in transistor-level circuits, and they do not typically appear in standard RTL simulation flows [@litterick2006cdcsva]. The trap is to conclude that simulation is merely optimistic. It is not: it is simulating a different circuit, and it diverges in *both* directions. Litterick walks the cases. A signal changing just before the clock edge is a setup violation; simulation propagates the new value, while the real circuit may go metastable and decay back to the old one. A two-cycle pulse is propagated by simulation as a two-cycle pulse, while the real circuit may filter it away entirely [@litterick2006cdcsva]. So the honest statement is that RTL simulation does not model metastability and disagrees with silicon in both directions, not that a broken crossing always passes.
+:::
+
+## Resets {#sec-ch03-resets}
+
+Reset is where a block's assumptions about its environment are densest, and where they are least often written down.
+
+A synchronous reset can only take effect at an active clock edge, which means the clock filters small glitches on the reset, and that filtering is the main reason to prefer one where the reset is generated internally by combinational logic [@cummings2003resets]. Its costs are environmental. It may need a pulse stretcher to guarantee the reset is still asserted at an active edge. It needs a clock at all, so if a clock is gated to save power and the gate closes as reset asserts, only an asynchronous reset will work. And an internal tristate bus needs a power-on asynchronous reset to avoid contention before any clock is running [@cummings2003resets]. The frequently cited area advantage is real but small, and the same source is blunt that at modern die sizes a gate or two per flip-flop is generally irrelevant.
+
+An asynchronous reset keeps the data path clean, which matters when a design is pushing its timing, and it works with or without a clock present [@cummings2003resets]. Its cost is concentrated entirely at one moment. Cummings and Mills state it exactly: the problem with asynchronous resets is that they are asynchronous both at assertion and at de-assertion, the assertion is a non-issue, and the de-assertion is the issue. If reset is released at or near an active clock edge, a flip-flop's output can go metastable and the reset state of the chip is lost.
+
+That is why an asynchronous reset needs a reset synchronizer, and why the paper's guideline for it is in capitals: every design using an asynchronous reset should include one, because without it the reset's usefulness in the final system is void even if the reset works in simulation [@cummings2003resets]. The structure asserts asynchronously and de-asserts synchronously. An external reset asynchronously resets a pair of flip-flops that drive the internal reset tree; removal happens by de-asserting the external reset and letting a tied-high input clock through, which typically takes two rising edges [@cummings2003resets].
+
+The timing checks that police this have names a verifier should recognize. *Recovery* time is the interval between reset de-assertion and the next rising clock edge, and *removal* is its counterpart; Verilog provides `$recovery`, `$removal` and the combined `$recrem` to model and check them [@cummings2003resets]. A second and distinct hazard is skew: when removal is asynchronous to the clock edge, differences in propagation delay along the reset or clock paths can let some flip-flops leave reset before others [@cummings2003resets].
+
+::: {.callout-tip title="In Practice"}
+Every block needs a reset test, and most have one: assert reset, release it, check the register values. The two that are usually missing are the ones that find bugs. The first is reset asserted in the middle of traffic, with transactions in flight, queues partly full and a handshake half-complete, which is where a state machine that returns to idle while its datapath does not will show itself. The second is reset in a design whose clock has been stopped, which is exactly the case a synchronous reset cannot handle and which a testbench that always runs its clocks will never produce. Neither costs much to write; both test an assumption that the block's specification usually leaves implicit.
+:::
+
+Registers with no reset are the last piece, and they need judgment rather than a rule. Some have no reset for good reasons: a datapath pipeline stage whose output is qualified by a valid bit does not need one, and a storage array is not meant to reset at all. The tool later in this chapter reports every unreset register it finds, and on the FIFO of @sec-ch01 it reports sixteen, which are that FIFO's memory. All sixteen findings are correct and none is a bug. What the tool cannot know is which unreset registers the specification intended, and that question is the verifier's, not the tool's.
+
+## State machines {#sec-ch03-fsm}
+
+A designer reads a state machine as a description of what the block does. A verifier reads the same text as a graph and asks four questions about it.
+
+*Which states are reachable?* An encoding admits more states than the design names, and a state the specification lists but the RTL can never enter is either dead logic or a missing transition. Symbolic reachability analysis is the natural tool for this question and long predates its use in this industry [@coudert1990reachability; @clarke1981modelchecking].
+
+*What happens on an illegal encoding?* A design with more encodings than states will eventually see one, whether through a soft error or a fault injection, and the specification usually says nothing about it. Security-focused designs answer explicitly: OpenTitan specifies sparse state encodings with a minimum Hamming distance so that a single-bit upset cannot silently land on another legal state [@opentitan-secure-hw]. It is worth being careful about what the safety standards do and do not say here. This book does not quote clause requirements from ISO 26262 or DO-254, because they are not openly readable; what can be cited is the engineering practice, and the practice is unambiguous.
+
+*Where can it get stuck?* A state with no exit under some input condition is a deadlock, and a cycle that makes no progress is a livelock. Both are properties of the graph rather than of any one test.
+
+*Which transitions did the RTL add?* The transitions the specification names are a subset of the transitions the code implements, and the difference is where unreviewed behavior lives.
+
+The natural coverage model follows from the reading: cover the states, and cover the transitions between them, not merely the lines of code that implement them. This is not exotic tooling. Verilator implements FSM state and transition coverage natively over a conservative subset of the state machines it recognizes, reporting state and arc coverage separately [@verilator-simulating]. Where coverage cannot close, formal reachability is the standard answer to why, and it is how mature projects distinguish a coverage hole from an unreachable point rather than waiving it by hand [@opentitan-dv-methodology].
+
+## Pipelines, handshakes and queues {#sec-ch03-pipelines}
+
+::: {.callout-note title="Definition"}
+A **valid/ready handshake** is a two-wire contract in which the sender raises `valid` to offer a beat and the receiver raises `ready` to accept one. The beat transfers only in a cycle where both are high. **Back-pressure** is the receiver's use of `ready` to slow the sender.
+:::
+
+The most important thing about this handshake is that it has normative rules, and that they are asymmetric. The SiFive TileLink specification states them in openly readable form [@sifive2017tilelink]:
+
+> "valid must never depend on ready. If a sender wishes to send a beat, it must assert valid independently of whether the receiver signals that it is ready. As a consequence, there must be no combinational path from ready to valid or any of the control and data signals."
+
+The converse is explicitly permitted in the same section: it is acceptable for a receiver to drive `ready` in response to `valid`, though driving it independently is recommended to keep the handshaking circuit shallow. So the asymmetry is the rule to remember. The receiver may look at the sender; the sender may not look at the receiver.
+
+One difference between protocol families must not be blurred, because a verifier who learns the wrong version will write the wrong checker. In TileLink, a beat is revocable: a sender may raise `valid` and lower it the next cycle even though the beat was not accepted, and may change the payload in the meantime [@sifive2017tilelink]. In AXI the opposite holds, and `VALID` once asserted must remain asserted with a stable payload until the transfer completes [@gisselquist2021axirules]. Which rule applies is a property of the specific protocol, and it is exactly the kind of question the block's interface specification must answer rather than the verifier assuming.
+
+Back-pressure is where pipeline bugs concentrate, because it is the case the designer exercised least. A stage that registers its `ready` output needs two storage slots, not one, to avoid losing the beat already in flight when it de-asserts; the structure that provides them is a skid buffer [@gisselquist2019skid].
+
+Queues bring the chapter back to @sec-ch01. A counter's width is an assumption about capacity, and the FIFO of Chapter 1 encoded a wrong one. Production RTL is careful about exactly this: OpenTitan's synchronous FIFO computes its occupancy width as `vbits(Depth+1)`, wide enough for the values zero through `Depth` inclusive rather than zero through `Depth-1` [@opentitan-prim-fifo]. That `+1` is the off-by-one, made explicit by an engineer who had met it before. The same file shows what an occupancy invariant looks like when it is written down rather than assumed, carrying an assertion that the reported depth never exceeds the parameterized depth, alongside assertions about reset behavior and about the data being known when valid is asserted [@opentitan-prim-fifo].
+
+::: {.callout-warning title="Pitfall"}
+A pipeline tested only at low occupancy has not been tested. The interesting behavior is at the boundaries and at the coincidences: what happens when the queue is full and a push arrives, when it is empty and a pop arrives, and above all when a push and a pop arrive in the same cycle at either boundary. Cummings' remark about asynchronous FIFOs generalizes to queues of every kind: most incorrectly implemented FIFO designs still function properly ninety percent of the time, and most almost-correct ones function properly more than ninety-nine percent of the time [@cummings2008cdc]. A test that runs at moderate occupancy is sampling that ninety-nine percent.
+:::
+
+## Interfaces {#sec-ch03-interfaces}
+
+The block boundary is the verifier's contract, and SystemVerilog gives it a name. An `interface` bundles the signals that cross a boundary into one declaration, and a `modport` states the direction each participant sees, so that a connection which disagrees with the contract fails at elaboration rather than in a waveform [@ieee1800-2023].
+
+Naming the signals is the easy half. A boundary specification has to answer more than which wires exist, and the questions a verifier should insist on are these: who drives what, and in which cycle; what is optional and what is mandatory; what the reset behavior of the boundary is; and what happens on an error. OpenTitan's comportability specification is a good public model of the full checklist, covering the bus interface, clocks, resets, the register map, interrupts and alerts, and error responses as a single boundary definition rather than a signal list [@opentitan-comportability].
+
+Once the contract is written, it can be checked continuously rather than inspected. A protocol monitor is an assertion set bound to the boundary that fires the moment the contract is broken, whoever broke it. OpenTitan's bus checker is a working example [@opentitan-tlul-checker], and pre-built libraries of such checkers exist, of which the Accellera Open Verification Library is the standard open one [@accellera2014ovl]. One detail of the OpenTitan checker is worth carrying into Part III: the same property is bound as an *assumption* on one side of the boundary and as an *assertion* on the other. Which one it is depends on whether the design is required to obey the rule or entitled to rely on it, and that distinction is the boundary contract written in a form a tool can act on.
+
+## The verifier's reading, as a procedure {#sec-ch03-reading}
+
+The reading has an order, and following it is what makes the process repeatable rather than a matter of experience.
+
+1. **The boundary first.** Ports, protocol, timing, reset behavior, error responses. Everything inside is in service of this.
+2. **Clocks.** How many, which registers on which, where domains meet, and what relationship the specification claims for each pair.
+3. **Resets.** Kind, polarity, source, synchronizer, release order across domains, and which registers deliberately have none.
+4. **State.** Reachability, illegal encodings, deadlock, and the transitions the RTL added.
+5. **Datapaths and queues.** Occupancy invariants, back-pressure, and the boundary cases.
+6. **Everything the RTL assumes about its environment.** This is the output.
+
+That last step is the point of the whole reading. Its product is a list of assumptions, and each assumption is a candidate plan item for @sec-ch02: something to be stated, agreed with the designer, and then either tested or explicitly waived.
+
+Lint is the first automated pass over this, and knowing its shape tells you what is left for you. Verilator's warning list carries 136 named warnings, of which 18 are off by default, and `-Wall` is needed to enable the stylistic ones [@verilator-warnings]. Several map directly onto sections of this chapter: `LATCH` for a signal not assigned on all paths of a combinational block, `ALWCOMBORDER` for an `always_comb` block that reads a variable before assigning it, `CASEINCOMPLETE` for a stimulus pattern with no case item, `BLKSEQ` for a blocking assignment in a sequential block, and `MULTIDRIVEN` for a signal with multiple procedural drivers [@verilator-warnings]. Verible's published rule list carries 61 rules, 42 on by default, including `always-comb`, `always-ff-non-blocking` and `case-missing-default` [@verible-lint-rules]. It is a nice illustration of how the primary literature became tool policy that Verilator's own documentation cites Cummings' SNUG papers by URL from inside two of its warning entries.
+
+What lint cannot do is stated best by a lint tool. Verible's own documentation says the linter operates on single unpreprocessed files in isolation, excels at finding patterns expressible as syntax-tree or token matching, and lists among its current limitations that it makes no attempt to understand preprocessing branches and performs no semantic analysis such as connectivity, which would require preprocessing, multi-file analysis and an abstract syntax tree [@verible-lint-readme].
+
+That is the whole argument in the tool's own words. A checker that reads one file at a time and matches syntax patterns cannot reason about two clocks meeting, because the meeting is a property of the elaborated design and not of any file's text.
+
+::: {.callout-warning title="Pitfall"}
+Do not assume a clean lint says anything about crossings, and do not assume the tools quietly check them. Neither claims to. Verible's rule list contains no rule mentioning clock domain crossing, synchronizers or metastability. Verilator had a crossing option and removed it: its `CDCRSTLOGIC` warning is documented as historical and never issued since version 5.008, and the related `CLKDATA` as never issued since 5.000 [@verilator-warnings]. Two warnings, `MULTIDRIVEN` and `SYNCASYNCNET`, mention crossings as a possible consequence of a local pattern, but they are single-block structural checks rather than domain analysis, and `SYNCASYNCNET` is off by default. @sec-ch03-example demonstrates this on a design with a real crossing bug.
+:::
+
+One more assumption is usually left implicit, and a chapter that runs its examples on Verilator has to be honest about it. X-propagation is where RTL simulation and gate-level simulation disagree most sharply. Turpin's framing is the one to know: the semantics of X in Verilog RTL are extremely dangerous because RTL bugs can be masked, letting RTL simulations pass where netlist simulations fail [@turpin2003x]. He separates the two effects. *X-pessimism* produces more unknowns than are really necessary, as in `a & ~a`, which is identically zero in hardware but unknown in simulation because the negation throws away the information that the operand is the same signal. *X-optimism* is the dangerous one: an unknown takes just one branch of an `if` or `case` when several should be considered, so a block guarded by an unknown enable simply does not update, and the simulation carries on looking healthy [@turpin2003x]. Verilator is mostly a two-state simulator, and assigning an X gives a constant determined by `--x-assign`, which can be randomized so that a used value causes downstream errors [@verilator-languages]. Randomized two-state initialization is a useful technique, but it is a different technique from X-propagation, and a four-state question cannot be settled with it.
+
+## Worked example: reading a design with a tool {#sec-ch03-example}
+
+::: {.callout-note title="Worked Example"}
+Everything in @sec-ch03-reading is a procedure, and most of steps 2 and 3 are mechanical. This section makes them executable. We build the first pieces of the book's tool layer, run them on a small two-clock design, and read what they say against the design's specification. The tools are ordinary Python programs over an elaborated netlist; they need no simulator and no license.
+:::
+
+### The design and its specification
+
+The block is deliberately small: a register block on a bus clock feeding a datapath on a core clock. Its specification is written into the source, because a specification a tool can be checked against has to exist somewhere.
+
+```{.systemverilog include="examples/ch03-digital-design/rtl/top.sv"}
+```
+
+Three claims in that header are checkable. The two clocks are asynchronous. Every signal crossing between them passes through a synchronizer, or a handshake if it is wider than one bit. Every register has a defined value after reset, except `last_cfg`, which the specification marks don't-care.
+
+The design honors the second claim for `en` and breaks it for `cfg`, which crosses eight bits wide with nothing at all. By @sec-ch03-cdc that is not a marginal choice but the failure Ginosar warns about, and there is no width of synchronizer that would fix it.
+
+### What lint says
+
+Verilator's strictest lint runs over these four files and reports nothing:
+
+```{.text include="examples/ch03-digital-design/sv-lint/run.out"}
+```
+
+That is the correct result. The design has no incomplete sensitivity list, no inferred latch, no width mismatch and no multiply-driven signal. It also has an eight-bit unsynchronized clock-domain crossing, which lint does not look for and does not claim to.
+
+### Extracting the structure
+
+The tool loads the design through Yosys and reads the resulting JSON. The pipeline matters: `proc` must lower RTLIL processes into cells before any register can be found, because processes are not cells [@yosys-rtlil], and `flatten` produces the single-module view the clock and reset walks need, while the unflattened view preserves the hierarchy the connection graph wants [@yosys-json].
+
+```{.python include="tools/dvh/design.py"}
+```
+
+The register cell types are the ones Yosys emits after `proc` and before technology mapping, and the split between them is what lets the reset walk report a kind and a polarity rather than a guess [@yosys-regcells].
+
+The clock and reset trees are then backward walks from each register's clock or reset pin to a source, passing through buffers, gates and multiplexers so that a gated clock is reported with its gating logic rather than mistaken for a new domain, as @sec-ch03-clocks requires.
+
+```{.python include="tools/dvh/clocks.py"}
+```
+
+Two details in that file are the chapter's content rather than programming. The crossing detector walks *data* cones with `any_comb=True`, following every combinational cell rather than only the clock-tree set, because a crossing that arrives through an adder is still a crossing. And `_feeds_directly` encodes the synchronizer recognition rule from @sec-ch03-cdc: a first stage is fed by the foreign register with no logic in between, and feeds a second register in its own domain the same way. A structure that is not shaped like that is not recognized as a synchronizer, which is the desired behavior, because a synchronizer with logic in its middle is not one.
+
+### What the tool says
+
+```{.text include="examples/ch03-digital-design/read/run.out"}
+```
+
+Read against the specification, every line is a finding and only two are bugs.
+
+Two domains, with `cclk` holding five registers, is what the header claims. One register without a reset, `last_cfg`, is the exception the specification names, so it is a finding that the reading closes rather than escalates. The synchronized crossing on `en_b` is the rule being followed. The two unsynchronized crossings on `cfg_b` are the rule being broken, and the tool exits non-zero on them, so a build can gate on it.
+
+Note what the tool did *not* have to be told. It did not know which crossings were expected, which registers were meant to have no reset, or that the two clocks were asynchronous. It derived the structure from the RTL and reported it; the judgment about which findings matter came from reading the specification alongside. That division is the one to carry forward: the tool decides what *is*, and a person decides what it *means*.
+
+The connection graph is drawn from the same netlist, with the hierarchy preserved:
+
+![The two-clock design as the tool extracts it, drawn from the elaborated netlist rather than from a hand-maintained diagram. Instances are placed in rows by dataflow rank, and the two clock nets are routed around the sides. Comparing this against the specification's own block diagram is the cheapest structural review available.](../examples/ch03-digital-design/read/top-connections.svg){#fig-ch03-connections width=64% fig-alt="Block diagram flowing down the page: an inputs cylinder feeding u_regs (regblock), which feeds u_sync_en (sync2) and then u_dp (datapath), which feeds an outputs cylinder; clock, reset and cfg nets routed around the sides."}
+
+### Why the findings are tested
+
+The report is included verbatim in this book, so its exact text is part of the tool's contract, ordering included. The test suite pins it:
+
+```{.python include="tools/dvh/tests/test_ch03.py"}
+```
+
+The last two tests are the interesting ones. Running the tools on the FIFO of @sec-ch01 finds one clock domain and no crossings, as it should, and reports sixteen registers without a reset, which are that FIFO's memory. Yosys expands the array into individual flip-flops, and the tool faithfully reports what it finds. The finding is correct and it is not a bug, which is precisely why the reading needs a person: a tool can tell you that sixteen registers have no reset, and only the specification can tell you that a FIFO's memory is not supposed to have one.
+
+::: {.callout-important title="Future Directions"}
+The reading in @sec-ch03-reading is a procedure over structure, and this section shows that most of steps 2 and 3 are mechanizable today with open tools. The natural extension is to make the whole reading a maintained artifact: derive the domain map, the crossing inventory, the reset-release order and the connection graph on every commit, diff them against the previous run, and require a human decision on every change. A crossing that appears in a diff is then something someone chose, rather than something someone will find in a lab eighteen months later.
+
+The limits are as important as the capability, and they are structural rather than temporary. No amount of netlist analysis recovers the *relationship* between two clocks, because that is a statement about the world outside the design; nor which crossings are waived, nor what a register array is for. Those come from a specification, and a tool that does not have one is guessing. Part VII returns to this, and the tool-layer appendix develops the wider set of derived documents that a design can be made to produce about itself.
+:::
 
 ## Summary
 
-*Eight bullets.*
+- RTL is read by two tools for two purposes, and the discipline of writing synthesizable code exists because those readings can disagree. When they do, the RTL simulation is the one that looks fine.
+- The `always_ff`, `always_comb` and `always_latch` keywords record intent and enable compile-time checks, but synthesis behavior for them is not defined by any IEEE standard, and simulators are permitted rather than required to warn when the inferred logic differs from the intent.
+- Mapping clocks is the first step of the reading, because everything else depends on knowing which registers move together. A gated clock keeps its source's domain; a multiplexed clock may not.
+- The relationship between two domains, mesochronous, multisynchronous, rational or unrelated, is a property of the specification, and each admits a different correct synchronizer. "Asynchronous" is not a sufficient answer.
+- A two-flop synchronizer trades the analog uncertainty of metastability for a digital uncertainty of one cycle or two. It is adequate or hopeless depending on the technology and data rate: the same structure gives $4 \times 10^{29}$ years or about a minute.
+- Synchronizers synchronize control, not data. A multi-bit crossing needs consolidation, a multi-cycle path, a handshake or a Gray-coded FIFO, and per-bit synchronizers are a loss of data rather than a partial fix.
+- Asynchronous reset is safe at assertion and dangerous at release, which is what a reset synchronizer exists to fix. Registers with no reset are common and often correct, and only the specification says which.
+- Lint is a syntactic check over single files and does not analyze connectivity or clock domains; the tools say so themselves. The structural reading that finds crossings is a separate pass, and it can be automated with open tools, but nothing derives the specification's intent from the RTL.
 
 ## Exercises
 
-1. *Take the FIFO of @sec-ch01 and list every assumption its RTL makes about its environment. Which are stated in its header contract and which are not?*
-2. *Write the same counter with a synchronous and with an asynchronous reset; describe a test that distinguishes them and a test that does not.*
-3. *Draw the state graph of a given FSM and mark the states the specification names, the states the RTL adds, and any state with no exit.*
-4. *For a valid/ready pipeline stage provided, list the cycle-by-cycle behavior at full, at empty, and with valid and ready both changing in one cycle; then find the bug.*
-5. *Run the clock-tree tool on the chapter's design with the synchronizer restored, then on a design of your own. Explain every crossing it reports and classify each as safe, waived, or a bug.*
-6. *Extend `rtl.reset_tree` to report reset-release order across domains from the RTL's reset synchronizer chain. What can it not know without the specification?*
-7. *The connection-graph tool draws the block. Compare its drawing with the specification's block diagram and list every difference.*
+::: {.callout-note title="Exercise"}
+1. Take the FIFO of @sec-ch01 and list every assumption its RTL makes about its environment. Which are stated in its header contract and which are not?
+2. Write the same counter with a synchronous and with an asynchronous reset. Describe a test that distinguishes them, and a test that does not.
+3. Draw the state graph of a state machine from a design you have access to. Mark the states the specification names, the states the encoding admits, and any state with no exit.
+4. For a valid/ready pipeline stage, write the cycle-by-cycle behavior at full, at empty, and with `valid` and `ready` both changing in one cycle. Then decide whether the stage needs a skid buffer, and say why.
+5. Run the crossing tool on the chapter's design with the synchronizer restored on `cfg`, using each of the four correct structures from @sec-ch03-cdc in turn. Which does the tool recognize, and which does it report as a bug? Explain each answer, then decide whether the tool or the design is wrong.
+6. Extend `reset_tree` to report reset-release order across domains from the reset synchronizer chain. What can it not know without the specification?
+7. Compare @fig-ch03-connections against a block diagram drawn by hand for the same design and list every difference. Which of the differences is the diagram's fault and which is the design's?
+8. Using the MTBF formula in @sec-ch03-metastability, compute the resolution time $S$ needed for a one-year MTBF, then for a thousand-year MTBF, at a clock frequency and $\tau$ of your choosing. How many synchronizer stages does each require, and what does that tell you about quoting "two flip-flops" as a rule?
+:::
 
 ## Further reading
 
-*The SystemVerilog standard; the reset, CDC and FIFO papers from the research note; the canonical digital-design textbook; Verilator and Verible warning documentation; Yosys and pyslang documentation for the tools.*
-
-## Planned examples
-
-| Directory | Language | Demonstrates |
-|---|---|---|
-| `examples/ch03-digital-design/rtl/` | SystemVerilog | `regblock.sv` (bus clock), `datapath.sv` (core clock), `sync2.sv` (two-flop synchronizer), `top.sv` with one crossing correctly synchronized and one not; one register deliberately without a reset |
-| `tools/dvh/` | Python | the substrate: `design.py` (Yosys JSON and pyslang loaders), `clocks.py` (`clock_tree`, `reset_tree`), `graph.py` (`connections`, SVG via `figures/blocks.py`), `cli.py`; pytest fixtures on the FIFO and the chapter's design |
-| `examples/ch03-digital-design/read/` | Python | `make run` runs the three tools on `top.sv`, prints domains, crossings, unreset registers, and writes the block diagram; `EXPECT := fail` if the tool is made to gate on the unsynchronized crossing |
-| `examples/ch03-digital-design/sv-lint/` | SystemVerilog, Verilator | the same design through `--lint-only --diagnostics-sarif`: what lint finds and what it cannot |
-
-## Sources
-
-- `research/ch03-digital-design-for-verifiers.md` (in progress): standard and textbook citations, reset and CDC and FIFO papers, handshake rules, lint documentation, Yosys JSON and pyslang documentation, unsourced-claims table.
-- `docs/specs/2026-09-07-agentic-tooling-catalog.md` §6.2 for the tool designs.
-- `research/ch01-cost-gap-lifecycle.md` for the escape examples if the opener uses one.
+Ran Ginosar's tutorial "Metastability and Synchronizers", in *IEEE Design and Test of Computers*, is the clearest short treatment of the physics and of the structures that contain it, and its worked MTBF numbers are the ones this chapter uses [@ginosar2011metastability]. Clifford Cummings' SNUG papers are the practitioner canon for the coding side: the nonblocking-assignment guidelines [@cummings2000nba], the simulation and synthesis mismatch catalogue written with Don Mills [@millscummings1999mismatch], the clock-domain-crossing techniques paper [@cummings2008cdc], and the reset design paper written with Mills [@cummings2003resets]. Mike Turpin's "The Dangers of Living with an X" remains the standard reference on X-optimism and X-pessimism [@turpin2003x]. Guillaume Plassan's doctoral thesis on conclusive formal verification of clock-domain-crossing properties gives the formal definitions this chapter uses for clocks and derived clocks, along with an industrial case study [@plassan2018cdc]. For the boundary, the SiFive TileLink specification states the flow-control rules in openly readable form [@sifive2017tilelink], and OpenTitan's comportability specification is a public example of a complete boundary definition [@opentitan-comportability]. The tool documentation cited through @sec-ch03-example is worth reading directly: Verilator's warning list [@verilator-warnings], Verible's lint rule list [@verible-lint-rules], and the Yosys manual's pages on its JSON output and register cells [@yosys-json; @yosys-regcells].
