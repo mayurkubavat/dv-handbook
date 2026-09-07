@@ -184,6 +184,67 @@ Each entry: the capability, its software analogue, what exists on the hardware s
 | Provenance and attribution | signed commits (Sigstore), SLSA | none | Distinguish agent-written from human-written artifacts in a tapeout package | adopt as is |
 | Outcome metrics | DORA metrics; METR-style trials | none standard | bugs found per engineer-week, escape rate, time to closure, mutation kill rate, review load (Ch. 34) | **gap** (measurement practice) |
 
+### M. Testbench understanding and logs as context (added 2026-09-07)
+
+Domains B and H cover the RTL and the waveform. This domain covers what an agent needs to understand the *testbench*, which is class-based, dynamically constructed and observable mostly through its log. Nothing open does this today; the two surveys found no server with UVM class-hierarchy awareness, and the software analogues are the strongest guide.
+
+#### M.1 Structural understanding from the AST and the elaborated design
+
+| Capability | Software analogue | Hardware today | Agent use | Gap |
+|---|---|---|---|---|
+| Clock tree: every clock source through buffers, gates, muxes and dividers to every sequential element it drives | none exact (build dependency graph) | none open; vendor CDC tools infer it | Name the clock domain of any register; list crossings an edit introduced; the first half of CDC | **gap**: derivable from Yosys RTLIL or pyslang by walking `always_ff` sensitivity through the driver cone of the clock net |
+| Reset tree: sources, polarity, sync or async per register, reset domains | none exact | none open | Same for resets; find a register with no reset; find an async reset crossing | **gap**: same derivation, from `always_ff` reset branches |
+| Instance connection graph: which port of which instance connects to which, including implicit `.*` and interface modports | module dependency graph, import graph | Verilator `--xml-only`, Yosys `write_json`, pyslang connections; naja-scope | Answer "what is connected to this FIFO's full flag" without reading RTL; render a block diagram | partial (data exists, no tool exposes it as a graph query) |
+| UVM component hierarchy, static: what `build_phase` constructs, from `type_id::create` and `new` calls, with factory overrides and `uvm_config_db` set/get sites | dependency-injection graph analysis (Spring, Guice bean graphs) | none; slang parses the classes but no tool walks the construction | Know the testbench topology before running it; find a config_db key set but never got, or got with the wrong type | **gap**: an AST walk over slang's class model plus a small interpreter for the UVM idioms |
+| UVM component hierarchy, dynamic: the real tree at run time | runtime object graph dumps | `uvm_top.print_topology()`, `uvm_config_db::dump()`, `+UVM_PHASE_TRACE`, `+UVM_OBJECTION_TRACE`, `+UVM_CONFIG_DB_TRACE` all exist in the reference implementation | Parse the printed topology into a tree; diff static versus dynamic to find factory surprises | exists (text only; parsers to write) |
+| TLM connection graph: analysis ports to exports and FIFOs, from `connect_phase` | message-flow graphs | none | Trace where a monitor's transactions go; find a scoreboard export nothing feeds | **gap**: same AST walk over `connect()` calls |
+| Dry sequence trace: statically walk a sequence `body()` through `` `uvm_do ``, `start()`, nested sequences, `p_sequencer` and `grab`/`lock`, without simulating | static call-graph and control-flow analysis; symbolic execution of the "happy path" | none | Produce the expected transaction order and the sequencer arbitration a test will exercise; compare with the plan item's stimulus intent before running | **gap**: bounded control-flow walk of sequence bodies; loops summarised, randomised fields left symbolic |
+| Phase and objection map | lifecycle analysis | `+UVM_PHASE_TRACE`, `+UVM_OBJECTION_TRACE` | Explain a test that ended at time zero (no objection) or never ended (objection leak) | exists (text) |
+| Transaction recording | tracing databases | `uvm_tr_database` / `uvm_text_tr_database` in the reference implementation record begin and end of transactions with attributes; vendor transaction viewers (Verdi, DVT) | Transaction-level view without a vendor viewer; the recorded stream is the join key for M.2 | partial (text database; no open parser) |
+
+#### M.2 Logs as context: a message-signature methodology
+
+The problem: a UVM log of a large environment is millions of lines, mostly `UVM_INFO`, and the lines that explain a failure are scattered across components and times. An agent cannot read it, and a person reads it by grep and intuition. The software world solved the same problem for distributed systems with **structured logging** and **distributed tracing**: every log record is a structured event, every request carries a trace identifier that all its spans share, and a query engine reconstructs the request's path after the fact. The mapping onto UVM is direct, and most of the machinery already exists in the reference implementation.
+
+**The convention.** Every transaction gets a unique identifier at the point it is created (in the sequence), and every component that touches it logs with that identifier. The UVM message ID field, which today holds an arbitrary string, becomes a **signature**: a small grammar rather than free text.
+
+| Field | Content | UVM carrier |
+|---|---|---|
+| component role | `SEQ`, `DRV`, `MON`, `SB`, `RM` (reference model), `COV`, `ENV`, `TEST` | first token of the message ID |
+| component instance | the UVM hierarchical name | already printed by the report server as the scope |
+| transaction id | unique per transaction, created in the sequence, copied by the driver into the pin activity's metadata, recovered by the monitor (from a sideband, a tag field, or ordering), carried into the scoreboard | second token of the ID, `TXN=<n>` |
+| stage | `CREATE`, `SEND`, `DRIVE_BEGIN`, `DRIVE_END`, `OBSERVE`, `EXPECT`, `COMPARE_OK`, `COMPARE_FAIL`, `DROP` | third token |
+| payload | key-value pairs, machine-parseable (`addr=0x40 data=0xA7 len=4`) | message text, in a fixed `key=value` form |
+| time and scope | simulation time and hierarchical scope | already in every report line |
+
+A line then reads, for example, `UVM_INFO @ 1230ns: uvm_test_top.env.agt.drv [DRV TXN=17 DRIVE_END] addr=0x40 data=0xA7`. The reference model logs `[RM TXN=17 EXPECT] data=0xA7`, the monitor logs `[MON TXN=17 OBSERVE] data=0xB3`, and the scoreboard logs `[SB TXN=17 COMPARE_FAIL] expected=0xA7 actual=0xB3`.
+
+**What the convention buys.** A transaction's whole lifecycle is one grep: `TXN=17`. The first `COMPARE_FAIL` names the transaction; joining on its identifier gives, in order, what the sequence intended, what the driver drove, what the model expected and what the monitor saw. That join is the evidence an agent needs to make the single most valuable distinction in triage:
+
+- **Sequence intended X, driver drove X, monitor observed Y, model expected X**: the RTL did something the model did not expect. Suspect the RTL (or the model's understanding of the spec); hand the debug role the monitor's time and the signal names.
+- **Sequence intended X, driver drove Y**: the driver or the sequence item is wrong. Suspect the testbench.
+- **Monitor observed X, model expected Y, and X matches the spec on inspection**: the reference model is wrong. Suspect the oracle, and route to the oracle owner, not the stimulus role.
+- **No `OBSERVE` for a transaction that was driven**: the monitor missed it, or the DUT dropped it; the waveform at `DRIVE_END` time decides which.
+
+**Structured at the source, not regex after the fact.** UVM's `uvm_report_catcher` and a custom `uvm_report_server` can emit each message as one JSON object (time, severity, scope, role, transaction id, stage, payload) alongside the text log, so no parser is needed; the software analogue is JSON-lines logging feeding a query engine. Where the convention cannot be retrofitted, a parser over the text ID grammar is enough.
+
+**Context injection for an agent.** The log is never given to a model whole. A tool assembles, for one failure, a bounded context in a fixed order: the plan item under test, the first error line, the lifecycle of its transaction, the lifecycles of the two transactions before it, the phase and objection events around that time, and a pointer to the waveform window. That is a few hundred lines, chosen by the join rather than by proximity, and it is the same shape as the software practice of attaching a trace to an error report.
+
+| Tool | Arguments | Returns | Built on |
+|---|---|---|---|
+| `log.uvm_parse` | log path | JSON records (time, severity, scope, role, txn, stage, payload) | ID grammar above; or the JSON emitter |
+| `log.txn_lifecycle` | log, txn id | the ordered events for one transaction across components | join on `TXN` |
+| `log.first_failure_context` | log, window | plan item, first error, lifecycle of the failing and preceding transactions, phase and objection events, wave window | composition of the above and `plan.items` |
+| `log.classify_failure` | lifecycle | one of the four verdicts above, with the evidence lines | rule table over stages present and payload equality |
+| `log.compress` | log | INFO lines deduplicated by signature with counts; transitions kept; errors kept verbatim | signature grouping (the software analogue is error fingerprinting) |
+| `log.summarize_by_role` | log | counts and first/last time per role and stage | grouping |
+| `tb.topology` | log or design | the component tree (dynamic from `print_topology`, static from the AST walk), with a diff | M.1 tools |
+| `tb.sequence_dry_run` | sequence class, config | expected transaction order and sequencer arbitration, randomised fields symbolic | M.1 dry trace |
+| `tb.tlm_graph` | environment | analysis-port connection graph | M.1 |
+| `rtl.clock_tree`, `rtl.reset_tree`, `rtl.connections` | top | trees and connection graph as JSON | M.1 |
+
+**Software parallels, stated once.** Structured logging (JSON lines) and log levels map to severity and verbosity. Distributed tracing with a trace identifier maps to the transaction identifier carried from sequence to scoreboard. Error fingerprinting for deduplication maps to `log.compress` and to failure clustering in domain H. OpenTelemetry's semantic conventions are the model for the signature grammar: a fixed vocabulary of attribute names, so tools compose.
+
 ## 3. A proposed tool set for the book's flow
 
 The book's build system already has three uniform targets and a status file. The proposal below grows that into a tool set an agent could call, using only open tools from the two surveys. Names are suggestions for discussion. Every tool is tagged **R** (read) or **W** (write) and with the roles allowed to call it; the permission column is the invariant of Chapter 34 made concrete.
@@ -241,6 +302,8 @@ The book's build system already has three uniform targets and a status file. The
 | `triage.bisect` | good rev, bad rev, predicate | culprit commit | `git bisect run` |
 | `review.mutation_report` | block | kill rate over time, surviving mutants by plan item | `mutants.score` history |
 | `review.held_out` | block | results on tests the stimulus role never saw | a held-out test directory outside the stimulus role's write set |
+| `log.first_failure_context`, `log.txn_lifecycle`, `log.classify_failure` | see M.2 | bounded, joined context for one failure; DV-versus-RTL verdict with evidence | M.2 convention |
+| `tb.topology`, `tb.tlm_graph`, `tb.sequence_dry_run`, `rtl.clock_tree`, `rtl.reset_tree` | see M.1 | testbench and design structure as JSON | M.1 walks over slang and RTLIL |
 
 ### 3.5 Planner role (W on plan drafts only)
 
@@ -260,6 +323,9 @@ Merged from both surveys and ordered by leverage per unit of effort. The first f
 | 3 | Coverage half of the plan report: bins joined to plan items (Ch. 2 follow-up) | none exact | days | turns "tests pass" into "closed" |
 | 4 | Machine-readable formal counterexample trace (G7, traces only) | CBMC JSON traces | days | lets `formal.prove` feed the debug tools |
 | 5 | Repository map for SV (Aider-style) | Aider repo-map | days | cheapest context win |
+| 5a | UVM log signature convention + JSON emitter + `log.first_failure_context` (M.2) | structured logging, distributed tracing | days to a week | turns the largest artifact in DV into bounded, joined context; enables the DV-versus-RTL verdict |
+| 5b | Clock and reset tree, connection graph from RTLIL/pyslang (M.1) | dependency graphs | a week | first half of open CDC; every debug question starts here |
+| 5c | Static UVM topology, TLM graph and dry sequence trace over slang's class model (M.1) | DI-graph and call-graph analysis | weeks | no open tool understands the testbench today |
 | 6 | Shrinking for constrained-random failures (G4) | Hypothesis, cvise | weeks | halves debug effort per failure |
 | 7 | Failure clustering by first-error signature (G6, dedup half) | ClusterFuzz | weeks | one hypothesis per cluster instead of per seed |
 | 8 | Open RTL mutation tool with SV operators and per-mutant reports (G3) | mutmut, PIT | months | the honest metric for agent-written stimulus |
@@ -281,3 +347,5 @@ Merged from both surveys and ordered by leverage per unit of effort. The first f
 6. For AST-based tools, is tree-sitter-systemverilog complete enough for the book's rules, or should structural search be specified over slang's elaborated tree?
 7. Where does the "regression history as text" knowledge base live, and who owns it, given that it grounds every debug agent?
 8. What is the minimum measurement plan (Chapter 34, section on measuring) a team must run before any of this is adopted?
+9. The message-signature convention (M.2) needs a transaction identifier to survive from sequence to monitor. Which mechanism does the book recommend: a sideband tag the monitor can read, ordering plus a sequence number, or a payload-derived hash? Each fails differently under reordering and drops.
+10. Should M.2 become the worked example of the debug chapter (Chapter 28), with the FIFO environment retrofitted to the convention, so that the four verdicts are demonstrated on a real log?
