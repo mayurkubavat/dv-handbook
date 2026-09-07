@@ -4,14 +4,16 @@
 > Stable conventions live in `AGENTS.md`; this file holds the living state.
 
 ## Current milestone
-**M2 — Chapters 1, 2, 34 reviewed and live.** Tooling catalogue (`docs/specs/2026-09-07-agentic-tooling-catalog.md`, §1–7) written; placement decision (appendix vs chapter) pending with the author. Ch.3 next.
+**M2 — Chapters 1, 2, 34 reviewed and live; Ch.3 in drafting.** Tooling catalogue (`docs/specs/2026-09-07-agentic-tooling-catalog.md`, §1–7) written; placement decided (Appendix I, 2026-09-07). Ch.3's examples and tool layer are complete and pushed; the prose is blocked only on the research note.
 
 M1 — Repo scaffold: COMPLETE (2026-09-06). CI green on main (examples → PDF+HTML render → Pages deploy). Web edition live at https://mayurkubavat.github.io/dv-handbook (PDF at /Design-Verification-draft.pdf). Next: M2 = Chapter 1.
 
 ### Next three actions
-1. Review `research/*.md` outputs; read `research/dv-adaptation-synthesis.md` once produced.
-2. Finish design doc section 6 (writing workflow + AI assistance) using the synthesis note in `docs/specs/2026-09-05-dv-handbook-design.md`.
-3. Write implementation plan for M1 (repo scaffold: Quarto skeleton, AGENTS.md, CI, first chapter) → `docs/plans/`.
+1. Merge `research/parts/ch03-part{1,2,3}-*.md` into `research/ch03-digital-design-for-verifiers.md` (single header, renumbered sections, one unsourced-claims table, one confidence section); delete `research/parts/`; index it in `research/README.md`; add its BibTeX keys to `refs.bib`.
+2. Draft Ch.3: `touch .claude/state/drafting` FIRST (only after the research agents have finished, or the lock denies their writes), replace the eight outline intent lines with prose, splice the listings from `tools/dvh/` and `examples/ch03-digital-design/`, register the chapter in `_quarto.yml`, remove the `<!-- OUTLINE -->` line, build, then `rm .claude/state/drafting`.
+3. Dispatch a fresh-context review subagent for Ch.3, then take gate 2 to the author.
+
+Also open, not on the critical path: the 14 discussion questions in the tooling catalogue (§5, §7.7); Appendix I's draft; commercial-simulator recipes in `examples/mk/sv.mk` (written from memory, unverified).
 
 ## Chapter status
 States: planned → outlined → drafting → examples-verified → reviewed → published
@@ -68,6 +70,7 @@ See `research/README.md` for the index. Active notes:
 - Bare `ls` in this shell hangs (aliased to an interactive tool); use `/bin/ls`.
 
 ## Session log
+- 2026-09-07 — appF updated (`f586f54`): documents `LINT_ONLY` and why an example that is itself a static check must record a lint verdict rather than an empty simulation log; the "four examples passing" paragraph refreshed to the current thirteen passing / two skipped. Ch.3 Makefiles and all `tools/dvh` sources wrapped to 80 columns. Book rebuilds at 104 pages. Three Ch.3 research agents still running; drafting deliberately not started, because the drafting lock would deny their writes to `research/`.
 - 2026-09-07 — Ch.3 worked example complete and pushed (`703333d`). `tools/dvh` (design/clocks/graph/cli) reads a Yosys netlist and reports 2 domains, 1 unreset register, 2 unsynchronized crossings and a ranked block diagram; Verilator `-Wall` lint on the same files is silent, which is the section's argument. 7 unit tests including one that pins the exact printed report text. `common.mk` gained `LINT_ONLY` for an example that *is* a static check. Ch.3 research relaunched as three parallel agents (RTL/FSM/lint, clocks/resets/CDC, pipelines/interfaces/extraction) writing `research/parts/`, to be merged into the note before drafting.
 - 2026-09-07 — Gate 1: Ch.3 outline approved. Yosys 0.68 installed (brew); pyslang in dvbook env. Research subagent relaunched. Starting the worked example's design and tools.
 - 2026-09-07 — Ch.3 outline written (8 sections; worked example builds `tools/dvh` clock-tree, reset-tree and connection-graph tools on a two-clock design with one missing synchronizer). Installing Yosys (brew) and pyslang (dvbook env) for it.
