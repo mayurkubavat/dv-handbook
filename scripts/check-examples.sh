@@ -47,6 +47,11 @@ for d in $DIRS; do
             | tr -d ' '; }
   requires=$(mkvar REQUIRES)
   expect=$(mkvar EXPECT); expect=${expect:-pass}
+  # A bare EXPECT := fail accepts any failure, so a missing tool or a broken
+  # import counts as the bug the example exists to find. EXPECT_OUTPUT names
+  # a string the run must print for the failure to be the expected one.
+  expect_output=$(grep -E "^EXPECT_OUTPUT\s*:?=" "$d/Makefile" \
+                  | sed -E 's/.*=[[:space:]]*//')
   lint="pass"; run="pass"
   if ! (cd "$d" && $RUN make -s lint >"$d/lint.log" 2>&1); then
     lint="fail"
@@ -60,6 +65,9 @@ for d in $DIRS; do
     if [[ "$expect" == "fail" ]]; then
       # The example exists to expose a bug: a clean exit would mean it missed.
       if [[ $rc -eq 0 ]]; then run="fail (expected to fail, but passed)"
+      elif [[ -n "$expect_output" ]] \
+           && ! grep -qF -- "$expect_output" "$d/run.log"; then
+        run="fail (failed, but not with '$expect_output')"
       else run="pass (failed as expected)"; fi
     elif [[ $rc -ne 0 ]]; then run="fail"; fi
   fi

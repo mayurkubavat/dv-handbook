@@ -26,11 +26,13 @@ jobs:
         run: |
           sudo apt-get update -q
           sudo apt-get install -y -q verilator iverilog make g++
+          sudo apt-get install -y -q yosys
           sudo apt-get install -y -q libsystemc-dev || echo "no libsystemc-dev; SystemC examples will be skipped"
+          yosys -V
       - uses: actions/setup-python@v5
         with: { python-version: '3.12' }
-      - name: Install cocotb and pyuvm
-        run: pip install cocotb pyuvm pyyaml
+      - name: Install cocotb, pyuvm and pytest
+        run: pip install cocotb pyuvm pyyaml pytest
       - name: Lint and run every example
         env:
           SYSTEMC_HOME: /usr

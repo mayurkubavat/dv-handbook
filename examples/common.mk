@@ -26,6 +26,12 @@
 #      EXPECT         pass (default) or fail. A teaching example whose point
 #                     is to find a bug sets EXPECT := fail; the checker then
 #                     treats a non-zero `make run` as the correct outcome.
+#      EXPECT_OUTPUT  a fixed string that `make run` must print for an
+#                     EXPECT := fail example to count as having failed the
+#                     way it was meant to. Without it any failure passes,
+#                     including a missing tool or a broken import, and an
+#                     example that exists to find a bug goes green while
+#                     finding nothing.
 #      LINT_ONLY      1 for an example that has nothing to simulate, because
 #                     the example *is* the static check (a lint or analysis
 #                     demonstration, or RTL shown without a testbench).
@@ -57,6 +63,7 @@ endif
 # Defaults that every language may use.
 REQUIRES ?=
 EXPECT   ?= pass
+EXPECT_OUTPUT ?=
 LINT_ONLY ?= 0
 PLUSARGS ?=
 UVM      ?= 0

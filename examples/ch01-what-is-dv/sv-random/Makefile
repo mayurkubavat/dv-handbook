@@ -5,4 +5,5 @@ TOP          := tb_fifo_random
 SOURCES      := ../rtl/fifo.sv tb_fifo_random.sv
 PLUSARGS     := +seed=1
 EXPECT       := fail      # this test exists to find the bug
+EXPECT_OUTPUT := full=1 with 15 entries
 include ../../common.mk
