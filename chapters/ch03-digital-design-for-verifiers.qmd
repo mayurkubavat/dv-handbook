@@ -1,0 +1,80 @@
+<!-- OUTLINE: not yet approved -->
+
+# Digital Design for Verifiers {#sec-ch03}
+
+*Chapter intent: by the end, a reader who can write RTL reads it the way a verifier must: as a set of claims about clocks, resets, state, timing and interfaces that a specification made and the RTL may or may not honor. The chapter teaches the structures every block is built from (clocks and resets, registers and state machines, pipelines and handshakes, interfaces) and, for each, the question a verifier asks that a designer does not. Its worked example builds the first tools of the book's tool layer: extracting a design's clock tree, reset tree and connection graph from the RTL itself, so that "reading a design" becomes something a program can do and a person can check.*
+
+> The designer reads RTL to see how the block works. The verifier reads it to see what the block assumes.
+
+## Learning objectives
+
+*Five items: explain what synthesis makes of RTL and why simulation and synthesis can disagree; identify every clock and reset domain in a design and name the crossings; read a state machine for its unreachable, illegal and deadlock states; read a pipeline or handshake for its back-pressure, hazard and off-by-one risks; extract a design's clock tree, reset tree and connection graph with a tool and check them against the specification.*
+
+## The assumption that shipped
+
+*Motivation, 400 to 600 words. A block whose designer assumed a synchronous reset and whose integrator supplied an asynchronous one; or the FIFO of @sec-ch01, whose four-bit counter was a correct implementation of a wrong assumption about capacity. The point: bugs of this class are not coding errors and no lint finds them; they are assumptions the RTL makes about its environment, and the verifier's first job is to enumerate the assumptions. Sourced from the research note's escape examples or the book's own FIFO.*
+
+## 3.1 What RTL is, and what synthesis makes of it {#sec-ch03-rtl}
+
+*Register-transfer level as a description of registers and the combinational logic between them; `always_ff`, `always_comb`, `always_latch` as statements of intent that synthesis checks; the synthesizable subset; why simulation semantics (event-driven, four-state, delta cycles) and synthesis semantics (netlist) can disagree, with the classic cases: incomplete sensitivity, latches from incomplete assignments, blocking versus non-blocking in sequential blocks, initial values that synthesis ignores. Definition callout: register, combinational cloud, netlist. Pitfall callout: "it simulated correctly" as a claim about the simulator, not the silicon; forward pointer to gate-level simulation in Part IV.*
+
+## 3.2 Clocks {#sec-ch03-clocks}
+
+*Clock sources, dividers, gates and multiplexers; what a clock domain is and why it is the first thing a verifier maps; multi-clock designs and the crossing as the single most common source of escapes that simulation cannot reproduce; metastability in one paragraph with a primary source; synchronizers as structures a tool can recognize. The verifier's questions: how many clocks, which registers are on which, where do they meet, and what does the specification say about the relationship (synchronous, asynchronous, ratio). Forward pointer to the CDC chapter in Part IV.*
+
+## 3.3 Resets {#sec-ch03-resets}
+
+*Synchronous versus asynchronous reset: what each costs and what each assumes; reset synchronizers and reset release; reset domains; registers with no reset and why they exist; reset values as part of the specification. The verifier's questions: what is the reset sequence, in what order do domains release, which registers are defined after reset and which are X, and does the testbench's reset match the integrator's. In Practice callout: the reset test every block needs and the two it usually lacks (reset mid-traffic, reset with a clock stopped).*
+
+## 3.4 State machines {#sec-ch03-fsm}
+
+*Coding styles and encodings, briefly; the verifier's reading: the state graph, reachable and unreachable states, illegal encodings and what happens on one, deadlock and livelock, the transitions the specification names and the ones the RTL adds. Coverage of states and transitions as the natural coverage model; formal as the natural tool for unreachability and deadlock (forward pointer). Worked on a small FSM from the FIFO's environment or a bus interface.*
+
+## 3.5 Pipelines, handshakes and queues {#sec-ch03-pipelines}
+
+*The valid/ready handshake and its rules (the source rule, the sink rule, no combinational dependence of valid on ready), back-pressure, skid buffers, hazards; queues and their occupancy invariants; the FIFO of @sec-ch01 revisited as an instance of the general off-by-one: a counter's width is an assumption about capacity. The verifier's questions: what stalls, what drains, what happens at full and at empty, what happens at both ends in the same cycle. Pitfall callout: testing a pipeline only at low occupancy.*
+
+## 3.6 Interfaces {#sec-ch03-interfaces}
+
+*The block boundary as the verifier's contract: ports, protocols, timing, and what the specification says versus what the RTL implements; SystemVerilog interfaces and modports as the language's way of naming a contract; a canonical bus family (APB, AXI-Lite) as examples of what a boundary specification contains. The verifier's questions at a boundary: who drives what when, what is optional, what is undefined. Forward pointer to Part III's agents and Part VI's protocol chapter.*
+
+## 3.7 The verifier's reading, as a procedure {#sec-ch03-reading}
+
+*The chapter's synthesis: a fixed order for reading a new block: boundary first, then clocks and resets, then state, then datapaths and queues, then everything the RTL assumes about its environment; lint as the first automated reading (what Verilator and Verible warnings mean to a verifier); X-propagation and initialization as the assumptions most often left implicit. Output of the reading: a list of assumptions, each of which is a plan item candidate for @sec-ch02. Future Directions callout: the reading as something a tool does and a person checks, pointing to the worked example and the tool-layer appendix.*
+
+## 3.8 Worked example: reading a design with a tool {#sec-ch03-example}
+
+*The first tools of the book's tool layer, built here because this chapter needs them. Three programs over an elaborated design: `rtl.clock_tree` walks every sequential element's clock back to its source through buffers, gates, multiplexers and dividers and groups registers into domains; `rtl.reset_tree` does the same for resets with polarity and synchronicity, and lists registers with none; `rtl.connections` builds the instance connection graph and draws it with the book's own diagram library. Run on a small two-clock design written for the chapter (a bus-clocked register block feeding a core-clocked datapath through a synchronizer, with one deliberate missing synchronizer), the tools report the domains, the crossings, the one register without a reset, and a block diagram, and the chapter reads their output against the specification. Everything they find is an assumption; the missing synchronizer is the one the specification did not permit. Listings included from `tools/dvh/` and `examples/ch03-digital-design/`; output included from `run.out`.*
+
+## Summary
+
+*Eight bullets.*
+
+## Exercises
+
+1. *Take the FIFO of @sec-ch01 and list every assumption its RTL makes about its environment. Which are stated in its header contract and which are not?*
+2. *Write the same counter with a synchronous and with an asynchronous reset; describe a test that distinguishes them and a test that does not.*
+3. *Draw the state graph of a given FSM and mark the states the specification names, the states the RTL adds, and any state with no exit.*
+4. *For a valid/ready pipeline stage provided, list the cycle-by-cycle behavior at full, at empty, and with valid and ready both changing in one cycle; then find the bug.*
+5. *Run the clock-tree tool on the chapter's design with the synchronizer restored, then on a design of your own. Explain every crossing it reports and classify each as safe, waived, or a bug.*
+6. *Extend `rtl.reset_tree` to report reset-release order across domains from the RTL's reset synchronizer chain. What can it not know without the specification?*
+7. *The connection-graph tool draws the block. Compare its drawing with the specification's block diagram and list every difference.*
+
+## Further reading
+
+*The SystemVerilog standard; the reset, CDC and FIFO papers from the research note; the canonical digital-design textbook; Verilator and Verible warning documentation; Yosys and pyslang documentation for the tools.*
+
+## Planned examples
+
+| Directory | Language | Demonstrates |
+|---|---|---|
+| `examples/ch03-digital-design/rtl/` | SystemVerilog | `regblock.sv` (bus clock), `datapath.sv` (core clock), `sync2.sv` (two-flop synchronizer), `top.sv` with one crossing correctly synchronized and one not; one register deliberately without a reset |
+| `tools/dvh/` | Python | the substrate: `design.py` (Yosys JSON and pyslang loaders), `clocks.py` (`clock_tree`, `reset_tree`), `graph.py` (`connections`, SVG via `figures/blocks.py`), `cli.py`; pytest fixtures on the FIFO and the chapter's design |
+| `examples/ch03-digital-design/read/` | Python | `make run` runs the three tools on `top.sv`, prints domains, crossings, unreset registers, and writes the block diagram; `EXPECT := fail` if the tool is made to gate on the unsynchronized crossing |
+| `examples/ch03-digital-design/sv-lint/` | SystemVerilog, Verilator | the same design through `--lint-only --diagnostics-sarif`: what lint finds and what it cannot |
+
+## Sources
+
+- `research/ch03-digital-design-for-verifiers.md` (in progress): standard and textbook citations, reset and CDC and FIFO papers, handshake rules, lint documentation, Yosys JSON and pyslang documentation, unsourced-claims table.
+- `docs/specs/2026-09-07-agentic-tooling-catalog.md` §6.2 for the tool designs.
+- `research/ch01-cost-gap-lifecycle.md` for the escape examples if the opener uses one.

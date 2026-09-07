@@ -22,6 +22,7 @@ States: planned → outlined → drafting → examples-verified → reviewed →
 | 1 | What Is Design Verification? (`chapters/ch01-what-is-dv.qmd`) | **reviewed** (gate 2 approved by author 2026-09-06 after subagent review + revision) | ~5,400 | 2026-09-06 |
 | 2 | Verification Planning (`chapters/ch02-verification-planning.qmd`) | **reviewed** (gate 2 approved by author 2026-09-06) | ~5,500 | 2026-09-06 |
 | 34 | Generative AI and Agentic DV (`chapters/ch34-generative-ai-agentic-dv.qmd`) | **reviewed** (gate 2 approved by author 2026-09-07; concept chapter, no runnable examples by design) | ~7,600 | 2026-09-06 |
+| 3 | Digital Design for Verifiers (`chapters/ch03-digital-design-for-verifiers.qmd`) | outlined (awaiting gate-1 approval); research running; worked example = first `tools/dvh` tools (clock tree, reset tree, connections) | 0 | 2026-09-07 |
 | I | An agent tool layer and derived documentation (`appendices/appI-agent-tool-layer.qmd`) | outlined stub (Edition 3; not registered); source: tooling catalogue §1, §3, §6, §7 | 0 | 2026-09-07 |
 | — | chapters 3–33, 35 + appendices A–E, G, H | planned | 0 | 2026-09-05 |
 
@@ -67,6 +68,7 @@ See `research/README.md` for the index. Active notes:
 - Bare `ls` in this shell hangs (aliased to an interactive tool); use `/bin/ls`.
 
 ## Session log
+- 2026-09-07 — Ch.3 outline written (8 sections; worked example builds `tools/dvh` clock-tree, reset-tree and connection-graph tools on a two-clock design with one missing synchronizer). Installing Yosys (brew) and pyslang (dvbook env) for it.
 - 2026-09-07 — Placement decided: Appendix I (tool layer + derived documentation), outline stub written; three forward pointers added to Ch.34 (grounding, tools, delegation); design doc TOC and phasing updated. Ch.3 research subagent dispatched.
 - 2026-09-07 — Gate 2: Ch.34 approved as reviewed (author referred to it by its current rendered number, chapter 3).
 - 2026-09-07 — Catalogue §7 added: documentation agents producing a maintained knowledge base of derived design documents (hierarchy map, clock/reset domains with crossing inventory, CSR access paths, life of a packet per protocol via structural paths + tagged simulation, interrupt paths, reset sequence, testbench observation coverage); extract → narrate → verify → publish workflow on an agent development kit (vendor-neutral, Google's ADK as one example); retrieval design with stable page ids and an evaluation set; chapter placement (Ch.3, 13, 15, 27, 28, 30, 34); 4 more discussion questions.
