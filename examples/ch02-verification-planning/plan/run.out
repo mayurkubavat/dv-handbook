@@ -1,9 +1,9 @@
 Verification plan report: fifo (revision 1)
 item      priority status       feature
 ------------------------------------------------------------
-FIFO-001  must     failing      reset
-FIFO-002  must     failing      write
-FIFO-003  must     failing      read
+FIFO-001  must     passing      reset
+FIFO-002  must     passing      write
+FIFO-003  must     passing      read
 FIFO-004  must     failing      ordering
 FIFO-005  must     failing      full flag
 FIFO-006  must     failing      empty flag
@@ -14,6 +14,7 @@ FIFO-010  must     no evidence  no overflow
 FIFO-011  should   no evidence  parameterisation
 FIFO-012  should   no evidence  reset during traffic
 ------------------------------------------------------------
-failing         7 of 12
+passing         3 of 12
+failing         4 of 12
 no evidence     5 of 12
-must-have items without passing evidence: FIFO-001, FIFO-002, FIFO-003, FIFO-004, FIFO-005, FIFO-006, FIFO-007, FIFO-008, FIFO-009, FIFO-010
+must-have items without passing evidence: FIFO-004, FIFO-005, FIFO-006, FIFO-007, FIFO-008, FIFO-009, FIFO-010

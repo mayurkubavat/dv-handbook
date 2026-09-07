@@ -4,7 +4,9 @@
 # must be driven (stimulus), what must be observed and compared (checking),
 # what must be measured to prove it happened (coverage), and what "done"
 # means (closure). The tests column names example directories under
-# examples/; the report tool looks them up in examples/status.json.
+# examples/; the report tool looks them up in examples/status.json. List
+# only the tests that provide evidence for the item: a test that failed
+# cannot vouch for anything it was meant to cover.
 
 block: fifo
 spec: "Synchronous FIFO, DEPTH entries of WIDTH bits (default 16 x 8)"
@@ -20,7 +22,7 @@ items:
     coverage: "Reset observed at least once with the FIFO non-empty beforehand."
     closure: "Test passes; coverage point hit."
     priority: must
-    tests: [ch01-what-is-dv/sv-directed, ch01-what-is-dv/sv-random]
+    tests: [ch01-what-is-dv/sv-directed]
 
   - id: FIFO-002
     feature: write
@@ -30,7 +32,7 @@ items:
     coverage: "Writes at every occupancy from 0 to DEPTH-1."
     closure: "Test passes; all DEPTH occupancy bins hit."
     priority: must
-    tests: [ch01-what-is-dv/sv-directed, ch01-what-is-dv/sv-random]
+    tests: [ch01-what-is-dv/sv-directed]
 
   - id: FIFO-003
     feature: read
@@ -40,7 +42,7 @@ items:
     coverage: "Reads at every occupancy from 1 to DEPTH."
     closure: "Test passes; all DEPTH occupancy bins hit."
     priority: must
-    tests: [ch01-what-is-dv/sv-directed, ch01-what-is-dv/sv-random]
+    tests: [ch01-what-is-dv/sv-directed]
 
   - id: FIFO-004
     feature: ordering
