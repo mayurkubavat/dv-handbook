@@ -21,7 +21,8 @@ States: planned → outlined → drafting → examples-verified → reviewed →
 | F | Building and Running the Examples (`appendices/appF-building-examples.qmd`) | examples-verified (4 run, 2 skipped: UVM needs commercial sim, UVM-SystemC needs library) | ~2,600 | 2026-09-06 |
 | 1 | What Is Design Verification? (`chapters/ch01-what-is-dv.qmd`) | **reviewed** (gate 2 approved by author 2026-09-06 after subagent review + revision) | ~5,400 | 2026-09-06 |
 | 2 | Verification Planning (`chapters/ch02-verification-planning.qmd`) | examples-verified; reviewed by subagent (`docs/reviews/ch02-review-2026-09-06.md`) and revised; **awaiting gate 2 (author review)** | ~5,500 | 2026-09-06 |
-| — | chapters 3–35 + appendices A–E, G, H | planned | 0 | 2026-09-05 |
+| 34 | Generative AI and Agentic DV (`chapters/ch34-generative-ai-agentic-dv.qmd`) | outlined (awaiting gate-1 approval + example-design decisions); evidence base: 4 research notes | 0 | 2026-09-06 |
+| — | chapters 3–33, 35 + appendices A–E, G, H | planned | 0 | 2026-09-05 |
 
 Edition 1 target: Parts I–III + appendices A–D, F, G. See design doc §4.
 
@@ -63,6 +64,7 @@ See `research/README.md` for the index. Active notes:
 - Bare `ls` in this shell hangs (aliased to an interactive tool); use `/bin/ls`.
 
 ## Session log
+- 2026-09-06 — Author asked to deep-dive the generative-AI chapter next. Ch.34 outline written from the synthesis blueprint: 10 sections, 3 laptop-runnable worked examples (coverage-directed stimulus loop, SVA loop with SymbiYosys judge, triage agent) sharing a model interface with recorded transcripts for CI and a live client for readers. Decisions pending: transcript strategy, live model choice, writing order.
 - 2026-09-06 — Ch.2 second pass from review: report tool states renamed (tests pass / tests fail / unknown test / no test) with an evidence-only header line; prose no longer equates a passing test with closure; textbook/standards claims softened to the note's confidence; OpenTitan V2/V3 quoted directly; V2S acknowledged; Future Directions moved after the worked example; plan file folded to 80 cols, American spelling; figure matches the plan. Hook: `docs/reviews/` exempt from the mention check (evidence records). Pushed.
 - 2026-09-06 — Ch.2 research note delivered (2nd run; 15 bib entries) and indexed; chapter prose written with citations; `figures/ch02-traceability.svg`; 3 bib entries added (UART/HMAC testplans, EE Times); chapter registered; PDF 70 pages. Review subagent dispatched.
 - 2026-09-06 — Ch.2 examples: `examples/mk/python.mk` (lint = py_compile, run = python3 TOP), `fifo_plan.yaml` (12 items with stimulus/checking/coverage/closure), `plan_report.py` (reads `status.json`; treats EXPECT=fail examples as design failures; exits 1 while must-have items lack evidence), UART spec for exercises. Report: 3 passing / 4 failing / 5 no evidence. PyYAML added to dvbook env, CI and README.

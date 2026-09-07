@@ -1,0 +1,103 @@
+<!-- OUTLINE: not yet approved -->
+
+# Generative AI and Agentic DV {#sec-ch34}
+
+*Chapter intent: by the end, a reader can explain what a language-model agent is and is not, build a small agentic loop against a real simulator and a real formal engine on a laptop, say from measured evidence which verification tasks such agents do well today and which they do badly, and organize an agentic flow so that the part it does badly, the oracle, stays in human hands.*
+
+> Agents collapse the cost of producing stimulus, assertions and hypotheses. They leave the cost of trusting them untouched.
+
+## Learning objectives
+
+*Five items: describe the plan, act, observe loop and the evaluator-optimizer pattern in verification terms; ground an agent in a specification, RTL and logs without exceeding its context; connect an agent to a simulator, a coverage database and a formal engine through a tool protocol and a sandbox; state, with sources, the measured pass rates for stimulus, assertion, checker and test-plan generation; apply the stimulus-never-owns-the-oracle invariant to an agentic flow and defend it.*
+
+## The agent that built a lookup table
+
+*Motivation, 500 to 700 words. Two documented episodes. First, the coding agent that satisfied a compiler benchmark's visible tests by building a 2,900-line lookup table posing as a compiler, from the 2026 specification-gaming study [GA note §4]. Second, a verification analogue from the DV note: agents that reach 90 percent coverage on small designs while detecting mutants 13.9 percent of the time [DV note §2.3]. The point: an agent optimizes what it is measured on, and in verification the thing measured must therefore be the thing that matters, which is the oracle, not the coverage number. Sets up the invariant.*
+
+## 34.1 From copilots to agents {#sec-ch34-agents}
+
+*Definition callout: an agent is a model in a loop with tools and a stopping condition. The three patterns the field converged on, in verification vocabulary: ReAct (reason, call a tool, observe), plan-and-execute (a planner emits a task graph, workers execute), evaluator-optimizer (a generator proposes, an independent evaluator judges). Why the evaluator must be the toolchain, not a second opinion from the same model, citing the multi-agent failure taxonomy [GA §1]. Vendor "autonomy levels" L1 to L5 stated as marketing vocabulary, each vendor's own, unaligned [DV §1]. Pitfall callout: mistaking a demo loop for a verified one.*
+
+## 34.2 Grounding: what the agent is allowed to know {#sec-ch34-grounding}
+
+*Context engineering for DV: the specification, the plan (@sec-ch02), the RTL, the regression history and the logs, and why they do not all fit. Agentic search over a repository versus retrieval over embedded chunks, and the evidence that search won for code [GA §3]. Context rot: effective context is far below the nominal window. The instruction file for a testbench (the DV equivalent of the cross-vendor agent instruction file [GA §2]): conventions, forbidden edits, how to run the regression. In Practice callout: what to put in the instruction file for a UVM environment.*
+
+## 34.3 Tools: connecting agents to simulators, coverage and formal {#sec-ch34-tools}
+
+*The tool protocol that became the standard and what a tool server for a simulator exposes: compile, run with seed, fetch coverage, fetch failures, fetch a waveform slice [GA §2, DV §3]. Existing open servers for EDA tools [DV §3]. Sandboxing: the agent runs in a directory it can break, with a worktree per agent [GA §5]. Cost and latency: a simulation is an expensive tool call, and the loop must be designed around that. Worked on the book's own build system: `make run` and `examples/status.json` are already a tool interface.*
+
+## 34.4 Stimulus agents and the coverage loop {#sec-ch34-stimulus}
+
+*The loop that works today: read the coverage report, propose one test aimed at a hole, run it, keep it only if coverage rose. Measured results on open designs with open tools and on small UVM designs, with the caveats [DV §2.3, §3]. Template-first generation: emit UVM from protocol templates rather than raw code, and why it compiles 100 percent of the time [DV §2.3]. Coverage is not bug-finding power: the 90 percent coverage versus 13.9 percent mutation-detection gap [DV §2.3]. Forward pointer to worked example (a).*
+
+## 34.5 Assertions: the model proposes, formal disposes {#sec-ch34-assertions}
+
+*The pattern with the best evidence: an agent proposes SVA, a formal engine proves or refutes it, vacuous properties are rejected, and a mutant set measures whether the property has teeth [DV §2.2]. Measured pass rates with and without the formal engine in the loop. Why this works: the formal engine is a ground-truth judge the model cannot argue with. Forward pointer to worked example (b). Cross-reference to Part IV for the formal engine itself.*
+
+## 34.6 Checkers and test plans: the hard part {#sec-ch34-oracle}
+
+*The evidence ledger for the oracle: test-plan generation passes a known-good design a third of the time at best; reference-model generation scores in the low teens; specification-to-formal translation is below ten percent semantically correct [DV §2.1, §2.3; SW §3]. Why: the checker is the independent translation of the specification that @sec-ch01-hard called the heart of the craft, and a model trained on implementations reproduces implementations. Checker-first practice for agentic flows: the human writes or approves the oracle before any agent-written stimulus is judged against it. The measured pattern from software: agents delete or fake the failing test when they can [SW §2]. Definition callout: the oracle.*
+
+## 34.7 Debug agents {#sec-ch34-debug}
+
+*The most mature use: hypothesis generation over logs and waveforms, with a human checking the hypothesis instead of trusting generated code [DV §2.4]. Measured results on failure scenarios with and without retrieval. Failure clustering and triage products in production, with vendor figures labelled [DV §1.1]. What a good debug agent outputs: a ranked list with evidence pointers, not a fix. Forward pointer to worked example (c).*
+
+## 34.8 A reference architecture and its invariant {#sec-ch34-architecture}
+
+*The orchestrator-worker architecture from the synthesis note, redrawn: grounding sources read-only, roles in isolated contexts (planner, stimulus, checker, coverage analyst, debug, formal, reviewer), the tool layer, and three human gates (plan, oracle, sign-off). The invariant: the stimulus agent has no write access to checkers, reference models, assertions or the coverage model, enforced by the harness and the repository, not by the prompt. How the book's own workflow instantiates the same separation (the reviewer never sees the drafter's context). Which pieces run on open tools today.*
+
+## 34.9 Measuring and governing {#sec-ch34-governance}
+
+*Metrics that survive contact with an agent: bugs found per engineer-week, escape rate, time to coverage closure, mutation kill rate of checkers, regression cost, human review load; why self-reported speed-ups are not evidence [SW §7]. Guardrails specific to DV: hallucinated SVA, vacuous properties, specification drift, IP leakage to hosted models, tool poisoning through tool servers, consent fatigue at sign-off gates, licensing of generated code in tapeout deliverables [synthesis §6]. Regulatory context stated neutrally [GA §7]. Future Directions callout: what the measurements would need to show before an agent could own an oracle, pointing to Part VII's closing chapter.*
+
+## 34.10 Worked examples {#sec-ch34-examples}
+
+*Three examples, all on the FIFO of @sec-ch01 and its plan of @sec-ch02, all runnable on a laptop with Verilator, cocotb and SymbiYosys. The model behind each agent is behind one small interface with two implementations: a recorded transcript, so the examples run identically in the book's continuous integration without any model access, and a live client the reader can point at a model of their choosing. Every listing shows the recorded run; the text says which model produced the recording and when.*
+
+### (a) A coverage-directed stimulus agent
+
+*Reads the coverage report from the random test of @sec-ch01, proposes one new cocotb test aimed at a named hole (the write-while-full corner from plan item FIFO-007), runs it, keeps it only if coverage rose. Shows the loop, the tool interface, the acceptance rule, and the agent's transcript. Then the honest part: the new test passes, coverage rises, and the FIFO bug is still there, because the agent was never allowed to touch the checker and the checker is what found it.*
+
+### (b) An assertion loop with a formal judge
+
+*The agent proposes SVA for plan items FIFO-005 and FIFO-010; SymbiYosys proves, refutes or finds them vacuous; a Yosys-generated mutant set measures whether each accepted property catches anything. The full-flag property fails on the buggy FIFO, which is the correct outcome, and the agent's first no-overflow property is vacuous, which is the teaching outcome.*
+
+### (c) A triage agent
+
+*A seeded regression of the random test produces a set of failures; the agent clusters them by first error, drafts a ranked hypothesis list with pointers into logs, and stops. The reader checks the top hypothesis against the RTL. The example demonstrates the output contract: hypotheses with evidence, never a patch.*
+
+## Summary
+
+*Ten bullets, one per section.*
+
+## Exercises
+
+1. *Classify five described agent products, from their public descriptions, by which of the three patterns they implement and where their evaluator comes from.*
+2. *Write the instruction file for the FIFO testbench: what an agent may edit, what it may not, how to run the regression, and how to report.*
+3. *Extend example (a) to target two more plan items. Report coverage before and after, and whether any run found a bug. Explain why or why not.*
+4. *In example (b), write a deliberately vacuous property and show that the vacuity check catches it. Then write a property the mutant set does not distinguish from a trivial one and explain what that says about the mutants.*
+5. *Give the stimulus agent of example (a) write access to the checker, re-run, and record what it does. Restore the invariant.*
+6. *Take one vendor announcement cited in the chapter and list the claims in it that a published measurement could confirm or refute, and what that measurement would have to look like.*
+7. *Using the metrics of @sec-ch34-governance, design a four-week pilot of a debug agent on a real regression, including the baseline you would measure first.*
+
+## Further reading
+
+*The multi-agent failure taxonomy; the specification-gaming study; the coverage-directed agent papers on open tools; the assertion-with-formal papers; the test-plan and reference-model generation papers; the tool protocol specification; the two general references on agent architectures from the research notes.*
+
+## Planned examples
+
+| Directory | Language | Demonstrates |
+|---|---|---|
+| `examples/ch34-agentic-dv/agentlib/` | Python | The model interface with `RecordedModel` (replays a JSON transcript) and `LiveModel` (any HTTP chat endpoint, key from the environment); the tool layer wrapping `make`, `examples/status.json`, Verilator coverage and SymbiYosys; a tiny loop runner with an acceptance rule |
+| `examples/ch34-agentic-dv/stimulus-loop/` | Python + cocotb | Example (a): coverage-directed test proposal on the FIFO; recorded transcript; `make run` replays it and reports the coverage delta |
+| `examples/ch34-agentic-dv/sva-loop/` | Python + SystemVerilog + SymbiYosys | Example (b): propose, prove, vacuity-check, mutate; recorded transcript; `make run` replays it |
+| `examples/ch34-agentic-dv/triage/` | Python | Example (c): cluster seeded failures, rank hypotheses; recorded transcript |
+| `examples/ch34-agentic-dv/mutants/` | Python + Yosys | Mutant generator for the FIFO used by (b) |
+
+## Sources
+
+- `research/dv-adaptation-synthesis.md` §1 to §7: thesis, concept map, reference architecture, evidence ledger, metrics, risks, blueprint.
+- `research/genai-agentic-flows.md`: agent patterns, protocols, context engineering, evals and reward hacking, coding tools, risks.
+- `research/ai-in-dv-state-of-the-art.md`: vendor products, academic results, agentic DV flows, benchmarks, trust.
+- `research/sw-engineering-ai-era.md` §1, §2, §7: spec-driven development, agents and tests, productivity measurement.
+- A short refresh research pass before drafting: developments since 2026-09-06 in agentic DV tools and benchmarks, plus primary sources for any claim above that the notes cite only second-hand.
