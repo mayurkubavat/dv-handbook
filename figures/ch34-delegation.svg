@@ -22,6 +22,7 @@
 <path d="M170.0,119 L790.0,180" fill="none" stroke="#7FA3C0" stroke-width="2.2" marker-end="url(#ah)"/>
 <path d="M530.0,119 L790.0,180" fill="none" stroke="#7FA3C0" stroke-width="2.2" marker-end="url(#ah)"/>
 <path d="M890.0,119 L790.0,180" fill="none" stroke="#7FA3C0" stroke-width="2.2" marker-end="url(#ah)"/>
+<path d="M1290.0,119 L790.0,180" fill="none" stroke="#7FA3C0" stroke-width="2.2" marker-end="url(#ah)"/>
 <path d="M790.0,275 L880,313.0 L790.0,351 L700,313.0 Z" fill="#FBF1DC" stroke="#B7791F" stroke-width="2.5"/>
 <text x="790.0" y="308.6" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" text-anchor="middle" fill="#6B4A0E">Gate 1</text>
 <text x="790.0" y="328.6" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" text-anchor="middle" fill="#6B4A0E">plan approval</text>
@@ -85,6 +86,7 @@
 <text x="597.0" y="620.2" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="400" text-anchor="middle" fill="#5B3E8E">failures</text>
 <path d="M934.0,506 L676.0,740" fill="none" stroke="#7FA3C0" stroke-width="2.2" marker-end="url(#ah)"/>
 <path d="M1192.0,506 L934.0,740" fill="none" stroke="#7FA3C0" stroke-width="2.2" marker-end="url(#ah)"/>
+<path d="M1290.0,119 Q1232.0,394.5 934.0,430" fill="none" stroke="#7FA3C0" stroke-width="2.2" marker-end="url(#ah)"/>
 <path d="M1450.0,506 L1450.0,740" fill="none" stroke="#7FA3C0" stroke-width="2.2" marker-end="url(#ah)"/>
 <path d="M1450.0,506 Q505.0,743.0 160.0,740" fill="none" stroke="#7FA3C0" stroke-width="2.2" marker-end="url(#ah)"/>
 <path d="M1440.0,870 L1540,912.0 L1440.0,954 L1340,912.0 Z" fill="#FBF1DC" stroke="#B7791F" stroke-width="2.5"/>
@@ -96,6 +98,8 @@
 <text x="1292.0" y="860.2" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="400" text-anchor="middle" fill="#5B3E8E">ranked hypotheses</text>
 <path d="M1095.0,680 Q1277.5,916.0 1340,912.0" fill="none" stroke="#5B3E8E" stroke-width="2.2" stroke-dasharray="7 5" marker-end="url(#ahj)"/>
 <text x="1247.5" y="901.2" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="400" text-anchor="middle" fill="#5B3E8E">coverage against plan</text>
+<path d="M1302,468.0 Q1531.0,789.0 1440.0,870" fill="none" stroke="#5B3E8E" stroke-width="2.2" stroke-dasharray="7 5" marker-end="url(#ahj)"/>
+<text x="1451.0" y="714.2" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="400" text-anchor="middle" fill="#5B3E8E">proof status</text>
 <path d="M270,468 H310" stroke="#B7791F" stroke-width="4"/><text x="290" y="500" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="700" fill="#6B4A0E" text-anchor="middle">no write</text>
 <rect x="40" y="420" width="240" height="96" rx="10" fill="#2E7D32" fill-opacity="0.10" stroke="#2E7D32" stroke-width="3"/>
 <rect x="810" y="420" width="248" height="96" rx="10" fill="#2E7D32" fill-opacity="0.10" stroke="#2E7D32" stroke-width="3"/>

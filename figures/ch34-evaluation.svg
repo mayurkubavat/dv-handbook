@@ -26,5 +26,6 @@
 <rect x="20" y="500" width="960" height="120" rx="12" fill="none" stroke="#1B4F72" stroke-width="1.5" stroke-dasharray="6 5"/>
 <text x="32" y="522.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" text-anchor="start" fill="#1B4F72">Verification counterpart</text>
 <text x="40" y="555.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="400" text-anchor="start" fill="#1C1C1C">Visible: coverage (a proxy).   Hidden: bug-finding power (mutants killed).</text>
-<text x="40" y="574.5" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="400" text-anchor="start" fill="#1C1C1C">Measured on small designs: coverage near 90 percent; fault detection near 14 percent.</text>
+<text x="40" y="574.5" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="400" text-anchor="start" fill="#1C1C1C">Two different experiments on small designs: testbench coverage near 90 percent (Ye et al. 2025);</text>
+<text x="40" y="594.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="400" text-anchor="start" fill="#1C1C1C">test-plan bug detection near 14 percent (Kochar et al. 2026). Not one ratio.</text>
 </svg>
