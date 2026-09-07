@@ -26,6 +26,12 @@
 #      EXPECT         pass (default) or fail. A teaching example whose point
 #                     is to find a bug sets EXPECT := fail; the checker then
 #                     treats a non-zero `make run` as the correct outcome.
+#      LINT_ONLY      1 for an example that has nothing to simulate, because
+#                     the example *is* the static check (a lint or analysis
+#                     demonstration, or RTL shown without a testbench).
+#                     `make run` then runs the example's lint, so the checker
+#                     records the lint verdict as the example's result
+#                     instead of an empty simulation log.
 #
 #  Layout assumed by the paths below:
 #      examples/common.mk            <- this file
@@ -51,6 +57,7 @@ endif
 # Defaults that every language may use.
 REQUIRES ?=
 EXPECT   ?= pass
+LINT_ONLY ?= 0
 PLUSARGS ?=
 UVM      ?= 0
 UVM_TEST ?=

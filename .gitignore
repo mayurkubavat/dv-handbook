@@ -6,6 +6,7 @@ _book/
 examples/**/build/
 examples/**/sim_build/
 examples/**/obj_dir/
+__pycache__/
 examples/**/__pycache__/
 examples/**/results.xml
 examples/**/*.log

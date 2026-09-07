@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1478 317.5" width="1478" height="317.5" role="img">
+<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#7FA3C0"/></marker><marker id="ahj" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#5B3E8E"/></marker></defs>
+<rect width="1478" height="317.5" fill="white"/>
+<rect x="304" y="96.0" width="210" height="76" rx="6" fill="white" stroke="#1B4F72" stroke-width="2"/>
+<text x="409.0" y="131.7" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="600" text-anchor="middle" fill="#1C1C1C">u_regs</text>
+<text x="409.0" y="155.9" font-family="'JetBrains Mono', Menlo, monospace" font-size="14" font-weight="400" text-anchor="middle" fill="#7FA3C0">regblock</text>
+<rect x="634" y="96.0" width="210" height="76" rx="6" fill="white" stroke="#1B4F72" stroke-width="2"/>
+<text x="739.0" y="131.7" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="600" text-anchor="middle" fill="#1C1C1C">u_sync_en</text>
+<text x="739.0" y="155.9" font-family="'JetBrains Mono', Menlo, monospace" font-size="14" font-weight="400" text-anchor="middle" fill="#7FA3C0">sync2</text>
+<rect x="964" y="96.0" width="210" height="76" rx="6" fill="white" stroke="#1B4F72" stroke-width="2"/>
+<text x="1069.0" y="131.7" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="600" text-anchor="middle" fill="#1C1C1C">u_dp</text>
+<text x="1069.0" y="155.9" font-family="'JetBrains Mono', Menlo, monospace" font-size="14" font-weight="400" text-anchor="middle" fill="#7FA3C0">datapath</text>
+<path d="M34,108.0 A75.0,10 0 0 1 184,108.0 V160.0 A75.0,10 0 0 1 34,160.0 Z" fill="#F4F6F8" stroke="#1B4F72" stroke-width="2"/>
+<path d="M34,108.0 A75.0,10 0 0 0 184,108.0" fill="none" stroke="#1B4F72" stroke-width="2"/>
+<text x="109.0" y="144.7" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="600" text-anchor="middle" fill="#1C1C1C">inputs</text>
+<path d="M1294,108.0 A75.0,10 0 0 1 1444,108.0 V160.0 A75.0,10 0 0 1 1294,160.0 Z" fill="#F4F6F8" stroke="#1B4F72" stroke-width="2"/>
+<path d="M1294,108.0 A75.0,10 0 0 0 1444,108.0" fill="none" stroke="#1B4F72" stroke-width="2"/>
+<text x="1369.0" y="144.7" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="600" text-anchor="middle" fill="#1C1C1C">outputs</text>
+<text x="109.0" y="192.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="400" text-anchor="middle" fill="#7FA3C0">bclk</text>
+<text x="109.0" y="210.2" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="400" text-anchor="middle" fill="#7FA3C0">brst_n</text>
+<text x="109.0" y="228.4" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="400" text-anchor="middle" fill="#7FA3C0">cclk</text>
+<text x="109.0" y="246.6" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="400" text-anchor="middle" fill="#7FA3C0">crst_n</text>
+<text x="109.0" y="264.8" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="400" text-anchor="middle" fill="#7FA3C0">...</text>
+<text x="1369.0" y="192.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="400" text-anchor="middle" fill="#7FA3C0">acc</text>
+<text x="1369.0" y="210.2" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="400" text-anchor="middle" fill="#7FA3C0">count</text>
+<text x="1369.0" y="228.4" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="400" text-anchor="middle" fill="#7FA3C0">last_cfg</text>
+<path d="M184,134.0 Q574.0,270.0 964,134.0" fill="none" stroke="#7FA3C0" stroke-width="2.2" marker-end="url(#ah)"/>
+<text x="574.0" y="225.2" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="400" text-anchor="middle" fill="#1C1C1C">cclk, crst_n</text>
+<path d="M184,134.0 L304,134.0" fill="none" stroke="#7FA3C0" stroke-width="2.2" marker-end="url(#ah)"/>
+<text x="244.0" y="131.2" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="400" text-anchor="middle" fill="#1C1C1C">bclk, brst_n ...</text>
+<path d="M184,134.0 Q409.0,-2.0 634,134.0" fill="none" stroke="#7FA3C0" stroke-width="2.2" marker-end="url(#ah)"/>
+<text x="409.0" y="63.2" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="400" text-anchor="middle" fill="#1C1C1C">cclk, crst_n</text>
+<path d="M1174,134.0 L1294,134.0" fill="none" stroke="#7FA3C0" stroke-width="2.2" marker-end="url(#ah)"/>
+<text x="1234.0" y="131.2" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="400" text-anchor="middle" fill="#1C1C1C">acc, count ...</text>
+<path d="M514,134.0 Q739.0,270.0 964,134.0" fill="none" stroke="#7FA3C0" stroke-width="2.2" marker-end="url(#ah)"/>
+<text x="739.0" y="225.2" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="400" text-anchor="middle" fill="#1C1C1C">cfg_b</text>
+<path d="M514,134.0 L634,134.0" fill="none" stroke="#7FA3C0" stroke-width="2.2" marker-end="url(#ah)"/>
+<text x="574.0" y="131.2" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="400" text-anchor="middle" fill="#1C1C1C">en_b</text>
+<path d="M844,134.0 L964,134.0" fill="none" stroke="#7FA3C0" stroke-width="2.2" marker-end="url(#ah)"/>
+<text x="904.0" y="131.2" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="400" text-anchor="middle" fill="#1C1C1C">en_c</text>
+<text x="34" y="305.5" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="400" text-anchor="start" fill="#7FA3C0">top connections</text>
+</svg>

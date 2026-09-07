@@ -50,12 +50,18 @@ else
 	$(VERILATOR) --lint-only $(VERILATOR_FLAGS) \
 	    $(UVM_DEFINES) $(UVM_INCDIR) $(UVM_SOURCE) $(SOURCES) \
 	    --top-module $(TOP)
+	@echo "verilator --lint-only -Wall: no warnings"
 endif
 
+# An example that is only a static check has no binary to build or run.
+ifeq ($(LINT_ONLY),1)
+run: lint
+else
 # A failing test ends with $fatal, which Verilator turns into an abort
 # signal; the `|| exit 1` turns that into an ordinary non-zero exit.
 run: $(VERILATOR_BIN)
 	$(VERILATOR_BIN) $(UVM_RUNARGS) $(PLUSARGS) || exit 1
+endif
 
 $(VERILATOR_BIN): $(SOURCES) $(UVM_SOURCE)
 	$(VERILATOR) --binary $(VERILATOR_FLAGS) \
