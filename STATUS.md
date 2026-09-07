@@ -4,7 +4,7 @@
 > Stable conventions live in `AGENTS.md`; this file holds the living state.
 
 ## Current milestone
-**M2 — Chapters 1–2.** Ch.1 REVIEWED and live. Ch.2 (Verification Planning): drafted, reviewed, revised, pushed; awaiting gate 2.
+**M2 — Chapters 1, 2 reviewed and live; Ch.34 next (author's call).** Ch.34 re-outlined as a concept chapter (theory + block diagrams + SW-development parallels). Gate 1 pending. Ch.3 after.
 
 M1 — Repo scaffold: COMPLETE (2026-09-06). CI green on main (examples → PDF+HTML render → Pages deploy). Web edition live at https://mayurkubavat.github.io/dv-handbook (PDF at /Design-Verification-draft.pdf). Next: M2 = Chapter 1.
 
@@ -20,8 +20,8 @@ States: planned → outlined → drafting → examples-verified → reviewed →
 |---|---|---|---|---|
 | F | Building and Running the Examples (`appendices/appF-building-examples.qmd`) | examples-verified (4 run, 2 skipped: UVM needs commercial sim, UVM-SystemC needs library) | ~2,600 | 2026-09-06 |
 | 1 | What Is Design Verification? (`chapters/ch01-what-is-dv.qmd`) | **reviewed** (gate 2 approved by author 2026-09-06 after subagent review + revision) | ~5,400 | 2026-09-06 |
-| 2 | Verification Planning (`chapters/ch02-verification-planning.qmd`) | examples-verified; reviewed by subagent (`docs/reviews/ch02-review-2026-09-06.md`) and revised; **awaiting gate 2 (author review)** | ~5,500 | 2026-09-06 |
-| 34 | Generative AI and Agentic DV (`chapters/ch34-generative-ai-agentic-dv.qmd`) | outlined (awaiting gate-1 approval + example-design decisions); evidence base: 4 research notes | 0 | 2026-09-06 |
+| 2 | Verification Planning (`chapters/ch02-verification-planning.qmd`) | **reviewed** (gate 2 approved by author 2026-09-06) | ~5,500 | 2026-09-06 |
+| 34 | Generative AI and Agentic DV (`chapters/ch34-generative-ai-agentic-dv.qmd`) | outlined, revision 2 (concept chapter: theory + 11 block diagrams, SW-practice parallels, no runnable code); awaiting gate-1 approval | 0 | 2026-09-06 |
 | — | chapters 3–33, 35 + appendices A–E, G, H | planned | 0 | 2026-09-05 |
 
 Edition 1 target: Parts I–III + appendices A–D, F, G. See design doc §4.
@@ -53,6 +53,7 @@ See `research/README.md` for the index. Active notes:
 - Cover tooling: rsvg-convert (librsvg), pdfinfo/pdffonts (poppler)
 
 ## House rules learned
+- Ch.34 (and Part VII generally): concept chapters, theory + block diagrams + SW-practice parallels; cite evidence where a number is claimed but do not survey DV articles or build the chapter around runnable agent code (author, 2026-09-06).
 - Run `research-topic` BEFORE `draft-chapter`, never during: the drafting lock blocks research writes (a research subagent had to park its note in scratch on 2026-09-06). Sequence is research → outline → draft.
 - Attribution: primary sources for every fact, short attributed quotations only, redraw never reproduce, credit discoverers of named bugs (author, 2026-09-06). Written into AGENTS.md.
 - Agent configuration (`.claude/` and the one-line stub that imports AGENTS.md) never goes to the remote; it is gitignored. Keep a private backup if it matters.
@@ -64,7 +65,7 @@ See `research/README.md` for the index. Active notes:
 - Bare `ls` in this shell hangs (aliased to an interactive tool); use `/bin/ls`.
 
 ## Session log
-- 2026-09-06 — Author asked to deep-dive the generative-AI chapter next. Ch.34 outline written from the synthesis blueprint: 10 sections, 3 laptop-runnable worked examples (coverage-directed stimulus loop, SVA loop with SymbiYosys judge, triage agent) sharing a model interface with recorded transcripts for CI and a live client for readers. Decisions pending: transcript strategy, live model choice, writing order.
+- 2026-09-06 — Author asked to deep-dive the generative-AI chapter next. First Ch.34 outline (code-heavy agent loops) rejected by author: they want mainly theory and block diagrams, concepts related to DV and to SW-development practice, original rather than a survey of DV articles. Outline revision 2 written on that basis (11 sections, 11 planned figures, worked example on paper, no runnable code; model choice deferred). Gate 2: Ch.2 approved as reviewed. Order: Ch.34 before Ch.3.
 - 2026-09-06 — Ch.2 second pass from review: report tool states renamed (tests pass / tests fail / unknown test / no test) with an evidence-only header line; prose no longer equates a passing test with closure; textbook/standards claims softened to the note's confidence; OpenTitan V2/V3 quoted directly; V2S acknowledged; Future Directions moved after the worked example; plan file folded to 80 cols, American spelling; figure matches the plan. Hook: `docs/reviews/` exempt from the mention check (evidence records). Pushed.
 - 2026-09-06 — Ch.2 research note delivered (2nd run; 15 bib entries) and indexed; chapter prose written with citations; `figures/ch02-traceability.svg`; 3 bib entries added (UART/HMAC testplans, EE Times); chapter registered; PDF 70 pages. Review subagent dispatched.
 - 2026-09-06 — Ch.2 examples: `examples/mk/python.mk` (lint = py_compile, run = python3 TOP), `fifo_plan.yaml` (12 items with stimulus/checking/coverage/closure), `plan_report.py` (reads `status.json`; treats EXPECT=fail examples as design failures; exits 1 while must-have items lack evidence), UART spec for exercises. Report: 3 passing / 4 failing / 5 no evidence. PyYAML added to dvbook env, CI and README.
