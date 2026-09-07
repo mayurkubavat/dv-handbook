@@ -22,7 +22,7 @@ States: planned → outlined → drafting → examples-verified → reviewed →
 | 1 | What Is Design Verification? (`chapters/ch01-what-is-dv.qmd`) | **reviewed** (gate 2 approved by author 2026-09-06 after subagent review + revision) | ~5,400 | 2026-09-06 |
 | 2 | Verification Planning (`chapters/ch02-verification-planning.qmd`) | **reviewed** (gate 2 approved by author 2026-09-06) | ~5,500 | 2026-09-06 |
 | 34 | Generative AI and Agentic DV (`chapters/ch34-generative-ai-agentic-dv.qmd`) | **reviewed** (gate 2 approved by author 2026-09-07; concept chapter, no runnable examples by design) | ~7,600 | 2026-09-06 |
-| 3 | Digital Design for Verifiers (`chapters/ch03-digital-design-for-verifiers.qmd`) | drafting (outline approved 2026-09-07); building the two-clock design + `tools/dvh` substrate; research relaunched (1st run hit usage limit) | 0 | 2026-09-07 |
+| 3 | Digital Design for Verifiers (`chapters/ch03-digital-design-for-verifiers.qmd`) | drafting (outline approved 2026-09-07); **all 3 examples green**, `tools/dvh` built and unit-tested (7 tests); prose blocked on the research note (3rd run, 3 agents in parallel) | 0 | 2026-09-07 |
 | I | An agent tool layer and derived documentation (`appendices/appI-agent-tool-layer.qmd`) | outlined stub (Edition 3; not registered); source: tooling catalogue §1, §3, §6, §7 | 0 | 2026-09-07 |
 | — | chapters 3–33, 35 + appendices A–E, G, H | planned | 0 | 2026-09-05 |
 
@@ -68,6 +68,7 @@ See `research/README.md` for the index. Active notes:
 - Bare `ls` in this shell hangs (aliased to an interactive tool); use `/bin/ls`.
 
 ## Session log
+- 2026-09-07 — Ch.3 worked example complete and pushed (`703333d`). `tools/dvh` (design/clocks/graph/cli) reads a Yosys netlist and reports 2 domains, 1 unreset register, 2 unsynchronized crossings and a ranked block diagram; Verilator `-Wall` lint on the same files is silent, which is the section's argument. 7 unit tests including one that pins the exact printed report text. `common.mk` gained `LINT_ONLY` for an example that *is* a static check. Ch.3 research relaunched as three parallel agents (RTL/FSM/lint, clocks/resets/CDC, pipelines/interfaces/extraction) writing `research/parts/`, to be merged into the note before drafting.
 - 2026-09-07 — Gate 1: Ch.3 outline approved. Yosys 0.68 installed (brew); pyslang in dvbook env. Research subagent relaunched. Starting the worked example's design and tools.
 - 2026-09-07 — Ch.3 outline written (8 sections; worked example builds `tools/dvh` clock-tree, reset-tree and connection-graph tools on a two-clock design with one missing synchronizer). Installing Yosys (brew) and pyslang (dvbook env) for it.
 - 2026-09-07 — Placement decided: Appendix I (tool layer + derived documentation), outline stub written; three forward pointers added to Ch.34 (grounding, tools, delegation); design doc TOC and phasing updated. Ch.3 research subagent dispatched.

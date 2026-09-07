@@ -7,6 +7,7 @@
 # There is no testbench here on purpose: the example is the static check.
 EXAMPLE_LANG := sv
 TOP          := top
-SOURCES      := ../rtl/regblock.sv ../rtl/sync2.sv ../rtl/datapath.sv ../rtl/top.sv
+SOURCES      := ../rtl/regblock.sv ../rtl/sync2.sv \
+                ../rtl/datapath.sv ../rtl/top.sv
 LINT_ONLY    := 1
 include ../../common.mk
