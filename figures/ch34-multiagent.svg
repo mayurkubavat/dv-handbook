@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 520" width="1400" height="520" role="img" aria-label="A multi-agent flow and the path of a propagating wrong belief">
+<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#7FA3C0"/></marker><marker id="ahj" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#5B3E8E"/></marker></defs>
+<rect width="1400" height="520" fill="white"/>
+<rect x="600" y="40" width="200" height="64" rx="32.0" fill="#1B4F72" stroke="#123A56" stroke-width="2"/>
+<text x="700.0" y="69.6" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" text-anchor="middle" fill="white">Orchestrator</text>
+<text x="700.0" y="90.2" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" text-anchor="middle" fill="#DCE9F3">plans, delegates, believes</text>
+<rect x="120" y="200" width="180" height="64" rx="32.0" fill="#1B4F72" stroke="#123A56" stroke-width="2"/>
+<text x="210.0" y="229.6" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" text-anchor="middle" fill="white">Worker A</text>
+<text x="210.0" y="250.2" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" text-anchor="middle" fill="#DCE9F3">stimulus</text>
+<rect x="610" y="200" width="180" height="64" rx="32.0" fill="#1B4F72" stroke="#123A56" stroke-width="2"/>
+<text x="700.0" y="229.6" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" text-anchor="middle" fill="white">Worker B</text>
+<text x="700.0" y="250.2" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" text-anchor="middle" fill="#DCE9F3">coverage analysis</text>
+<rect x="1100" y="200" width="180" height="64" rx="32.0" fill="#1B4F72" stroke="#123A56" stroke-width="2"/>
+<text x="1190.0" y="229.6" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" text-anchor="middle" fill="white">Worker C</text>
+<text x="1190.0" y="250.2" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" text-anchor="middle" fill="#DCE9F3">verifier</text>
+<path d="M700.0,104 L210.0,200" fill="none" stroke="#7FA3C0" stroke-width="2.2" marker-end="url(#ah)"/>
+<path d="M700.0,104 L700.0,200" fill="none" stroke="#7FA3C0" stroke-width="2.2" marker-end="url(#ah)"/>
+<path d="M700.0,104 L1190.0,200" fill="none" stroke="#7FA3C0" stroke-width="2.2" marker-end="url(#ah)"/>
+<path d="M210.0,200 Q375.0,132.0 700.0,104" fill="none" stroke="#7FA3C0" stroke-width="2.2" marker-end="url(#ah)"/>
+<text x="415.0" y="138.2" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" text-anchor="middle" fill="#1C1C1C">summary: &#x27;done, all passing&#x27;</text>
+<path d="M700.0,104 Q760.0,152.0 700.0,200" fill="none" stroke="#7FA3C0" stroke-width="2.2" marker-end="url(#ah)"/>
+<text x="730.0" y="148.2" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" text-anchor="middle" fill="#1C1C1C">&#x27;A says done; analyze&#x27;</text>
+<path d="M210,200 Q400,90 600,72" fill="none" stroke="#B7791F" stroke-width="4" stroke-dasharray="10 6"/>
+<path d="M700,104 Q700,150 700,200" fill="none" stroke="#B7791F" stroke-width="4" stroke-dasharray="10 6"/>
+<text x="330" y="120.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="700" text-anchor="start" fill="#B7791F">a wrong belief travels</text>
+<text x="330" y="136.9" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="700" text-anchor="start" fill="#B7791F">as a confident summary</text>
+<path d="M520,340 A180.0,10 0 0 1 880,340 V384 A180.0,10 0 0 1 520,384 Z" fill="#F4F6F8" stroke="#1B4F72" stroke-width="2"/>
+<path d="M520,340 A180.0,10 0 0 0 880,340" fill="none" stroke="#1B4F72" stroke-width="2"/>
+<text x="700.0" y="364.2" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="600" text-anchor="middle" fill="#1C1C1C">Shared prompt and summaries</text>
+<text x="700.0" y="384.2" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" text-anchor="middle" fill="#7FA3C0">what every agent was told</text>
+<path d="M1000,340 A190.0,10 0 0 1 1380,340 V384 A190.0,10 0 0 1 1000,384 Z" fill="#F4F6F8" stroke="#1B4F72" stroke-width="2"/>
+<path d="M1000,340 A190.0,10 0 0 0 1380,340" fill="none" stroke="#1B4F72" stroke-width="2"/>
+<text x="1190.0" y="364.2" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="600" text-anchor="middle" fill="#1C1C1C">Independent evidence</text>
+<text x="1190.0" y="384.2" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" text-anchor="middle" fill="#7FA3C0">simulator output, formal verdict, coverage DB</text>
+<path d="M700.0,330 L700.0,264" fill="none" stroke="#7FA3C0" stroke-width="2.2" marker-end="url(#ah)"/>
+<path d="M1190.0,330 L1190.0,264" fill="none" stroke="#5B3E8E" stroke-width="2.2" stroke-dasharray="7 5" marker-end="url(#ahj)"/>
+<text x="1190.0" y="293.2" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" text-anchor="middle" fill="#5B3E8E">what A did not hold</text>
+<rect x="40" y="420" width="1320" height="32" rx="6" fill="#F4F6F8" stroke="#CBD2D9"/>
+<text x="50" y="441.1" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="400" text-anchor="start" fill="#1C1C1C">A verifier that shares the generator&#x27;s evidence agrees with it. A verifier helps only when it holds evidence the generator does not: the toolchain&#x27;s verdict, never a second reading of the same prompt.</text>
+<text x="40" y="505.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="400" text-anchor="start" fill="#7FA3C0">Verification counterpart: designer, verifier, formal engineer and sign-off reviewer, whose value has always been their independence.</text>
+</svg>

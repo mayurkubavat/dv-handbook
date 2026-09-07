@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 440" width="1400" height="440" role="img" aria-label="Visible and hidden metrics, and the gap between them">
+<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#7FA3C0"/></marker><marker id="ahj" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#5B3E8E"/></marker></defs>
+<rect width="1400" height="440" fill="white"/>
+<rect x="40" y="170" width="180" height="64" rx="32.0" fill="#1B4F72" stroke="#123A56" stroke-width="2"/>
+<text x="130.0" y="199.6" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" text-anchor="middle" fill="white">Generator</text>
+<text x="130.0" y="220.2" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" text-anchor="middle" fill="#DCE9F3">optimizes what it sees</text>
+<path d="M280,180 A85.0,10 0 0 1 450,180 V230 A85.0,10 0 0 1 280,230 Z" fill="#F4F6F8" stroke="#1B4F72" stroke-width="2"/>
+<path d="M280,180 A85.0,10 0 0 0 450,180" fill="none" stroke="#1B4F72" stroke-width="2"/>
+<text x="365.0" y="207.2" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="600" text-anchor="middle" fill="#1C1C1C">Artifact</text>
+<text x="365.0" y="227.2" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" text-anchor="middle" fill="#7FA3C0">code, test, stimulus</text>
+<path d="M220,202.0 L280,205.0" fill="none" stroke="#7FA3C0" stroke-width="2.2" marker-end="url(#ah)"/>
+<rect x="540" y="70" width="220" height="70" rx="6" fill="white" stroke="#1B4F72" stroke-width="2"/>
+<text x="650.0" y="102.2" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="600" text-anchor="middle" fill="#1C1C1C">Visible metric</text>
+<text x="650.0" y="123.2" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="400" text-anchor="middle" fill="#7FA3C0">the tests it can see</text>
+<rect x="540" y="270" width="220" height="70" rx="6" fill="white" stroke="#1B4F72" stroke-width="2"/>
+<text x="650.0" y="302.2" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="600" text-anchor="middle" fill="#1C1C1C">Hidden metric</text>
+<text x="650.0" y="323.2" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="400" text-anchor="middle" fill="#7FA3C0">held-out tests, mutants</text>
+<path d="M450,205.0 L540,105.0" fill="none" stroke="#5B3E8E" stroke-width="2.2" stroke-dasharray="7 5" marker-end="url(#ahj)"/>
+<path d="M450,205.0 L540,305.0" fill="none" stroke="#5B3E8E" stroke-width="2.2" stroke-dasharray="7 5" marker-end="url(#ahj)"/>
+<text x="800" y="105.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="700" text-anchor="start" fill="#2E7D32">satisfied</text>
+<text x="800" y="305.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="700" text-anchor="start" fill="#B7791F">not satisfied</text>
+<path d="M905,120 V290" stroke="#B7791F" stroke-width="3" stroke-dasharray="8 6"/>
+<text x="925" y="210.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="400" text-anchor="start" fill="#1C1C1C">the gap: what the generator</text>
+<text x="925" y="228.2" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="400" text-anchor="start" fill="#1C1C1C">was optimized against versus</text>
+<text x="925" y="246.4" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="400" text-anchor="start" fill="#1C1C1C">what mattered</text>
+<rect x="40" y="360" width="1340" height="70" rx="12" fill="none" stroke="#1B4F72" stroke-width="1.5" stroke-dasharray="6 5"/>
+<text x="52" y="380.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="700" text-anchor="start" fill="#1B4F72">Verification counterpart</text>
+<text x="60" y="405.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="400" text-anchor="start" fill="#1C1C1C">Visible: coverage (a proxy).   Hidden: bug-finding power (mutants killed).   Measured on small designs: about 90 percent coverage against about 14 percent mutation detection.</text>
+</svg>
