@@ -4,7 +4,7 @@
 > Stable conventions live in `AGENTS.md`; this file holds the living state.
 
 ## Current milestone
-**M2 — Chapters 1, 2 reviewed and live; Ch.34 next (author's call).** Ch.34 re-outlined as a concept chapter (theory + block diagrams + SW-development parallels). Gate 1 pending. Ch.3 after.
+**M2 — Chapters 1, 2 reviewed and live; Ch.34 drafted, reviewed, revised, live; awaiting gate 2.** In parallel: AI-concept inventory delivered; MCP/automation tooling catalogue in research (two landscape subagents). Ch.3 after.
 
 M1 — Repo scaffold: COMPLETE (2026-09-06). CI green on main (examples → PDF+HTML render → Pages deploy). Web edition live at https://mayurkubavat.github.io/dv-handbook (PDF at /Design-Verification-draft.pdf). Next: M2 = Chapter 1.
 
@@ -21,7 +21,7 @@ States: planned → outlined → drafting → examples-verified → reviewed →
 | F | Building and Running the Examples (`appendices/appF-building-examples.qmd`) | examples-verified (4 run, 2 skipped: UVM needs commercial sim, UVM-SystemC needs library) | ~2,600 | 2026-09-06 |
 | 1 | What Is Design Verification? (`chapters/ch01-what-is-dv.qmd`) | **reviewed** (gate 2 approved by author 2026-09-06 after subagent review + revision) | ~5,400 | 2026-09-06 |
 | 2 | Verification Planning (`chapters/ch02-verification-planning.qmd`) | **reviewed** (gate 2 approved by author 2026-09-06) | ~5,500 | 2026-09-06 |
-| 34 | Generative AI and Agentic DV (`chapters/ch34-generative-ai-agentic-dv.qmd`) | drafted (~7,400 words, 11 figures re-laid out for print, 41 citations); independent review in progress (2nd run; 1st hit usage limit unsaved) | ~7,400 | 2026-09-06 |
+| 34 | Generative AI and Agentic DV (`chapters/ch34-generative-ai-agentic-dv.qmd`) | examples n/a (concept chapter); reviewed by subagent (`docs/reviews/ch34-review-2026-09-07.md`) and revised; pushed; **awaiting gate 2 (author review)** | ~7,600 | 2026-09-06 |
 | — | chapters 3–33, 35 + appendices A–E, G, H | planned | 0 | 2026-09-05 |
 
 Edition 1 target: Parts I–III + appendices A–D, F, G. See design doc §4.
@@ -53,6 +53,7 @@ See `research/README.md` for the index. Active notes:
 - Cover tooling: rsvg-convert (librsvg), pdfinfo/pdffonts (poppler)
 
 ## House rules learned
+- The publication rule is broader than the mention hook: any description of AI-assisted authoring (roles, hooks, reviewers) is out, even with no names. Reviewer prompt now checks for it explicitly; keep doing so.
 - Ch.34 (and Part VII generally): concept chapters, theory + block diagrams + SW-practice parallels; cite evidence where a number is claimed but do not survey DV articles or build the chapter around runnable agent code (author, 2026-09-06).
 - Run `research-topic` BEFORE `draft-chapter`, never during: the drafting lock blocks research writes (a research subagent had to park its note in scratch on 2026-09-06). Sequence is research → outline → draft.
 - Attribution: primary sources for every fact, short attributed quotations only, redraw never reproduce, credit discoverers of named bugs (author, 2026-09-06). Written into AGENTS.md.
@@ -65,6 +66,7 @@ See `research/README.md` for the index. Active notes:
 - Bare `ls` in this shell hangs (aliased to an interactive tool); use `/bin/ls`.
 
 ## Session log
+- 2026-09-07 — Ch.34 second pass from review (verdict: needs another pass; 3 blockers): deleted the paragraph describing the book's own AI-assisted process (publication rule, caught by the reviewer, not the hook); fixed 4 alt texts + tools caption to match drawings; flow figure now feeds logs to planner and debug and routes formal status to gate 3; over-claims softened (search vs retrieval, 'since 2007', 90/14 pairing labeled as two experiments, TDD-faking claim replaced by the SpecBench result, superlatives dropped, AI Act hedged); no-overflow row rewritten as the RTL-counter trap; conventions box folded into prose; Future Directions moved after the worked example; delegation split for checker/coverage roles; DV counterparts made specific for grounding and multi-agent. PDF 102 pages. Pushed.
 - 2026-09-07 — Ch.34 figures re-laid out: page-width figures ≤1000 px wide (type ≥7 pt in print), flow/delegation/swim-lane placed as sideways full-page figures (`rotating` package). PDF 100 pages. Reviewer relaunched (first run lost to a usage limit). Author requested: exhaustive AI-concept inventory for Ch.34 and an MCP/automation tooling catalogue for RTL, DV, debug, AST-based tools and SW-engineering analogues; two landscape-research subagents dispatched.
 - 2026-09-06 — Ch.34 drafted as a concept chapter: 11 sections + worked example on paper (walk table + swim-lane), 11 block diagrams via `figures/blocks.py` + `gen_ch34_figures.py`, 43 concept-primary bib entries from `research/ch34-concept-sources.md`. PDF 94 pages. Review subagent dispatched.
 - 2026-09-06 — Gate 1: Ch.34 outline rev. 2 approved. Research subagent dispatched for primary sources of the general concepts (no vendor blogs). Starting the block-diagram library.
