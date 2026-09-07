@@ -9,7 +9,9 @@
 M1 — Repo scaffold: COMPLETE (2026-09-06). CI green on main (examples → PDF+HTML render → Pages deploy). Web edition live at https://mayurkubavat.github.io/dv-handbook (PDF at /Design-Verification-draft.pdf). Next: M2 = Chapter 1.
 
 ### Next three actions
-1. Read `docs/reviews/ch03-review-2026-09-07.md` when the review agent lands; make the second pass; take gate 2 to the author. Do not set the Ch.3 row to `reviewed` until the author says so.
+1. Read `docs/reviews/ch03-review-2026-09-07.md` when the review agent lands; make the second pass; take gate 2 to the author. Do not set the Ch.3 row to `reviewed` until the author says so. **Two additions already identified for that pass**, both in the merged research note and both unused by the first draft:
+   (a) A Pitfall on gate-level simulation and crossings. Cummings §7.0–7.1: ASIC libraries model flip-flops to drive X on a timing violation, so gate-level simulation *does* flag synchronizer setup/hold violations and "can frequently cause gate-level simulations to fail" — and §7.2 lists the industry's four standard countermeasures (turn off timing checks, zero the setup/hold times, edit the flip-flop models, use multiple SDF files), i.e. the usual response is to remove the one signal a simulator does give. Strong material for @sec-ch03-cdc.
+   (b) A measured number for the Future Directions callout, which currently only reasons. Plassan §3.1.1: one FIFO overflow property proves in 13 s with the clock-gate enables constrained and 192 s without, 15x, and "modern designs include thousands of clock-gating structures". Plus his decisive limit on the chapter's own approach: "a structural approach cannot check protocols and assumptions on the control signal", and a pattern library "would never be exhaustive" because designers roll their own synchronizers.
 2. Answer the 14 open discussion questions in the tooling catalogue (§5, §7.7).
 3. Draft Appendix I (tool layer + derived documentation) from catalogue §1, §3, §6, §7, and register it.
 
