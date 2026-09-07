@@ -432,3 +432,75 @@ Repository layout: `tools/dvh/` for the package with its own pytest suite run by
 4. Topology, TLM graph and dry trace with Part III.
 5. Triage, shrinking and clustering with Chapter 28.
 6. The MCP server and the appendix last, once the functions exist and have a year of use behind them.
+
+## 7. Documentation agents: a maintained knowledge base of derived design facts
+
+Added 2026-09-07 in answer to the author's second question. Chapter 34 says an agent is only as good as what is in its context, and that the assembler of that context is the design decision. This section proposes the thing the assembler should be drawing from: a **knowledge base of derived documents**, generated from the design, the testbench and the logs by agents, kept fresh by continuous integration, and structured so that a debug agent, a coding agent or a person can retrieve exactly the page that answers "how does a write to this register reach the datapath" or "where does a packet go after the parser".
+
+### 7.1 What is different about derived documentation
+
+Hand-written design documents describe intent and go stale. Derived documents describe the artifact as it is, and are regenerated whenever it changes. The two are complementary: the specification says what the block should do; the derived documents say what the RTL and testbench actually contain, with a file and line for every claim. Derived documents have three properties the specification cannot have:
+
+- **Every statement is traceable to evidence.** A sentence about a clock crossing names the register, the two clock nets and the RTL lines; a sentence about a packet's path names the signals and, when a simulation was used, the cycle times.
+- **Drift is detectable.** Regeneration in CI on every RTL or testbench change turns a design change into a document diff in the pull request. A reviewer sees "the packet path gained a stage" as text, not as a waveform.
+- **They are addressable.** Each entity, a module, a register field, a crossing, a packet stage, has a stable identifier and its own page, so retrieval returns a page rather than a passage.
+
+### 7.2 The document types
+
+| Document | Content | Derived from | Who consults it |
+|---|---|---|---|
+| **Hierarchy map** | modules, instances, parameters, ports, one page per module with its neighbours | design model (pyslang, Yosys JSON) | every agent, first |
+| **Clock and reset domains** | sources, dividers, domains, per-register table, crossing inventory with synchronizer classification, waivers as decision records | `rtl.clock_tree`, `rtl.reset_tree` (M.1) | coding agents before an edit; the CDC gate; debug on metastability suspects |
+| **CSR access paths** | for every register field: the path from the bus interface through decode and the register file to the storage element, and the reverse map from the field to every reader and writer in the datapath; access type, reset value, side effects; which tests touched it (from the log convention) | SystemRDL/IP-XACT model joined to the design model's driver and load cones | coding agents editing registers; debug on "the field was written but the block did not react" |
+| **Life of a packet, per protocol** | the stages a transaction passes through from ingress to egress: interfaces, parsers, queues, arbiters, pipelines, egress; per stage the signals, the handshake, the storage, the latency and the back-pressure points; the testbench's observation points (monitors) and check points (scoreboard stages) aligned to the same stages | structural path finding over the connection graph (queues recognised as memories with valid/ready or push/pop handshakes; arbiters as multiplexers with request inputs), refined by one tagged simulation whose transaction is followed with `wave.trace_driver` and the M.2 lifecycle | debug on lost or corrupted packets; new engineers; the protocol chapter's worked examples |
+| **Interrupt and event paths** | from source condition to the interrupt output, with masks, enables and clears, and the CSR fields involved | design model plus CSR paths | debug on missing or stuck interrupts |
+| **Reset and initialization sequence** | the order in which resets release and configuration must be applied, derived from reset domains and the CSR reset values, cross-checked against the testbench's reset sequence | reset tree, CSR model, `tb.sequence_dry_run` on the base sequence | bring-up; every test's first fifty cycles |
+| **Testbench topology and observation coverage** | the component tree, the TLM graph, and for each packet stage whether a monitor observes it and a scoreboard checks it | `tb.topology`, `tb.tlm_graph` (M.1) joined to the packet-journey stages | the review role: stages nobody checks are where escapes live |
+| **Power and isolation** (where UPF exists) | domains, isolation and retention cells, and crossings | vendor tools today; the structure is the same as the crossing inventory | low-power verification |
+| **Performance paths** | the critical structural paths for throughput and latency claims in the specification | packet journey plus latency measurements from tagged runs | performance verification |
+
+Each document exists twice: as a structured file (JSON or YAML, one record per entity, with evidence pointers) that tools and agents read, and as rendered Markdown with stable anchors that people read and that a retrieval index can split by heading. The structured file is the source; the Markdown is generated from it.
+
+### 7.3 The agent architecture, using an agent development kit
+
+Several open agent development kits exist; Google's Agent Development Kit is one open-source example, and the orchestration frameworks in the software survey are others. The design below uses the vocabulary those kits share: an agent has tools, a workflow composes agents sequentially, in parallel or in a loop, and sessions hold state across steps. The specific kit is a choice for the author; nothing in the design depends on it.
+
+The workflow for one document type, run per block:
+
+1. **Extract** (tool-only, deterministic). An agent whose only tools are the `dvh` functions of section 6 runs them and writes the structured file. No model is needed for this step; it is included as an agent so that the workflow is uniform and so that the model can decide *which* extractions a block needs (a block with no bus interface has no CSR document).
+2. **Narrate** (model, constrained). A model writes the Markdown from the structured file, under two constraints enforced by the harness: it may only name entities that exist in the structured file, and every paragraph must cite the record it describes. The narration is where "the parser stage decodes the header and raises `hdr_valid`, which the queue accepts when `q_ready` is high" comes from; the facts came from the extractor.
+3. **Verify** (deterministic first, model second). A checker confirms that every identifier in the prose exists in the structured file, that every cited record is cited correctly, and that no numbers appear that are not in the records. A second model, in a fresh context, is then asked only whether the prose is consistent with the records, never whether it is good. This is Chapter 34's separation of generator and judge applied to documentation.
+4. **Publish.** The files land in `docs/derived/<block>/`, the retrieval index is rebuilt, and a pull-request comment lists what changed since the last generation.
+
+The three refinements the kits make easy: the Extract step for all blocks runs in parallel; Narrate and Verify run in a loop until the verifier passes or a retry limit is reached, at which point the document is published with a "narration failed verification" banner rather than silently; and each block's session records which extractions ran, so an incremental run touches only blocks whose inputs changed.
+
+**Life of a packet deserves its own note**, because it is the document engineers most want and the hardest to derive. Structure alone finds candidate paths but not which one a given packet takes. The design therefore combines a structural pass, which enumerates paths from each ingress interface to each egress interface through recognised queues and arbiters, with a **tagged simulation**: one transaction carrying the M.2 transaction identifier is sent through the block in an otherwise idle environment, and its progress is followed stage by stage with `wave.trace_driver` and the log lifecycle. The result is a path with cycle times at each stage. Repeating it under load gives the back-pressure points. For a protocol with several transaction kinds, one tagged run per kind gives one journey per kind. The chapter on standard protocols (Chapter 30) can carry this as its worked example, on an AXI-Lite or a small PCIe-style block, where the author's own domain gives the narrative.
+
+### 7.4 How the documents are used
+
+- **During debugging.** The debug agent's context assembler (Chapter 34) retrieves the packet-journey page for the failing interface and the CSR page for any register the test wrote, before it reads a line of the log. The failure context of M.2 then has a map to place its transaction on.
+- **During development.** A coding agent asked to change a register reads its CSR page first: every reader and writer of the field, and every test that touched it, are listed. An agent asked to add a pipeline stage reads the packet journey and the clock domains. The instruction file for the repository names these pages as required reading, in the way an `AGENTS.md` names the build commands.
+- **During review.** A pull request shows the document diff next to the code diff. A reviewer who sees a new crossing in the diff, or a packet stage with no monitor, asks about it; the review role of Chapter 34 does the same automatically.
+- **During planning.** Chapter 2's feature extraction has a second source: the derived documents list every interface, register, mode and path, so the plan's decomposition axes can be checked for completeness against the artifact, not only against the specification.
+
+### 7.5 Retrieval design
+
+The documents are written to be retrieved. Each page has a stable identifier (`block/register/<name>`, `block/path/<ingress>-<egress>/<kind>`), a one-line summary, and structured fields, so that both a search over identifiers and a similarity search over summaries return the page rather than a fragment. The context assembler prefers pages to passages, and prefers the structured file to the Markdown when the consumer is a tool. The retrieval index is rebuilt on publish, and an evaluation set of questions with known answers from the structured files (which register controls the arbiter's weight, which stage has a FIFO, which registers are in the slow-clock domain) runs on every rebuild so that a regression in the documents is caught by the same continuous integration that catches a regression in the design.
+
+### 7.6 Where it lands in the book
+
+| Piece | Chapter | Role |
+|---|---|---|
+| Hierarchy, clock and reset, CSR access paths | Ch. 3 | the derived documents as the output of "reading a design" |
+| Life of a packet | Ch. 30, Verifying Standard Protocols | the worked example, on a small bus or link block |
+| Testbench topology and observation coverage | Ch. 13 and Ch. 15 | which stages a scoreboard checks; reuse across environments |
+| Derived documents as the debug agent's map | Ch. 28 | the knowledge base a triage flow starts from |
+| The documentation workflow, extract, narrate, verify, publish | Ch. 34 (grounding and separation, as concepts) and the tool-layer appendix (as the runnable substrate); the narrating model stays behind the recorded-transcript decision | |
+| Drift as a pull-request diff | Ch. 27, Testbench Infrastructure | documentation in the gate stack |
+
+### 7.7 Questions for discussion
+
+11. Which document types come first? The proposal is hierarchy, clock and reset, and CSR paths with Chapter 3, and life of a packet with Chapter 30.
+12. Tagged simulation for the packet journey requires the M.2 transaction identifier to cross the pin boundary. For which of the book's protocols is a sideband tag available, and where must ordering or a payload hash be used instead?
+13. Is the narration step worth a model at all for the first release, or should the Markdown be a deterministic rendering of the structured file until the verifier exists?
+14. Which agent development kit does the book name as its example, given that the runnable tools are kit-independent and only the workflow wrapper would use it?
