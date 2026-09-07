@@ -755,3 +755,504 @@
   url         = {https://www.copyright.gov/ai/Copyright-and-Artificial-Intelligence-Part-2-Copyrightability-Report.pdf},
   note        = {Published 2025-01-29. Accessed 2026-09-06}
 }
+
+% ---------------------------------------------------------------------------
+% Chapter 3 — Digital Design for Verifiers.
+% Sources from research/ch03-digital-design-for-verifiers.md. One key per
+% source: the three research passes suggested colliding keys for several of
+% these, and the keys below are the canonical ones.
+% ---------------------------------------------------------------------------
+
+% --- RTL, synthesis and coding styles (SNUG practitioner papers) -----------
+@inproceedings{cummings2000nba,
+  author    = {Clifford E. Cummings},
+  title     = {Nonblocking Assignments in {Verilog} Synthesis, Coding Styles
+               That Kill!},
+  booktitle = {Synopsys Users Group (SNUG) San Jose},
+  year      = {2000},
+  url       = {http://www.sunburst-design.com/papers/CummingsSNUG2000SJ_NBA.pdf},
+  note      = {Read from an Internet Archive capture (2025-07-17); the original
+               host now redirects to a registration-walled index.
+               Accessed 2026-09-07}
+}
+
+@inproceedings{millscummings1999mismatch,
+  author    = {Don Mills and Clifford E. Cummings},
+  title     = {{RTL} Coding Styles That Yield Simulation and Synthesis
+               Mismatches},
+  booktitle = {Synopsys Users Group (SNUG) San Jose},
+  year      = {1999},
+  url       = {http://www.sunburst-design.com/papers/CummingsSNUG1999SJ_SynthMismatch.pdf},
+  note      = {Read from an Internet Archive capture. Accessed 2026-09-07}
+}
+
+@inproceedings{cummings1999fullparallel,
+  author    = {Clifford E. Cummings},
+  title     = {`full\_case parallel\_case', the Evil Twins of {Verilog}
+               Synthesis},
+  booktitle = {Synopsys Users Group (SNUG) Boston},
+  year      = {1999},
+  url       = {http://www.sunburst-design.com/papers/CummingsSNUG1999Boston_FullParallelCase.pdf},
+  note      = {Read from an Internet Archive capture. Accessed 2026-09-07}
+}
+
+@inproceedings{cummings2016logicprocs,
+  author    = {Clifford E. Cummings},
+  title     = {{SystemVerilog} Logic Specific Processes for Synthesis:
+               Benefits and Proper Usage},
+  booktitle = {Synopsys Users Group (SNUG) Silicon Valley},
+  year      = {2016},
+  url       = {http://www.sunburst-design.com/papers/CummingsSNUG2016SV_SVLogicProcs.pdf},
+  note      = {Read from an Internet Archive capture. Accessed 2026-09-07}
+}
+
+@inproceedings{cummings1998fsm,
+  author    = {Clifford E. Cummings},
+  title     = {State Machine Coding Styles for Synthesis},
+  booktitle = {Synopsys Users Group (SNUG) San Jose},
+  year      = {1998},
+  url       = {http://www.sunburst-design.com/papers/CummingsSNUG1998SJ_FSM.pdf},
+  note      = {Read from an Internet Archive capture. Accessed 2026-09-07}
+}
+
+@inproceedings{cummingschambers2019fsm,
+  author    = {Clifford E. Cummings and Heath Chambers},
+  title     = {Finite State Machine {(FSM)} Design and Synthesis using
+               {SystemVerilog}, Part {I}},
+  booktitle = {Synopsys Users Group (SNUG) Silicon Valley},
+  year      = {2019},
+  url       = {http://www.sunburst-design.com/papers/CummingsSNUG2019SV_FSM1.pdf},
+  note      = {Read from an Internet Archive capture. Accessed 2026-09-07}
+}
+
+@inproceedings{golson1994fsm,
+  author    = {Steve Golson},
+  title     = {State machine design techniques for {Verilog} and {VHDL}},
+  journal   = {Synopsys Journal of High-Level Design},
+  booktitle = {Synopsys Journal of High-Level Design},
+  year      = {1994},
+  url       = {https://www.trilobyte.com/pdf/golson_snug94.pdf},
+  note      = {Accessed 2026-09-07}
+}
+
+% --- Clocks, metastability, crossings and resets ---------------------------
+@article{ginosar2011metastability,
+  author  = {Ran Ginosar},
+  title   = {Metastability and Synchronizers: A Tutorial},
+  journal = {IEEE Design and Test of Computers},
+  volume  = {28},
+  number  = {5},
+  pages   = {23--35},
+  year    = {2011},
+  doi     = {10.1109/MDT.2011.113},
+  url     = {https://webee.technion.ac.il/~ran/papers/Metastability-and-Synchronizers.IEEEDToct2011.pdf},
+  note    = {Accessed 2026-09-07}
+}
+
+@inproceedings{ginosar2003fourteen,
+  author    = {Ran Ginosar},
+  title     = {Fourteen Ways to Fool Your Synchronizer},
+  booktitle = {Proceedings of the 9th IEEE International Symposium on
+               Asynchronous Circuits and Systems (ASYNC)},
+  pages     = {89--96},
+  publisher = {IEEE Computer Society Press},
+  year      = {2003},
+  doi       = {10.1109/ASYNC.2003.1199169},
+  note      = {Cited by DOI only: no reachable full text at time of writing,
+               and nothing in this book is quoted from it. Accessed 2026-09-07}
+}
+
+@inproceedings{cummings2008cdc,
+  author    = {Clifford E. Cummings},
+  title     = {Clock Domain Crossing {(CDC)} Design and Verification
+               Techniques Using {SystemVerilog}},
+  booktitle = {Synopsys Users Group (SNUG) Boston},
+  year      = {2008},
+  url       = {http://www.sunburst-design.com/papers/CummingsSNUG2008Boston_CDC.pdf},
+  note      = {Revision 1.0. Read from an Internet Archive capture.
+               Accessed 2026-09-07}
+}
+
+@inproceedings{cummings2002fifo,
+  author    = {Clifford E. Cummings},
+  title     = {Simulation and Synthesis Techniques for Asynchronous {FIFO}
+               Design},
+  booktitle = {Synopsys Users Group (SNUG) San Jose},
+  year      = {2002},
+  url       = {http://www.sunburst-design.com/papers/CummingsSNUG2002SJ_FIFO1.pdf},
+  note      = {Read from an Internet Archive capture. Accessed 2026-09-07}
+}
+
+@inproceedings{cummings2003resets,
+  author    = {Clifford E. Cummings and Don Mills},
+  title     = {Asynchronous and Synchronous Reset Design Techniques,
+               Part Deux},
+  booktitle = {Synopsys Users Group (SNUG) Boston},
+  year      = {2003},
+  url       = {http://www.sunburst-design.com/papers/CummingsSNUG2003Boston_Resets.pdf},
+  note      = {Revision 1.3. Read from an Internet Archive capture.
+               Accessed 2026-09-07}
+}
+
+@inproceedings{litterick2006cdcsva,
+  author    = {Mark Litterick},
+  title     = {Pragmatic Simulation-Based Verification of Clock Domain
+               Crossing Signals and Jitter using {SystemVerilog} Assertions},
+  booktitle = {Design and Verification Conference (DVCon)},
+  organization = {Verilab},
+  year      = {2006},
+  url       = {http://web.archive.org/web/2018id_/http://www.verilab.com/files/sva_cdc_paper_dvcon2006.pdf},
+  note      = {Original URL now returns 404; read from an Internet Archive
+               capture. Accessed 2026-09-07}
+}
+
+@inproceedings{hunter2013resettesting,
+  author    = {Bryan Hunter and Barry Chen and Rick Lipon},
+  title     = {Reset Testing Made Simple with {UVM} Phases},
+  booktitle = {Synopsys Users Group (SNUG)},
+  year      = {2013},
+  note      = {Accessed 2026-09-07}
+}
+
+@phdthesis{plassan2018cdc,
+  author = {Guillaume Plassan},
+  title  = {Conclusive formal verification of clock domain crossing
+            properties},
+  school = {Universit\'e Grenoble Alpes},
+  year   = {2018},
+  url    = {https://theses.hal.science/tel-01870205},
+  note   = {HAL tel-01870205. Accessed 2026-09-07}
+}
+
+@inproceedings{fawzy2020rdcnoise,
+  author    = {Mohamed Fawzy and Ahmed Elgohary and Hesham Ibrahim},
+  title     = {Noise Reduction in Reset Domain Crossings Verification Using
+               Formal Verification},
+  booktitle = {IEEE East-West Design and Test Symposium (EWDTS)},
+  year      = {2020},
+  doi       = {10.1109/EWDTS50664.2020.9224763},
+  note      = {Accessed 2026-09-07}
+}
+
+@inproceedings{sundriyal2024cdcrdc,
+  author    = {Ankit Sundriyal and Vaibhav Gupta},
+  title     = {Clock and Reset Domain Crossing Issues and Verification
+               Techniques for {SoC} Design},
+  booktitle = {4th Asian Conference on Innovation in Technology (ASIANCON)},
+  year      = {2024},
+  doi       = {10.1109/ASIANCON62057.2024.10837784},
+  note      = {Accessed 2026-09-07}
+}
+
+@inproceedings{yeung2015multidomain,
+  author    = {Ping Yeung and Erich Mandel},
+  title     = {Multi-Domain Verification of Power, Clock and Reset Domains},
+  booktitle = {Hardware and Software: Verification and Testing (HVC 2015)},
+  series    = {Lecture Notes in Computer Science},
+  volume    = {9434},
+  publisher = {Springer},
+  year      = {2015},
+  doi       = {10.1007/978-3-319-26287-1_15},
+  note      = {Metadata only: full text not obtained. Accessed 2026-09-07}
+}
+
+@book{dally1998digital,
+  author    = {William J. Dally and John W. Poulton},
+  title     = {Digital Systems Engineering},
+  publisher = {Cambridge University Press},
+  year      = {1998},
+  note      = {Cited as the origin of the MTBF and synchronizer definitions
+               used by \cite{cummings2008cdc}; the book itself was not
+               consulted for this edition}
+}
+
+% --- X-propagation ---------------------------------------------------------
+@techreport{turpin2003x,
+  author      = {Mike Turpin},
+  title       = {The Dangers of Living with an {X} (bugs hidden in your
+                 {Verilog})},
+  institution = {ARM Ltd.},
+  address     = {Cambridge, UK},
+  year        = {2003},
+  url         = {https://www.averant.com/assets/pdf/Verilog_X_Bugs.pdf},
+  note        = {Version 1.1, 2003-10-14. Accessed 2026-09-07}
+}
+
+% --- Formal reachability and coverage --------------------------------------
+@inproceedings{coudert1990reachability,
+  author    = {Olivier Coudert and Christian Berthet and
+               Jean Christophe Madre},
+  title     = {Verification of synchronous sequential machines based on
+               symbolic execution},
+  booktitle = {Automatic Verification Methods for Finite State Systems},
+  series    = {Lecture Notes in Computer Science},
+  publisher = {Springer},
+  year      = {1990},
+  doi       = {10.1007/3-540-52148-8_30}
+}
+
+@inproceedings{clarke1981modelchecking,
+  author    = {Edmund M. Clarke and E. Allen Emerson},
+  title     = {Design and synthesis of synchronization skeletons using
+               branching time temporal logic},
+  booktitle = {Logics of Programs},
+  series    = {Lecture Notes in Computer Science},
+  volume    = {131},
+  publisher = {Springer},
+  year      = {1981},
+  doi       = {10.1007/BFb0025774}
+}
+
+@article{tasiran2001coverage,
+  author  = {Serdar Tasiran and Kurt Keutzer},
+  title   = {Coverage metrics for functional validation of hardware designs},
+  journal = {IEEE Design and Test of Computers},
+  year    = {2001},
+  doi     = {10.1109/54.936247}
+}
+
+% --- Standards (named, not quoted: see the research note's constraints) -----
+@misc{ieee1800-2023,
+  author       = {{IEEE}},
+  title        = {{IEEE} Std 1800-2023, {IEEE} Standard for {SystemVerilog}:
+                  Unified Hardware Design, Specification, and Verification
+                  Language},
+  howpublished = {IEEE Standards Association},
+  year         = {2024},
+  url          = {https://standards.ieee.org/ieee/1800/7743/},
+  note         = {Published 2024-02-28. Paywalled; clause text not consulted.
+                  Accessed 2026-09-07}
+}
+
+@misc{ieee1364.1-2002,
+  author       = {{IEEE}},
+  title        = {{IEEE} Std 1364.1-2002, {IEEE} Standard for {Verilog}
+                  Register Transfer Level Synthesis},
+  howpublished = {IEEE Standards Association},
+  year         = {2002},
+  note         = {Paywalled and the record page was unreachable; named only,
+                  contents not described. Accessed 2026-09-07}
+}
+
+% --- Bus and handshake specifications --------------------------------------
+@misc{sifive2017tilelink,
+  author       = {{SiFive, Inc.}},
+  title        = {{SiFive} {TileLink} Specification, Version 1.7-draft},
+  year         = {2017},
+  url          = {https://static.dev.sifive.com/docs/tilelink/tilelink-spec-1.7-draft.pdf},
+  note         = {Dated 2017-08-21. Accessed 2026-09-07}
+}
+
+@misc{accellera2014ovl,
+  author       = {{Accellera Systems Initiative}},
+  title        = {Open Verification Library {(OVL)}, version 2.8.1},
+  year         = {2014},
+  url          = {https://www.accellera.org/downloads/standards/ovl},
+  note         = {Dated 2014-04-08. Accessed 2026-09-07}
+}
+
+% --- Practitioner articles on handshakes, skid buffers and async FIFOs -----
+@misc{gisselquist2019skid,
+  author       = {Dan Gisselquist},
+  title        = {Building a skid buffer for {AXI} processing},
+  howpublished = {ZipCPU},
+  year         = {2019},
+  url          = {http://zipcpu.com/blog/2019/05/22/skidbuffer.html},
+  note         = {Dated 2019-05-22. Accessed 2026-09-07}
+}
+
+@misc{gisselquist2021axirules,
+  author       = {Dan Gisselquist},
+  title        = {{AXI} Handshaking Rules},
+  howpublished = {ZipCPU},
+  year         = {2021},
+  url          = {https://zipcpu.com/blog/2021/08/28/axi-rules.html},
+  note         = {Dated 2021-08-28. A practitioner restatement: the ARM
+                  specification itself was not reachable. Accessed 2026-09-07}
+}
+
+@misc{gisselquist2018afifo,
+  author       = {Dan Gisselquist},
+  title        = {Crossing clock domains with an Asynchronous {FIFO}},
+  howpublished = {ZipCPU},
+  year         = {2018},
+  url          = {https://zipcpu.com/blog/2018/07/06/afifo.html},
+  note         = {Dated 2018-07-06. Accessed 2026-09-07}
+}
+
+% --- OpenTitan / lowRISC ---------------------------------------------------
+@misc{lowrisc-verilog-style,
+  author       = {{lowRISC contributors}},
+  title        = {{Verilog} Coding Style Guide},
+  howpublished = {GitHub, lowRISC/style-guides},
+  year         = {2026},
+  url          = {https://github.com/lowRISC/style-guides/blob/master/VerilogCodingStyle.md},
+  note         = {Accessed 2026-09-07}
+}
+
+@misc{opentitan-secure-hw,
+  author       = {{lowRISC contributors (OpenTitan project)}},
+  title        = {Secure Hardware Design Guidelines},
+  howpublished = {OpenTitan documentation},
+  year         = {2026},
+  url          = {https://opentitan.org/book/doc/security/implementation_guidelines/hardware/index.html},
+  note         = {Accessed 2026-09-07}
+}
+
+@misc{opentitan-comportability,
+  author       = {{lowRISC contributors (OpenTitan project)}},
+  title        = {Comportability Definition and Specification},
+  howpublished = {OpenTitan documentation},
+  year         = {2026},
+  url          = {https://opentitan.org/book/doc/contributing/hw/comportability/index.html},
+  note         = {Accessed 2026-09-07}
+}
+
+@misc{opentitan-tlul,
+  author       = {{lowRISC contributors (OpenTitan project)}},
+  title        = {{TileLink-UL} bus},
+  howpublished = {OpenTitan documentation},
+  year         = {2026},
+  url          = {https://opentitan.org/book/hw/ip/tlul/index.html},
+  note         = {Accessed 2026-09-07}
+}
+
+@misc{opentitan-tlul-checker,
+  author       = {{lowRISC contributors (OpenTitan project)}},
+  title        = {{TL-UL} Protocol Checker Specification},
+  howpublished = {OpenTitan documentation},
+  year         = {2026},
+  url          = {https://opentitan.org/book/hw/ip/tlul/doc/TlulProtocolChecker.html},
+  note         = {Accessed 2026-09-07}
+}
+
+@misc{opentitan-prim-fifo,
+  author       = {{lowRISC contributors (OpenTitan project)}},
+  title        = {{prim\_fifo\_sync.sv}},
+  howpublished = {OpenTitan, hw/ip/prim/rtl},
+  year         = {2026},
+  url          = {https://github.com/lowRISC/opentitan/blob/master/hw/ip/prim/rtl/prim_fifo_sync.sv},
+  note         = {Accessed 2026-09-07}
+}
+
+% --- Open tool documentation ----------------------------------------------
+@misc{verilator-warnings,
+  author       = {Wilson Snyder and {Verilator contributors}},
+  title        = {Verilator User's Guide: Warnings},
+  year         = {2026},
+  url          = {https://verilator.org/guide/latest/warnings.html},
+  note         = {Accessed 2026-09-07}
+}
+
+@misc{verilator-changes,
+  author       = {{Verilator contributors}},
+  title        = {Verilator Changes},
+  howpublished = {GitHub, verilator/verilator},
+  year         = {2026},
+  url          = {https://github.com/verilator/verilator/blob/master/Changes},
+  note         = {Accessed 2026-09-07}
+}
+
+@misc{verible-lint-rules,
+  author       = {{CHIPS Alliance}},
+  title        = {Verible {SystemVerilog} lint rule list},
+  year         = {2026},
+  url          = {https://chipsalliance.github.io/verible/lint.html},
+  note         = {Accessed 2026-09-07}
+}
+
+@misc{verible-lint-readme,
+  author       = {{CHIPS Alliance}},
+  title        = {{SystemVerilog} Style Linter},
+  howpublished = {GitHub, chipsalliance/verible},
+  year         = {2026},
+  url          = {https://github.com/chipsalliance/verible/blob/master/verible/verilog/tools/lint/README.md},
+  note         = {Accessed 2026-09-07}
+}
+
+@misc{verible-syntax,
+  author       = {{CHIPS Alliance}},
+  title        = {Verible: verilog\_syntax},
+  year         = {2026},
+  url          = {https://chipsalliance.github.io/verible/verilog_syntax.html},
+  note         = {Accessed 2026-09-07}
+}
+
+@misc{surelog,
+  author       = {{CHIPS Alliance}},
+  title        = {Surelog: {SystemVerilog} 2017 pre-processor, parser and
+                  elaborator},
+  howpublished = {GitHub, chipsalliance/Surelog},
+  year         = {2026},
+  url          = {https://github.com/chipsalliance/Surelog},
+  note         = {Accessed 2026-09-07}
+}
+
+@misc{chipsalliance-svtests,
+  author       = {{CHIPS Alliance}},
+  title        = {sv-tests results},
+  year         = {2026},
+  url          = {https://chipsalliance.github.io/sv-tests-results/},
+  note         = {Accessed 2026-09-07}
+}
+
+@misc{yosys-json,
+  author       = {{YosysHQ}},
+  title        = {Yosys manual: backends ({write\_json})},
+  year         = {2026},
+  url          = {https://yosyshq.readthedocs.io/projects/yosys/en/latest/cmd/index_backends.html},
+  note         = {Accessed 2026-09-07}
+}
+
+@misc{yosys-regcells,
+  author       = {{YosysHQ}},
+  title        = {Yosys manual: word-level register cells},
+  year         = {2026},
+  url          = {https://yosyshq.readthedocs.io/projects/yosys/en/latest/cell/word_reg.html},
+  note         = {Accessed 2026-09-07}
+}
+
+@misc{yosys-rtlil,
+  author       = {{YosysHQ}},
+  title        = {Yosys manual: {RTL} Intermediate Language},
+  year         = {2026},
+  url          = {https://yosyshq.readthedocs.io/projects/yosys/en/latest/yosys_internals/formats/rtlil_rep.html},
+  note         = {Accessed 2026-09-07}
+}
+
+@misc{yosys-verilog,
+  author       = {{YosysHQ}},
+  title        = {Yosys manual: {Verilog} support},
+  year         = {2026},
+  url          = {https://yosyshq.readthedocs.io/projects/yosys/en/latest/using_yosys/verilog.html},
+  note         = {Accessed 2026-09-07}
+}
+
+@misc{slang-docs,
+  author       = {Michael Popoloski},
+  title        = {slang: {SystemVerilog} compiler and language services},
+  year         = {2026},
+  url          = {https://sv-lang.com/},
+  note         = {Source at https://github.com/MikePopoloski/slang; the
+                  standalone pyslang repository was archived 2025-01-18 and
+                  packaging moved upstream. Accessed 2026-09-07}
+}
+
+% --- Vendor product pages (labelled as vendor claims in the text) ----------
+@misc{synopsys-cdc,
+  author       = {{Synopsys, Inc.}},
+  title        = {{VC SpyGlass CDC}},
+  howpublished = {Vendor product page},
+  year         = {2026},
+  url          = {https://www.synopsys.com/verification/static-and-formal-verification/vc-spyglass/vc-spyglass-cdc.html},
+  note         = {Vendor claim. Accessed 2026-09-07}
+}
+
+@misc{synopsys-rdc,
+  author       = {{Synopsys, Inc.}},
+  title        = {{VC SpyGlass RDC}},
+  howpublished = {Vendor product page},
+  year         = {2026},
+  url          = {https://www.synopsys.com/verification/static-and-formal-verification/vc-spyglass/vc-spyglass-rdc.html},
+  note         = {Vendor claim. Accessed 2026-09-07}
+}
