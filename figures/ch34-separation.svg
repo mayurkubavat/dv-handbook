@@ -37,10 +37,11 @@
 <text x="550.0" y="736.9" font-family="'JetBrains Mono', Menlo, monospace" font-size="14" font-weight="400" text-anchor="middle" fill="#7FA3C0">the only judge</text>
 <path d="M670,115.0 Q1160.0,475.0 850,715.0" fill="none" stroke="#7FA3C0" stroke-width="2.2" marker-end="url(#ah)"/>
 <path d="M560.0,476 L550.0,680" fill="none" stroke="#7FA3C0" stroke-width="2.2" marker-end="url(#ah)"/>
-<path d="M250,715.0 Q-125.0,413.5 140,112.0" fill="none" stroke="#5B3E8E" stroke-width="2.2" stroke-dasharray="7 5" marker-end="url(#ahj)"/>
-<text x="35.0" y="258.8" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="400" text-anchor="middle" fill="#5B3E8E">pass, fail, coverage</text>
-<path d="M250,715.0 Q-5.0,573.5 140,432.0" fill="none" stroke="#5B3E8E" stroke-width="2.2" stroke-dasharray="7 5" marker-end="url(#ahj)"/>
-<text x="95.0" y="609.4" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="400" text-anchor="middle" fill="#5B3E8E">proven, refuted,</text>
-<text x="95.0" y="628.1" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="400" text-anchor="middle" fill="#5B3E8E">vacuous</text>
+<path d="M250,715.0 Q-5.0,413.5 140,112.0" fill="none" stroke="#5B3E8E" stroke-width="2.2" stroke-dasharray="7 5" marker-end="url(#ahj)"/>
+<text x="95.0" y="239.4" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="400" text-anchor="middle" fill="#5B3E8E">pass, fail,</text>
+<text x="95.0" y="258.1" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="400" text-anchor="middle" fill="#5B3E8E">coverage</text>
+<path d="M250,715.0 Q75.0,573.5 140,432.0" fill="none" stroke="#5B3E8E" stroke-width="2.2" stroke-dasharray="7 5" marker-end="url(#ahj)"/>
+<text x="135.0" y="619.4" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="400" text-anchor="middle" fill="#5B3E8E">proven, refuted,</text>
+<text x="135.0" y="638.1" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="400" text-anchor="middle" fill="#5B3E8E">vacuous</text>
 <text x="130" y="830.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="400" text-anchor="start" fill="#7FA3C0">Whatever generates must not own what judges.</text>
 </svg>

@@ -157,8 +157,8 @@ def fig_separation():
     d.arrow(stim, tc, sides=("r", "r"), bend=(400, 60))
     d.arrow(orc, tc, sides=("b", "t"))
     # judgments back out along the left margin, outside both regions
-    d.arrow(tc, sa, kind="judgment", sides=("l", "l"), bend=(-320, 0), label="pass, fail, coverage", label_dy=-160)
-    d.arrow(tc, oa, kind="judgment", sides=("l", "l"), bend=(-200, 0), label="proven, refuted,\nvacuous", label_dy=40)
+    d.arrow(tc, sa, kind="judgment", sides=("l", "l"), bend=(-200, 0), label="pass, fail,\ncoverage", label_dy=-170)
+    d.arrow(tc, oa, kind="judgment", sides=("l", "l"), bend=(-120, 0), label="proven, refuted,\nvacuous", label_dy=50)
     d.caption(130, 830, "Whatever generates must not own what judges.", size=15)
     d.save("ch34-separation.svg")
 
