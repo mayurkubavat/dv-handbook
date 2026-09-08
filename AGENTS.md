@@ -78,6 +78,11 @@ Never hand-edit a state to look further along than the evidence supports.
   to them. Trademarks are used descriptively.
 - Further-reading entries name the work, its authors and, where relevant, the
   edition; they do not summarise the work's text.
+- The book never cites its own working documents. `research/` notes and
+  `docs/specs/` are evidence and planning records, not sources: their content
+  belongs in the chapter text and their citations in `refs.bib`. A reader of
+  the published book has no access to them and no reason to care that they
+  exist. A `.qmd` that names a repository path as a source is a defect.
 
 ## Separation of drafting and judging
 While `draft-chapter` runs, a local marker file exists and a tool hook denies

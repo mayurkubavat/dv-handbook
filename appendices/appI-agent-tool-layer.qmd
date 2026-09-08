@@ -288,9 +288,3 @@ The deterministic half of this appendix is buildable today with open tools; the 
 
 Two limits are structural rather than temporary, and neither closes with a better model. Nothing derives intent from a design: which crossings are waived, which registers were meant to have no reset, what a queue is for. Those come from a specification, and where there is none the pipeline documents what was built rather than what was wanted. And a structural recognizer is always a step behind the designs it meets, as @sec-ch03-example demonstrates on this book's own tool. What the layer gives you is a report to review, produced the same way every time, with a pointer from every claim to the thing it came from. That is a smaller promise than it first appears and a far more useful one than a confident paragraph nobody can check.
 :::
-
-## Sources
-
-- `docs/specs/2026-09-07-agentic-tooling-catalog.md` §2 domains A–M, §3 the tool set, §6 tool designs, §7 documentation agents.
-- `research/tooling-landscape-hardware.md` and `research/tooling-landscape-software.md` for the open tools surveyed and the software analogues.
-- `tools/dvh/` for the running code this appendix describes, and its tests.
