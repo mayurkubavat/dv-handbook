@@ -209,6 +209,54 @@ The check is not advisory. The tools validate on request and the tests validate 
 ```{.python include="tools/dvh/schema.py"}
 ```
 
+## I.6 What exists today {#sec-appI-today}
+
+Everything above is a specification. This section is a survey of what a team can actually buy or clone at the time of writing, and of how much of the published evidence for it survives contact with the question "compared to what?"
+
+### The commercial tools
+
+**Someone has shipped the layer this appendix describes.** AMIQ EDA's development environment has understood SystemVerilog and UVM semantically for years, and in January 2026 the company exposed that understanding to programs rather than only to people, through a tool-protocol server over its compiled database [@amiq-dvt-mcp-server]. Its published tool list includes design and verification hierarchy search, symbol references, the constraints attached to a random field, lint failures, simulation log messages and waveform value changes [@amiq-dvt-mcp-tools]. Its release notes run from January 2026 through August of the same year [@amiq-dvt-mcp-whatsnew]. The vendor states it can run inside the editor for live context or in batch to support fleets of agents.
+
+That is close to the design in @sec-appI-substrate, built on a compiled database rather than reconstructed from a netlist, and it is worth knowing about before building anything. Two qualifications matter. The tool surface is not uniform: some operations are documented as available only to command-line clients and others only inside the graphical environment. And no language server is claimed anywhere, which is worth recording as *not claimed* rather than as absent.
+
+Two adjacent AMIQ products fit the appendix directly. Its linter can emit findings as JSON, XML or CSV through a report template, which is what makes a lint result a tool output rather than a screenful of text [@amiq-verissimo-custom-report]. Its documentation generator derives documents from source without relying on comments [@amiq-specador], which is the commercial form of @sec-appI-documents.
+
+The large vendors approach the same ground from the platform side. Cadence's verification platform is organized as applications over a shared data layer, including automatic triage, waveform comparison across runs, and regression debug [@cadence-verisium-pr-2022]; its simulator has applied machine learning to regression compaction since 2020 [@cadence-xcelium-ml-2020]. Synopsys structures its offering as coverage-space optimization, a set of assistants, and more recently an agentic layer that it describes as running verification closure autonomously [@synopsys-agentic-ai-page]. A peer-reviewed survey with a vendor co-author is available for the wider landscape [@bendhaou2025survey].
+
+### How to read the numbers
+
+::: {.callout-warning title="Pitfall"}
+Almost every figure published about AI in verification is a vendor claim, and the claims are stated in a form that cannot be checked. Three patterns are worth recognizing.
+
+**The number that lost its provenance.** The most-repeated pair in this field, a tenfold reduction in coverage holes and a thirty percent productivity gain, originates as a *customer quotation* inside a 2023 product launch [@synopsys-ai-suite-2023]. By the time it is quoted back it has usually become the vendor's measurement, and the testbench, the baseline and the speaker have all dropped away.
+
+**The comparison to nothing.** A 2026 announcement claimed a fiftyfold speedup to validated RTL. A trade report of it quotes the vendor's own footnote conceding the comparison is against workflows "not powered by" the product, with no design, process node or engineer-hours disclosed [@uniteai-synopsys-agents-2026]. A ratio without a denominator is a marketing figure, not a result.
+
+**The pattern across both major vendors.** Searching the archived proceedings of the main verification conferences turns up no paper from either company reporting a measured result for these products. The nearest thing to an exception proves the rule: the one verification figure encountered with a stated baseline, a testbench and a named team was presented by the *customer* at a users' conference, and even that is available only as a vendor retelling [@synopsys-vso-nvidia-2024].
+
+None of this means the tools do not work. It means that at the time of writing there is no published evidence a reader can check, and that a team evaluating them has to run the measurement themselves. @sec-ch34 gives the shape of that measurement.
+:::
+
+### The open stack
+
+The more useful news for anyone building rather than buying is that the deterministic layer of this appendix can be assembled today from maintained open tools.
+
+For parsing and elaboration, slang provides a full front end with a Python binding, and Verible exports a syntax tree as JSON, which is the shortest path from source to something a program can query [@verible-syntax-json]. Surelog with UHDM elaborates to a standard object model [@surelog-uhdm], and tree-sitter has a SystemVerilog grammar for the error-tolerant, editor-time half of @sec-appI-ast [@treesitter-sv]. Verilator and Yosys supply the rest of the design model, as @sec-ch03-example uses them.
+
+For waveforms, an open Rust library reads the common formats [@wellen-lib] and an open viewer can be driven remotely, though its control protocol is not separately documented [@surfer-viewer]. Tool-protocol servers for waveform debug now exist in open form, the most substantial at the time of writing being a thirty-four-tool server from an industrial research group [@wave-mcp]. It is new, and this book cites it as evidence that the shape is buildable rather than as a dependency to adopt.
+
+For regression management as a machine-readable flow rather than a pile of scripts, OpenTitan's is public and in production use [@dvsim-tool].
+
+::: {.callout-tip title="In Practice"}
+Check three things before adopting any of these: the licence, the last commit, and whether the repository has ever cut a release. This survey found real projects with no licence at all, and benchmark repositories dormant for well over a year whose papers are still widely cited. An unlicensed repository is not open source, whatever its README says, and a dormant benchmark reports on models that have since been superseded. Where a paper is sound and its repository is stale, cite the paper.
+:::
+
+### What the research measures, and does not
+
+The academic literature is heavily weighted toward *generation*: given a specification, write the RTL. The standard benchmarks are of that shape [@verilogeval-revisited; @rtllm-bench], and the results should be read with the knowledge that benchmark scores in this area are measurably inflated by training-data contamination [@vericontaminated].
+
+Verification is measured far less often, which is precisely the gap this book cares about. The exceptions are worth knowing: a benchmark that includes verification tasks rather than only design [@cvdp-benchmark], an evaluation of formal verification capability [@fveval-formal], work on generating assertions from specifications [@assertllm], and a recent measurement of where agentic coverage closure stops improving [@agentic-coverage-limits]. That last one is the shape of result this field needs more of, because it reports a limit rather than a speedup.
+
 ## I.6 Who may call what {#sec-appI-roles}
 
 @sec-ch34 argues that the separation between the thing that proposes and the thing that judges must be structural rather than instructed. In a tool layer, structural means the permissions.
@@ -288,3 +336,11 @@ The deterministic half of this appendix is buildable today with open tools; the 
 
 Two limits are structural rather than temporary, and neither closes with a better model. Nothing derives intent from a design: which crossings are waived, which registers were meant to have no reset, what a queue is for. Those come from a specification, and where there is none the pipeline documents what was built rather than what was wanted. And a structural recognizer is always a step behind the designs it meets, as @sec-ch03-example demonstrates on this book's own tool. What the layer gives you is a report to review, produced the same way every time, with a pointer from every claim to the thing it came from. That is a smaller promise than it first appears and a far more useful one than a confident paragraph nobody can check.
 :::
+
+## Further reading
+
+The commercial landscape moves faster than a book can, so these are cited as dated positions rather than as current descriptions. AMIQ EDA's tool-protocol server and its published tool list are the closest thing in the market to the layer this appendix specifies [@amiq-dvt-mcp-server; @amiq-dvt-mcp-tools]. Cadence's verification platform [@cadence-verisium-pr-2022] and Synopsys's agentic offering [@synopsys-agentic-ai-page] show how the same ground looks from the platform side, and a peer-reviewed survey covers the wider field with a vendor co-author [@bendhaou2025survey].
+
+For building rather than buying, the tools worth knowing are Verible's JSON syntax export [@verible-syntax-json], Surelog and UHDM for elaboration to a standard object model [@surelog-uhdm], a SystemVerilog grammar for incremental parsing [@treesitter-sv], an open waveform library [@wellen-lib] and viewer [@surfer-viewer], and OpenTitan's regression system as a public example of a machine-readable flow [@dvsim-tool]. An open tool-protocol server for waveform debug shows the shape is buildable today [@wave-mcp].
+
+On evidence, read the benchmarks before the announcements. A benchmark covering verification rather than only generation [@cvdp-benchmark], an evaluation of formal capability [@fveval-formal], assertion generation from specifications [@assertllm], and a study of where agentic coverage closure stops improving [@agentic-coverage-limits] are more useful than any vendor figure. Read all of them alongside the finding that scores in this area are inflated by training-data contamination [@vericontaminated].
