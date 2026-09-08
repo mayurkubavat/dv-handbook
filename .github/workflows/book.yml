@@ -31,8 +31,8 @@ jobs:
           yosys -V
       - uses: actions/setup-python@v6
         with: { python-version: '3.12' }
-      - name: Install cocotb, pyuvm and pytest
-        run: pip install cocotb pyuvm pyyaml pytest
+      - name: Install cocotb, pyuvm, pytest and jsonschema
+        run: pip install cocotb pyuvm pyyaml pytest jsonschema
       - name: Lint and run every example
         env:
           SYSTEMC_HOME: /usr

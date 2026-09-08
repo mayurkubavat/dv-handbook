@@ -168,3 +168,45 @@ def test_bit_blasted_registers_are_not_collapsed():
     names = [n for n, _ in design.registers(flat)]
     assert len(names) == len(set(names))
     assert len(names) == len(clocks.clock_tree(flat)["registers"])
+
+
+# --------------------------------------------------------------------------
+# The published schemas are a contract with callers who are not this book,
+# so a change to an output that the schema does not describe must fail here.
+# --------------------------------------------------------------------------
+def test_every_command_matches_its_published_schema():
+    from dvh import schema                                # noqa: PLC0415
+    flat = design.load_flat(TWO_CLOCK, "top")
+    mods = design.load_hier(TWO_CLOCK, "top")
+    payloads = {
+        "clock-tree": clocks.clock_tree(flat),
+        "reset-tree": clocks.reset_tree(flat),
+        "crossings": clocks.crossings(flat),
+        "connections": graph.connections(mods, "top"),
+    }
+    assert set(payloads) == set(schema.FOR_COMMAND)
+    for command, payload in payloads.items():
+        assert schema.validate(command, payload) == [], command
+
+
+def test_the_schemas_reject_a_payload_that_is_wrong():
+    """A validator that accepts everything is not a check.
+
+    Each case below is a mistake a change to the tools could plausibly
+    make: a dropped key, a renamed field, a wrong type.
+    """
+    from dvh import schema                                # noqa: PLC0415
+    assert schema.validate("crossings", {"crossings": []})
+    assert schema.validate("reset-tree", {"registers": {}, "no_reset": "none"})
+    assert schema.validate("clock-tree", {
+        "domains": {}, "registers": {"r": {"clock_sources": []}}})
+
+
+def test_every_schema_is_versioned_by_url():
+    """A consumer pins the $id, so every schema must carry one."""
+    from dvh import schema                                # noqa: PLC0415
+    for command in schema.FOR_COMMAND:
+        doc = schema.load(command)
+        assert doc["$id"].startswith("https://")
+        assert doc["$id"].endswith("-1.json"), command
+        assert doc["description"]

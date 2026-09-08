@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mayurkubavat.github.io/dv-handbook/schema/clock-tree-1.json",
+  "title": "dvh clock-tree",
+  "description": "Registers grouped by the clock that samples them.",
+  "$comment": "Gating control is reported in `through`, not in the name.",
+  "type": "object",
+  "required": [
+    "domains",
+    "registers"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "domains": {
+      "description": "Domain name -> its registers, sorted.",
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      }
+    },
+    "registers": {
+      "description": "Register name -> what its clock pin traced back to.",
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": [
+          "clock_sources",
+          "gated_or_muxed",
+          "through"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "clock_sources": {
+            "description": "Sorted roots: a port, or a clock register.",
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1
+          },
+          "gated_or_muxed": {
+            "description": "True if anything was walked through.",
+            "type": "boolean"
+          },
+          "through": {
+            "description": "Cells walked through, and controls skipped.",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mayurkubavat.github.io/dv-handbook/schema/connections-1.json",
+  "title": "dvh connections",
+  "description": "One module's instances, and the nets joining them.",
+  "$comment": "'top' means the module's own boundary.",
+  "type": "object",
+  "required": [
+    "instances",
+    "edges"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "instances": {
+      "description": "Instance name -> the module it instantiates.",
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "edges": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "from",
+          "from_port",
+          "to",
+          "to_port",
+          "nets"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "from": {
+            "description": "Driving instance, or 'top'.",
+            "type": "string"
+          },
+          "from_port": {
+            "type": "string"
+          },
+          "to": {
+            "description": "Receiving instance, or 'top'.",
+            "type": "string"
+          },
+          "to_port": {
+            "type": "string"
+          },
+          "nets": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  }
+}

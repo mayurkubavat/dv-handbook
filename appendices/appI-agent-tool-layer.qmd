@@ -1,16 +1,184 @@
-<!-- OUTLINE: not yet approved; not registered in _quarto.yml until drafted -->
+# An Agent Tool Layer and Derived Documentation {#sec-appI}
 
-# An Agent Tool Layer and Derived Documentation for the Book's Examples {#sec-appI}
+> A model that cannot run your tools is guessing about your design.
 
-*Appendix intent: the runnable, versioned counterpart to the concepts of the generative-AI chapter. Four parts: the `tools/dvh` substrate (design, testbench and evidence models; CLI, JSON and tool-protocol doors); the tool set with role permissions and schemas; the derived-document types and the extract, narrate, verify, publish workflow, kit-neutral with one named example; and the knowledge-base retrieval design with its evaluation set. Every listing is a file under `tools/dvh/` or `examples/`, verified in CI. The narration step waits on the recorded-transcript decision; everything else is deterministic.*
+@sec-ch34 argues that the useful unit of automation is not a model that knows about verification but a model that can call tools which know about *your* design, and that every claim it makes has to be traceable to something a person can re-run. This appendix is the runnable half of that argument. It specifies the layer those tools live in: what they read, what they return, who may call which, and how a design can be made to produce maintained documentation about itself.
 
-## I.1 The substrate: three models, three doors
-## I.2 The tool set and who may call what
-## I.3 Derived documents: types, evidence pointers, drift as a diff
-## I.4 The documentation workflow: extract, narrate, verify, publish
-## I.5 Retrieval and the evaluation set
-## I.6 Building it: sequence, tests, continuous integration
+One principle governs the whole appendix, and it is worth stating before anything else.
+
+::: {.callout-note title="Definition"}
+A **tool**, here, is a deterministic program. It takes a design, a testbench, or a log, and returns structured data. It runs in continuous integration like any other example, needs no model access, and is useful to a person on the day it is written. An **agent** is a loop that decides which tools to call and in what order. The two are separated on purpose: the tools are the part you can test.
+:::
+
+The distinction matters commercially as well as technically. A tool layer that is only useful when a model is driving it has to be justified against the model's error rate. A tool layer that a verification engineer would run by hand pays for itself first and becomes the substrate later.
+
+## I.1 The substrate: three models, three doors {#sec-appI-substrate}
+
+Everything here rests on three models of a design and its verification, and each is a different question a caller might ask.
+
+The **design model** answers questions about structure: what modules exist, which registers are on which clock, what crosses between domains, what connects to what. @sec-ch03-example builds the first of it. It is derived from an elaborated netlist, so it reflects what the design *is* after parameters resolve and generate blocks unroll, rather than what the source text appears to say.
+
+The **testbench model** answers questions about the verification environment: which components exist, how sequences reach a driver, which monitors observe which interfaces, what a transaction's path through the environment looks like. Chapters in Part III build the environment this describes.
+
+The **evidence model** answers questions about what has actually been run: which tests passed, which coverage points are hit, which assertions fired, what a failing log says and where in the design it points. @sec-ch02 builds the first of it in the plan report.
+
+Each model is reachable through three doors, and the doors matter as much as the models.
+
+The **shell door** is a command that prints JSON, as in @sec-ch03-example. A person runs it, a Makefile runs it, continuous integration runs it. It is the door that needs no infrastructure at all.
+
+The **file-format door** is the structured output itself, written to a file that other programs read. It is what lets a tool built this year feed a tool written next year.
+
+The **protocol door** is a server exposing the same operations to a model over a tool protocol, with the argument and result shapes declared. Nothing about the underlying program changes; the protocol door is an adapter, and it is deliberately the thinnest of the three.
+
+::: {.callout-warning title="Pitfall"}
+The temptation is to build the protocol door first, because that is the part that looks like the future. It is the wrong order. A protocol door over a tool nobody has validated exports your bugs with a confident schema attached. Build the shell door, use it yourself until you trust what it says, then adapt it.
+:::
+
+### Which front end the structural rules are written against
+
+Structural questions divide into two kinds, and only one of them can be answered by reading text.
+
+A question such as "which identifiers do not match the naming convention" is a text question, and an incremental parser answers it quickly and tolerates a file that does not compile. A question such as "which registers are on the clock this parameter selects" is not a text question at all. It cannot be answered before parameters resolve, generate blocks unroll, and types are checked.
+
+This book specifies its structural rules against an **elaborated** tree, using the slang front end, for that reason [@slang-docs]. The tools in @sec-ch03-example go one step further and read an elaborated netlist through Yosys, because a netlist answers "what will be built" rather than "what was written" [@yosys-json]. Both are elaboration; they differ in how much has been lowered by the time the rule runs.
+
+The cost of that choice is worth stating. An elaborated front end is a heavier dependency, it needs a design that actually compiles, and it cannot help with a file the author is halfway through editing. A team that wants an editor-time rule will want a text-shaped parser as well, and should expect to write some rules twice.
+
+### The output contract
+
+A tool that returns JSON has made a promise about what the JSON means, and callers who are not this book need that promise written down. The schemas are therefore part of the deliverable rather than documentation of it:
+
+```{.json include="tools/dvh/schema/crossings.schema.json"}
+```
+
+Three properties of that file are deliberate. Every field carries a description written for a person, because a field name is not a definition. The schema is versioned in its identifier rather than by a version field inside the payload, so a consumer pins a URL and a producer who changes what a field means has to publish a new one. And the descriptions record what the tool *cannot* decide, in the same place a caller reads what it returns: the crossings schema says in its own text that recognition is structural and that neither verdict is a sign-off.
+
+The check is not advisory. The tools validate their own output on request, and the test suite validates every command's output on every run, so an output that drifts from its schema fails in continuous integration rather than in somebody else's parser:
+
+```{.python include="tools/dvh/schema.py"}
+```
+
+::: {.callout-tip title="In Practice"}
+Publish the schemas as a small versioned convention with your build system behind them as the reference implementation, rather than keeping them private to one repository. The cost is a compatibility promise you now have to keep. The benefit is that the second team to want a crossing report writes a consumer instead of a second extractor, and the two reports can be compared. If you are not willing to keep the promise, say so in the schema's own description rather than leaving callers to discover it.
+:::
+
+## I.2 The tool set and who may call what {#sec-appI-tools}
+
+@sec-ch34 argues that the separation between the thing that proposes and the thing that judges has to be structural, not a matter of instructions. In a tool layer, structural means the permissions.
+
+The roles and their write permissions are the load-bearing part:
+
+| Role | May write | May read | Never |
+|---|---|---|---|
+| Planner | plan drafts | specification, design, evidence | tests, checkers, RTL |
+| Stimulus | tests and sequences | specification, design, coverage | checkers, scoreboards, RTL |
+| Oracle | checkers, models, assertions, coverage model | specification, design, evidence | tests, RTL |
+| Debug | nothing | everything | everything |
+| Review | nothing | everything | everything |
+
+The two roles that must not converge are stimulus and oracle. A single agent that writes both the test and the thing that judges the test can make any test pass, and will, because that is what the objective rewards. Denying the write is what makes the separation real.
+
+Read access is the harder question, and this book takes a middle position. The stimulus role **may** read the checker, and every such read is recorded as evidence. The reasoning is that denying the read costs a second environment and duplicated context, and buys less than it appears to: a determined optimizer infers a great deal about the checker from which tests pass. Recording the read keeps the risk visible instead. When a reviewer asks whether a test was written against the specification or against the checker's blind spots, the access log is the evidence that answers it.
+
+::: {.callout-warning title="Pitfall"}
+An access log is only evidence if someone reads it. A team that records stimulus-side reads of the oracle and never looks at the record has bought the cost of the mechanism and none of its value. Make it a question at the review gate of @sec-ch02: which tests were written with the checker open, and does the specification support them independently?
+:::
+
+## I.3 Derived documents: types, evidence pointers, drift as a diff {#sec-appI-documents}
+
+A derived document is one nobody writes and nobody has to maintain. It is generated from the design, it carries a pointer from every claim back to the artifact the claim came from, and when the design changes it changes with it. That last property is the whole point.
+
+::: {.callout-note title="Definition"}
+An **evidence pointer** is the reference a derived document carries from each claim to the artifact that supports it: a file and line, a netlist cell, a coverage database record, a simulation run identifier. A claim without one is prose, not documentation, and is removed rather than reviewed.
+:::
+
+Four document types come first, in this order.
+
+**The hierarchy map.** What instantiates what, with parameters resolved. Its evidence is the elaborated netlist. It is the cheapest to produce and the one most often wrong in hand-maintained form, because a block diagram in a specification is written once and the design keeps moving.
+
+**Clock and reset domains, with a crossing inventory.** Every domain, every register in it, every crossing between domains and its classification. @sec-ch03-example produces exactly this. Its evidence is the netlist walk, and its most valuable property is that a new crossing appears as a line in a diff.
+
+**Control and status register access paths.** For each register, the path from the bus boundary to the storage element and back: which decode, which clock domain, which synchronizer, what happens on a read of a write-only field. Its evidence is the connection graph plus the register description the design already keeps.
+
+**Life of a packet.** For a given protocol, the journey a transaction takes: where it enters, what transforms it, which queues it sits in, where it leaves, and what can drop it. This is the document people most want and the only one of the four that cannot be produced from structure alone.
+
+That last point deserves emphasis rather than a footnote. The first three documents are extractions: the answer is in the design and a program can find it. The packet journey needs structure *and* observation, because which path a transaction actually took is a fact about a run. It is produced by joining the structural path against a tagged simulation, which is where @sec-ch03's message-signature convention becomes load-bearing.
+
+### Drift is a diff
+
+Derived documents are regenerated on every commit and committed alongside the design. The consequence is that documentation drift stops being an editorial problem and becomes a code review problem: a change to the clock-domain document appears in the same pull request as the RTL change that caused it, and a reviewer who did not expect a new crossing sees one.
+
+This also gives the team a defensible answer to a question that otherwise has none. When someone asks whether the documentation is current, the answer is not a judgment about how recently anyone looked at it. It is that the document is generated from the current design and its regeneration is in the build.
+
+## I.4 The documentation workflow: extract, narrate, verify, publish {#sec-appI-workflow}
+
+Four stages, of which exactly one uses a model.
+
+**Extract** runs the deterministic tools of @sec-appI-substrate and produces structured files. No model. Fully reproducible. This is where the truth comes from, and every later stage is constrained by it.
+
+**Narrate** turns the structured file into prose a person will read. This is the stage a model earns its place in: a table of eleven clock domains and forty crossings is data, and a paragraph explaining which two crossings are unusual and why is documentation. The model is given the structured file and nothing else, so it cannot introduce a fact that the extractor did not find.
+
+**Verify** checks every claim in the narration against the evidence pointers, and is the reason the narration stage is safe to automate. A claim whose pointer does not support it is removed before publication, not flagged for later. The verifier is a separate step with a separate context from the narrator, for the reason @sec-ch34 gives: a generator asked to check itself grades its own homework.
+
+**Publish** writes the reviewed document to the knowledge base with its version, its evidence pointers, and the identity of the human who approved it.
+
+That last clause is the gate. The narration stage produces text that will be read as authoritative by people who will not check it, and possibly by later agents that treat it as ground truth. It does not publish itself.
+
+::: {.callout-warning title="Pitfall"}
+The failure mode to design against is not a wrong sentence; it is a wrong sentence that becomes an input. A derived document that a later agent retrieves as context has the authority of the pipeline that produced it, and an error in it propagates into work nobody traces back. This is why verification is a stage rather than a review habit, and why the published document keeps its evidence pointers: the pointers are what let a reader check a claim without rebuilding the reasoning that produced it.
+:::
+
+### The workflow on an agent development kit
+
+The extractors are kit-independent by construction: they are programs that print JSON. Only the workflow wrapper touches a kit, and what it needs from one is modest. It needs to run four steps in order, give each step a different context, carry structured state between them, and stop at a human gate.
+
+Google's Agent Development Kit is the concrete example this book uses, because a reader who has only seen the shape described abstractly does not know what it costs to build [@google-adk]. The mapping is direct: each stage is an agent with its own instruction and its own tool permissions; the extract stage is given the tool layer and no model reasoning to speak of; the narrate stage is given the structured file and no tools at all; the verify stage is given the narration, the structured file and read access to the evidence; and the publish step is a callback that requires an approval before it writes.
+
+Two things are worth separating from that example. The choice of kit is the least durable decision in this appendix, and nothing above depends on it: the same four stages run under any framework that supports sequential agents with separate contexts, or under a shell script with four invocations. And the interesting engineering is not in the kit at all. It is in the extractors, the schemas, and the verifier, which is where every claim this pipeline makes either becomes checkable or does not.
+
+## I.5 Retrieval and the evaluation set {#sec-appI-retrieval}
+
+A knowledge base is only as good as what comes back from it. Three design choices decide that.
+
+**Stable page identity.** Every derived document has an identifier that survives regeneration, so that a link to "the clock-domain document for this block" resolves after the design changes rather than pointing at a stale copy. Identity is by design element, not by the run that produced it.
+
+**Chunking by question, not by length.** The unit retrieved should be the answer to a question someone asks: one block's clock domains, one register's access path, one protocol's packet journey. Splitting a document into fixed-size fragments is what turns a precise structural fact into a plausible-sounding paragraph missing its qualifier.
+
+**An evaluation set, written before the retrieval is built.** A list of real questions with their correct answers and the document each should come from. Without it there is no way to tell an improvement from a change, and retrieval quality is exactly the kind of thing that feels better while getting worse.
+
+### Where the regression history lives
+
+The knowledge base that grounds every debug agent is the record of what has failed before and what it turned out to be. This book puts the curated form of it **in the repository, beside the code**: failure signatures, the investigation that resolved each one, and the fix, as structured files that are reviewed like any other change.
+
+The reasons are the ones that apply to any code: it is versioned with the design it describes, it diffs, it needs no infrastructure the book cannot ship, and a signature that no longer matches anything is visible as a file nobody has touched. The cost is real and should be planned for. The record grows without bound, it carries whatever the logs carried including anything sensitive, and it needs a retention decision that a repository does not make for you.
+
+::: {.callout-tip title="In Practice"}
+Keep the raw regression output wherever your regression manager already puts it, and commit only the curated slice: the signature, the verdict, and the resolution. The raw logs are large, uninteresting after a week, and the part with a retention policy attached. The curated slice is small, is what actually grounds a debug agent, and is worth reviewing.
+:::
+
+## I.6 Building it: sequence, tests, continuous integration {#sec-appI-building}
+
+The order below is not arbitrary. Each step is useful on its own, and each is testable before the next one starts.
+
+1. **The design model and its shell door.** Clock tree, reset tree, connection graph, crossing report. @sec-ch03-example is this step, complete.
+2. **The schemas and their validation.** Publish the output contract and make the tests enforce it, as @sec-appI-substrate does. Do this before anything consumes the output, because the first consumer freezes the format whether or not it is written down.
+3. **The evidence model.** Test results, coverage, assertion status, joined to the plan of @sec-ch02.
+4. **The testbench model.** Component topology, sequence paths, transaction routes.
+5. **The message-signature convention**, so that a log can be joined to the models above. This is the step that unlocks the packet journey.
+6. **The derived documents**, in the order of @sec-appI-documents.
+7. **The protocol door**, last, over tools that are by then trusted.
+8. **The agent loops**, which are a separate problem and should be started only when the layer beneath them is boring.
+
+Every step in that list is a program with tests. The book's own tool layer is checked on every commit, and its tests are of three kinds, which is the pattern worth copying. There are tests that pin what the tool says about a known design, so a change in behavior is visible. There are tests that pin the exact text of any output that gets published, because a printed artifact is an interface. And there are tests built from designs that the tool once got wrong, each kept as its own fixture, which is the only kind of test that accumulates.
+
+::: {.callout-important title="Future Directions"}
+The honest summary of this appendix is that the deterministic half is buildable today with open tools, and the rest is a design. The extractors, the schemas, the permissions and the document types need no model at all; a team can have the clock-domain document and its drift diff this quarter. The narrate and verify stages need a model, a gate, and a willingness to measure whether the prose is better than the table it replaced.
+
+Two limits are structural rather than temporary, and neither is closed by a better model. Nothing derives intent from a design: which crossings are waived, which registers were meant to have no reset, what a queue is for. Those come from a specification, and where there is no specification the pipeline documents what was built rather than what was wanted. And a structural recognizer is always a step behind the designs it meets, as @sec-ch03-example shows on its own tool. What the layer gives you is a report to review, produced the same way every time, with a pointer from every claim to the thing it came from. That is a smaller promise than it first appears, and a much more useful one than a confident paragraph nobody can check.
+:::
 
 ## Sources
-- `docs/specs/2026-09-07-agentic-tooling-catalog.md` §1, §3, §6, §7
-- `research/tooling-landscape-hardware.md`, `research/tooling-landscape-software.md`
+
+- `docs/specs/2026-09-07-agentic-tooling-catalog.md` §1, §3, §6, §7 for the tool domains, the role matrix, the tool designs and the documentation-agent architecture.
+- `research/tooling-landscape-hardware.md` and `research/tooling-landscape-software.md` for the open tools surveyed.
+- `tools/dvh/` for the running code this appendix describes, and its tests.

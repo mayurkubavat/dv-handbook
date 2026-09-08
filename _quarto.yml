@@ -17,6 +17,7 @@ book:
     - references.qmd
   appendices:
     - appendices/appF-building-examples.qmd
+    - appendices/appI-agent-tool-layer.qmd
   repo-url: https://github.com/mayurkubavat/dv-handbook
   site-url: https://mayurkubavat.github.io/dv-handbook
   license: "CC BY-NC-SA 4.0"

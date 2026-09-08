@@ -1,0 +1,87 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mayurkubavat.github.io/dv-handbook/schema/crossings-1.json",
+  "title": "dvh crossings",
+  "description": "Paths between clock domains, and how each was classified.",
+  "$comment": "Recognition is structural; neither verdict is a sign-off.",
+  "type": "object",
+  "required": [
+    "crossings",
+    "unsynchronized"
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "crossing": {
+      "type": "object",
+      "required": [
+        "to",
+        "to_domain",
+        "from",
+        "from_domain",
+        "width",
+        "direct",
+        "second_stage",
+        "synchronized",
+        "reason"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "from": {
+          "description": "The sending register.",
+          "type": "string"
+        },
+        "from_domain": {
+          "type": "string"
+        },
+        "to": {
+          "description": "The receiving register.",
+          "type": "string"
+        },
+        "to_domain": {
+          "type": "string"
+        },
+        "width": {
+          "description": "Width of the receiving register.",
+          "$comment": "A synchronizer is one bit wide by definition.",
+          "type": "integer",
+          "minimum": 1
+        },
+        "direct": {
+          "description": "True if the sender reaches D with no logic between.",
+          "type": "boolean"
+        },
+        "second_stage": {
+          "description": "Same-domain registers fed directly by this one.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "synchronized": {
+          "type": "boolean"
+        },
+        "reason": {
+          "description": "Empty when synchronized; else why not, for a person.",
+          "type": "string"
+        }
+      }
+    }
+  },
+  "properties": {
+    "crossings": {
+      "description": "Every crossing found, safe or not.",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/crossing"
+      }
+    },
+    "unsynchronized": {
+      "description": "The subset to act on.",
+      "$comment": "A tool gating a build exits non-zero when this is set.",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/crossing"
+      }
+    }
+  }
+}

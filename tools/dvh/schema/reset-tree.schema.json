@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mayurkubavat.github.io/dv-handbook/schema/reset-tree-1.json",
+  "title": "dvh reset-tree",
+  "description": "Each register's reset, and the registers that have none.",
+  "$comment": "A register in `no_reset` is a finding, not a bug.",
+  "type": "object",
+  "required": [
+    "registers",
+    "no_reset"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "registers": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": [
+          "kind",
+          "active",
+          "sources",
+          "through"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "kind": {
+            "enum": [
+              "asynchronous",
+              "synchronous"
+            ]
+          },
+          "active": {
+            "enum": [
+              "high",
+              "low"
+            ]
+          },
+          "sources": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "through": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "no_reset": {
+      "description": "Registers with no reset pin, sorted.",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

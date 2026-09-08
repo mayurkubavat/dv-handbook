@@ -7,6 +7,10 @@
     python3 -m dvh read         TOP file.sv ... [--svg out.svg]
                                                   (all of the above)
 
+Add --validate to check the JSON against its published schema before it is
+printed (see schema.py). The tests always do; a caller that has pinned a
+schema URL may want to as well.
+
 Every command prints JSON; `read` also prints a short human report and
 exits 1 if any crossing is unsynchronized, so it can gate a commit.
 """
@@ -16,7 +20,7 @@ import argparse
 import json
 import sys
 
-from . import clocks, design, graph
+from . import clocks, design, graph, schema
 
 
 def _report(tree, resets, xings, conn) -> str:
@@ -44,6 +48,18 @@ def _report(tree, resets, xings, conn) -> str:
     return "\n".join(lines)
 
 
+def _emit(command: str, payload: dict, check: bool) -> int:
+    """Print one command's JSON, optionally checking it against its schema."""
+    if check:
+        problems = schema.validate(command, payload)
+        for p in problems:
+            print(f"schema: {p}", file=sys.stderr)
+        if problems:
+            return 2
+    print(json.dumps(payload, indent=2))
+    return 0
+
+
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(prog="dvh")
     ap.add_argument("command", choices=["clock-tree", "reset-tree",
@@ -51,22 +67,24 @@ def main(argv=None) -> int:
     ap.add_argument("top")
     ap.add_argument("files", nargs="+")
     ap.add_argument("--svg", default=None)
+    ap.add_argument("--validate", action="store_true",
+                    help="check the output against its schema")
     args = ap.parse_args(argv)
 
     if args.command in ("clock-tree", "reset-tree", "crossings", "read"):
         flat = design.load_flat(args.files, args.top)
     if args.command == "clock-tree":
-        print(json.dumps(clocks.clock_tree(flat), indent=2)); return 0
+        return _emit(args.command, clocks.clock_tree(flat), args.validate)
     if args.command == "reset-tree":
-        print(json.dumps(clocks.reset_tree(flat), indent=2)); return 0
+        return _emit(args.command, clocks.reset_tree(flat), args.validate)
     if args.command == "crossings":
-        print(json.dumps(clocks.crossings(flat), indent=2)); return 0
+        return _emit(args.command, clocks.crossings(flat), args.validate)
     mods = design.load_hier(args.files, args.top)
     conn = graph.connections(mods, args.top)
     if args.svg:
         graph.draw(conn, args.svg, f"{args.top} connections")
     if args.command == "connections":
-        print(json.dumps(conn, indent=2)); return 0
+        return _emit(args.command, conn, args.validate)
     tree = clocks.clock_tree(flat)
     resets = clocks.reset_tree(flat)
     xings = clocks.crossings(flat, tree)
