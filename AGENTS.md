@@ -51,6 +51,9 @@ Never hand-edit a state to look further along than the evidence supports.
   ```` ```{.lang include="examples/..."} ```` ````. No code typed into prose.
 - Included source files stay at 80 columns or less; comment rulers are 72.
 - Makefile recipes use real tabs.
+- The generative-AI chapter closes the book. Register every new chapter in
+  `_quarto.yml` **before** `chapters/ch34-generative-ai-agentic-dv.qmd`, never
+  after. Its file keeps the `ch34-` name for history; it is chapter 35.
 - Cross-reference by label (`@sec-...`, `@tbl-...`), never by hard-coded chapter,
   section, figure or table number. Part numbers ("Part II") are exempt: parts are
   fixed structure and Quarto cannot label them.

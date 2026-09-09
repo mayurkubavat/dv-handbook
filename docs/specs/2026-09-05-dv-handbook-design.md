@@ -123,8 +123,14 @@ independently draftable/verifiable/releasable.
 
 ### Part VII · The Future of Verification
 33. Machine Learning in Verification — coverage-directed generation, regression optimization, bug prediction
-34. Generative AI and Agentic DV — LLM-assisted testbench/SVA generation, spec-to-vPlan, debug assistants, agentic flows, RAG over specs, risks and evaluation
-35. The Road Ahead — chiplets/UCIe, 3D-IC, HLS verification, evolving standards
+34. The Road Ahead — chiplets/UCIe, 3D-IC, HLS verification, evolving standards
+35. Generative AI and Agentic DV — LLM-assisted testbench/SVA generation, spec-to-vPlan, debug assistants, agentic flows, RAG over specs, risks and evaluation
+
+**The generative-AI chapter closes the book** (author, 2026-09-08). Swapped with
+The Road Ahead for that reason. Consequences to honour: every new chapter is
+registered in `_quarto.yml` *before* it, never after; its file keeps the name
+`ch34-...` for continuity of history, so file name and chapter number differ
+here and nowhere else.
 
 ### Appendices (GRM-style reference)
 A. SV quick reference · B. UVM class/macro reference · C. SVA cheat sheet ·

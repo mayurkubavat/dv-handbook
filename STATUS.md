@@ -32,7 +32,7 @@ States: planned → outlined → drafting → examples-verified → reviewed →
 | F | Building and Running the Examples (`appendices/appF-building-examples.qmd`) | examples-verified (4 run, 2 skipped: UVM needs commercial sim, UVM-SystemC needs library) | ~2,600 | 2026-09-06 |
 | 1 | What Is Design Verification? (`chapters/ch01-what-is-dv.qmd`) | **reviewed** (gate 2 approved by author 2026-09-06 after subagent review + revision) | ~5,400 | 2026-09-06 |
 | 2 | Verification Planning (`chapters/ch02-verification-planning.qmd`) | **reviewed** (gate 2 approved by author 2026-09-06) | ~5,500 | 2026-09-06 |
-| 34 | Generative AI and Agentic DV (`chapters/ch34-generative-ai-agentic-dv.qmd`) | **reviewed** (gate 2 approved by author 2026-09-07; concept chapter, no runnable examples by design) | ~7,600 | 2026-09-06 |
+| 35 | Generative AI and Agentic DV (`chapters/ch34-generative-ai-agentic-dv.qmd`; file name keeps 34, chapter is 35 and closes the book) | **reviewed** (gate 2 approved by author 2026-09-07; concept chapter, no runnable examples by design) | ~7,600 | 2026-09-06 |
 | 3 | Digital Design for Verifiers (`chapters/ch03-digital-design-for-verifiers.qmd`) | **examples-verified**, reviewed + second pass done (3/3 examples green, 11 unit tests); PDF 142 pages; **awaiting gate 2 (author)** | ~8,700 | 2026-09-07 |
 | I | An agent tool layer and derived documentation (`appendices/appI-agent-tool-layer.qmd`) | **drafted and live** (registered, renders as appendix B while only two appendices exist); 8 catalogue questions decided by the author; not yet independently reviewed | ~2,900 | 2026-09-07 |
 | — | chapters 3–33, 35 + appendices A–E, G, H | planned | 0 | 2026-09-05 |
@@ -40,6 +40,7 @@ States: planned → outlined → drafting → examples-verified → reviewed →
 Edition 1 target: Parts I–III + appendices A–D, F, G. See design doc §4.
 
 ## Decisions log
+- 2026-09-08 — **The generative-AI chapter closes the book.** Swapped with The Road Ahead in Part VII: 34 is now The Road Ahead, 35 is Generative AI and Agentic DV. Mechanical consequence: **every new chapter goes into `_quarto.yml` before `ch34-generative-ai-agentic-dv.qmd`, never after.** The file keeps its `ch34-` name so history stays continuous, so file name and chapter number differ for this one chapter and no other.
 - 2026-09-07 — Tooling catalogue: 8 of 14 open questions answered by the author. Narration uses a model behind a human gate with a separate verifier. Google ADK is the named example of the workflow wrapper; extractors stay framework-independent. The stimulus role may read the checker and every read is recorded. Transaction identity is a sideband tag the monitor reads. Output schemas are a published versioned convention with this build system as the reference implementation. Structural rules are specified against slang's elaborated tree. Life of a packet is a first-class document type from the start. Curated regression history lives in the repository beside the code. **Still open: Q1, Q4, Q5, Q8, Q10, Q12** — all chapter-placement or protocol-survey questions that do not block the appendix.
 - 2026-09-05 — Toolchain: Quarto (PDF via MacTeX, HTML site). Rejected pure LaTeX, Pandoc, AsciiDoc, Typst.
 - 2026-09-05 — Style: teaching textbook (Patterson-style) + GRM-style reference appendices.
