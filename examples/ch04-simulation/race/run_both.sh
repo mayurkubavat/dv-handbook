@@ -16,12 +16,15 @@ run_one() {                 # $1 = racy|safe, $2 = the -D macro
   verilator --binary --timing --timescale 1ns/1ps \
       -Wno-BLKSEQ -Wno-DECLFILENAME -D"$macro" \
       --top-module tb_race -Mdir $BUILD/v_$name $name.sv tb_race.sv >/dev/null
-  ./$BUILD/v_$name/Vtb_race | grep -E '^(design|count)=' > $BUILD/$name.verilator
+  ./$BUILD/v_$name/Vtb_race \
+    | grep -E '^(design|count)=' > $BUILD/$name.static
 
   echo "=== $name"
-  echo "--- event-driven simulator"; sed 's/^/    /' $BUILD/$name.icarus
-  echo "--- statically scheduled simulator"; sed 's/^/    /' $BUILD/$name.verilator
-  if diff -q $BUILD/$name.icarus $BUILD/$name.verilator >/dev/null; then
+  echo "--- event-driven simulator"
+  sed 's/^/    /' $BUILD/$name.icarus
+  echo "--- statically scheduled simulator"
+  sed 's/^/    /' $BUILD/$name.static
+  if diff -q $BUILD/$name.icarus $BUILD/$name.static >/dev/null; then
     echo "verdict: the two simulators agree on $name"
   else
     echo "verdict: the two simulators disagree on $name"

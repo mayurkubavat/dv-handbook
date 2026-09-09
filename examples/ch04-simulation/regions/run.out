@@ -1,0 +1,6 @@
+one timestep, printed from several places:
+  [active]    just assigned b<=1, b is still x
+  [active]    just assigned a=1 with =
+  [postponed] $strobe sees b=1, after the update
+  [next step] a=1 b=1
+tb_regions.sv:43: $finish called at 6 (1s)
