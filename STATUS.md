@@ -9,7 +9,8 @@
 M1 — Repo scaffold: COMPLETE (2026-09-06). CI green on main (examples → PDF+HTML render → Pages deploy). Web edition live at https://mayurkubavat.github.io/dv-handbook (PDF at /Design-Verification-draft.pdf). Next: M2 = Chapter 1.
 
 ### Next three actions
-0. **Appendix I: dispatch a review subagent.** It is the only book page that has not been through the review gate, and the Ch.3 review caught four real bugs, so this one should not ship unreviewed. Ask the reviewer specifically to check that no vendor figure is stated as a result and that every dated claim still matches its source.
+0. **Two reviews running** (2026-09-08). `docs/reviews/ch03-verify-2026-09-08.md` verifies that Ch.3's 32 findings were actually fixed, re-running the four blocking tool bugs against *its own* constructed designs rather than the committed fixtures, and hunting regressions in the second pass. `docs/reviews/appI-review-2026-09-08.md` is Appendix I's first review, weighted to vendor-claims-as-results. When they land: make the passes, then gate 2 on both.
+0b. ~~Appendix I: dispatch a review subagent.~~ It is the only book page that has not been through the review gate, and the Ch.3 review caught four real bugs, so this one should not ship unreviewed. Ask the reviewer specifically to check that no vendor figure is stated as a result and that every dated claim still matches its source.
 1. **Gate 2 for Ch.3 is with the author.** Second pass is done and pushed (`dcbaca2`); all review findings addressed. Do not set the Ch.3 row to `reviewed` until the author says so.
 2. Answer the 14 open discussion questions in the tooling catalogue (§5, §7.7).
 3. Dispatch a review subagent for Appendix I, the same way chapters are reviewed. It has not been through that gate.
