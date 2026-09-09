@@ -104,28 +104,25 @@ and the SystemVerilog set is then motivated as *additions with a purpose* rather
 than as a list to memorize.
 
 **Why the additional regions exist.** The paper is explicit that the new regions
-were added specifically to support constructs that would otherwise have created
-new simulation-induced races between the RTL design and the verification code,
-and that the assertion regions make race-free assertion-based verification
-possible. Two of its FAQ answers are worth the chapter's space because they
-pre-empt the reader's obvious objections: the new regions do **not** make
-simulation slower (the events were already being scheduled; the standard merely
-described where), and the model is backward compatible with Verilog-2001, with
-one deliberate exception noted below.
-[Cummings and Salz, 2006, §§1–2.2](https://web.archive.org/web/20061111005225id_/http://www.sunburst-design.com/papers/CummingsSNUG2006Boston_SystemVerilog_Events.pdf)
+were added to support constructs that would otherwise have created new
+simulation-induced races between the design and the verification code, and that
+the assertion regions make race-free assertion-based verification possible. Two
+FAQ answers pre-empt the reader's obvious objections: the new regions do **not**
+make simulation slower (the events were already being scheduled; the standard
+merely described where), and the model stays backward compatible with
+Verilog-2001 but for one deliberate exception.
+[Cummings and Salz, Rev 1.2, §§1–2.2](https://web.archive.org/web/20090419050008id_/http://www.sunburst-design.com/papers/CummingsSNUG2006Boston_SystemVerilog_Events.pdf)
 **[primary]**
 
-**The one deliberate incompatibility (a good worked detail).** In Verilog-2001,
-a variable initialized at its declaration was scheduled as if assigned in an
-`initial` block, in nondeterministic order, and so *caused a time-0 event* — a
-standing source of time-0 races, since nothing ordered variable initialization
-against `always` blocks, `initial` blocks and continuous assignments. In
-SystemVerilog such variables are initialized *before* time 0, so declaration
-initialization causes no time-0 event at all.
-[Cummings and Salz, 2006, FAQ #4](https://web.archive.org/web/20061111005225id_/http://www.sunburst-design.com/papers/CummingsSNUG2006Boston_SystemVerilog_Events.pdf)
+**That one incompatibility** is a cheap, concrete illustration of the chapter's
+thesis that scheduling rules are race policy. In Verilog-2001 a variable
+initialized at its declaration was scheduled as if assigned in an `initial`
+block, in nondeterministic order, and so *caused a time-0 event* — a standing
+source of time-0 races, since nothing ordered variable initialization against
+`always` blocks, `initial` blocks and continuous assignments. In SystemVerilog
+such variables are initialized *before* time 0 and cause no time-0 event.
+[Cummings and Salz, Rev 1.2, FAQ #4](https://web.archive.org/web/20090419050008id_/http://www.sunburst-design.com/papers/CummingsSNUG2006Boston_SystemVerilog_Events.pdf)
 **[primary]**
-This is a compact, concrete illustration of the chapter's thesis — that
-scheduling rules are race policy — and it is cheap to explain.
 
 ## 2. The scheduling regions
 
@@ -163,101 +160,86 @@ All of the following is from Cummings and Salz Rev 1.2, §§2.2.1–2.2.11,
 [same URL](https://web.archive.org/web/20090419050008id_/http://www.sunburst-design.com/papers/CummingsSNUG2006Boston_SystemVerilog_Events.pdf),
 **[primary]**.
 
-**Preponed.** Samples the values that concurrent assertions will use. It runs
-**once per timestep**, immediately after simulation time advances, and has no
-feedback path back into itself. The paper adds an implementation insight the
-chapter can use: because Preponed and the previous timestep's Postponed are both
-read-only, the sampled values are identical in either, so it is not observable
-which one the simulator actually used — only the simulation time differs. It
-also explains the mechanism plainly: the simulator can keep two values per
-sampled signal, the current one and the Preponed one, and hand the Preponed one
-to the sampling construct when the clocking expression finally triggers; it does
-not need to see the future. The paper illustrates this as a delay element inside
-the timestep (its Figure 7 — *describe this, do not reproduce it*; the chapter
-should draw its own).
+**Preponed.** Samples the values concurrent assertions will use. Runs **once per
+time slot**, immediately after time advances, with no feedback path into itself.
+Two useful details: because Preponed and the previous slot's Postponed are both
+read-only, the sampled values are identical in either, so which one the
+simulator really used is not observable — only the simulation time differs. And
+the simulator needs no knowledge of the future: it can keep two values per
+signal, current and Preponed, and hand over the Preponed one when the clocking
+expression eventually triggers. The paper draws this as a delay element inside
+the slot (Figure 7 — *describe, do not reproduce*).
 
-**Active.** Evaluates and executes current module activity, in **arbitrary
-order** among these categories (statements between `begin`/`end` still execute
-in written order): module blocking assignments; evaluation of the *right-hand
-side* of non-blocking assignments, with the update scheduled into NBA;
-continuous assignments; evaluation of inputs and update of outputs of Verilog
-primitives; and `$display` and `$finish`.
+**Active.** Evaluates and executes current module activity in **arbitrary
+order** among these categories (statements between `begin`/`end` still run in
+written order): module blocking assignments; evaluation of the *right-hand side*
+of non-blocking assignments, scheduling the update into NBA; continuous
+assignments; evaluation of inputs and update of outputs of primitives; and
+`$display` and `$finish`.
 
 **Inactive.** Where `#0` blocking assignments are scheduled. The authors
-recommend against using it in RTL at all, and they omit it from the rest of the
-paper's scheduling examples on the grounds that well-written code never
-populates it. A footnote gives the historical reason, which is worth a sentence
-in the chapter: the Inactive region was needed in early Verilog, *before the NBA
-region existed* (the paper dates that to circa 1989); proper use of NBA makes it
-unnecessary.
+recommend against using it in RTL at all and omit it from the paper's later
+scheduling diagrams, since well-written code never populates it. Their footnote
+gives the reason it exists, worth a sentence in the chapter: Inactive was needed
+in early Verilog *before the NBA region was added* (they date that to circa
+1989), and proper use of NBA makes it unnecessary.
 
-**NBA.** Executes the updates to the left-hand-side variables whose right-hand
-sides were evaluated back in Active. The paper notes a second role that the
-chapter needs for §4: the verification regions also schedule stimulus into NBA,
-so it runs again later in the same timestep, *after* the first NBA pass has
-already updated the design's sequential state.
+**NBA.** Executes updates to the left-hand-side variables whose right-hand sides
+were evaluated in Active. Second role, needed for §4: the verification regions
+also schedule stimulus into NBA, so it runs again later in the same slot, after
+the first NBA pass has already updated the design's sequential state.
 
-**Observed.** Evaluates the concurrent assertions, using the values sampled in
-Preponed. Assertion pass/fail action blocks do **not** run here — they schedule
-a process into the Reactive region — because concurrent assertions are designed
-to behave strictly as monitors and are not permitted to modify design state.
-The paper then answers the obvious question about the Observed-to-Active
-feedback path: it exists for an `expect` statement written at module scope,
-whose process is added to Active; an `expect` inside a program block schedules
-into Reactive instead. The authors call this path rare and say they know of no
+**Observed.** Evaluates the concurrent assertions on the Preponed values.
+Assertion pass/fail action blocks do **not** run here — they schedule a process
+into Reactive — because concurrent assertions are designed to be strictly
+monitors and may not modify design state. The Observed-to-Active feedback path
+exists for an `expect` statement at module scope (an `expect` inside a program
+schedules into Reactive instead); the authors call this rare and know of no
 methodology that puts such statements in a module.
 
 **The Reactive region set (Reactive, Re-Inactive, Re-NBA).** Its stated purpose
-is to schedule testbench stimulus drivers and testbench checking *in the same
-time slot, after the RTL has settled to a semi-steady state* — while allowing
-that the stimulus may itself cause further combinational activity in that same
-slot. It schedules the blocking assignments, `#0` blocking assignments and
-non-blocking assignments in program code, plus any task or function called from
-a program. The authors note that testbench code *can* be written as module code
-and historically was, but they encourage placing it in programs so the design is
-isolated from testbench execution.
+is to schedule testbench stimulus drivers and checking *in the same time slot,
+after the RTL has settled to a semi-steady state* — while allowing that the
+stimulus may itself cause further combinational activity in that slot. It
+schedules the blocking, `#0` blocking and non-blocking assignments in program
+code, plus any task or function called from a program. The authors note
+testbench code can be (and historically was) written as module code, but
+encourage programs so the design is isolated from testbench execution.
 
-- **Reactive** — the dual of Active. Evaluates and executes current *program*
-  activity, in any order: program blocking assignments; **the pass/fail code
-  from concurrent assertions**; evaluation of the right-hand side of program
-  non-blocking assignments, with updates scheduled into **Re-NBA**; program
-  continuous assignments; and `$exit`. The paper gives the clearest available
-  justification for placing verification late in the slot: a process running
-  here has access to three things at once — the steady-state Active-set values
-  from the *start* of the slot, the *next* steady-state values after clock and
-  signal propagation, and the disposition of every concurrent assertion
-  triggered in that slot. It calls this out as enabling verification techniques
-  that would otherwise need specialized synchronization code.
-- **Re-Inactive** — the dual of Inactive. Reached by a `#0` in a program
-  process. The authors are careful here and the chapter should be too:
-  Re-Inactive is the dual of the Inactive region they recommend avoiding, **but
-  that recommendation does not extend to verification code**, where a `#0` is
-  often useful and harmless for adding determinism to the scheduler. Their
-  example is a `fork ... join_none` of several processes followed by `#0`, so
-  the children get to start before the parent continues. (Write the book's own
-  version; describe theirs.)
-- **Re-NBA** — the dual of NBA. Executes the updates to left-hand-side variables
-  whose right-hand sides were evaluated in Reactive.
+- **Reactive** — dual of Active. Executes current *program* activity in any
+  order: program blocking assignments; **the pass/fail code from concurrent
+  assertions**; evaluation of the right-hand side of program non-blocking
+  assignments, scheduling updates into **Re-NBA**; program continuous
+  assignments; `$exit`. The authors' justification for placing verification late
+  in the slot is the clearest available: a process here sees three things at
+  once — the steady-state Active-set values from the *start* of the slot, the
+  *next* steady-state values after clock and signal propagation, and the
+  disposition of every concurrent assertion triggered in that slot.
+- **Re-Inactive** — dual of Inactive, reached by a `#0` in a program process.
+  The authors are careful here and the chapter should be too: this is the dual
+  of the region they recommend avoiding, **but that recommendation does not
+  extend to verification code**, where a `#0` is often useful and harmless for
+  adding determinism. Their example is `fork ... join_none` followed by `#0`, so
+  the children start before the parent continues. (Describe; write your own.)
+- **Re-NBA** — dual of NBA. Executes updates to left-hand-side variables whose
+  right-hand sides were evaluated in Reactive.
 
 The three iterate together until all Reactive-set events are done. *Then*, if
 program execution scheduled anything that can trigger Active-set events in the
-same slot, the Active set (Active-Inactive-NBA) re-triggers and iterates until
-it too has completed. The paper adds a detail worth a sentence in the chapter:
-on that second entry into the RTL regions the Active and Inactive regions are
-typically empty and the work is in NBA — and a second NBA pass can well trigger
-further combinational activity, but only if the testbench drives with zero
-delay, which is one reason some engineers deliberately drive stimulus away from
-the clock edge.
+same slot, the Active set re-triggers and iterates until it too completes. One
+detail worth a sentence: on that second entry the Active and Inactive regions
+are typically empty and the work is in NBA, and a second NBA pass can trigger
+further combinational activity — but only if the testbench drives with zero
+delay, which is why some engineers deliberately drive away from the clock edge.
 
-**Isolation — why a program block cannot race the design.** The mechanism is
-stated precisely and is the load-bearing claim for the chapter's §4. Program
-processes may modify design signals only via non-blocking assignments, whose
-updates land in a later region rather than taking effect immediately.
-Assignments to *program* variables are blocking and do take effect immediately
-during Reactive/Re-Inactive — but because they touch only program variables,
-they schedule nothing in Active. Combine that with the rule that all program
-processes complete before the Active set is re-entered, and the testbench
-cannot interleave with the design.
+**Isolation — why a program block cannot race the design.** This is the
+load-bearing claim for §4. Program processes may modify design signals only via
+non-blocking assignments, whose updates land in a later region. Assignments to
+*program* variables are blocking and take effect immediately during
+Reactive/Re-Inactive, but because they touch only program variables they
+schedule nothing in Active. Add the rule that all program processes complete
+before the Active set is re-entered, and the testbench cannot interleave with
+the design.
 
 **Postponed.** Executes `$strobe` and `$monitor`, showing the final updated
 values for the timestep, and collects functional coverage that uses strobe
@@ -282,10 +264,10 @@ one `$strobe` on the same variable, printing different values.
 ### 2.3 A naming aside worth one footnote
 
 "Prepone" is a real word meaning to schedule for an earlier time, in common use
-in South Asia; the SystemVerilog committee groaned at it but accepted no
-alternative. Cummings and Salz suggest thinking of Preponed and Postponed as the
-begin/end regions bracketing each timestep — a genuinely useful mnemonic.
-[Cummings and Salz, 2006, §2.2.9](https://web.archive.org/web/20061111005225id_/http://www.sunburst-design.com/papers/CummingsSNUG2006Boston_SystemVerilog_Events.pdf)
+in South Asia; the committee groaned but accepted no alternative. The authors'
+mnemonic is genuinely useful: Preponed and Postponed are the begin/end regions
+bracketing each time slot.
+[Cummings and Salz, Rev 1.2, §2.2.12](https://web.archive.org/web/20090419050008id_/http://www.sunburst-design.com/papers/CummingsSNUG2006Boston_SystemVerilog_Events.pdf)
 **[primary]**
 
 ### 2.4 Which revision to cite, and why it matters
