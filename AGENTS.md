@@ -31,9 +31,31 @@ conda run -n dvbook --no-capture-output make run   # cocotb/pyuvm example
 Quarto is at `~/.local/bin/quarto`. Use `/bin/ls`; bare `ls` hangs here.
 
 ## Chapter workflow (agent skills, kept locally and not in this repository)
-research-topic → outline-chapter → **[gate 1: outline approved by author]** →
-draft-chapter → verify-examples → review-chapter → **[gate 2: author review]**
-→ release → book-blog-post. **[gate 3: author tags the release]**
+research-topic → outline-chapter → **[gate 1]** → draft-chapter →
+verify-examples → review-chapter → **[gate 2]** → release → book-blog-post.
+**[gate 3: the author tags the release]**
+
+**Gates 1 and 2 are delegated** (author, 2026-09-09: "You decide review
+process ... and ungate to proceed"). Gate 3 stays with the author, because a
+tag is public and irreversible. Delegated does not mean removed: a gate is
+passed by evidence, not by the drafter's own satisfaction.
+
+- **Gate 1** passes when the outline names, for every section, what the reader
+  must be able to do, and when the research note's constraints are folded into
+  it. Record the decision and its date in `STATUS.md`. If the research left a
+  question that changes the chapter's shape, raise it with the author instead
+  of choosing.
+- **Gate 2** passes only when an independent reviewer, in a fresh subagent that
+  never saw the drafting conversation, returns **no blocking findings**. One
+  review is not enough where the chapter makes claims about code the book
+  ships: those are verified by a reviewer that *runs* the code against designs
+  it constructs itself, because three of the four blocking bugs found in Ch.3
+  were things the prose asserted and nobody had executed. A verdict of "needs
+  another pass" means another pass and another review, not a judgement call.
+- **Escalate to the author regardless of the gates** for: a change to the
+  book's structure or scope, anything that would make a public claim about a
+  named company or person, and any finding that suggests an earlier approved
+  chapter is wrong.
 
 Chapter states: planned → outlined → drafting → examples-verified → reviewed →
 published. A state advances only through the skill that produces its evidence.
