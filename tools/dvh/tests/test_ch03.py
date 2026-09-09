@@ -152,8 +152,45 @@ def test_parallel_per_bit_synchronizers_are_rejected():
     flat = design.load_flat(files, "per_bit_sync")
     x = clocks.crossings(flat)
     assert len(x["unsynchronized"]) == 8
-    assert all("parallel one-bit synchronizers" in c["reason"]
-               for c in x["unsynchronized"])
+    assert all("read together" in c["reason"] for c in x["unsynchronized"])
+
+
+def test_per_bit_anti_pattern_is_caught_without_a_shared_name():
+    """Convergence is the signal, not the sending register's name.
+
+    Here the eight sending flops are declared separately, so any check that
+    grouped by name would pass this design. What gives it away is that one
+    downstream register reads all eight synchronizer outputs.
+    """
+    files = [str(FIXTURE / "split_source_sync.sv")]
+    flat = design.load_flat(files, "split_source_sync")
+    x = clocks.crossings(flat)
+    assert len(x["unsynchronized"]) == 8
+    assert all("read together" in c["reason"] for c in x["unsynchronized"])
+
+
+def test_two_gates_on_one_clock_are_not_a_crossing():
+    """The same clock, gated two ways, is not an asynchronous crossing.
+
+    With no register driven straight from a port there is no strong
+    evidence for which gate input is the clock, so both domains carry the
+    enable in their name. They still share the root `clk`, and a path
+    between them raises a timing question, not a metastability one.
+    """
+    files = [str(FIXTURE / "two_clock_gates.sv")]
+    flat = design.load_flat(files, "two_clock_gates")
+    tree = clocks.clock_tree(flat)
+    assert all("clk" in d.split("+") for d in tree["domains"])
+    assert clocks.crossings(flat, tree)["crossings"] == []
+
+
+def test_a_crossing_through_a_latch_is_still_reported():
+    """A latch is state, so the path is not a synchronizer -- but stopping
+    the walk at one would hide the crossing altogether, which is worse."""
+    files = [str(FIXTURE / "crossing_via_latch.sv")]
+    flat = design.load_flat(files, "crossing_via_latch")
+    x = clocks.crossings(flat)
+    assert len(x["unsynchronized"]) == 1
 
 
 def test_bit_blasted_registers_are_not_collapsed():

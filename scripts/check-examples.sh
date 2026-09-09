@@ -60,8 +60,10 @@ for d in $DIRS; do
   # A bare EXPECT := fail accepts any failure, so a missing tool or a broken
   # import counts as the bug the example exists to find. EXPECT_OUTPUT names
   # a string the run must print for the failure to be the expected one.
+  # Take everything after the first '=' so a value may contain one, and
+  # strip a trailing comment the way mkvar does.
   expect_output=$(grep -E "^EXPECT_OUTPUT\s*:?=" "$d/Makefile" \
-                  | sed -E 's/.*=[[:space:]]*//')
+                  | sed -E 's/^[^=]*=[[:space:]]*//; s/[[:space:]]+#.*$//')
   lint="pass"; run="pass"
   if ! (cd "$d" && $RUN make -s lint >"$d/lint.log" 2>&1); then
     lint="fail"

@@ -41,24 +41,44 @@ class Source:
     through: list = field(default_factory=list)   # cell types walked through
 
 
-def primary_clocks(mod: Module) -> set:
-    """Ports that drive a register's clock pin with no logic in between.
+def clock_candidates(mod: Module) -> tuple:
+    """Two tiers of evidence that a net is carrying a clock, not control.
 
-    These anchor the clock walk: at a gate or a multiplexer, an input whose
-    cone reaches one of these is carrying the clock, and the rest are
-    control."""
-    prim = set()
+    At a gate feeding a clock pin, one input is the clock and the others are
+    enables, and nothing in the netlist says which. Two signals separate them
+    most of the time. **Strong**: the net already drives some register's
+    clock pin directly, or is a register output used as a clock (a divider),
+    or is something the netlist cannot see into, which is what an analog
+    block looks like from here. **Weak**: it is an input port, which a clock
+    usually is and an enable sometimes is.
+
+    Where the strong evidence is absent and more than one input is merely a
+    port, the two are genuinely indistinguishable from the RTL, and the walk
+    says so rather than guessing. That is not a defect in the tool; it is
+    @sec-ch03-clocks' point that the relationship between clocks is a
+    property of the specification. Pass the clock names in and the question
+    does not arise.
+    """
+    strong, used_as_clock = set(), set()
     for _, cell in registers(mod):
-        bits = cell.conns.get("CLK", [])
-        if bits and isinstance(bits[0], int) and bits[0] in mod.port_of_bit:
-            prim.add(mod.port_of_bit[bits[0]])
-    return prim
+        for b in cell.conns.get("CLK", []):
+            if isinstance(b, int):
+                used_as_clock.add(b)
+                if b in mod.port_of_bit:
+                    strong.add(mod.port_of_bit[b])
+    for name, cell in registers(mod):
+        if any(b in used_as_clock for b in cell.conns.get("Q", [])):
+            strong.add(name)          # a divided or generated clock
+    weak = {p for p, v in mod.ports.items() if v["direction"] == "input"}
+    return strong, weak
 
 
-def _reaches(mod: Module, bit, roots, any_comb) -> bool:
-    """Does this net's cone reach one of the primary clocks?"""
-    return any(s.name in roots
-               for s in _walk_to_sources(mod, bit, set(), any_comb, None))
+def _tier(mod: Module, bit, strong, weak, any_comb) -> int:
+    """2 for strong evidence of a clock, 1 for weak, 0 for none."""
+    srcs = _walk_to_sources(mod, bit, set(), any_comb, None)
+    if any(s.name in strong or s.kind == "unknown" for s in srcs):
+        return 2
+    return 1 if any(s.name in weak for s in srcs) else 0
 
 
 def _walk_to_sources(mod: Module, bit, seen=None, any_comb=False,
@@ -67,9 +87,9 @@ def _walk_to_sources(mod: Module, bit, seen=None, any_comb=False,
 
     With any_comb=True every combinational cell is walked (data cones);
     otherwise only the clock-tree pass-through set is (clock and reset nets).
-    With clock_roots given, a gate or multiplexer follows only the inputs
-    whose cone reaches a primary clock, so a clock gate's enable does not
-    become part of the domain name."""
+    `clock_roots` is the (strong, weak) pair from `clock_candidates`, or a
+    single set of declared clock names; a gate then follows only the inputs
+    that look like clocks, so an enable does not join the domain name."""
     seen = seen if seen is not None else set()
     if not isinstance(bit, int):
         return [Source(f"const {bit}", "constant")]
@@ -85,11 +105,20 @@ def _walk_to_sources(mod: Module, bit, seen=None, any_comb=False,
     if cell.type in DFF_TYPES:
         return [Source(mod.reg_of_bit.get(bit, mod.net(cell.conns["Q"][0])),
                        "register")]
+    combinational = (cell.type not in DFF_TYPES
+                     and not cell.type.startswith("$mem"))
+    if cell.type in LATCH_TYPES and any_comb:
+        # A latch is a state element, so a path through one is not direct and
+        # cannot be a synchronizer; but the crossing behind it is still a
+        # crossing, so the walk continues rather than stopping here.
+        out = []
+        for b in cell.conns.get("D", []):
+            for src in _walk_to_sources(mod, b, seen, any_comb, clock_roots):
+                src.through = [cell.type] + src.through
+                out.append(src)
+        return out or [Source(mod.net(bit), "latch")]
     if cell.type in LATCH_TYPES:
         return [Source(mod.net(bit), "latch")]
-    combinational = (cell.type not in DFF_TYPES
-                     and cell.type not in LATCH_TYPES
-                     and not cell.type.startswith("$mem"))
     if cell.type in PASS_THROUGH or (any_comb and combinational):
         # A multiplexer's select is not a clock, so the clock walk skips it.
         # A data cone must follow it: a foreign register steering a mux is a
@@ -99,14 +128,20 @@ def _walk_to_sources(mod: Module, bit, seen=None, any_comb=False,
                if cell.dirs.get(port) == "input"
                and not (skip_select and port == "S")
                for b in bits]
-        control = []
+        control, ambiguous = [], False
         if clock_roots:
-            carrying = [(p, b) for (p, b) in ins
-                        if _reaches(mod, b, clock_roots, any_comb)]
-            if carrying:        # else nothing here is a clock: keep them all
-                control = [mod.net(b) for (p, b) in ins
-                           if (p, b) not in carrying]
+            strong, weak = clock_roots
+            tiers = [(_tier(mod, b, strong, weak, any_comb), p, b)
+                     for (p, b) in ins]
+            best = max((t for t, _, _ in tiers), default=0)
+            carrying = [(p, b) for (t, p, b) in tiers if t == best]
+            if best and len(carrying) < len(ins):
+                control = [mod.net(b) for (p, b) in ins if (p, b) not in carrying]
                 ins = carrying
+            elif best == 1 and len(carrying) > 1:
+                # Several ports and no stronger evidence: from the RTL alone
+                # these are indistinguishable. Say so instead of choosing.
+                ambiguous = True
         out = []
         for port, b in ins:
             for s in _walk_to_sources(mod, b, seen, any_comb, clock_roots):
@@ -117,6 +152,8 @@ def _walk_to_sources(mod: Module, bit, seen=None, any_comb=False,
                 s.through = ["mux"] + s.through
         for s in out:           # name the gating control we did not follow
             s.through += [f"gated by {c}" for c in sorted(set(control))]
+            if ambiguous:
+                s.through += ["ambiguous: clock not distinguishable here"]
         return out
     return [Source(f"{mod.net(bit)} (driven by {cell.type})", "unknown")]
 
@@ -124,7 +161,7 @@ def _walk_to_sources(mod: Module, bit, seen=None, any_comb=False,
 def clock_tree(mod: Module) -> dict:
     """Registers grouped by clock source; each register with its clock path."""
     regs = {}
-    prim = primary_clocks(mod)
+    prim = clock_candidates(mod)
     for name, cell in registers(mod):
         srcs = _walk_to_sources(mod, cell.conns["CLK"][0], None, False, prim)
         roots = sorted({s.name for s in srcs})
@@ -155,7 +192,7 @@ def reset_tree(mod: Module) -> dict:
         else:
             none.append(name)
             continue
-        prim = primary_clocks(mod)
+        prim = clock_candidates(mod)
         srcs = []
         for b in cell.conns[pin]:      # $dffsr's set/reset are per-bit vectors
             srcs += _walk_to_sources(mod, b, None, False, prim)
@@ -178,31 +215,36 @@ def _data_cone_registers(mod: Module, cell) -> set[str]:
     return found
 
 
-def _value_of(register_name: str) -> str:
-    """The declared value a register belongs to, without its bit index."""
-    return register_name.split("[")[0]
-
-
-def _flag_parallel_synchronizers(report: list) -> None:
-    """Demote a set of one-bit synchronizers carrying one multi-bit value.
+def _flag_converging_synchronizers(mod: Module, report: list) -> None:
+    """Demote one-bit synchronizers that are read together.
 
     Each chain is individually the right shape, which is why a purely
-    structural rule accepts them, and together they are the loss of data
-    that a multi-bit crossing must not be. The bits are resynchronized
-    independently, so they are not guaranteed to arrive in the same cycle.
+    structural rule accepts them. What makes a set of them wrong is that
+    something downstream reads them as one value: the bits resolve
+    independently, so a reader can see a combination the sender never sent.
+
+    Convergence is the signal, not the sending register's name. Grouping by
+    name would miss a value carried on eight separately declared flops and
+    would wrongly flag two unrelated controls that happen to share one
+    declared vector.
     """
-    groups = {}
-    for c in report:
-        if c["synchronized"]:
-            key = (_value_of(c["from"]), c["to_domain"])
-            groups.setdefault(key, []).append(c)
-    for (value, _), members in groups.items():
-        if len(members) > 1:
-            for c in members:
-                c["synchronized"] = False
-                c["reason"] = (f"{len(members)} parallel one-bit "
-                               f"synchronizers on {value}; the bits may "
-                               f"arrive in different cycles")
+    sync = [c for c in report if c["synchronized"]]
+    if len(sync) < 2:
+        return
+    stages = {}                       # second-stage register -> its crossing
+    for c in sync:
+        for n in c["second_stage"]:
+            stages[n] = c
+    for name, cell in registers(mod):
+        cone = _data_cone_registers(mod, cell)
+        together = {id(stages[n]): stages[n] for n in cone if n in stages}
+        if len(together) < 2:
+            continue
+        for c in together.values():
+            c["synchronized"] = False
+            c["reason"] = (f"{len(together)} one-bit synchronizers are read "
+                           f"together by {name}; their bits can resolve in "
+                           f"different cycles")
 
 
 def _feeds_directly(mod: Module, cell, source: str) -> bool:
@@ -229,7 +271,13 @@ def crossings(mod: Module, tree: dict | None = None) -> dict:
         for src in _data_cone_registers(mod, cell):
             # An unresolvable clock is exactly what a verifier needs to see,
             # so it gets its own domain name rather than the destination's.
-            if dom_of.get(src, "unresolved clock") == mine:
+            theirs = dom_of.get(src, "unresolved clock")
+            if theirs == mine:
+                continue
+            # Two domains that share a clock root are the same clock, gated
+            # or divided differently. That raises timing questions, not the
+            # metastability question this report is about.
+            if set(theirs.split("+")) & set(mine.split("+")):
                 continue
             # direct connection (no logic) from src to this register's D?
             direct = _feeds_directly(mod, cell, src)
@@ -245,7 +293,7 @@ def crossings(mod: Module, tree: dict | None = None) -> dict:
                            "synchronized": synchronizer,
                            "reason": "" if synchronizer else "no synchronizer",
                            "src": cell.src})
-    _flag_parallel_synchronizers(report)
+    _flag_converging_synchronizers(mod, report)
     # collapse: a crossing that lands on a synchronizer's first stage is fine;
     # flag the rest
     flagged = [c for c in report if not c["synchronized"]]
