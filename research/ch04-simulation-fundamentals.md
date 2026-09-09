@@ -37,13 +37,18 @@ carries its own unsourced-claims table, BibTeX suggestions and confidence notes.
 ## The two questions that decided the chapter, both answered
 
 **Can the scheduling model be taught without quoting the standard? Yes.**
-Cummings and Salz, "SystemVerilog Event Regions, Race Avoidance & Guidelines"
-(SNUG Boston 2006), was retrieved in full from an Internet Archive capture of
-the now login-walled original. It gives the timestep, the regions one section
-each, a race taxonomy and the guidelines with their rationale, as its own
-exposition rather than as paraphrase of clause text. **Cite the revision**: the
-paper exists in one revision describing eight regions and a later one
-describing nine, after Re-NBA was added.
+Cummings and Salz, "SystemVerilog Event Regions, Race Avoidance & Guidelines",
+was retrieved in full from an Internet Archive capture of the now login-walled
+original. It gives the timestep, the regions one section each, a race taxonomy
+and the guidelines with their rationale, as its own exposition rather than as
+paraphrase of clause text.
+
+**Cite revision 1.2, and mind the date.** Revision 1.0 describes eight regions;
+revision 1.2 describes nine, after Re-NBA was added and the Reactive set
+formally defined. Revision 1.2 is the one to cite, and every page of it still
+carries the "SNUG Boston 2006" venue although its content is from late 2007, so
+the citation needs the revision as well as the venue or a reader counting
+regions will find a different number.
 
 **May two conforming simulators disagree on the same source? Yes, and the tool
 authors say so themselves.** Verilator documents that its identity comparisons
@@ -57,9 +62,11 @@ one source file. See Part C §3.
 
 1. **No IEEE 1800 clause text, quoted or paraphrased, and never "the standard
    requires...".** Say "SystemVerilog schedules..." and attribute the account to
-   Cummings and Salz. Their own definition of *simulation time* is quoted from a
-   draft of the standard, so do not reuse that quotation either; state the idea
-   in the book's own words.
+   Cummings and Salz. **Beware the second-hand trap**: the paper itself quotes
+   the standard and a draft of it in several places, including its definition of
+   *simulation time*, so paraphrasing those passages would reproduce clause text
+   at one remove. Paraphrase only the authors' own exposition. Their definition
+   of *timestep* is their own and is safe.
 2. **"Delta cycle" is VHDL vocabulary, not SystemVerilog.** Cummings and Salz
    say "iterations" through the regions. Teach iteration within a timestep, and
    if the borrowed term is mentioned at all, mark it as borrowed. The design
