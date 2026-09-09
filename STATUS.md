@@ -36,7 +36,7 @@ States: planned → outlined → drafting → examples-verified → reviewed →
 | 1 | What Is Design Verification? (`chapters/ch01-what-is-dv.qmd`) | **reviewed** (gate 2 approved by author 2026-09-06 after subagent review + revision) | ~5,400 | 2026-09-06 |
 | 2 | Verification Planning (`chapters/ch02-verification-planning.qmd`) | **reviewed** (gate 2 approved by author 2026-09-06) | ~5,500 | 2026-09-06 |
 | 35 | Generative AI and Agentic DV (`chapters/ch34-generative-ai-agentic-dv.qmd`; file name keeps 34, chapter is 35 and closes the book) | **reviewed** (gate 2 approved by author 2026-09-07; concept chapter, no runnable examples by design) | ~7,600 | 2026-09-06 |
-| 3 | Digital Design for Verifiers (`chapters/ch03-digital-design-for-verifiers.qmd`) | **examples-verified**, reviewed twice + third pass done (3/3 green, 18 unit tests, 7 regression fixtures); **awaiting gate 2 (author)** | ~9,000 | 2026-09-08 |
+| 3 | Digital Design for Verifiers (`chapters/ch03-digital-design-for-verifiers.qmd`) | gate-2 review defeated 2 of 3 fixes; **fourth pass done** (22 tests, 9 regression fixtures); **needs a re-review** | ~9,000 | 2026-09-09 |
 | I | An agent tool layer for RTL, UVM and debug (`appendices/appI-agent-tool-layer.qmd`) | gate-2 review returned 4 blockers, **third pass done**; 20 tool tests; **needs a re-review before it can pass** | ~6,000 | 2026-09-09 |
 | 4 | Simulation Fundamentals (`chapters/ch04-simulation-fundamentals.qmd`) | **gate 1 passed 2026-09-09** (delegated; outline names a reader outcome per section and folds in all 14 research constraints); drafting | 0 | 2026-09-09 |
 | — | chapters 5–33 + appendices A–E, G, H | planned | 0 | 2026-09-05 |
