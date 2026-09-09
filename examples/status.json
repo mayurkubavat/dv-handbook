@@ -1,6 +1,6 @@
 {
-  "checked": "2026-09-09T02:07:29Z",
-  "pass": 13,
+  "checked": "2026-09-09T04:49:54Z",
+  "pass": 14,
   "fail": 0,
   "skipped_run": 2,
   "examples": [
@@ -90,6 +90,13 @@
     },
     {
       "dir": "examples/ch03-digital-design/sv-lint",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch04-simulation/race",
       "lint": "pass",
       "run": "pass",
       "requires": "",

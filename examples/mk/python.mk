@@ -11,8 +11,13 @@
 
 PYTHON ?= python3
 
+ifeq ($(strip $(LINT_CMD)),)
 lint:
 	$(PYTHON) -m py_compile $(SOURCES)
+else
+lint:
+	$(LINT_CMD)
+endif
 
 run:
 	$(PYTHON) $(TOP) $(PLUSARGS)

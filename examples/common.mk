@@ -32,6 +32,11 @@
 #                     including a missing tool or a broken import, and an
 #                     example that exists to find a bug goes green while
 #                     finding nothing.
+#      LINT_CMD       the command `make lint` should run, for an example
+#                     whose lint is not its language's default. An example
+#                     driven by a script but written in another language
+#                     needs this: without it the Python recipe would try to
+#                     byte-compile SystemVerilog.
 #      LINT_ONLY      1 for an example that has nothing to simulate, because
 #                     the example *is* the static check (a lint or analysis
 #                     demonstration, or RTL shown without a testbench).
@@ -62,6 +67,7 @@ endif
 
 # Defaults that every language may use.
 REQUIRES ?=
+LINT_CMD ?=
 EXPECT   ?= pass
 EXPECT_OUTPUT ?=
 LINT_ONLY ?= 0

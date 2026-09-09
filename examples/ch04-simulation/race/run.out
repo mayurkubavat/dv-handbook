@@ -1,0 +1,28 @@
+=== racy
+--- event-driven simulator
+    design=racy
+    count=1 observed=0
+    count=2 observed=2
+    count=3 observed=2
+    count=4 observed=4
+--- statically scheduled simulator
+    design=racy
+    count=1 observed=1
+    count=2 observed=2
+    count=3 observed=3
+    count=4 observed=4
+verdict: the two simulators disagree on racy
+=== safe
+--- event-driven simulator
+    design=safe
+    count=1 observed=0
+    count=2 observed=1
+    count=3 observed=2
+    count=4 observed=3
+--- statically scheduled simulator
+    design=safe
+    count=1 observed=0
+    count=2 observed=1
+    count=3 observed=2
+    count=4 observed=3
+verdict: the two simulators agree on safe
