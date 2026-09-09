@@ -1,0 +1,9 @@
+=== four-state, event-driven
+out is unknown
+=== two-state, every register starts at zero
+out = 2
+=== two-state, randomized, three seeds
+seed 1   out = 65
+seed 7   out = 4
+seed 99  out = 176
+the result changes with the seed: the missing reset is visible here too

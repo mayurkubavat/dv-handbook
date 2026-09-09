@@ -1,0 +1,11 @@
+three watchers, one edge, and d rising 10, 11, 12 ...
+t=5  at the edge : q=x
+t=5  $strobe     : q=10
+t=6  after it    : q=10
+t=15  at the edge : q=10
+t=15  $strobe     : q=11
+t=16  after it    : q=11
+t=25  at the edge : q=11
+t=25  $strobe     : q=12
+t=26  after it    : q=12
+tb_sampling.sv:43: $finish called at 26 (1s)

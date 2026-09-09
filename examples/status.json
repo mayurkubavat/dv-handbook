@@ -1,6 +1,6 @@
 {
-  "checked": "2026-09-09T15:49:24Z",
-  "pass": 15,
+  "checked": "2026-09-09T23:46:16Z",
+  "pass": 17,
   "fail": 0,
   "skipped_run": 2,
   "examples": [
@@ -96,6 +96,13 @@
       "expect": "pass"
     },
     {
+      "dir": "examples/ch04-simulation/fourstate",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "",
+      "expect": "pass"
+    },
+    {
       "dir": "examples/ch04-simulation/race",
       "lint": "pass",
       "run": "pass",
@@ -104,6 +111,13 @@
     },
     {
       "dir": "examples/ch04-simulation/regions",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch04-simulation/sampling",
       "lint": "pass",
       "run": "pass",
       "requires": "",
