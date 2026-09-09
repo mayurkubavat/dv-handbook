@@ -81,7 +81,7 @@ independently draftable/verifiable/releasable.
 1. What Is Design Verification? — cost of bugs, verification gap, DV in the silicon lifecycle
 2. Verification Planning — spec → features → vPlan → coverage → sign-off criteria
 3. Digital Design for Verifiers — RTL, clocks/resets, FSMs, pipelines, interfaces; verifier vs designer thinking
-4. Simulation Fundamentals — event-driven scheduling, regions, races, delta cycles, cycle-based (Verilator) vs event-driven
+4. Simulation Fundamentals — event-driven scheduling, regions, races, delta cycles, and how far a real simulator implements the model (corrected 2026-09-09: the earlier line called Verilator cycle-based, which its own documentation contradicts — it schedules statically at compile time and implements the Active and NBA regions only, so the honest contrast is "two regions, not the full set", not "cycle-based versus event-driven")
 
 ### Part II · SystemVerilog for Verification
 5. The SystemVerilog Testbench Language — types, classes, interfaces, clocking blocks
