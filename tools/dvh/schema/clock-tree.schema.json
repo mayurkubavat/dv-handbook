@@ -3,7 +3,6 @@
   "$id": "https://mayurkubavat.github.io/dv-handbook/schema/clock-tree-1.json",
   "title": "dvh clock-tree",
   "description": "Registers grouped by the clock that samples them.",
-  "$comment": "Gating control is reported in `through`, not in the name.",
   "type": "object",
   "required": [
     "domains",
@@ -12,7 +11,7 @@
   "additionalProperties": false,
   "properties": {
     "domains": {
-      "description": "Domain name -> its registers, sorted.",
+      "description": "Domain name -> the registers it samples, sorted.",
       "type": "object",
       "additionalProperties": {
         "type": "array",
@@ -29,7 +28,8 @@
         "required": [
           "clock_sources",
           "gated_or_muxed",
-          "through"
+          "through",
+          "src"
         ],
         "additionalProperties": false,
         "properties": {
@@ -42,7 +42,7 @@
             "minItems": 1
           },
           "gated_or_muxed": {
-            "description": "True if anything was walked through.",
+            "description": "True if any logic was walked through.",
             "type": "boolean"
           },
           "through": {
@@ -51,9 +51,14 @@
             "items": {
               "type": "string"
             }
+          },
+          "src": {
+            "description": "Source location, as file:line.col-line.col.",
+            "type": "string"
           }
         }
       }
     }
-  }
+  },
+  "$comment": "Gating control appears in `through`, not in the name."
 }

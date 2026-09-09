@@ -29,9 +29,19 @@ if ! command -v cocotb-config >/dev/null 2>&1 \
 fi
 
 if [[ "$FILTER" == "--changed" ]]; then
-  DIRS=$( (git -C "$ROOT" diff --name-only HEAD -- examples;
-           git -C "$ROOT" diff --cached --name-only -- examples) \
+  CHANGED=$( (git -C "$ROOT" diff --name-only HEAD;
+              git -C "$ROOT" diff --cached --name-only) | sort -u)
+  DIRS=$(echo "$CHANGED" | grep '^examples/' \
          | xargs -n1 dirname 2>/dev/null | sort -u | sed "s|^|$ROOT/|")
+  # A change under tools/ has no example directory of its own, but the
+  # examples that exercise it are exactly the ones that would catch a
+  # regression, so run them too rather than committing untested.
+  if echo "$CHANGED" | grep -q '^tools/'; then
+    DIRS="$DIRS
+$(grep -rl 'tools/dvh\|\.\./\.\./\.\./tools' "$ROOT"/examples --include=Makefile \
+  | xargs -n1 dirname | sort -u)"
+  fi
+  DIRS=$(echo "$DIRS" | grep . | sort -u)
 else
   DIRS=$(find "$ROOT/examples" -mindepth 3 -maxdepth 3 -name Makefile \
          -exec dirname {} \; | sort)

@@ -2,8 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://mayurkubavat.github.io/dv-handbook/schema/reset-tree-1.json",
   "title": "dvh reset-tree",
-  "description": "Each register's reset, and the registers that have none.",
-  "$comment": "A register in `no_reset` is a finding, not a bug.",
+  "description": "Each register's reset, and the registers with none.",
   "type": "object",
   "required": [
     "registers",
@@ -12,6 +11,7 @@
   "additionalProperties": false,
   "properties": {
     "registers": {
+      "description": "Register name -> the reset that drives it.",
       "type": "object",
       "additionalProperties": {
         "type": "object",
@@ -19,43 +19,53 @@
           "kind",
           "active",
           "sources",
-          "through"
+          "through",
+          "src"
         ],
         "additionalProperties": false,
         "properties": {
           "kind": {
+            "description": "Whether reset takes effect on a clock edge.",
             "enum": [
               "asynchronous",
               "synchronous"
             ]
           },
           "active": {
+            "description": "The level at which this reset asserts.",
             "enum": [
               "high",
               "low"
             ]
           },
           "sources": {
+            "description": "Sorted roots of the reset net.",
             "type": "array",
             "items": {
               "type": "string"
             }
           },
           "through": {
+            "description": "Cells walked through on the way there.",
             "type": "array",
             "items": {
               "type": "string"
             }
+          },
+          "src": {
+            "description": "Source location, as file:line.col-line.col.",
+            "type": "string"
           }
         }
       }
     },
     "no_reset": {
-      "description": "Registers with no reset pin, sorted.",
+      "description": "Registers with no reset pin at all, sorted.",
       "type": "array",
       "items": {
         "type": "string"
       }
     }
-  }
+  },
+  "$comment": "A register in `no_reset` is a finding, not a bug."
 }

@@ -130,7 +130,8 @@ def clock_tree(mod: Module) -> dict:
         roots = sorted({s.name for s in srcs})
         gated = any(s.through for s in srcs)
         regs[name] = {"clock_sources": roots, "gated_or_muxed": gated,
-                      "through": sorted({t for s in srcs for t in s.through})}
+                      "through": sorted({t for s in srcs for t in s.through}),
+                      "src": cell.src}
     domains = {}
     for name, info in regs.items():
         key = "+".join(info["clock_sources"])
@@ -161,7 +162,8 @@ def reset_tree(mod: Module) -> dict:
         out[name] = {"kind": kind,
                      "active": "high" if str(pol).endswith("1") else "low",
                      "sources": sorted({s.name for s in srcs}),
-                     "through": sorted({t for s in srcs for t in s.through})}
+                     "through": sorted({t for s in srcs for t in s.through}),
+                     "src": cell.src}
     return {"registers": out, "no_reset": sorted(none)}
 
 
@@ -241,7 +243,8 @@ def crossings(mod: Module, tree: dict | None = None) -> dict:
                            "from_domain": dom_of[src], "width": width,
                            "direct": direct, "second_stage": second_stage,
                            "synchronized": synchronizer,
-                           "reason": "" if synchronizer else "no synchronizer"})
+                           "reason": "" if synchronizer else "no synchronizer",
+                           "src": cell.src})
     _flag_parallel_synchronizers(report)
     # collapse: a crossing that lands on a synchronizer's first stage is fine;
     # flag the rest

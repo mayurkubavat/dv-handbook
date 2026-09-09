@@ -202,6 +202,37 @@ def test_the_schemas_reject_a_payload_that_is_wrong():
         "domains": {}, "registers": {"r": {"clock_sources": []}}})
 
 
+def test_every_field_carries_a_description():
+    """The appendix claims every field is described. Keep that true.
+
+    A field name is not a definition, and a caller who is not this book has
+    only the schema to read. `description` is the consumer-facing keyword;
+    `$comment` is a note between schema authors and does not count.
+    """
+    from dvh import schema                                # noqa: PLC0415
+
+    def walk(node, path):
+        missing = []
+        if isinstance(node, dict):
+            props = node.get("properties", {})
+            for name, sub in props.items():
+                where = f"{path}/{name}"
+                if "description" not in sub:
+                    missing.append(where)
+                missing += walk(sub, where)
+            for key in ("items", "additionalProperties"):
+                if isinstance(node.get(key), dict):
+                    missing += walk(node[key], f"{path}/{key}")
+            for name, sub in node.get("$defs", {}).items():
+                missing += walk(sub, f"{path}/$defs/{name}")
+        return missing
+
+    for command in schema.FOR_COMMAND:
+        doc = schema.load(command)
+        assert doc.get("description"), command
+        assert walk(doc, command) == [], command
+
+
 def test_every_schema_is_versioned_by_url():
     """A consumer pins the $id, so every schema must carry one."""
     from dvh import schema                                # noqa: PLC0415

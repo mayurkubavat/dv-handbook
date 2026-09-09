@@ -2,8 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://mayurkubavat.github.io/dv-handbook/schema/crossings-1.json",
   "title": "dvh crossings",
-  "description": "Paths between clock domains, and how each was classified.",
-  "$comment": "Recognition is structural; neither verdict is a sign-off.",
+  "description": "Crossings between domains. No verdict is a sign-off.",
   "type": "object",
   "required": [
     "crossings",
@@ -22,7 +21,8 @@
         "direct",
         "second_stage",
         "synchronized",
-        "reason"
+        "reason",
+        "src"
       ],
       "additionalProperties": false,
       "properties": {
@@ -31,6 +31,7 @@
           "type": "string"
         },
         "from_domain": {
+          "description": "Its clock domain.",
           "type": "string"
         },
         "to": {
@@ -38,11 +39,11 @@
           "type": "string"
         },
         "to_domain": {
+          "description": "Its clock domain.",
           "type": "string"
         },
         "width": {
-          "description": "Width of the receiving register.",
-          "$comment": "A synchronizer is one bit wide by definition.",
+          "description": "Width of the receiving register, in bits.",
           "type": "integer",
           "minimum": 1
         },
@@ -58,10 +59,16 @@
           }
         },
         "synchronized": {
-          "type": "boolean"
+          "description": "True only for a recognized synchronizer shape.",
+          "type": "boolean",
+          "$comment": "Direct, feeds a second stage, one bit, not one of many."
         },
         "reason": {
           "description": "Empty when synchronized; else why not, for a person.",
+          "type": "string"
+        },
+        "src": {
+          "description": "Source location, as file:line.col-line.col.",
           "type": "string"
         }
       }
@@ -77,11 +84,12 @@
     },
     "unsynchronized": {
       "description": "The subset to act on.",
-      "$comment": "A tool gating a build exits non-zero when this is set.",
       "type": "array",
       "items": {
         "$ref": "#/$defs/crossing"
-      }
+      },
+      "$comment": "A build gate fails when this is not empty."
     }
-  }
+  },
+  "$comment": "A shape never taught is reported unsynchronized."
 }

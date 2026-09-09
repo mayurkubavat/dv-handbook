@@ -37,6 +37,7 @@ class Cell:
     params: dict
     conns: dict          # port name -> list of bit ids (int) or const strings
     dirs: dict           # port name -> "input" | "output"
+    src: str = ""        # "file:line.col-line.col", from Yosys's src attribute
 
 
 @dataclass
@@ -92,14 +93,32 @@ def _run_yosys(files, top, flatten: bool) -> dict:
             return json.load(f)
 
 
+def _relative(src: str) -> str:
+    """Yosys reports an absolute path; a report is more useful, and more
+    reproducible between machines, with a path relative to where it ran."""
+    if not src:
+        return ""
+    out = []
+    for part in src.split("|"):          # Yosys joins several with '|'
+        file, _, span = part.partition(":")
+        try:
+            file = os.path.relpath(file)
+        except ValueError:               # different drive on Windows
+            pass
+        out.append(f"{file}:{span}" if span else file)
+    return "|".join(out)
+
+
 def _parse(data: dict) -> dict:
     mods = {}
     for mname, m in data["modules"].items():
         cells = {}
         for cname, c in m.get("cells", {}).items():
+            attrs = c.get("attributes", {})
             cells[cname] = Cell(cname, c["type"], c.get("parameters", {}),
                                 c.get("connections", {}),
-                                c.get("port_directions", {}))
+                                c.get("port_directions", {}),
+                                _relative(attrs.get("src", "")))
         mod = Module(mname, m.get("ports", {}), cells, m.get("netnames", {}))
         mod.finish()
         # One naming for registers, shared by every walk: a bit-blasted

@@ -3,7 +3,6 @@
   "$id": "https://mayurkubavat.github.io/dv-handbook/schema/connections-1.json",
   "title": "dvh connections",
   "description": "One module's instances, and the nets joining them.",
-  "$comment": "'top' means the module's own boundary.",
   "type": "object",
   "required": [
     "instances",
@@ -19,6 +18,7 @@
       }
     },
     "edges": {
+      "description": "One entry per driver and sink pair that share nets.",
       "type": "array",
       "items": {
         "type": "object",
@@ -36,6 +36,7 @@
             "type": "string"
           },
           "from_port": {
+            "description": "Port on the driver.",
             "type": "string"
           },
           "to": {
@@ -43,9 +44,11 @@
             "type": "string"
           },
           "to_port": {
+            "description": "Port on the receiver.",
             "type": "string"
           },
           "nets": {
+            "description": "Nets carried on this edge, sorted.",
             "type": "array",
             "items": {
               "type": "string"
@@ -54,5 +57,6 @@
         }
       }
     }
-  }
+  },
+  "$comment": "'top' means the module's own boundary."
 }
