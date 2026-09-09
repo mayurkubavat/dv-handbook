@@ -29,7 +29,8 @@
           "clock_sources",
           "gated_or_muxed",
           "through",
-          "src"
+          "src",
+          "clock_ambiguous"
         ],
         "additionalProperties": false,
         "properties": {
@@ -57,6 +58,11 @@
             "$comment": "Constrained so a blank or a non-location cannot pass.",
             "type": "string",
             "pattern": "^[^:]+:\\d+"
+          },
+          "clock_ambiguous": {
+            "description": "True when a clock could not be told from an enable.",
+            "$comment": "Findings that touch such a register are reported as undecided.",
+            "type": "boolean"
           }
         }
       }

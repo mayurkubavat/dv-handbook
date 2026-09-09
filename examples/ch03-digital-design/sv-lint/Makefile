@@ -8,12 +8,12 @@
 # There is no testbench here on purpose: the example is the static check.
 #
 # This example drops the -Wno-* waivers the shared recipe uses to keep UVM
-# source from failing lint, and turns on the two crossing-adjacent warnings
-# Verilator leaves off by default. Nothing here is waived, so a silent run
-# is the strongest form of the section's point.
+# source from failing lint, and turns on SYNCASYNCNET, which is off by
+# default and is the one warning whose description mentions clock domains.
+# Nothing here is waived, so a silent run is the section's point.
 EXAMPLE_LANG := sv
 VERILATOR_FLAGS := --timing --timescale 1ns/1ps -Wall \
-                   -Wwarn-SYNCASYNCNET -Wwarn-IMPERFECTSCH
+                   -Wwarn-SYNCASYNCNET
 TOP          := top
 SOURCES      := ../rtl/regblock.sv ../rtl/sync2.sv \
                 ../rtl/datapath.sv ../rtl/top.sv

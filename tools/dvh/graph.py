@@ -22,7 +22,7 @@ def connections(mods: dict, top: str) -> dict:
     for cname, cell in mod.cells.items():
         if cell.type not in mods:
             continue                       # only user-module instances
-        # A parameterised instance is typed "$paramod\\sync2\\W=4"; the
+        # A parameterized instance is typed "$paramod\\sync2\\W=4"; the
         # module's own name is what the reader of a block diagram wants.
         pretty = (cell.type.split("\\")[1]
                   if cell.type.startswith("$paramod") else cell.type)

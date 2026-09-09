@@ -185,19 +185,22 @@ def test_per_bit_anti_pattern_is_caught_without_a_shared_name():
     assert all("read together" in c["reason"] for c in x["unsynchronized"])
 
 
-def test_two_gates_on_one_clock_are_not_a_crossing():
-    """The same clock, gated two ways, is not an asynchronous crossing.
+def test_an_undecidable_clock_is_reported_not_suppressed():
+    """When the walk cannot tell a clock from an enable, it must say so.
 
     With no register driven straight from a port there is no strong
-    evidence for which gate input is the clock, so both domains carry the
-    enable in their name. They still share the root `clk`, and a path
-    between them raises a timing question, not a metastability one.
+    evidence for which gate input is the clock, so the enable lands in the
+    domain name. An earlier version suppressed any crossing whose domain
+    names shared a token, which silenced real crossings between two
+    asynchronous clocks that happened to share one global enable. Failing
+    loudly is the only safe behaviour for a report a build gate trusts.
     """
     files = [str(FIXTURE / "two_clock_gates.sv")]
     flat = design.load_flat(files, "two_clock_gates")
     tree = clocks.clock_tree(flat)
-    assert all("clk" in d.split("+") for d in tree["domains"])
-    assert clocks.crossings(flat, tree)["crossings"] == []
+    assert all(r["clock_ambiguous"] for r in tree["registers"].values())
+    found = clocks.crossings(flat, tree)["unsynchronized"]
+    assert found and all("declare the clocks" in c["reason"] for c in found)
 
 
 def test_a_crossing_through_a_latch_is_still_reported():
@@ -332,3 +335,29 @@ def test_every_schema_is_versioned_by_url():
         assert doc["$id"].startswith("https://")
         assert doc["$id"].endswith("-1.json"), command
         assert doc["description"]
+
+
+def test_a_shared_clock_enable_does_not_hide_a_crossing():
+    """Two asynchronous clocks gated by one enable still cross.
+
+    This is the shape that a name-based "same clock" rule silenced: the
+    enable is in both domain names, so the names intersect, so the crossing
+    vanished. A build gate trusting that exit code would have shipped it.
+    """
+    files = [str(FIXTURE / "shared_enable_clocks.sv")]
+    flat = design.load_flat(files, "shared_enable_clocks")
+    x = clocks.crossings(flat)
+    assert len(x["unsynchronized"]) == 1
+
+
+def test_convergence_is_followed_through_a_third_flop():
+    """The check follows the chain, not one link of it.
+
+    Each bit here crosses through a three-flop synchronizer, so the register
+    that reads all eight is two steps from the second stage rather than one.
+    """
+    files = [str(FIXTURE / "three_flop_per_bit.sv")]
+    flat = design.load_flat(files, "three_flop_per_bit")
+    x = clocks.crossings(flat)
+    assert len(x["unsynchronized"]) == 8
+    assert all("read together" in c["reason"] for c in x["unsynchronized"])

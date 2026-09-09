@@ -26,8 +26,10 @@ PASS_THROUGH = {"$not", "$and", "$or", "$xor", "$mux", "$pmux", "$logic_not",
                 "$logic_and", "$logic_or", "$_BUF_", "$_NOT_", "$_AND_",
                 "$_OR_", "$_MUX_", "$reduce_or", "$reduce_and", "$eq", "$ne"}
 
-# Latches are state elements, not combinational logic. Walking through one
-# would hide a crossing that lands on it, so both walks stop here instead.
+# Latches are state elements, not combinational logic. A path through one is
+# never direct, so it can never be a synchronizer; but stopping at a latch
+# would hide the crossing behind it, so the data walk passes through and
+# records the latch. Only the clock walk stops here.
 LATCH_TYPES = {"$dlatch", "$adlatch", "$dlatchsr", "$sr",
                "$_DLATCH_P_", "$_DLATCH_N_", "$_SR_PP_", "$_SR_NN_"}
 
@@ -136,7 +138,8 @@ def _walk_to_sources(mod: Module, bit, seen=None, any_comb=False,
             best = max((t for t, _, _ in tiers), default=0)
             carrying = [(p, b) for (t, p, b) in tiers if t == best]
             if best and len(carrying) < len(ins):
-                control = [mod.net(b) for (p, b) in ins if (p, b) not in carrying]
+                control = [mod.net(b) for (p, b) in ins
+                           if (p, b) not in carrying]
                 ins = carrying
             elif best == 1 and len(carrying) > 1:
                 # Several ports and no stronger evidence: from the RTL alone
@@ -166,9 +169,11 @@ def clock_tree(mod: Module) -> dict:
         srcs = _walk_to_sources(mod, cell.conns["CLK"][0], None, False, prim)
         roots = sorted({s.name for s in srcs})
         gated = any(s.through for s in srcs)
+        through = sorted({t for s in srcs for t in s.through})
         regs[name] = {"clock_sources": roots, "gated_or_muxed": gated,
-                      "through": sorted({t for s in srcs for t in s.through}),
-                      "src": cell.src}
+                      "through": through, "src": cell.src,
+                      "clock_ambiguous": any(t.startswith("ambiguous")
+                                             for t in through)}
     domains = {}
     for name, info in regs.items():
         key = "+".join(info["clock_sources"])
@@ -238,9 +243,29 @@ def _flag_converging_synchronizers(mod: Module, report: list) -> None:
     for c in sync:
         for n in c["second_stage"]:
             stages[n] = c
+    # Follow the whole chain, not one link of it. A three-flop synchronizer
+    # puts a register between the second stage and whatever reads it, and a
+    # rule that looked only at immediate readers saw nothing there.
+    feeds = {n: _data_cone_registers(mod, c) for n, c in registers(mod)}
+    reach = {}
+
+    def ancestors(name, seen=None):
+        seen = seen if seen is not None else set()
+        if name in reach:
+            return reach[name]
+        out = set()
+        for p in feeds.get(name, ()):  # noqa: PLR1704
+            if p in seen:
+                continue
+            seen.add(p)
+            out.add(p)
+            out |= ancestors(p, seen)
+        reach[name] = out
+        return out
+
     for name, cell in registers(mod):
-        cone = _data_cone_registers(mod, cell)
-        together = {id(stages[n]): stages[n] for n in cone if n in stages}
+        together = {id(stages[n]): stages[n]
+                    for n in ancestors(name) if n in stages}
         if len(together) < 2:
             continue
         for c in together.values():
@@ -277,11 +302,15 @@ def crossings(mod: Module, tree: dict | None = None) -> dict:
             theirs = dom_of.get(src, "unresolved clock")
             if theirs == mine:
                 continue
-            # Two domains that share a clock root are the same clock, gated
-            # or divided differently. That raises timing questions, not the
-            # metastability question this report is about.
-            if set(theirs.split("+")) & set(mine.split("+")):
-                continue
+            # An earlier version suppressed a crossing whenever the two
+            # domain names shared a token, meaning to say "one clock, gated
+            # two ways". Domain names carry gating control when the walk
+            # could not tell a clock from an enable, so two genuinely
+            # asynchronous clocks sharing one global enable were silenced --
+            # a real crossing reported as a clean design. Nothing is
+            # suppressed here now. Where the walk could not decide, the
+            # crossing is reported *as* undecided, below, so the failure is
+            # loud rather than silent.
             # direct connection (no logic) from src to this register's D?
             direct = _feeds_directly(mod, cell, src)
             # does another register in this domain take it straight from here?
@@ -289,12 +318,18 @@ def crossings(mod: Module, tree: dict | None = None) -> dict:
                             if dom_of[n] == mine and n != name
                             and _feeds_directly(mod, c, name)]
             width = len(cell.conns.get("Q", []))
-            synchronizer = direct and bool(second_stage) and width == 1
+            unsure = (tree["registers"].get(name, {}).get("clock_ambiguous")
+                      or tree["registers"].get(src, {}).get("clock_ambiguous"))
+            synchronizer = (direct and bool(second_stage)
+                            and width == 1 and not unsure)
             report.append({"to": name, "to_domain": mine, "from": src,
                            "from_domain": dom_of[src], "width": width,
                            "direct": direct, "second_stage": second_stage,
                            "synchronized": synchronizer,
-                           "reason": "" if synchronizer else "no synchronizer",
+                           "reason": ("" if synchronizer else
+                                      "clock and enable not distinguishable "
+                                      "here; declare the clocks" if unsure
+                                      else "no synchronizer"),
                            "src": cell.src})
     _flag_converging_synchronizers(mod, report)
     # collapse: a crossing that lands on a synchronizer's first stage is fine;
