@@ -1,0 +1,83 @@
+<!-- OUTLINE: not yet approved -->
+
+# Simulation Fundamentals {#sec-ch04}
+
+*Chapter intent: by the end, a reader knows what a simulator does with their design and their testbench in a single tick of simulated time, and can therefore predict which of two processes sees which value. @sec-ch03 asserted a set of rules about simulation and deferred every mechanism behind them: what a race is, why the assignment guidelines are what they are, why "it simulated correctly" is a claim about a tool, and what an unknown really does to an `if`. This chapter supplies the model those rules follow from, and it is the chapter Part II's clocking blocks and Part III's assertion timing both depend on.*
+
+> Every testbench bug that begins "but I drove it on that edge" is a scheduling bug.
+
+## Learning objectives
+
+*Five items: describe what happens inside one simulation timestep and say why time does not advance until nothing is left to do in it; name the scheduling regions and say which construct executes in which; predict, for two processes touching one variable at one clock edge, what each sees and why; explain what a four-state simulator does with an unknown that a two-state one does not, and what each therefore cannot find; and read a disagreement between two simulators as evidence about the code rather than about the tools.*
+
+## The value that was already gone
+
+*Motivation, 400 to 600 words. A monitor sampling a bus on the same edge the driver drives it, reporting values that are correct but one cycle stale, and a scoreboard that therefore compares the wrong pair for a whole regression. The bug is in neither the design nor the checker; it is in the assumption that "at the clock edge" names one moment. The point to land: the reader has already met three rules in @sec-ch03 (use non-blocking assignments for sequential logic, never assign one variable from two processes, do not trust that a passing simulation means a working design) and has been given no way to derive any of them. All three fall out of one model, and this chapter is that model.*
+
+## What a simulator actually does {#sec-ch04-model}
+
+*The event-driven algorithm, in the amount a verifier needs: processes, events, an event queue, and a simulation time that advances only when no events remain at the current time. Definition callout for **timestep** and **event**, taking the wording from the research note's own exposition rather than from the standard. The key reframing for a reader who thinks of RTL as parallel: nothing is parallel, everything is a queue, and "at the same time" means "in the same timestep", which is a container with internal order. Brief historical grounding so this reads as a well-understood algorithm rather than a language quirk.*
+
+## The regions {#sec-ch04-regions}
+
+*The heart of the chapter. The regions in order, what executes in each, and what that means for the reader's own code: blocking assignments and process execution in Active; the evaluation-then-update split that defines a non-blocking assignment; where continuous assignments and `always_comb` land; where a testbench's reactive code goes; where sampling for assertions happens. Attribute the account to Cummings and Salz throughout, citing the revision used, since the paper exists in an eight-region and a nine-region form. Figure: the regions as a loop, drawn with the book's diagram library. Pitfall callout: the ordering within a region is not something a reader may rely on, only the ordering between regions.*
+
+## Iteration within one timestep {#sec-ch04-iteration}
+
+*Why a timestep is a loop rather than a list: an Active-region assignment can schedule more Active-region work, and the simulator keeps going until nothing is left. Why a design can therefore hang without time advancing, which @sec-ch03 mentioned as a consequence of an empty sensitivity list and did not explain. Terminology callout: "delta cycle" is borrowed from VHDL and is not this language's word; the source says "iterations", and this book says iteration within a timestep and mentions the borrowed name once so a reader meeting it elsewhere is not confused.*
+
+## Races, and where the guidelines come from {#sec-ch04-races}
+
+*The payoff section. A race defined properly, then the classic cases worked: one variable written by two processes; a value read in one process and written in another at the same edge; the read-write race across the testbench boundary. Then Cummings' guidelines from @sec-ch03 re-derived from the regions, so the reader can reconstruct them rather than memorize them, with the honest note that guideline 5 is a corollary of 1 and 3 rather than a region-derived rule. Why `#0` is the fix that is not one. `$strobe` versus `$display` and which region each observes. In Practice callout: the race-avoidance question to ask of any testbench, which is simply "which region is this line in".*
+
+## The boundary at a clock edge {#sec-ch04-boundary}
+
+*Where the chapter becomes about verification specifically. Driving and sampling at the same edge; why a testbench that works today breaks when a design's assignment style changes; and the language's answer: a clocking block, which moves sampling before the edge and driving after it. Introduced here only far enough to explain why it exists, since it belongs to Part II. Program blocks and the reactive region: what problem they were introduced for and the live disagreement about whether clocking blocks made them unnecessary, reported as a disagreement rather than settled. Assertion sampling as the reason assertions are immune to the race that catches procedural code, which Part III will rely on.*
+
+## Four state, two state, and what each cannot find {#sec-ch04-fourstate}
+
+*The four values and what an unknown does when it meets an operator, an `if` and a `case`, which is the mechanism behind the X-optimism @sec-ch03 introduced without explaining. Two-state simulation: what it buys and what it gives up. Two claims to correct while here, both widely repeated and both wrong: that two-state simulation is dramatically faster, when the only measurement available puts it near six percent on a large model; and that a two-state simulator is useless for finding reset bugs, when randomized initialization finds a class of them, and what it truly cannot do is propagate an unknown or compare against one. Pitfall callout tying this back to the reset tests of @sec-ch03-resets.*
+
+## Time and timescale {#sec-ch04-time}
+
+*Short. The unit and precision arguments, what happens when modules declare different ones, and why the failure mode is results that look plausible rather than results that look wrong. Honest note that no open source states the rounding rule, so the chapter says simulators round without inventing one.*
+
+## What a real simulator implements {#sec-ch04-real}
+
+*The chapter's turn from model to practice. How much of the model each of the book's two simulators implements: one schedules statically at compile time and implements two of the regions, iterating to convergence, with an option that adds suspension for delays and event controls without making it event-driven; the other is event-driven and four-state and documents a deliberate departure in its time-zero ordering. Neither is wrong; both are documented. The verifier's conclusion: the model is what your code must be correct against, and the tool is what you actually ran.*
+
+## Worked example: one race, two simulators {#sec-ch04-example}
+
+*A small design and testbench whose result depends on scheduling, run under both simulators, disagreeing. Then the same design with the race removed, agreeing. The example is the chapter's argument made checkable, and it is the concrete form of @sec-ch03's claim that "it simulated correctly" describes a tool rather than a design. The example checker records both outputs, so the book prints what the tools actually produced. Future Directions callout: what it would take to test a simulator's semantics rather than a design's behavior, and the observation from the research that no public differential tester for runtime semantics appears to exist, only parsing and elaboration support matrices.*
+
+## Summary
+
+*Eight bullets.*
+
+## Exercises
+
+1. *Given a fragment with two processes assigning one variable at one edge, state what each process sees and which region decides it.*
+2. *Rewrite a racy testbench so its result cannot depend on process order, and say which guideline you applied.*
+3. *Predict the output of a fragment using `$display` and `$strobe` in a clocked block, then run it and explain any difference.*
+4. *Take the chapter's racing example and make the two simulators agree without removing the race. Explain why this is worse than removing it.*
+5. *Write a design whose simulation never advances past time zero, then explain the loop in terms of regions.*
+6. *For a given assertion and a procedural check of the same property, say which sees the pre-edge value and why that matters.*
+7. *Run a design with an unreset register under a four-state and a two-state simulator, and say what each tells you about the reset bug.*
+8. *Two modules declare different timescales. Construct a case where the result is wrong but plausible, and say how a reviewer would catch it.*
+
+## Planned examples
+
+| Directory | Language | Demonstrates |
+|---|---|---|
+| `examples/ch04-simulation/race/` | SystemVerilog, Icarus + Verilator | the chapter's central example: one race-sensitive design and testbench, run under both simulators, with the outputs recorded and compared; `EXPECT_OUTPUT` pins the disagreement so a missing tool cannot masquerade as the finding |
+| `examples/ch04-simulation/regions/` | SystemVerilog, Icarus | a testbench that prints from each region in one timestep, so the ordering is observed rather than asserted; four-state, so Icarus is the right tool |
+| `examples/ch04-simulation/sampling/` | SystemVerilog, Icarus | the read-write race at a clock edge, then the same testbench with a clocking block, showing the value each sees |
+| `examples/ch04-simulation/fourstate/` | SystemVerilog, Icarus + Verilator | an unreset register read under four-state and under randomized two-state initialization, showing what each finds and what each misses |
+
+*All four run on the installed free toolchain. The race and four-state examples need both simulators, so their Makefiles run each in turn rather than taking `SIM` from the environment.*
+
+## Sources
+
+- `research/ch04-simulation-fundamentals.md`, Parts A, B and C, and the ten constraints in its front matter.
+- Existing `refs.bib` keys this chapter reuses: `cummings2000nba`, `turpin2003x`, `verilator-warnings`, `verilator-languages`, `millscummings1999mismatch`.
+- New keys to add from the note's suggestions: the Cummings and Salz event-regions paper with its revision, the Sutherland, Mills and Spear paper on tool divergence, the Cummings and Bening measurement of two-state cost, Verilator's internals documentation, and Icarus's documented time-zero quirk.
