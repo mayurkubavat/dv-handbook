@@ -3,6 +3,7 @@
 Each test states a fact the chapter prints, so a change to the design or
 the tools that alters the fact fails here before it reaches the text.
 """
+import os
 import pathlib
 import sys
 
@@ -28,7 +29,7 @@ def test_two_clock_domains():
 
 def test_one_register_without_reset():
     resets = clocks.reset_tree(design.load_flat(TWO_CLOCK, "top"))
-    assert resets["no_reset"] == ["last_cfg"]
+    assert [r["name"] for r in resets["no_reset"]] == ["last_cfg"]
     for name, r in resets["registers"].items():
         assert r["kind"] == "asynchronous" and r["active"] == "low", name
     assert resets["registers"]["acc"]["sources"] == ["crst_n"]
@@ -70,7 +71,7 @@ def test_fifo_storage_array_reports_as_unreset_registers():
     decide on its own.
     """
     resets = clocks.reset_tree(design.load_flat(FIFO, "fifo"))
-    assert all(n.startswith("mem[") for n in resets["no_reset"])
+    assert all(r["name"].startswith("mem[") for r in resets["no_reset"])
     assert len(resets["no_reset"]) == 16
     for name in ("wr_ptr", "rd_ptr", "count"):
         r = resets["registers"][name]
@@ -87,6 +88,18 @@ def test_report_text_is_exactly_what_the_chapter_prints():
     reader's own run is worse than no listing at all.
     """
     from dvh import cli                                    # noqa: PLC0415
+    # A source location is reported relative to where the tool ran, which is
+    # what a reader wants and what makes this text depend on the directory.
+    # Pin it from the repository root so the expectation is one string.
+    here = os.getcwd()
+    os.chdir(ROOT)
+    try:
+        _assert_report_text(cli)
+    finally:
+        os.chdir(here)
+
+
+def _assert_report_text(cli):
     flat = design.load_flat(TWO_CLOCK, "top")
     mods = design.load_hier(TWO_CLOCK, "top")
     tree = clocks.clock_tree(flat)
@@ -98,11 +111,14 @@ def test_report_text_is_exactly_what_the_chapter_prints():
         "  bclk: 2 registers",
         "  cclk: 5 registers",
         "registers without reset: 1",
-        "  last_cfg",
+        "  last_cfg  [examples/ch03-digital-design/rtl/datapath.sv:24]",
         "crossings: 3, unsynchronized: 2",
-        "  BUG  cfg_b (bclk) -> acc (cclk), 8 bits, no synchronizer",
-        "  BUG  cfg_b (bclk) -> last_cfg (cclk), 8 bits, no synchronizer",
-        "  ok   en_b (bclk) -> u_sync_en.meta (cclk), 1 bit, synchronizer",
+        "  BUG  cfg_b (bclk) -> acc (cclk), 8 bits, no synchronizer"
+        "  [examples/ch03-digital-design/rtl/datapath.sv:14]",
+        "  BUG  cfg_b (bclk) -> last_cfg (cclk), 8 bits, no synchronizer"
+        "  [examples/ch03-digital-design/rtl/datapath.sv:24]",
+        "  ok   en_b (bclk) -> u_sync_en.meta (cclk), 1 bit, synchronizer"
+        "  [examples/ch03-digital-design/rtl/sync2.sv:13]",
         "instances: 3, connections: 15",
     ])
 
@@ -250,24 +266,62 @@ def test_every_field_carries_a_description():
 
     def walk(node, path):
         missing = []
-        if isinstance(node, dict):
-            props = node.get("properties", {})
-            for name, sub in props.items():
+        if not isinstance(node, dict):
+            return missing
+        for group in ("properties", "patternProperties", "$defs"):
+            for name, sub in node.get(group, {}).items():
                 where = f"{path}/{name}"
-                if "description" not in sub:
-                    missing.append(where)
+                if group != "$defs" and not sub.get("description"):
+                    missing.append(where)     # absent or empty both count
                 missing += walk(sub, where)
-            for key in ("items", "additionalProperties"):
-                if isinstance(node.get(key), dict):
-                    missing += walk(node[key], f"{path}/{key}")
-            for name, sub in node.get("$defs", {}).items():
-                missing += walk(sub, f"{path}/$defs/{name}")
+        for key in ("items", "additionalProperties", "contains"):
+            if isinstance(node.get(key), dict):
+                missing += walk(node[key], f"{path}/{key}")
+        for key in ("allOf", "anyOf", "oneOf", "prefixItems"):
+            for i, sub in enumerate(node.get(key, [])):
+                missing += walk(sub, f"{path}/{key}[{i}]")
         return missing
 
     for command in schema.FOR_COMMAND:
         doc = schema.load(command)
         assert doc.get("description"), command
         assert walk(doc, command) == [], command
+
+
+def test_every_finding_carries_a_real_source_location():
+    """The book claims a finding names the RTL that produced it. Prove it.
+
+    Schema conformance is not enough on its own: a blank string would once
+    have satisfied it, so an extractor that stopped reading source locations
+    would have left the claim silently false with a green build. Here the
+    locations are checked for existence, for shape, and for pointing at a
+    file that exists.
+    """
+    flat = design.load_flat(TWO_CLOCK, "top")
+    tree = clocks.clock_tree(flat)
+    resets = clocks.reset_tree(flat)
+    found = ([r["src"] for r in tree["registers"].values()]
+             + [r["src"] for r in resets["registers"].values()]
+             + [r["src"] for r in resets["no_reset"]]
+             + [c["src"] for c in clocks.crossings(flat, tree)["crossings"]])
+    assert found, "no report carried a source location at all"
+    for src in found:
+        file, _, span = src.partition(":")
+        assert span and span[0].isdigit(), src
+        assert pathlib.Path(file).is_file(), file
+        assert not pathlib.Path(file).is_absolute(), file
+
+
+def test_the_source_location_points_at_the_right_line():
+    """A location that is well formed but wrong is worse than none."""
+    resets = clocks.reset_tree(design.load_flat(TWO_CLOCK, "top"))
+    src = [r["src"] for r in resets["no_reset"] if r["name"] == "last_cfg"][0]
+    file, _, span = src.partition(":")
+    first = int(span.split(".")[0])
+    text = pathlib.Path(file).read_text().splitlines()
+    # The reported line begins the always_ff block that infers last_cfg.
+    assert "always_ff" in text[first - 1], text[first - 1]
+    assert any("last_cfg" in l for l in text[first - 1:first + 3])
 
 
 def test_every_schema_is_versioned_by_url():

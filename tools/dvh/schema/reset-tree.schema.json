@@ -54,16 +54,35 @@
           },
           "src": {
             "description": "Source location, as file:line.col-line.col.",
-            "type": "string"
+            "$comment": "Constrained so a blank or a non-location cannot pass.",
+            "type": "string",
+            "pattern": "^[^:]+:\\d+"
           }
         }
       }
     },
     "no_reset": {
-      "description": "Registers with no reset pin at all, sorted.",
+      "description": "Registers with no reset pin, sorted by name.",
       "type": "array",
       "items": {
-        "type": "string"
+        "type": "object",
+        "required": [
+          "name",
+          "src"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "description": "The register's name.",
+            "type": "string"
+          },
+          "src": {
+            "description": "Source location, as file:line.col-line.col.",
+            "$comment": "Constrained so a blank or a non-location cannot pass.",
+            "type": "string",
+            "pattern": "^[^:]+:\\d+"
+          }
+        }
       }
     }
   },

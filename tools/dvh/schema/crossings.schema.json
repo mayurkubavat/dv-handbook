@@ -69,7 +69,9 @@
         },
         "src": {
           "description": "Source location, as file:line.col-line.col.",
-          "type": "string"
+          "$comment": "Constrained so a blank or a non-location cannot pass.",
+          "type": "string",
+          "pattern": "^[^:]+:\\d+"
         }
       }
     }

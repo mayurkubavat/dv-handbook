@@ -190,7 +190,9 @@ def reset_tree(mod: Module) -> dict:
             pin, kind = "SRST", "synchronous"
             pol = cell.params.get("SRST_POLARITY", "1")
         else:
-            none.append(name)
+            # The unreset registers are the finding a reader acts on, so
+            # they carry a location like every other finding.
+            none.append({"name": name, "src": cell.src})
             continue
         prim = clock_candidates(mod)
         srcs = []
@@ -201,7 +203,8 @@ def reset_tree(mod: Module) -> dict:
                      "sources": sorted({s.name for s in srcs}),
                      "through": sorted({t for s in srcs for t in s.through}),
                      "src": cell.src}
-    return {"registers": out, "no_reset": sorted(none)}
+    return {"registers": out,
+            "no_reset": sorted(none, key=lambda r: r["name"])}
 
 
 def _data_cone_registers(mod: Module, cell) -> set[str]:

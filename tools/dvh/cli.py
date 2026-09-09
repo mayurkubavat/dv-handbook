@@ -24,6 +24,17 @@ import sys
 from . import clocks, design, graph, schema
 
 
+def _at(src: str) -> str:
+    """A finding names the RTL that produced it, when the netlist knows it.
+
+    Only the file and the first line: the column range Yosys records is
+    noise in a report a person reads."""
+    if not src:
+        return ""
+    file, _, span = src.partition(":")
+    return f"  [{file}:{span.split('.')[0]}]" if span else f"  [{file}]"
+
+
 def _report(tree, resets, xings, conn) -> str:
     """A short human report. Everything is printed in sorted order: the
     output is included verbatim in the book, so it must not depend on the
@@ -33,7 +44,7 @@ def _report(tree, resets, xings, conn) -> str:
         lines.append(f"  {dom}: {len(regs)} registers")
     lines.append(f"registers without reset: {len(resets['no_reset'])}")
     for r in resets["no_reset"]:
-        lines.append(f"  {r}")
+        lines.append(f"  {r['name']}{_at(r['src'])}")
     lines.append(f"crossings: {len(xings['crossings'])}, "
                  f"unsynchronized: {len(xings['unsynchronized'])}")
     for c in sorted(xings["crossings"],
@@ -43,7 +54,7 @@ def _report(tree, resets, xings, conn) -> str:
         how = "synchronizer" if c["synchronized"] else c["reason"]
         lines.append(f"  {mark} {c['from']} ({c['from_domain']}) -> "
                      f"{c['to']} ({c['to_domain']}), "
-                     f"{c['width']} bit{plural}, {how}")
+                     f"{c['width']} bit{plural}, {how}{_at(c['src'])}")
     lines.append(f"instances: {len(conn['instances'])}, "
                  f"connections: {len(conn['edges'])}")
     return "\n".join(lines)
