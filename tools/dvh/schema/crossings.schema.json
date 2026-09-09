@@ -2,11 +2,11 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://mayurkubavat.github.io/dv-handbook/schema/crossings-1.json",
   "title": "dvh crossings",
-  "description": "Crossings between domains. No verdict is a sign-off.",
+  "description": "Crossings between clock domains, and their shapes.",
   "type": "object",
   "required": [
     "crossings",
-    "unsynchronized"
+    "unrecognized"
   ],
   "additionalProperties": false,
   "$defs": {
@@ -20,8 +20,8 @@
         "width",
         "direct",
         "second_stage",
-        "synchronized",
-        "reason",
+        "shape_recognized",
+        "note",
         "src"
       ],
       "additionalProperties": false,
@@ -58,20 +58,20 @@
             "type": "string"
           }
         },
-        "synchronized": {
-          "description": "True only for a recognized synchronizer shape.",
-          "type": "boolean",
-          "$comment": "Direct, feeds a second stage, one bit, not one of many."
-        },
-        "reason": {
-          "description": "Empty when synchronized; else why not, for a person.",
-          "type": "string"
-        },
         "src": {
           "description": "Source location, as file:line.col-line.col.",
           "$comment": "Constrained so a blank or a non-location cannot pass.",
           "type": "string",
           "pattern": "^[^:]+:\\d+"
+        },
+        "shape_recognized": {
+          "description": "True if this matches a known shape.",
+          "type": "boolean",
+          "$comment": "Two-flop, and not one of several carrying one value."
+        },
+        "note": {
+          "description": "Empty when known; else what was seen.",
+          "type": "string"
         }
       }
     }
@@ -84,14 +84,14 @@
         "$ref": "#/$defs/crossing"
       }
     },
-    "unsynchronized": {
-      "description": "The subset to act on.",
+    "unrecognized": {
+      "description": "The subset to review.",
       "type": "array",
       "items": {
         "$ref": "#/$defs/crossing"
       },
-      "$comment": "A build gate fails when this is not empty."
+      "$comment": "A shape to look at, not a bug."
     }
   },
-  "$comment": "A shape never taught is reported unsynchronized."
+  "$comment": "Reports a shape, never a verdict about safety."
 }

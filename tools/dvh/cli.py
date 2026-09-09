@@ -13,7 +13,7 @@ schema URL may want to as well.
 
 Every command but `read` prints JSON validated against a published schema;
 `read` prints a short human report instead, and exits 1 if any crossing is
-unsynchronized, so it can gate a commit.
+a crossing's shape is not recognized, so it can gate a commit.
 """
 from __future__ import annotations
 
@@ -46,12 +46,14 @@ def _report(tree, resets, xings, conn) -> str:
     for r in resets["no_reset"]:
         lines.append(f"  {r['name']}{_at(r['src'])}")
     lines.append(f"crossings: {len(xings['crossings'])}, "
-                 f"unsynchronized: {len(xings['unsynchronized'])}")
+                 f"shape not recognized: {len(xings['unrecognized'])}")
     for c in sorted(xings["crossings"],
-                    key=lambda c: (c["synchronized"], c["from"], c["to"])):
-        mark = "ok  " if c["synchronized"] else "BUG "
+                    key=lambda c: (c["shape_recognized"], c["from"],
+                                   c["to"])):
+        mark = "known" if c["shape_recognized"] else "CHECK"
         plural = "s" if c["width"] != 1 else ""
-        how = "synchronizer" if c["synchronized"] else c["reason"]
+        how = ("two-flop synchronizer" if c["shape_recognized"]
+               else c["note"])
         lines.append(f"  {mark} {c['from']} ({c['from_domain']}) -> "
                      f"{c['to']} ({c['to_domain']}), "
                      f"{c['width']} bit{plural}, {how}{_at(c['src'])}")
@@ -101,7 +103,7 @@ def main(argv=None) -> int:
     resets = clocks.reset_tree(flat)
     xings = clocks.crossings(flat, tree)
     print(_report(tree, resets, xings, conn))
-    return 1 if xings["unsynchronized"] else 0
+    return 1 if xings["unrecognized"] else 0
 
 
 if __name__ == "__main__":

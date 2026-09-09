@@ -6,5 +6,5 @@ EXAMPLE_LANG := python
 TOP          := read_design.py
 SOURCES      := read_design.py
 EXPECT       := fail   # the tool finds the missing synchronizer
-EXPECT_OUTPUT := unsynchronized: 2
+EXPECT_OUTPUT := shape not recognized: 2
 include ../../common.mk

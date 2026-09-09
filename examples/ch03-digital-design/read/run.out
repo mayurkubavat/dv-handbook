@@ -3,8 +3,8 @@ clock domains: 2
   cclk: 5 registers
 registers without reset: 1
   last_cfg  [../rtl/datapath.sv:24]
-crossings: 3, unsynchronized: 2
-  BUG  cfg_b (bclk) -> acc (cclk), 8 bits, no synchronizer  [../rtl/datapath.sv:14]
-  BUG  cfg_b (bclk) -> last_cfg (cclk), 8 bits, no synchronizer  [../rtl/datapath.sv:24]
-  ok   en_b (bclk) -> u_sync_en.meta (cclk), 1 bit, synchronizer  [../rtl/sync2.sv:13]
+crossings: 3, shape not recognized: 2
+  CHECK cfg_b (bclk) -> acc (cclk), 8 bits, no synchronizer shape  [../rtl/datapath.sv:14]
+  CHECK cfg_b (bclk) -> last_cfg (cclk), 8 bits, no synchronizer shape  [../rtl/datapath.sv:24]
+  known en_b (bclk) -> u_sync_en.meta (cclk), 1 bit, two-flop synchronizer  [../rtl/sync2.sv:13]
 instances: 3, connections: 15

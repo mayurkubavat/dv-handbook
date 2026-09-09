@@ -236,7 +236,7 @@ def _flag_converging_synchronizers(mod: Module, report: list) -> None:
     would wrongly flag two unrelated controls that happen to share one
     declared vector.
     """
-    sync = [c for c in report if c["synchronized"]]
+    sync = [c for c in report if c["shape_recognized"]]
     if len(sync) < 2:
         return
     stages = {}                       # second-stage register -> its crossing
@@ -269,8 +269,8 @@ def _flag_converging_synchronizers(mod: Module, report: list) -> None:
         if len(together) < 2:
             continue
         for c in together.values():
-            c["synchronized"] = False
-            c["reason"] = (f"{len(together)} one-bit synchronizers are read "
+            c["shape_recognized"] = False
+            c["note"] = (f"{len(together)} one-bit synchronizers are read "
                            f"together by {name}; their bits can resolve in "
                            f"different cycles")
 
@@ -286,9 +286,22 @@ def _feeds_directly(mod: Module, cell, source: str) -> bool:
 
 def crossings(mod: Module, tree: dict | None = None) -> dict:
     """Registers that receive data from a register in another clock domain,
-    and whether the receiving path looks like a synchronizer (a register
-    whose D is fed directly, with no logic, by the foreign register, and
-    which itself feeds another register in the same domain the same way)."""
+    and whether the receiving structure *matches a shape this tool knows*.
+
+    The distinction is the whole design of this report, and it was learned
+    the hard way. An earlier version answered "is this crossing safe", which
+    is a judgement, and every defect it ever had was in making that
+    judgement: a shape nobody had taught it was called safe, and once a rule
+    meant to remove a false alarm silenced a real crossing entirely.
+
+    So it answers a smaller question it can actually answer. `shape_recognized`
+    is a fact about structure, not a verdict about correctness: true means
+    the receiving path matches a two-flop synchronizer and is not one of
+    several such paths carrying one value. A crossing whose shape is not
+    recognized may be perfectly correct and merely unusual. Nothing is ever
+    suppressed, and where the walk cannot resolve a clock it says so. Whether
+    a crossing is *safe* is a question about the specification, and
+    @sec-ch03-cdc is where a person answers it."""
     tree = tree or clock_tree(mod)
     dom_of = {r: "+".join(i["clock_sources"])
               for r, i in tree["registers"].items()}
@@ -325,14 +338,14 @@ def crossings(mod: Module, tree: dict | None = None) -> dict:
             report.append({"to": name, "to_domain": mine, "from": src,
                            "from_domain": dom_of[src], "width": width,
                            "direct": direct, "second_stage": second_stage,
-                           "synchronized": synchronizer,
-                           "reason": ("" if synchronizer else
+                           "shape_recognized": synchronizer,
+                           "note": ("" if synchronizer else
                                       "clock and enable not distinguishable "
                                       "here; declare the clocks" if unsure
-                                      else "no synchronizer"),
+                                      else "no synchronizer shape"),
                            "src": cell.src})
     _flag_converging_synchronizers(mod, report)
     # collapse: a crossing that lands on a synchronizer's first stage is fine;
     # flag the rest
-    flagged = [c for c in report if not c["synchronized"]]
-    return {"crossings": report, "unsynchronized": flagged}
+    unrecognized = [c for c in report if not c["shape_recognized"]]
+    return {"crossings": report, "unrecognized": unrecognized}

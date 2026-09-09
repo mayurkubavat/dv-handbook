@@ -38,9 +38,9 @@ def test_one_register_without_reset():
 def test_crossings_found_and_classified():
     flat = design.load_flat(TWO_CLOCK, "top")
     x = clocks.crossings(flat)
-    unsync = {(c["from"], c["to"]) for c in x["unsynchronized"]}
+    unsync = {(c["from"], c["to"]) for c in x["unrecognized"]}
     assert unsync == {("cfg_b", "acc"), ("cfg_b", "last_cfg")}
-    sync = [c for c in x["crossings"] if c["synchronized"]]
+    sync = [c for c in x["crossings"] if c["shape_recognized"]]
     assert len(sync) == 1
     assert sync[0]["from"] == "en_b" and sync[0]["width"] == 1
 
@@ -112,12 +112,12 @@ def _assert_report_text(cli):
         "  cclk: 5 registers",
         "registers without reset: 1",
         "  last_cfg  [examples/ch03-digital-design/rtl/datapath.sv:24]",
-        "crossings: 3, unsynchronized: 2",
-        "  BUG  cfg_b (bclk) -> acc (cclk), 8 bits, no synchronizer"
+        "crossings: 3, shape not recognized: 2",
+        "  CHECK cfg_b (bclk) -> acc (cclk), 8 bits, no synchronizer shape"
         "  [examples/ch03-digital-design/rtl/datapath.sv:14]",
-        "  BUG  cfg_b (bclk) -> last_cfg (cclk), 8 bits, no synchronizer"
+        "  CHECK cfg_b (bclk) -> last_cfg (cclk), 8 bits, no synchronizer shape"
         "  [examples/ch03-digital-design/rtl/datapath.sv:24]",
-        "  ok   en_b (bclk) -> u_sync_en.meta (cclk), 1 bit, synchronizer"
+        "  known en_b (bclk) -> u_sync_en.meta (cclk), 1 bit, two-flop synchronizer"
         "  [examples/ch03-digital-design/rtl/sync2.sv:13]",
         "instances: 3, connections: 15",
     ])
@@ -142,7 +142,7 @@ def test_clock_gate_does_not_create_a_domain():
     assert list(tree["domains"]) == ["clk"]
     assert sorted(tree["domains"]["clk"]) == ["q_free", "q_gated"]
     assert "gated by en" in tree["registers"]["q_gated"]["through"]
-    assert clocks.crossings(flat, tree)["unsynchronized"] == []
+    assert clocks.crossings(flat, tree)["unrecognized"] == []
 
 
 def test_crossing_through_a_mux_select_is_found():
@@ -153,7 +153,7 @@ def test_crossing_through_a_mux_select_is_found():
     """
     flat = design.load_flat([str(FIXTURE / "mux_select.sv")], "mux_select")
     x = clocks.crossings(flat)
-    found = [(c["from"], c["to"]) for c in x["unsynchronized"]]
+    found = [(c["from"], c["to"]) for c in x["unrecognized"]]
     assert found == [("sel_b", "out")]
 
 
@@ -167,8 +167,8 @@ def test_parallel_per_bit_synchronizers_are_rejected():
     files = [str(FIXTURE / "per_bit_sync.sv")]
     flat = design.load_flat(files, "per_bit_sync")
     x = clocks.crossings(flat)
-    assert len(x["unsynchronized"]) == 8
-    assert all("read together" in c["reason"] for c in x["unsynchronized"])
+    assert len(x["unrecognized"]) == 8
+    assert all("read together" in c["note"] for c in x["unrecognized"])
 
 
 def test_per_bit_anti_pattern_is_caught_without_a_shared_name():
@@ -181,8 +181,8 @@ def test_per_bit_anti_pattern_is_caught_without_a_shared_name():
     files = [str(FIXTURE / "split_source_sync.sv")]
     flat = design.load_flat(files, "split_source_sync")
     x = clocks.crossings(flat)
-    assert len(x["unsynchronized"]) == 8
-    assert all("read together" in c["reason"] for c in x["unsynchronized"])
+    assert len(x["unrecognized"]) == 8
+    assert all("read together" in c["note"] for c in x["unrecognized"])
 
 
 def test_an_undecidable_clock_is_reported_not_suppressed():
@@ -199,8 +199,8 @@ def test_an_undecidable_clock_is_reported_not_suppressed():
     flat = design.load_flat(files, "two_clock_gates")
     tree = clocks.clock_tree(flat)
     assert all(r["clock_ambiguous"] for r in tree["registers"].values())
-    found = clocks.crossings(flat, tree)["unsynchronized"]
-    assert found and all("declare the clocks" in c["reason"] for c in found)
+    found = clocks.crossings(flat, tree)["unrecognized"]
+    assert found and all("declare the clocks" in c["note"] for c in found)
 
 
 def test_a_crossing_through_a_latch_is_still_reported():
@@ -209,7 +209,7 @@ def test_a_crossing_through_a_latch_is_still_reported():
     files = [str(FIXTURE / "crossing_via_latch.sv")]
     flat = design.load_flat(files, "crossing_via_latch")
     x = clocks.crossings(flat)
-    assert len(x["unsynchronized"]) == 1
+    assert len(x["unrecognized"]) == 1
 
 
 def test_bit_blasted_registers_are_not_collapsed():
@@ -347,7 +347,7 @@ def test_a_shared_clock_enable_does_not_hide_a_crossing():
     files = [str(FIXTURE / "shared_enable_clocks.sv")]
     flat = design.load_flat(files, "shared_enable_clocks")
     x = clocks.crossings(flat)
-    assert len(x["unsynchronized"]) == 1
+    assert len(x["unrecognized"]) == 1
 
 
 def test_convergence_is_followed_through_a_third_flop():
@@ -359,5 +359,5 @@ def test_convergence_is_followed_through_a_third_flop():
     files = [str(FIXTURE / "three_flop_per_bit.sv")]
     flat = design.load_flat(files, "three_flop_per_bit")
     x = clocks.crossings(flat)
-    assert len(x["unsynchronized"]) == 8
-    assert all("read together" in c["reason"] for c in x["unsynchronized"])
+    assert len(x["unrecognized"]) == 8
+    assert all("read together" in c["note"] for c in x["unrecognized"])

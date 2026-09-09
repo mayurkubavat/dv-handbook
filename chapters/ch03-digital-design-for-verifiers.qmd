@@ -224,7 +224,7 @@ The example runs Verilator's lint over these four files with every style warning
 ```{.text include="examples/ch03-digital-design/sv-lint/run.out"}
 ```
 
-That is the correct result. The design has no incomplete sensitivity list, no inferred latch, no width mismatch and no multiply-driven signal. It also has an eight-bit unsynchronized clock-domain crossing, which lint does not look for and does not claim to.
+That is the correct result. The design has no incomplete sensitivity list, no inferred latch, no width mismatch and no multiply-driven signal. It also has an eight-bit clock-domain crossing with no synchronizer, which lint does not look for and does not claim to.
 
 ### Extracting the structure
 
@@ -248,7 +248,7 @@ Three details in that file are the chapter's content rather than programming.
 
 The crossing detector walks *data* cones rather than clock nets, following combinational cells instead of only the clock-tree set, because a crossing that arrives through an adder is still a crossing. The two walks differ on one port. A multiplexer's select is not a clock, so the clock walk skips it; but a foreign register steering a multiplexer is a control crossing like any other, so the data walk must follow it. Getting that backwards reports the textbook single-bit control crossing as a clean design. The two walks also differ at a latch. A latch is a state element, so a path through one is never direct and can never be a synchronizer; but stopping there would hide the crossing behind it, so the data walk passes through and records the latch, while the clock walk stops.
 
-`_feeds_directly` answers half of the synchronizer question: is this register fed by the foreign register with nothing in between. `crossings` assembles the rest of the rule from @sec-ch03-cdc, and the third term is the one that matters most: a first stage fed directly, feeding a second register in its own domain the same way, and one bit wide. That width test is where "synchronizers synchronize control, not data" lives in the code.
+`_feeds_directly` answers half of the shape question: is this register fed by the foreign register with nothing in between. `crossings` assembles the rest of the shape from @sec-ch03-cdc, and the third term is the one that matters most: a first stage fed directly, feeding a second register in its own domain the same way, and one bit wide. That width test is where "synchronizers synchronize control, not data" lives in the code.
 
 The width test is not sufficient on its own, though, and the reason is worth seeing. Eight one-bit synchronizers on the eight bits of a bus pass it individually: each is one bit, each is fed directly, each feeds a second stage. Structurally they are eight correct synchronizers; together they are the loss of data @sec-ch03-cdc describes. What gives them away is not their names but where they end up: the tool follows each synchronizer's output forward through however many further stages it passes, looks for two or more of them that one register downstream reads *together*, and rejects the group, because a reader of several independently resolving bits can see a combination the sender never sent. Following the whole chain rather than one link of it matters: a three-flop synchronizer puts a register between the second stage and whatever reads it, and an earlier version that looked only at immediate readers saw nothing there.
 
@@ -259,7 +259,9 @@ The width test is not sufficient on its own, though, and the reason is worth see
 
 Read against the specification, every line is a finding and only two are bugs.
 
-Two domains, with `cclk` holding five registers, is what the header claims. One register without a reset, `last_cfg`, is the exception the specification names, so it is a finding that the reading closes rather than escalates. The synchronized crossing on `en_b` is the rule being followed. The two unsynchronized crossings on `cfg_b` are the rule being broken, and the tool exits non-zero on them, so a build can gate on it.
+Two domains, with `cclk` holding five registers, is what the header claims. One register without a reset, `last_cfg`, is the exception the specification names, so it is a finding that the reading closes rather than escalates. The crossing on `en_b` matches a two-flop synchronizer, which is the rule being followed. The two crossings on `cfg_b` match nothing the tool knows, and it exits non-zero on those, so a build can gate on it.
+
+Notice what the report does not say. It does not say the `cfg_b` crossings are bugs, and it does not say the `en_b` one is safe. It says one matches a shape it recognizes and two do not, which is a fact about structure. The distinction sounds pedantic and is not: an earlier version of this tool did answer "is this crossing safe", and every defect it ever had lived in that answer. It called a structure safe because nobody had taught it the anti-pattern, and once, trying to suppress a false alarm, it silenced a real crossing between two asynchronous clocks and reported the design clean. A report that a build gate trusts has to be wrong in the loud direction.
 
 Note what the tool did *not* have to be told. It did not know which crossings were expected, which registers were meant to have no reset, or that the two clocks were asynchronous. It derived the structure from the RTL and reported it; the judgment about which findings matter came from reading the specification alongside. That division is the one to carry forward: the tool decides what *is*, and a person decides what it *means*.
 
