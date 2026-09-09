@@ -10,7 +10,7 @@ M1 — Repo scaffold: COMPLETE (2026-09-06). CI green on main (examples → PDF+
 
 ### Next three actions
 1. Draft Ch.4 from the approved outline: build the four examples first, then prose, then register in `_quarto.yml` **before** `ch34-`, then review.
-2. Gate 2 verification running for Ch.3 and Appendix I. **Neither ships until its reviewer returns "no blocking findings"** — that is the standard now, not my judgement.
+2. **Appendix I needs a re-review**: its gate-2 pass returned 4 blockers, all now fixed, and the standard requires a clean verdict rather than my say-so. Ch.3's gate-2 reviewer is still running.
 3. Then Ch.5, or whichever of Part II the author prefers. `docs/reviews/ch03-verify-2026-09-08.md` verifies that Ch.3's 32 findings were actually fixed, re-running the four blocking tool bugs against *its own* constructed designs rather than the committed fixtures, and hunting regressions in the second pass. `docs/reviews/appI-review-2026-09-08.md` is Appendix I's first review, weighted to vendor-claims-as-results. When they land: make the passes, then gate 2 on both.
 0b. ~~Appendix I: dispatch a review subagent.~~ It is the only book page that has not been through the review gate, and the Ch.3 review caught four real bugs, so this one should not ship unreviewed. Ask the reviewer specifically to check that no vendor figure is stated as a result and that every dated claim still matches its source.
 1. **Gate 2 for Ch.3 is with the author.** Second pass is done and pushed (`dcbaca2`); all review findings addressed. Do not set the Ch.3 row to `reviewed` until the author says so.
@@ -37,7 +37,7 @@ States: planned → outlined → drafting → examples-verified → reviewed →
 | 2 | Verification Planning (`chapters/ch02-verification-planning.qmd`) | **reviewed** (gate 2 approved by author 2026-09-06) | ~5,500 | 2026-09-06 |
 | 35 | Generative AI and Agentic DV (`chapters/ch34-generative-ai-agentic-dv.qmd`; file name keeps 34, chapter is 35 and closes the book) | **reviewed** (gate 2 approved by author 2026-09-07; concept chapter, no runnable examples by design) | ~7,600 | 2026-09-06 |
 | 3 | Digital Design for Verifiers (`chapters/ch03-digital-design-for-verifiers.qmd`) | **examples-verified**, reviewed twice + third pass done (3/3 green, 18 unit tests, 7 regression fixtures); **awaiting gate 2 (author)** | ~9,000 | 2026-09-08 |
-| I | An agent tool layer for RTL, UVM and debug (`appendices/appI-agent-tool-layer.qmd`) | **reviewed + second pass done** (48 findings, 7 blocking, all addressed); 15 tool tests; **awaiting gate 2** | ~6,000 | 2026-09-08 |
+| I | An agent tool layer for RTL, UVM and debug (`appendices/appI-agent-tool-layer.qmd`) | gate-2 review returned 4 blockers, **third pass done**; 20 tool tests; **needs a re-review before it can pass** | ~6,000 | 2026-09-09 |
 | 4 | Simulation Fundamentals (`chapters/ch04-simulation-fundamentals.qmd`) | **gate 1 passed 2026-09-09** (delegated; outline names a reader outcome per section and folds in all 14 research constraints); drafting | 0 | 2026-09-09 |
 | — | chapters 5–33 + appendices A–E, G, H | planned | 0 | 2026-09-05 |
 
