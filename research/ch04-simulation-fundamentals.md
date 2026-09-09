@@ -102,6 +102,19 @@ one source file. See Part C §3.
    source derives from a region.
 10. **No rounding rule for delays finer than the declared precision.** No open
     source states one; say that simulators round, without a rule.
+11. **Do not say a simulator "must" sample in the Preponed region.** The source
+    is explicit that Preponed and the previous timestep's Postponed are
+    indistinguishable: same values, different timestamp.
+12. **Do not say assertions "cannot" race.** Preponed sampling removes the
+    read-write race on *sampled values* only; an assertion's action block runs in
+    the Reactive region as ordinary procedural code and races like any other.
+13. **Do not say a clocking block "fixes" testbench timing.** The one paper
+    devoted to using them calls them "surprisingly error-prone", mostly through
+    confusing a clocking variable with the signal and through using the wrong
+    assignment operator.
+14. **Program blocks are not obsolete because UVM does not use them.** That
+    non-use is real but no source makes it the reason; the argument on record is
+    a different one, about not driving on the active edge.
 
 
 
@@ -828,644 +841,446 @@ callout), that needs a separate pass. Nothing in §§1–5 depends on it.
 
 # Part B — Sampling, X, and time
 
-**Scope note.** This note covers the testbench/design boundary at a clock edge,
-the constructs added to close it, assertion sampling, four-state versus two-state
-simulation, and timescale. It deliberately does not re-derive Turpin's "The
-Dangers of Living with an X" (2003), which the book already cites as
-`turpin2003x`; it picks up the argument after 2003.
+**Scope.** Testbench/design boundary at a clock edge; clocking and program blocks;
+assertion sampling; four-state vs two-state; timescale. Does not re-derive Turpin
+2003 (`turpin2003x`).
 
-*Reachability.* `sunburst-design.com` now redirects to `paradigm-works.com` and
-the paper archive there is behind a login, so Clifford Cummings' SNUG papers were
-recovered from Internet Archive captures of the original `sunburst-design.com`
-URLs; those capture URLs are the ones cited below. `sutherland-hdl.com` still
-serves its site but not its paper archive at the historical paths, so Stuart
-Sutherland's DVCon paper was taken from the DVCon proceedings mirror instead.
-The IEEE 1800 standard itself is **named only** in this note: it is paywalled and
-unread, so every statement about language behavior below is sourced to a
-practitioner paper or to open simulator documentation, and anything that could
-only be supported from the standard is listed in section 6.
+**Reachability.** `sunburst-design.com` redirects to `paradigm-works.com` with its
+papers behind a login, so every Cummings paper here came from an Internet Archive
+capture of the original URL, and those capture URLs are what is cited; same route
+for `sutherland-hdl.com` and `verilab.com`. IEEE 1800 is **named only** — paywalled
+and unread. Every behavioral statement below is attributed to a practitioner paper
+or to open simulator docs; where a source describes the standard I relay that
+source's description and credit it. Claims supportable only from the standard are in
+§6. Web search was unavailable (§8).
 
 ---
 
-### 1. The testbench/design boundary at a clock edge
+### 1. The boundary at a clock edge
 
-The best worked treatment found is Cummings and Salz, *SystemVerilog Event
-Regions, Race Avoidance & Guidelines*, SNUG Boston 2006 (rev. 1.2, December
-2007) — 42 pages, co-authored by a Synopsys simulator architect, and the closest
-thing to a canonical account outside the standard.
+Cummings & Salz, *SystemVerilog Event Regions, Race Avoidance & Guidelines*, SNUG
+Boston 2006 (rev. 1.2, Dec 2007), 42 pp., co-authored by a Synopsys simulator
+architect.
 [Cummings & Salz, SNUG Boston, 2006-09-01](https://web.archive.org/web/20240110182353id_/http://www.sunburst-design.com/papers/CummingsSNUG2006Boston_SystemVerilog_Events.pdf)
 **[primary]**
 
-Its framing is the one the chapter should adopt. The paper separates *hardware
-races* — intrinsic to the physics, such as the NAND S-R latch whose final state
-is unpredictable when both inputs release simultaneously — from *simulation-induced
-races*, which it describes as "not intrinsic to the design or its physics, but
-... a natural, although undesirable, consequence of the event-driven simulation
-algorithm." The mechanism: the simulator processes events one at a time and
-therefore serializes activity that is concurrent in hardware. The paper's warning
-is the sentence the chapter should build its motivation on — such a race "can
-cause the simulator to simulate a faulty design when in fact the design is
-correct, or more dangerously, simulate a seemingly correct design when in fact
-the design is flawed." Cummings and Salz add that the language deliberately
-leaves the order within an event region arbitrary, but that every implementation
-in fact exhibits *some* fixed order; this is why a race can be invisible on one
-simulator and fatal on the next. (§2.1.)
-
-- **Terminology.** *Simulation time* is the time value the simulator maintains;
-  a *time slot* holds all activity processed at one simulation time, and may
-  require several iterations through the regions without time advancing. Note for
-  the chapter: the earlier term *timestep* was dropped during the 2008 revision.
-  (§2.)
-- **Region structure.** The paper counts 17 ordered regions per time slot in the
-  2005 revision, of which nine execute language statements and eight execute PLI
-  code. The nine are: Preponed; the *Active region set* (Active, Inactive, NBA);
-  Observed; the *Reactive region set* (Reactive, Re-Inactive, Re-NBA); and
-  Postponed. Cummings and Salz group them by intent, which is the framing the
-  chapter wants: Active-set regions implement RTL, Preponed/Reactive/Postponed
-  implement verification, and Preponed/Observed/Reactive implement assertion
-  checking. They recommend avoiding the Inactive region entirely — `#0`
-  procedural assignments in RTL are a symptom of a race being papered over rather
-  than fixed. (§2.2, §2.2.4.)
-- **The read-write race concretely.** A design's clocked logic uses nonblocking
-  assignments and therefore updates in the NBA region; a testbench written as
-  module code that reads those signals in the Active region of the same edge sees
-  the *old* value, while one that reads after the NBA update sees the new one, and
-  nothing in the language fixes which happens if both are in the Active region.
-  Cummings' older nonblocking-assignment guidelines — cited in the 2006 paper as
-  removing "90-100%" of induced races on RTL — are the design-side half of the
-  fix: clocked logic in nonblocking assignments, combinational logic in blocking
-  assignments, and never two `always` blocks assigning one variable.
+- **The distinction to open the chapter with** (§2.1). *Hardware races* are
+  intrinsic to the physics (their example: the NAND S-R latch whose final state is
+  unpredictable when both inputs release together). *Simulation-induced races* are
+  "not intrinsic to the design or its physics, but ... a natural, although
+  undesirable, consequence of the event-driven simulation algorithm" — the simulator
+  processes events one at a time and so serializes what hardware does concurrently.
+  The motivating sentence: such a race "can cause the simulator to simulate a faulty
+  design when in fact the design is correct, or more dangerously, simulate a
+  seemingly correct design when in fact the design is flawed." Order within a region
+  is arbitrary by the language but fixed in any implementation — which is why a race
+  is invisible on one simulator and fatal on the next.
+- **Structure** (§2, §2.2). A *time slot* holds all activity at one simulation time
+  and may iterate through the regions several times without time advancing (the older
+  term *timestep* was dropped in 2008). 17 ordered regions in the 2005 revision — nine
+  for language statements, eight for PLI. The nine: Preponed; *Active set* (Active,
+  Inactive, NBA); Observed; *Reactive set* (Reactive, Re-Inactive, Re-NBA); Postponed.
+  Grouped by intent: Active set for RTL, Preponed/Reactive/Postponed for verification,
+  Preponed/Observed/Reactive for assertions. Never use Inactive — `#0` in RTL papers
+  over a race instead of fixing it (§2.2.4).
+- **The race concretely.** Clocked design logic updates in NBA. A module-based
+  testbench reading in Active on the same edge sees the *old* value; reading after
+  NBA sees the new; nothing decides which if both sit in Active. The design-side half
+  of the fix is Cummings' earlier nonblocking guidelines, credited in the 2006 paper
+  with removing "90-100%" of induced RTL races: clocked logic nonblocking,
+  combinational blocking, never two `always` blocks writing one variable.
   [Cummings, SNUG San Jose, 2000-03-01](https://web.archive.org/web/2020/http://www.sunburst-design.com/papers/CummingsSNUG2000SJ_NBA.pdf)
-  **[primary]** (URL recorded from the 2006 paper's reference list; see §8 for its
-  verification status.)
-- **The pre-SystemVerilog workarounds, and why they were bad.** §6.1 is directly
-  usable. Applying stimulus *on* the active edge required driving every input with
-  a nonblocking assignment, which mimics a zero-delay register transfer from
-  testbench to design — and then breaks on a gate-level netlist with real hold
-  times, because all inputs change in zero time. Engineers reached for
-  `<= #1` right-hand-side delays to fix that, which Cummings had already shown to
-  be "a potential source for serious simulator performance degradation." The
-  Sunburst house style instead applied stimulus on the *inactive* edge, far from
-  setup and hold windows, which lets the same testbench drive RTL and a
-  back-annotated netlist unchanged. This is the practical argument for why a
-  driver and a monitor should not both live on the same edge.
+  **[primary]** (URL from the 2006 reference list; not fetched — §8.)
+- **Why not to drive on the active edge** (§6.1). Driving *on* it required
+  nonblocking assignments on every input — a zero-delay register transfer that breaks
+  on a netlist with real hold times, since all inputs change at once. The `<= #1`
+  workaround is "a potential source for serious simulator performance degradation."
+  Driving on the *inactive* edge, away from setup and hold, lets one testbench serve
+  RTL and a back-annotated netlist unchanged.
 
-### 2. Clocking blocks and program blocks: the problem they solve
+### 2. Clocking blocks and program blocks
 
-**Why skews exist at all.** The clearest published statement of the underlying
-motivation is Bromley and Johnston, *Taming Testbench Timing: Time's Up for
-Clocking Block Confusions*, SNUG Austin 2012 (Verilab), §2: a synchronous
-testbench must "sample signals one setup time before the clock event" and
-"update signals one clock-to-output delay after the clock event," because that is
-what the DUT's own flip-flops do. Input skew is the testbench's t<sub>SU</sub>;
-output skew is its t<sub>CO</sub>. Their §2 heading "A Clocking Block Is Not A
-Time Machine" is the pitfall in one line: at a clock edge a testbench can see
-current and past values but never future ones, and can schedule future drives but
-never alter the past. They also note the construct "has proved to be surprisingly
-error-prone, despite nearly a decade of application experience."
+**Why skews exist.** Bromley & Johnston, *Taming Testbench Timing: Time's Up for
+Clocking Block Confusions*, SNUG Austin 2012 (Verilab), §2: a synchronous testbench
+must "sample signals one setup time before the clock event" and "update signals one
+clock-to-output delay after the clock event," because that is what the DUT's
+flip-flops do. Input skew is the testbench's t<sub>SU</sub>, output skew its
+t<sub>CO</sub>. Their heading "A Clocking Block Is Not A Time Machine" is the pitfall
+in one line: at an edge a testbench sees current and past values, never future ones.
+They report the construct "has proved to be surprisingly error-prone, despite nearly
+a decade of application experience."
 [Bromley & Johnston, SNUG Austin, 2012-09-01](https://web.archive.org/web/2020id_/http://www.verilab.com/files/paper51_taming_tb_timing_FINAL_fixes.pdf)
-**[primary]** (recovered from an Internet Archive capture of `verilab.com`; the
-paper is no longer listed on Verilab's current papers page.)
+**[primary]**
 
-Their eleven guidelines are the most citable practical distillation found. The
-four that matter most to Chapter 4: access only the clockvars, never the raw
-signal (#1); synchronize on the clocking block's own event, not the raw clock
-(#2); drive output clockvars with `<=`, never `=` (#3); and **use `input #1step`
-unless you have a special reason not to, because it guarantees the testbench sees
-sampled values consistent with what SystemVerilog assertions see** (#4). Guideline
-#4 is the direct citation for the Chapter 4 → Chapter 9 link. Also useful:
-guideline #5 recommends non-zero output skew so waveforms are readable and gate-level
-clock-network delay does not bite, and #9-#11 put the clocking block in an
-interface reached through a virtual interface modport — the UVM-shaped pattern.
+Four of their eleven guidelines matter here: access only the clockvars, never the raw
+signal (#1); synchronize on the clocking block's own event, not the raw clock (#2);
+drive output clockvars with `<=`, never `=` (#3); and **use `input #1step` unless you
+have a special reason not to, because it guarantees the testbench sees sampled values
+consistent with what assertions see** (#4) — the direct citation for the Chapter 4 →
+Chapter 9 link. Also #5 (non-zero output skew, for readable waveforms and gate-level
+clock-network delay) and #9–#11 (clocking block in an interface, reached through a
+virtual-interface modport).
 
-**Clocking blocks.** Cummings and Salz describe the construct as a way to state
-sampling and driving timing once, declaratively, instead of scattering delays
-through the stimulus code (§5, §6.2). The load-bearing facts for the chapter:
+Cummings & Salz (§5, §6.2) add: signals get clocking-block timing **only when
+referenced through the block's name** — the bare name is still the raw signal, and
+mixing the two is the failure mode. Default input skew is one *step*, default output
+skew zero (§2.2.13). `##` is defined against the block's event, so `##1` in a
+`@(posedge clk)` block waits for that edge; their Example 12 and Figures 12–18 trace
+a program block mixing a plain assignment with `##1 cb1.d <= ...` through an
+`output #2 d` skew, event by event. Driving on the inactive edge costs no extra
+events, since combinational logic must ripple to quiescence anyway.
 
-- Signals get clocking-block timing **only when referenced through the clocking
-  block's name**; the bare signal name still refers to the raw, untimed signal.
-  Mixing the two accidentally is the failure mode, and the paper recommends
-  interfaces with modports as the structural guard against it (§5, §5.2.1).
-- Default skews: input skew defaults to one step (see §3 below) and output skew
-  to zero — inputs are therefore sampled at the steady-state value immediately
-  *before* the clock event, outputs driven *at* it (§2.2.13). A `default output
-  negedge` clocking block drives stimulus on the opposite edge, implementing the
-  inactive-edge methodology declaratively (§6.2, Example 16).
-- The `##` cycle-delay notation is defined against the clocking block's event, so
-  `##1` in a block clocked on `@(posedge clk)` is equivalent to waiting for that
-  edge (§5.1, Example 12/13). Worked example 12 in the paper traces a program
-  block that mixes a plain assignment to a signal with `##1 cb1.d <= ...` through
-  an `output #2 d` skew, and its event-by-event figures (Figures 12-18) show the
-  assignment landing 2 ns after each posedge. This is the cleanest published
-  demonstration of "the skew is the point" and is worth citing even though the
-  chapter will not reproduce it.
-- Cummings and Salz explicitly answer the performance objection: driving on the
-  inactive edge does not cost extra events, because the combinational logic must
-  ripple to quiescence either way — it merely does so between clock edges rather
-  than before one (§6.2).
+**Program blocks: the intent** (Cummings & Salz §2.2.7–2.2.8). The Reactive set is
+the dual of the Active set, later in the same slot, so program code sees three things
+module code does not: steady-state values at the start of the slot, settled values
+after propagation, and the disposition of every concurrent assertion that fired. They
+recommend programs "to isolate RTL design code execution from testbench code
+execution."
 
-**Program blocks.** The paper's own account of the intent (§2.2.7-2.2.8) is that
-the Reactive region set is the "dual" of the Active region set, one time slot
-later in the ordering, and that program code scheduled there has access to three
-things a module-based testbench does not: the steady-state values at the start of
-the slot, the settled values after clock and signal propagation, and the
-disposition of every concurrent assertion that triggered in the slot. Cummings
-and Salz recommend putting testbench code in programs "to isolate RTL design code
-execution from testbench code execution." They also note a legitimate use for
-`#0` in the Re-Inactive region that they reject in RTL: letting `fork ... join_none`
-subprocesses start before the parent continues (Example 1).
-
-**The disagreement — and it is unusually well documented, because it is Cummings
-against himself.** Ten years later, in *Applying Stimulus & Sampling Outputs —
-UVM Verification Testing Techniques*, SNUG 2016, he reverses.
+**The disagreement — and it is Cummings against himself.** In *Applying Stimulus &
+Sampling Outputs — UVM Verification Testing Techniques*, SNUG 2016, he reverses.
 [Cummings, SNUG, 2016-09-01](https://web.archive.org/web/2023id_/http://www.sunburst-design.com/papers/CummingsSNUG2016AUS_VerificationTimingTesting.pdf)
 **[primary]**
 
-His 2016 argument (§10, §10.1) runs: the program block "essentially made it
-possible to drive stimulus on the active clock edge and avoid RTL-stimulus race
-conditions," but stimulus should not be driven on the active clock edge in the
-first place — and "as long as the verification engineer does not drive stimulus on
-the active clock edge, there is no RTL-stimulus race condition and a program is
-not needed." He adds a list of restrictions he considers gratuitous (a program may
-contain `initial` but not `always` procedures; a program may hierarchically
-reference module signals but not the reverse; a program may call module tasks and
-functions but not the reverse; simulators have not consistently checked and
-executed program code), and concludes "The SystemVerilog program statement should
-just die and never be used in your code!"
+His §10: the program block "essentially made it possible to drive stimulus on the
+active clock edge and avoid RTL-stimulus race conditions," but stimulus should not be
+driven there at all — "as long as the verification engineer does not drive stimulus on
+the active clock edge, there is no RTL-stimulus race condition and a program is not
+needed." He lists restrictions he calls gratuitous (`initial` but not `always` inside
+a program; a program may hierarchically reference module signals but not the reverse;
+a program may call module tasks but not the reverse; simulators have not consistently
+checked program code) and concludes: "The SystemVerilog program statement should just
+die and never be used in your code!"
 
-The §10.1 passage titled "Cliff's confession" is the piece worth citing, because
-it records the committee's reasoning as well as his own: he voted to keep programs
-in the 2015 revision after advocates argued that programs would let engineers
-write race-free stimulus *without* having to understand his drive-off-the-active-edge
-technique; he says he now regrets the vote and would remove programs if backward
-compatibility allowed. Two defensible positions are therefore on the record from
-the same author — programs as a guard rail for engineers who have not internalized
-the timing discipline, versus programs as unnecessary once that discipline is in
-place. The chapter should present both and not adjudicate.
-
-Corroborating context, not a second opinion: the 2006 paper itself flags in §1.2
-that "there are some ambiguities that are currently being clarified by the IEEE
-SystemVerilog committee" and that those clarifications "might change some of the
-restrictions of programs, clocking blocks, event regions" — the authors treated the
-rules as unsettled even then. Bromley and Johnston's 2012 guidelines make no use of
-program blocks at all, putting the clocking block in an interface instead. That is
-suggestive but is *not* a stated position against programs, and the chapter should
-not report it as one.
+§10.1, "Cliff's confession," is the passage to cite, because it records the other
+side's reasoning: he voted to keep programs in the 2015 revision after advocates
+argued they let engineers write race-free stimulus *without* learning his
+drive-off-the-active-edge technique; he now regrets the vote. Two defensible
+positions from one author — programs as a guard rail for engineers who have not
+internalized the timing discipline, versus programs as unnecessary once they have.
+**Present both; do not adjudicate.** Context only: the 2006 paper already warned
+(§1.2) that committee clarifications "might change some of the restrictions of
+programs, clocking blocks, event regions"; Bromley & Johnston use no program blocks
+at all, which is suggestive but is not a stated position and must not be reported as
+one.
 
 ### 3. Assertion sampling
 
-This is the fact Chapter 9 depends on, so it is worth stating precisely and
-sourcing carefully.
+Cummings & Salz (§2.2.1, §2.2.6, §2.2.13): values used by concurrent assertions are
+sampled in the **Preponed** region — first in the slot, executed once immediately
+after time advances, no feedback path back into it — and the assertions are
+*evaluated* in the **Observed** region, after Active-set activity settles. An
+assertion therefore reads the value that was stable *before* the edge, not the value
+the edge produced. That is why it is immune to the §1 race: the race is
+Active-versus-NBA ordering and the assertion reads in neither.
 
-Cummings and Salz (§2.2.1, §2.2.6, §2.2.13) describe the mechanism as follows.
-Values used by concurrent assertions are sampled in the **Preponed** region — the
-first region of a time slot, executed once, immediately after simulation time
-advances, with no feedback path back into it — and the assertions themselves are
-*evaluated* later, in the **Observed** region, after the design's Active-set
-activity has settled. An assertion therefore reads the value that was stable
-*before* the edge, not the value the edge produced. That is exactly why an
-assertion is immune to the read-write race described in §1: the race is a question
-of Active-versus-NBA ordering, and the assertion is not reading in either region.
+- **Preponed vs. the previous Postponed is unobservable.** Both are read-only, so
+  values in a contiguous pair are identical and only the timestamp differs — "it is
+  not observable in which region the simulator actually samples a value." Do not claim
+  a simulator *must* sample in Preponed.
+- **Model** (Figure 7): keep two values per sampled signal, current and Preponed;
+  read the second when the clocking expression fires. Only slots where that expression
+  triggers need sampling, and the simulator need not predict it. They describe an
+  intra-slot delay gate whose delay can vary — input skew is the same mechanism.
+- **Assertions are monitors**: they cannot modify design state, and pass/fail action
+  blocks are scheduled into *Reactive*, not Observed.
+- **`#1step`** is the *global time precision*, the smallest precision declared
+  anywhere in the design (§5). All values used by assertions, with or without
+  clocking-block timing, effectively come from one step before the current slot, and
+  since nothing can happen in that interval this is indistinguishable from Preponed
+  sampling. This explains *why* the default skew is a step rather than a real delay:
+  it is the largest skew that provably cannot skip an event.
 
-Three refinements the chapter should keep straight:
+**`$strobe` vs. `$display` vs. `$monitor`** (§2.2.3, §2.2.11):
 
-- **Preponed versus the previous Postponed.** Cummings and Salz argue the
-  distinction is unobservable: both regions are read-only, so signal values in a
-  contiguous Postponed-Preponed pair are identical and only the timestamp differs.
-  Their words: "it is not observable in which region the simulator actually
-  samples a value." A simulator may implement either. The chapter should not
-  claim a simulator "must" sample in Preponed.
-- **The implementation picture.** The paper's mental model (Figure 7) is that the
-  simulator keeps two values per sampled signal — its current value and its
-  Preponed value — and the sampling construct reads the second when the clocking
-  expression fires. Sampling need not happen in every time slot, only in slots
-  where the clocking expression triggers, and the simulator does not need to
-  predict that in advance. Cummings and Salz describe this as behaving like an
-  intra-time-slot delay gate whose delay can be varied to sample an arbitrary
-  distance before the clocking event — which is the general mechanism that input
-  skew is a special case of.
-- **Assertions are monitors, not drivers.** Concurrent assertions cannot modify
-  design state; a pass or fail action block is scheduled into the *Reactive*
-  region, not Observed (§2.2.6). Useful for the chapter's framing of assertions as
-  passive.
-- **`#1step`.** The default clocking-block input skew is one *step*, where a step
-  is the global time precision — the smallest precision declared anywhere in the
-  design (§2.2.13, and see §5 below). Cummings and Salz's summary is that "all
-  values used by assertions, whether sampled with clocking block timing or
-  without ... occur at `#1step` before the current time slot", and that because
-  nothing can happen between one step and the edge, this is indistinguishable from
-  sampling in Preponed. Worth stating in the chapter because it explains *why* the
-  default skew is a step rather than a real delay: it is the largest skew that
-  provably cannot skip an event.
-
-**`$strobe` versus `$display` versus `$monitor`** (§2.2.3, §2.2.11):
-
-| Task | Region | What it therefore shows |
+| Task | Region | What it shows |
 |---|---|---|
-| `$display` | Active | the value at the moment the statement executes — before NBA updates land |
+| `$display` | Active | value when the statement executes — before NBA updates land |
 | `$strobe` | Postponed | the final settled value for the time slot |
-| `$monitor` | Postponed | same, re-triggered on any change in its argument list |
+| `$monitor` | Postponed | same, re-triggered on changes in its argument list |
 
-Cummings and Salz note there is no feedback path out of Postponed, so values
-printed there are final for the slot, and that this matches the behavior of the
-older Verilog Monitor region. They also record that Postponed is where
-strobe-sampled functional coverage is collected. This table is the single most
-directly usable finding in the note: a `$display` in a clocked `always` block
-printing "stale" values is the classic first encounter with the scheduler, and
-`$strobe` is the one-line fix.
-
----
+No feedback path leaves Postponed, so those values are final for the slot (matching
+the old Verilog Monitor region); Postponed is also where strobe-sampled functional
+coverage is collected. A `$display` in a clocked block printing stale values is the
+classic first encounter with the scheduler; `$strobe` is the one-line fix.
 
 ### 4. Four-state and two-state simulation
 
-The two papers that carry this section are Sutherland's *I'm Still In Love With My
-X! (but, do I want my X to be an optimist, a pessimist, or eliminated?)*, DVCon
-2013 — explicitly written as the successor to Turpin 2003 and to Mills' *Being
-Assertive with Your X* (SNUG San Jose 2004) — and Piper and Vimjam's *X-propagation
-Woes*, DVCon 2012.
 [Sutherland, DVCon, 2013-02-25](https://dvcon-proceedings.org/wp-content/uploads/im-still-in-love-with-my-x.pdf)
-**[primary]** ·
+**[primary]** — *I'm Still In Love With My X! (but, do I want my X to be an optimist,
+a pessimist, or eliminated?)*, written as the successor to Turpin 2003 and Mills 2004.
 [Piper & Vimjam, DVCon, 2012-02-28](https://dvcon-proceedings.org/wp-content/uploads/x-propagation-woes-masking-bugs-at-rtl-and-unnecessary-debug-at-the-netlist-presentation.pdf)
-**[vendor]** — the second is the *presentation* deck; the paper PDF is not on the
-proceedings site. Its author is a technical marketing manager at Real Intent and
-the last third is a pitch for a Real Intent flow, so its taxonomy is usable and its
-proposed solution is a vendor claim.
+**[vendor]** — *X-propagation Woes*; this is the presentation deck (the paper is not
+on the proceedings site), its author is a Real Intent technical marketing manager, and
+its last third pitches a Real Intent flow. Taxonomy usable; proposed solution is a
+vendor claim.
 
-**The four values.** Sutherland's framing is the one to adopt and it is sharper
-than the usual list: 0, 1 and Z are *abstractions of values that exist in silicon*
-(abstract because they carry no voltage, current or slope), whereas **X is not an
-abstraction of anything in silicon at all** — it is the simulator saying it cannot
-predict whether the real value would be 0, 1 or Z. Piper and Vimjam make the same
-point as a table of tool disagreement that is worth redrawing: to simulation X
-means *unknown, not 0 or 1*; to synthesis it means *don't care, either 0 or 1*; to
-formal it means *both 0 and 1*. Three tools, one character, three different
-meanings — the cleanest possible motivation for the section.
+**The four values.** Sutherland's framing beats the usual list: 0, 1 and Z are
+*abstractions of values that exist in silicon* (abstract because they carry no
+voltage, current or slope), whereas **X is not an abstraction of anything in
+silicon** — it is the simulator saying it cannot predict whether the real value would
+be 0, 1 or Z. Piper & Vimjam's tool-disagreement table is worth redrawing: to
+simulation X means *unknown, not 0 or 1*; to synthesis, *don't care, either 0 or 1*;
+to formal, *both 0 and 1*. Sutherland's sources of X (§2): uninitialized 4-state
+variables, registers and latches; low-power shutdown/power-up; unconnected input
+ports; bus contention; operations with unknown results; out-of-range bit-selects and
+indices; gates with unknown outputs; setup/hold violations; deliberate assignment;
+testbench injection.
 
-Sutherland's list of where an X comes from (§2): uninitialized 4-state variables;
-uninitialized registers and latches; low-power shutdown or power-up; unconnected
-module input ports; multi-driver bus contention; operations with an unknown
-result; out-of-range bit-selects and array indices; logic gates with unknown
-output; setup or hold timing violations; deliberate assignment in a model; and
-testbench X injection. Piper and Vimjam's shorter list agrees.
+**X-optimism, mechanically** (§3.1). If an `if...else` control condition is unknown,
+the `else` branch executes. A `case` with an X selector matches nothing and falls to
+`default`; `casex`/`casez` are worse, because the wildcard *masks out* an X in the
+selector and picks a branch. Operators do the same per bit: X AND 0 is 0. **Sometimes
+optimism is right** — his Figure 1 is a flip-flop with synchronous active-low reset:
+at power-up `d` is ambiguous, but with `rstN` at 0 the AND output is 0 in silicon
+regardless, so pessimistic propagation would fail to reset in simulation a design that
+resets fine in silicon. His Table 1 shows the other side: for `if (sel) y = a; else
+y = b;` with `sel` unknown, the RTL yields a known value for every combination, while
+both MUX-gate and NAND-gate netlists yield X where silicon is genuinely
+undeterminable.
 
-**X-optimism, mechanically.** Sutherland states the `if...else` rule plainly:
-should the control condition evaluate to unknown, the `else` branch executes
-(§3.1). A `case` with an X selector matches no item and falls to `default`, and
-`casex`/`casez` are worse because the wildcard *masks out* an X in the selector
-and selects a branch. Operators behave the same way at the bit level: an X ANDed
-with 0 is 0, not X.
+**X-pessimism, mechanically.** Piper & Vimjam's reconvergence example:
+`out = a*sel + b*!sel` with `a = b = 1` and `sel = X` evaluates to `X + !X`, which the
+simulator must call X, though the real circuit outputs 1 either way — it cannot know
+the two `sel` references are one signal. Their summary: "X-optimism = unknown reduced
+to known ... can result in the masking of a functional bug"; "X-pessimism = more X
+than necessary ... false negatives mean more debug." Sutherland adds *X lock-up*: a
+state element that captures an X can never leave it, because every decision that would
+clear it is itself unknown.
 
-The important nuance, and the reason the chapter must not present X-optimism as
-simply a bug: **sometimes optimism is right.** Sutherland's Figure 1 example is a
-flip-flop with synchronous active-low reset. At power-up `d` is ambiguous, but with
-`rstN` at 0 the AND gate output is 0 in real silicon regardless. If the X
-propagated pessimistically the design would fail to reset in simulation while
-resetting fine in silicon. Optimism gets that case right. His Table 1 then shows
-the case where it gets it wrong: for an `if (sel) y = a; else y = b;` with `sel`
-unknown, the RTL yields a known value for every input combination, whereas both a
-MUX-gate and a NAND-gate netlist yield X where silicon is genuinely
-undeterminable. Piper and Vimjam's version of the same table is the compact form —
-optimism in the RTL column, pessimism in the netlist column, on the same rows.
+**Since Turpin 2003, four strands:**
 
-**X-pessimism, mechanically.** Piper and Vimjam's example is the reconvergent one:
-`out = a*sel + b*!sel` with `a = b = 1` and `sel = X` evaluates to `X + !X`, which
-the simulator must call X, even though the real circuit outputs 1 for either value
-of `sel`. The simulator cannot know that the two `sel` references are the same
-signal. Their summary of the two failure modes is quotable and short: "X-optimism =
-unknown reduced to known ... can result in the masking of a functional bug" and
-"X-pessimism = more X than necessary ... false negatives mean more debug."
-Sutherland adds the operational consequence of pessimism: *X lock-up*, where a
-state element that has captured an X can never leave it because every subsequent
-decision that would clear it is itself now unknown.
+1. **`xprop` modes** (Sutherland §7). Some simulators offer a non-standard,
+   deliberately more pessimistic algorithm for `if...else`, `case` and edge
+   sensitivity, aiming at a balance rather than either extreme; he names the Synopsys
+   VCS `-xprop` option and its "T-merge" algorithm as the example, and is clear this
+   **breaks the language's rules by design**. Two objections to carry into the chapter:
+   an xprop mode makes a bug propagate *downstream* to become visible, which forces
+   tracing an X backward through many lines and clock cycles to its cause; and the
+   added pessimism risks false failures and X lock-up. Name the vendor option once as
+   an example, never as a recommendation.
+2. **Formal and static** (Piper & Vimjam's "point solutions"): structural analysis
+   (finds X-susceptible constructs, "can be very noisy," no sequential reasoning);
+   simulation with manual diffing ("slow and painful"; "random initialization to
+   eliminate X's can hide issues"); hand-written X-accurate models using `===`, which
+   they show is "error prone" and does not scale past a toy; model checking (X
+   exercised as both 0 and 1 exhaustively, but capacity-limited, and intent must first
+   be written as assertions); and symbolic simulation, exhaustive but producing false
+   failures.
+3. **Turpin's follow-up**, *Solving Verilog X-issues by sequentially comparing a
+   design with itself*, SNUG Boston 2005 — **not read** (§8).
+4. **Reducing X at the source** (Sutherland §9) — the recommendation to actually give
+   a reader. Trap the X where it appears, with immediate assertions on module input
+   ports and every selection control: `assert (!$isknown(sel)) else $error(...)`. This
+   "solves the problems of both X-optimism and X-pessimism" at once, since neither
+   matters if the X never leaves its origin; and assertions can be disabled during
+   reset and low-power windows where X is expected, which no propagation mode does
+   selectively. Assertions are ignored by synthesis.
 
-**What has been written since Turpin 2003.** Four strands, in decreasing order of
-how confidently the chapter can use them:
-
-1. **X-propagation simulation modes (`xprop`).** Sutherland §7 is the honest
-   account: some simulators offer a non-standard, deliberately more pessimistic
-   algorithm for `if...else`, `case` and edge sensitivity, aiming at a balance
-   between optimism and pessimism rather than at either extreme. He names the
-   Synopsys VCS `-xprop` option and its "T-merge" algorithm as the example, and is
-   careful that this **breaks the language's own rules by design**. His two
-   objections are the ones the chapter should carry: an xprop mode is built to make
-   a bug propagate *downstream* so it becomes visible, which then requires tracing
-   an X backwards through many lines and clock cycles to its cause; and the added
-   pessimism risks false failures and X lock-up. Note for the chapter: describe the
-   mechanism generically and name the vendor option once, as an example, not as a
-   recommendation.
-2. **Formal and static approaches.** Piper and Vimjam's survey of "point solutions"
-   is the usable taxonomy: structural analysis (finds X-susceptible constructs,
-   "can be very noisy," no sequential reasoning); simulation with manual diffing
-   ("slow and painful," and "random initialization to eliminate X's can hide
-   issues"); hand-written X-accurate models using `===` comparisons, which they
-   demonstrate is "error prone" and does not scale past a trivial example; model
-   checking, where X is exercised as both 0 and 1 exhaustively but capacity is
-   limited and the functional intent must first be written as assertions; and
-   symbolic simulation, which represents outputs as functions of input variables,
-   is exhaustive, and produces false failures. Their proposed combination of the
-   three is the vendor claim and should be labeled as such.
-3. **Turpin's own follow-up.** *Solving Verilog X-issues by sequentially comparing
-   a design with itself*, SNUG Boston 2005 — the equivalence-style formulation of
-   the problem. **Cited from Sutherland's reference list; I did not reach the
-   paper.** See §8.
-4. **Reducing X at the source.** Sutherland §9 is the recommendation the chapter
-   should actually give a reader: rather than tuning propagation, trap the X where
-   it appears, with immediate assertions on module input ports and on every
-   selection control — `assert (!$isknown(sel)) else $error(...)`. His argument is
-   that this "solves the problems of both X-optimism and X-pessimism" at once,
-   because neither matters if the X never gets past its origin; and that assertions
-   can be switched off during reset and low-power windows where X is expected, which
-   no propagation mode can do selectively. Assertions are ignored by synthesis, so
-   nothing has to be hidden behind `ifdef`.
-
-**Two-state simulation: what is gained.** Here the folklore and the evidence
-diverge, and this is the most useful correction in the note. Sutherland §5 lists
-the theoretical gains — no X lock-up, closer agreement with what synthesis does,
-closer agreement with silicon (which never holds an X), a smaller memory footprint,
-and faster run time because 4-state encode/decode work disappears. Cummings and
-Bening's *SystemVerilog 2-State Simulation Performance and Verification Advantages*
-(SNUG Boston 2004) set out to quantify exactly that and found much less than
-expected.
+**Two-state, what is gained: folklore vs. evidence.** Sutherland §5 lists the
+theoretical gains (no X lock-up, closer agreement with synthesis and with silicon,
+smaller memory footprint, faster run time). Cummings & Bening measured them.
 [Cummings & Bening, SNUG Boston, 2004-09-01](https://web.archive.org/web/2023id_/http://www.sunburst-design.com/papers/CummingsSNUG2004Boston_2StateSims.pdf)
 **[primary]**
 
-- The theoretical ceiling (§5.1): a 4-state value needs at least 2 bits, and a net
-  may also carry 3 bits of drive strength for 0 and 3 for 1, so a simulator may
-  spend up to 8 bits of storage per simulated bit; two-state gives a one-to-one
-  mapping of simulated bits to machine bits and lets native machine operations
-  replace table lookups.
-- The measured result (§7): on a roughly 2.4-million-gate-equivalent RTL chip model
-  at Hewlett-Packard, benchmarked in March 2001 on VCS 6.0, the run took **2045.96
-  CPU seconds without the two-state option and 1928.97 with it — about a 6%
-  improvement.** The authors add that they have "heard of some design teams that
-  claim upwards of 15% increases in simulation performance" but "have not seen this
-  level of performance improvement," and that at the time they did not consider the
-  performance gain a compelling reason to switch. Their compelling reason is the
-  *methodology* (below), not the speed.
-- Two cautions the chapter must attach to that 6%: it is a single 2001 measurement
-  on one simulator and one design, and the same paper warns in §6.4 that "it would
-  be a mistake to quote the performance figures from this paper even 6 months from
-  now." Use it to puncture the folklore that two-state is dramatically faster, not
-  as a current figure.
-- Their §8 is a good aside for a callout: HP's large server projects kept a
-  two-state *design style*, enforced by lint rules, random initialization and
-  assertions, while continuing to run on four-state commercial simulators. Two-state
-  as a discipline, not as a simulator switch.
+The ceiling (§5.1): a 4-state value needs ≥2 bits, and a net may carry 3 more for
+logic-1 strength and 3 for logic-0, so up to 8 bits of storage per simulated bit;
+two-state gives a one-to-one mapping and lets native machine operations replace table
+lookups. The measurement (§7): on a ~2.4-million-gate-equivalent RTL chip model at
+Hewlett-Packard, March 2001, VCS 6.0 — **2045.96 CPU seconds without the two-state
+option, 1928.97 with it: about 6%.** They add that they have "heard of some design
+teams that claim upwards of 15%" but "have not seen this level of performance
+improvement," and did not consider speed a compelling reason to switch; the compelling
+reason was the *methodology*. Two cautions: one 2001 measurement on one simulator and
+design, and §6.4 warns "it would be a mistake to quote the performance figures from
+this paper even 6 months from now." Use it to puncture the folklore, not as a current
+figure. Their §8 makes a good callout: HP's large server projects kept a two-state
+*design style* — enforced by lint rules, random initialization and assertions — while
+still running on four-state commercial simulators. Two-state as a discipline, not a
+simulator switch.
 
-**Two-state: what is lost.** Sutherland §5 and §6 give the list, and it is a
-better list than the speed argument: uninitialized state no longer announces
-itself; X and Z checks in the testbench silently stop working (`assert (data ===
-'Z)` and `assert (^data !== 'X)` can never fire); a deliberate `default: result =
-'X;` don't-care assignment in RTL becomes some concrete value the simulator picks,
-so the "I don't care" claim is never tested; and the mapping rule is blunt — when a
-4-state value is assigned to a 2-state variable, every X or Z bit becomes **0**,
-which as Sutherland notes "does not accurately mimic silicon behavior where each
-ambiguous bit might be either a 0 or a 1." His §6 worked example is the one to
-adapt: a program counter instantiated with its `loadN` and `new_count` inputs left
-unconnected. Under four-state that reads X and the bug is visible; under two-state
-`loadN` is a constant 0, `if (!loadN)` is always true, and the counter sits in load
-state forever, looking like a functional bug somewhere else entirely.
+**Two-state, what is lost** (Sutherland §5–§6). Uninitialized state stops announcing
+itself; X and Z checks silently stop working (`assert (data === 'Z)` and
+`assert (^data !== 'X)` can never fire); a deliberate `default: result = 'X;`
+don't-care becomes a concrete value the simulator picks, so the don't-care claim is
+never tested; and the mapping rule is blunt — assigning a 4-state value to a 2-state
+variable turns every X or Z bit into **0**, which "does not accurately mimic silicon
+behavior where each ambiguous bit might be either a 0 or a 1." His §6 example is the
+one to adapt: a program counter instantiated with `loadN` and `new_count` left
+unconnected. Four-state shows X and the bug is visible; two-state makes `loadN` a
+constant 0, `if (!loadN)` always true, and the counter sits in load state forever,
+looking like a bug somewhere else.
 
-**Randomized two-state initialization is a different technique.** The chapter
-should keep this separate from both plain two-state and from xprop. The idea traces
-to Bening, *A two-state methodology for RTL logic simulation*, DAC 1999 (cited from
-Sutherland's reference list; not reached — see §8): start each register bit at a
-*random* 0 or 1 and run many simulations with different seeds, so that reset
-coverage is sampled across power-up states instead of pinned to the single
-all-zeros corner. Sutherland's objection to plain two-state is exactly that
-all-zeros "verifies only one extreme and unlikely hardware condition." Cummings and
-Bening add the practical catch (§6.5, §10): to be useful the randomization must be
-*reproducible*, and in 2004 neither the language nor VCS's two-state mode provided
-seeded, repeatable initialization; the preferred method was covered by an HP patent
-and "might not be available for public use."
+**Randomized two-state initialization is a different technique** — keep it apart from
+plain two-state and from xprop. It traces to Bening, *A two-state methodology for RTL
+logic simulation*, DAC 1999 (from Sutherland's reference list; not read — §8): start
+each register bit at a *random* 0 or 1 and run many seeds, so reset coverage samples
+power-up states instead of pinning to all-zeros. Sutherland's objection to plain
+two-state is exactly that all-zeros "verifies only one extreme and unlikely hardware
+condition." Cummings & Bening add the catch (§6.5, §10): the randomization must be
+*reproducible*, and in 2004 neither the language nor VCS offered seeded repeatable
+initialization — the preferred method was covered by an HP patent and "might not be
+available for public use."
 
-The open-source realization of the technique is now in Verilator's documentation
-and is the best modern citation for it, because the options are public and
-inspectable.
+Verilator is the open realization, and therefore the citable one.
 [Verilator manual, accessed 2026-09-08](https://verilator.org/guide/latest/exe_verilator.html)
 **[docs]** ·
 [Verilator language support, accessed 2026-09-08](https://verilator.org/guide/latest/languages.html)
 **[docs]**
 
-- Verilator states plainly that it is "mostly a two-state simulator, not a
-  four-state simulator"; `--fourstate` exists but is documented as "Experimental,
-  for developer use only," and `--no-fourstate` is the default. This makes Verilator
-  a *usable classroom demonstration* of what two-state costs, which suits the book's
-  open-tool constraint.
-- `--x-initial` controls the value used for variables not otherwise initialized:
-  `0` zeroes everything; `unique` (the default) calls a function per initialization,
-  "gives the greatest flexibility and allows for finding reset bugs"; `fast` picks
-  whatever enables the most optimization and "will likely hide any code bugs relating
-  to missing resets." With `unique`, the runtime options `+verilator+rand+reset+2`
-  and `+verilator+seed+<value>` give the seeded randomization Cummings and Bening
-  could not get in 2004 — and the manual explicitly tells you to print the seed so a
-  failure can be reproduced.
-- `--x-assign` is the *separate* control for X values written explicitly in the
-  source: `0`, `1` ("more likely to find reset bugs as active high logic will fire"),
-  `fast` (the default), or `unique` ("the slowest, but safest for finding reset
-  bugs"). Two knobs, two different populations of X — a distinction the chapter
-  should preserve.
-- The language page's recommended procedure is a ready-made exercise: run the
-  design initialized to all zeros, then all ones, then with random values, and check
-  that reset brings it to the same state each time.
+- It states it is "mostly a two-state simulator, not a four-state simulator";
+  `--fourstate` is "Experimental, for developer use only," and `--no-fourstate` is the
+  default. That makes it a usable classroom demonstration of what two-state costs.
+- `--x-initial` controls variables not otherwise initialized: `0` zeroes everything;
+  `unique` (default) calls a function per initialization and "allows for finding reset
+  bugs"; `fast` optimizes and "will likely hide any code bugs relating to missing
+  resets." With `unique`, `+verilator+rand+reset+2` and `+verilator+seed+<value>` give
+  exactly the seeded randomization Cummings & Bening could not get in 2004 — and the
+  manual tells you to print the seed so a failure can be reproduced.
+- `--x-assign` is the *separate* control for X values written explicitly in source:
+  `0`, `1` ("more likely to find reset bugs as active high logic will fire"), `fast`
+  (default), `unique` ("the slowest, but safest for finding reset bugs"). Two knobs,
+  two populations of X — preserve the distinction.
+- Its recommended procedure is a ready-made exercise: run initialized to all zeros,
+  then all ones, then random, and check reset reaches the same state.
 
-**Reset and initialization — the link back to Chapter 3.** Sutherland §2.1-§2.2
-gives the mechanism directly: 4-state variables begin simulation at X, so register
-and latch outputs start at X, a register output "will remain an X until the register
-is either reset or a known input value is clocked into" it, and a latch output stays
-X until it is both enabled and fed a known value — in RTL and gate-level alike. That
-is why a four-state simulation of an unreset design shows X, and why the X is
-*informative*. A two-state simulation of the same design shows 0 (or a seeded random
-value), the design proceeds, and nothing announces that the reset was never
-connected. This is the sharpest argument available for the reset tests Chapter 3
-recommends, and it cuts in a direction worth stating explicitly: the reset test is
-what makes two-state simulation safe, and without it two-state hides precisely the
-class of bug the test exists to find.
+**Reset and initialization — the link back to Chapter 3.** Sutherland §2.1–§2.2:
+4-state variables begin simulation at X, so register and latch outputs start at X; a
+register output "will remain an X until the register is either reset or a known input
+value is clocked into" it, and a latch stays X until both enabled and fed a known
+value, in RTL and gate-level alike. That is why four-state simulation of an unreset
+design shows X, and why the X is *informative*. Two-state shows 0 (or a seeded random
+value), the design proceeds, and nothing announces that reset was never connected.
+The argument cuts a way worth stating: **the reset test is what makes two-state
+simulation safe**, and without it two-state hides precisely the bug class the test
+exists to find.
 
-Two further Verilator details that bear on reset tests specifically: uninitialized
-*clocks* are given 0 rather than a random value; and by default an X→0 transition
-does not produce a negedge, so a reset sequence that (badly) relies on the X→0 edge
-of an uninitialized `rst_n` will simply not fire. `--x-initial-edge` emulates the
-event-driven simulators that do generate such an edge, with the manual's own caveat
-that needing it "may be another indication of problems with the modeled design that
-should be addressed." Its suggested fix — declare `logic rst_n = 1;` at construction
-and drive it to 0 in an `initial` block at time zero, creating a real edge — is the
-same trick as Cummings and Salz's recommended clock oscillator, which assigns `clk
-<= '0` at time zero to produce a deterministic, race-free X→0 negedge (§4, Example
-5).
+Two Verilator details bear on reset tests: uninitialized *clocks* get 0 rather than a
+random value; and by default X→0 does not produce a negedge, so a reset sequence that
+(badly) relies on the X→0 edge of an uninitialized `rst_n` will not fire.
+`--x-initial-edge` emulates event-driven simulators that do generate it, with the
+manual's caveat that needing it "may be another indication of problems with the
+modeled design that should be addressed." Its suggested fix — declare
+`logic rst_n = 1;` at construction, drive it to 0 in an `initial` block at time zero —
+is the same trick as Cummings & Salz's recommended clock oscillator, which assigns
+`clk <= '0` at time zero for a deterministic, race-free X→0 negedge (§4, Example 5).
 
 ### 5. Time, timescale and precision
 
-Best source by a distance: Sutherland's *Gotcha Again: More Subtleties in the
-Verilog and SystemVerilog Standards That Every Engineer Should Know*, SNUG San Jose
-2007, §8.1, which is written as a symptom-first gotcha and can be adapted directly.
+Sutherland, *Gotcha Again: More Subtleties in the Verilog and SystemVerilog Standards
+That Every Engineer Should Know*, SNUG San Jose 2007, §8.1 — written symptom-first and
+adaptable directly.
 [Sutherland, SNUG San Jose, 2007-03-01](https://web.archive.org/web/2020id_/http://www.sutherland-hdl.com/papers/2007-SNUG-SanJose_gotcha_again_paper.pdf)
-**[primary]** (recovered from an Internet Archive capture; `sutherland-hdl.com`
-still serves its site but no longer this path.)
+**[primary]**
 
-The symptom he leads with is exactly the "plausible rather than obviously wrong"
-failure the chapter wants: *"My design outputs do not change at the same time in
-different simulators."* Nothing errors; the waveform is simply shifted.
+His symptom is exactly the "plausible rather than obviously wrong" failure: *"My
+design outputs do not change at the same time in different simulators."* Nothing
+errors; the waveform is merely shifted.
 
-- **The mechanism.** A `#` delay is a bare number with no unit attached. The unit
-  comes from a `` `timescale `` directive, which carries two arguments — the module's
-  time *unit* and its time *precision*, each an increment of 1, 10 or 100 in units
-  from seconds down to femtoseconds. The precision is what lets a module express a
-  non-whole delay, and is relative to the unit; within a simulation "all delays are
-  scaled to the smallest precision used by the design." So `` `timescale 1ns/100ps ``
-  makes `#2.3` mean 2.3 ns, while `` `timescale 1ps/1ps `` makes `#7` mean 7 ps.
-- **Gotcha one: file-order dependence.** The directive "is not bound to modules or
-  files." It applies to everything the compiler sees after it until the next
-  directive. If some files declare a timescale and others do not, reordering the file
-  list changes what a delay means in the files that do not — "radically different
-  simulation results, even with the same simulator."
-- **Gotcha two: no portable default.** Sutherland reports that a compiler that
-  reads a file with no timescale in effect at all "might, or might not, apply a
-  default time unit," so the same design can behave differently on different
-  simulators. (This is his characterization of the standard's position, and is the
-  form the chapter should use — a practitioner reporting it, not the book reading the
+- **Mechanism.** A `#` delay is a bare number with no unit. The unit comes from a
+  `` `timescale `` directive with two arguments — the module's time *unit* and time
+  *precision*, each an increment of 1, 10 or 100 in units from seconds to femtoseconds.
+  Precision lets a module express a non-whole delay and is relative to the unit; within
+  a simulation "all delays are scaled to the smallest precision used by the design."
+  So `` `timescale 1ns/100ps `` makes `#2.3` mean 2.3 ns, `` `timescale 1ps/1ps ``
+  makes `#7` mean 7 ps.
+- **Gotcha one: file order.** The directive "is not bound to modules or files"; it
+  applies to everything after it until the next one. If some files declare a timescale
+  and others do not, reordering the file list changes what a delay means in the files
+  that do not — "radically different simulation results, even with the same simulator."
+- **Gotcha two: no portable default.** A compiler reading a file with no timescale in
+  effect "might, or might not, apply a default time unit," so the same design behaves
+  differently on different simulators. (His characterization — cite him, not the
   standard.)
-- **His fix, in two parts.** Old-style: put a `` `timescale `` at the top of every
-  single file. SystemVerilog-style: use `timeunit` and `timeprecision` as
-  *keywords inside* a module, interface, program or package, which are local to that
-  scope and therefore immune to file order; and attach an explicit unit to the delay
-  itself (`#1ms`), which both documents the intent and removes the dependency
-  entirely.
+- **His fix.** Old-style: a `` `timescale `` at the top of every file.
+  SystemVerilog-style: `timeunit` and `timeprecision` as *keywords inside* a module,
+  interface, program or package, local to that scope and so immune to file order; plus
+  an explicit unit on the delay itself (`#1ms`).
 
-**Corroboration from open simulator documentation** (the chapter's preferred kind
-of source here):
+**Two open simulators, two different answers to the same missing declaration** —
+which is the point:
 
-- Icarus Verilog has a dedicated warning, `-Wtimescale`, described as enabling
-  "warnings for inconsistent use of the timescale directive. It detects if some
-  modules have no timescale, or if modules inherit timescale from another file" —
-  and states the consequence in the same terms Sutherland does: both "probably mean
+- Icarus ships `-Wtimescale`, for "inconsistent use of the timescale directive. It
+  detects if some modules have no timescale, or if modules inherit timescale from
+  another file," with the consequence in Sutherland's own terms: both "probably mean
   that timescales are inconsistent, and simulation timing can be confusing and
-  dependent on compilation order." It is included in `-Wall`. That a mainstream open
-  simulator ships a warning for exactly this is itself the evidence that the mistake
-  is common.
+  dependent on compilation order." Included in `-Wall`. A dedicated warning in a
+  mainstream open simulator is itself evidence the mistake is common.
   [Icarus Verilog documentation, accessed 2026-09-08](https://steveicarus.github.io/iverilog/usage/command_line_flags.html)
   **[docs]**
-- Verilator takes the other approach and supplies a default rather than warning:
-  `--timescale <timeunit>/<timeprecision>` "sets default timeunit and timeprecision
-  when `timescale` does not occur before a given module," with a documented default
-  of **1ps/1ps** chosen to match SystemC. `--timescale-override` overrides every
-  timescale in the sources, and may set precision alone (`/1fs`); the manual notes
-  that the precision must be consistent with SystemC's `sc_set_time_resolution()` and
-  that since 1fs is the finest available "it may be desirable always to use a
-  precision of 1fs." Two simulators, two different answers to the same missing
-  declaration — which is the whole point.
-- The precision-is-global rule connects to §3: Cummings and Salz define the *global
-  time precision* as the minimum over every precision declared anywhere in the design,
-  and `#1step` — the default clocking-block input skew — as exactly that quantity. A
-  consequence worth a sentence in the chapter: **adding one module with a finer
-  precision changes the meaning of `#1step` everywhere**, because it changes the
-  global minimum. Timescale is not a local decision.
+- Verilator instead supplies a default: `--timescale <timeunit>/<timeprecision>`
+  "sets default timeunit and timeprecision when `timescale` does not occur before a
+  given module," defaulting to **1ps/1ps** to match SystemC. `--timescale-override`
+  overrides every timescale in the sources and may set precision alone (`/1fs`); the
+  manual notes precision must be consistent with SystemC's `sc_set_time_resolution()`,
+  and since 1fs is finest "it may be desirable always to use a precision of 1fs."
+- Precision is global, which links back to §3: Cummings & Salz define the *global time
+  precision* as the minimum over every precision declared anywhere, and `#1step` as
+  exactly that. **Adding one module with a finer precision changes the meaning of
+  `#1step` everywhere.** Timescale is not a local decision.
 
-**Why it looks plausible.** Synthesizing across the above rather than quoting any
-one source: a wrong timescale does not produce an error, an X, or a missing edge. It
-produces a design whose internal orderings are all still self-consistent — every
-delay in a given file is scaled by the same wrong factor — so waveforms have the
-right shape and the wrong duration. It surfaces only where two differently-scaled
-regions meet: a testbench clock generator in one file and a delay in a model from
-another, a protocol timeout that now expires 1000× too early or too late. The
-failure looks like a functional bug in whichever block is on the wrong side of the
-boundary. This paragraph is my synthesis, not a claim from a source; see §6.
+**Why it looks plausible** (my synthesis, not a source claim — §6): a wrong timescale
+produces no error, no X, no missing edge. Every delay in a file is scaled by the same
+wrong factor, so waveforms keep the right shape and take the wrong duration. It
+surfaces only where two differently-scaled regions meet — a clock generator in one
+file, a model delay from another, a protocol timeout now expiring 1000× too early —
+and then looks like a functional bug in whichever block is on the wrong side.
 
 ### 6. Commonly repeated but unsourced claims
 
-Things widely asserted in practice that I could not support from a citable,
-reachable, non-standard source. The chapter must not state these as fact.
-
 | Claim | Status |
 |---|---|
-| Any statement of the form "IEEE 1800 requires X" | Out of bounds by the book's rule. Every behavioral statement above is attributed to a practitioner paper or to simulator documentation. Where a source quotes the standard, I have relayed the source's *description*, attributed to the source, and have not reproduced clause text. |
-| Delays finer than the declared precision are rounded to the nearest precision unit | Almost certainly true and universally taught, but I found no open source stating the rounding rule. Sutherland 2007 says only that delays are "scaled to the smallest precision used by the design." Either find a source or state it as "simulators round" without a rule. |
-| Two-state simulation is "roughly 2× faster" / "much faster" | Contradicted by the only measurement I could reach: ~6% on a 2.4M-gate model (Cummings & Bening 2004, §7). Do not repeat the folklore figure. |
-| Program blocks are obsolete because UVM does not use them | UVM's non-use is real, but I found no primary statement making that the *reason*. Cummings' 2016 argument is a different one (do not drive on the active edge, therefore no race, therefore no program). Attribute the argument to him, not to UVM. |
-| `$display` in a clocked block "shows the old value" | True as a consequence of Active-vs-NBA ordering (Cummings & Salz §2.2.3, §2.2.5), but the *specific* interleaving with other Active-region statements is explicitly arbitrary. Say "may show" for anything beyond the NBA case. |
-| Assertions "cannot" have race conditions | Overstated. Preponed sampling removes the read-write race on sampled values (§3). It does not remove races in assertion *action blocks*, which run in the Reactive region and are ordinary procedural code. |
-| A clocking block "fixes" testbench timing | Bromley & Johnston's whole paper is the counter-evidence: the construct is "surprisingly error-prone," chiefly through clockvar-versus-signal confusion and misuse of `=` where `<=` is required. |
-| The X→0 negedge at time zero behaves the same everywhere | It does not: Verilator suppresses it by default (`--x-initial-edge` restores it), which is the documented divergence from event-driven simulators. |
+| "IEEE 1800 requires X" in any form | Out of bounds by the book's rule; every statement above is attributed to a paper or to simulator docs. |
+| Delays finer than the precision round to the nearest precision unit | Universally taught; no open source found stating the rule. Sutherland 2007 says only that delays are "scaled to the smallest precision used by the design." Write "simulators round" without a rule, or find a source. |
+| Two-state simulation is "roughly 2× faster" | Contradicted by the only measurement reached: ~6% (Cummings & Bening §7). |
+| Program blocks are obsolete because UVM does not use them | UVM's non-use is real; no source makes it the *reason*. Cummings' 2016 argument is a different one. |
+| `$display` in a clocked block "shows the old value" | True as a consequence of Active-vs-NBA ordering, but ordering *within* Active is arbitrary. Say "may show" beyond the NBA case. |
+| Assertions "cannot" have race conditions | Overstated. Preponed sampling removes the race on sampled values; action blocks run in Reactive as ordinary procedural code. |
+| A clocking block "fixes" testbench timing | Bromley & Johnston are the counter-evidence: "surprisingly error-prone," chiefly clockvar-vs-signal confusion and `=` where `<=` is required. |
+| The X→0 negedge at time zero behaves the same everywhere | It does not: Verilator suppresses it by default; `--x-initial-edge` restores it. |
 
 ### 7. Suggested BibTeX keys
 
-New entries for `refs.bib` (all reached and read except where §8 says otherwise):
+`cummings2006events` (Cummings & Salz, SNUG Boston 2006, rev. 1.2 2007) ·
+`cummings2016stimulus` (Cummings, "Applying Stimulus & Sampling Outputs," SNUG 2016) ·
+`bromley2012clocking` (Bromley & Johnston, "Taming Testbench Timing," SNUG Austin
+2012) · `sutherland2013x` (DVCon 2013) · `piper2012xprop` (Piper & Vimjam, DVCon
+2012) · `cummings2004twostate` (Cummings & Bening, SNUG Boston 2004) ·
+`sutherland2007gotcha` (SNUG San Jose 2007) · `verilatormanual` and `iverilogdocs`
+(cite page + access date).
 
-| Key | Work |
-|---|---|
-| `cummings2006events` | Cummings & Salz, "SystemVerilog Event Regions, Race Avoidance & Guidelines," SNUG Boston 2006 (rev. 1.2, 2007) |
-| `cummings2016stimulus` | Cummings, "Applying Stimulus & Sampling Outputs — UVM Verification Testing Techniques," SNUG 2016 |
-| `bromley2012clocking` | Bromley & Johnston, "Taming Testbench Timing: Time's Up for Clocking Block Confusions," SNUG Austin 2012 |
-| `sutherland2013x` | Sutherland, "I'm Still In Love With My X!," DVCon 2013 |
-| `piper2012xprop` | Piper & Vimjam, "X-propagation Woes: Masking Bugs at RTL and Unnecessary Debug at the Netlist," DVCon 2012 |
-| `cummings2004twostate` | Cummings & Bening, "SystemVerilog 2-State Simulation Performance and Verification Advantages," SNUG Boston 2004 |
-| `sutherland2007gotcha` | Sutherland, "Gotcha Again: More Subtleties in the Verilog and SystemVerilog Standards," SNUG San Jose 2007 |
-| `verilatormanual` | Verilator user guide (cite the specific page and access date) |
-| `iverilogdocs` | Icarus Verilog documentation (ditto) |
-
-Already in `refs.bib`: `turpin2003x`. Candidates only if the chapter reaches the
-underlying papers: `mills2004assertive` (Mills, "Being Assertive with Your X," SNUG
-San Jose 2004), `bening1999twostate` (Bening, DAC 1999), `turpin2005sequential`
-(Turpin, SNUG Boston 2005), `cummings2000nba` (Cummings, "Nonblocking Assignments
-in Verilog Synthesis, Coding Styles That Kill!," SNUG San Jose 2000).
+Already present: `turpin2003x`. Only if the chapter reaches the papers:
+`mills2004assertive`, `bening1999twostate`, `turpin2005sequential`, `cummings2000nba`.
 
 ### 8. Confidence notes and gaps
 
 **High confidence — full text read from the PDF in this session:** Cummings & Salz
-2006 (42 pp.); Cummings 2016; Bromley & Johnston 2012; Sutherland 2013; Sutherland
-2007 §8.1; Cummings & Bening 2004; Piper & Vimjam 2012 (presentation deck). Every
-figure, guideline number and section number cited above was read from the document,
-not recalled.
+2006; Cummings 2016; Bromley & Johnston 2012; Sutherland 2013; Sutherland 2007 §8.1;
+Cummings & Bening 2004; Piper & Vimjam 2012 (deck). Every figure, guideline and
+section number cited was read from the document, not recalled. Same for the Verilator
+option text and the Icarus `-Wtimescale` description.
 
-**High confidence — documentation read directly:** the Verilator option
-descriptions and the Icarus `-Wtimescale` description.
+**Cited but not read — attribute nothing specific to these:** Mills, "Being Assertive
+with Your X," SNUG San Jose 2004; Bening, DAC 1999; Turpin, SNUG Boston 2005; the
+three SNUG San Jose 2012 X-propagation papers Sutherland cites (Greene tutorial;
+Evans, Yam & Forward; Greene, Salz & Booth); Cummings, SNUG San Jose 2000.
 
-**Cited but not read — do not attribute specifics to these until reached:**
+**One correction to the brief.** It expected Mills material on xprop. Mills'
+contribution is the 2004 *assertion-based X-detection* argument, carried forward by
+Sutherland 2013 §9 and sourced here to Sutherland. The DVCon 2012 X-propagation paper
+is by **Piper and Vimjam**, not Mills.
 
-- Mills, "Being Assertive with Your X," SNUG San Jose 2004. Known only from
-  Sutherland's and Turpin-adjacent reference lists. The task brief expected Mills
-  material on xprop; what I found is that Mills' contribution is the 2004
-  *assertion-based X-detection* argument, which Sutherland 2013 §9 carries forward
-  and which I have therefore sourced to Sutherland. Do not attribute the xprop
-  discussion to Mills — the DVCon 2012 X-propagation paper is by **Piper and
-  Vimjam**, not Mills, and the brief's assumption on that point is wrong.
-- Bening, DAC 1999 (two-state methodology); Turpin, SNUG Boston 2005 (sequential
-  self-comparison); the three SNUG San Jose 2012 X-propagation papers Sutherland
-  cites (Greene tutorial; Evans, Yam & Forward; Greene, Salz & Booth); Cummings,
-  SNUG San Jose 2000 (nonblocking assignments). All are named in reference lists I
-  read; none were fetched.
-
-**Reachability notes.** `sunburst-design.com` redirects to `paradigm-works.com` with
-its paper archive behind a login; all Cummings papers here came from Internet
-Archive captures of the original URLs, and the archive URLs given are the ones that
-resolved. The same route worked for `sutherland-hdl.com` and `verilab.com`, whose
-current sites no longer serve these paths. The DVCon proceedings site serves
-Sutherland 2013 and the Piper & Vimjam deck directly, but not the Piper & Vimjam
-paper.
-
-**Gaps the chapter should know about.**
-
-1. **No source for the timescale rounding rule** (see §6). This is the one factual
-   hole in section 5.
-2. **The `$strobe`/`$display`/`$monitor` table rests on a single source.** Cummings
-   & Salz is authoritative and was corroborated by nothing else I reached. It is very
-   unlikely to be wrong, but it is one source.
-3. **Everything about two-state performance is from 2001-2004 measurements** on a
-   commercial simulator two decades out of date. If the chapter wants a current
-   number, it needs a fresh measurement — which the book could actually produce from
-   its own Verilator and Icarus examples, and which would be a genuinely original
-   contribution rather than a citation.
-4. **No post-2013 source on xprop.** Sutherland 2013 is the most recent substantive
-   treatment I reached. Whether the technique is now routine or has been displaced by
-   formal X-analysis is an open question in this note; the chapter should not
-   characterize current practice.
-5. **Search budget.** This session's web-search allowance was exhausted before this
-   task began, so discovery was done by fetching known URLs, enumerating Internet
-   Archive captures, and following reference lists. That biases the note toward the
-   practitioner canon and away from anything recent that is not linked from it. A
-   follow-up pass with search available should look specifically for post-2015
-   material on X-propagation and on whether clocking-block guidance has changed.
-
+**Gaps.** (1) No source for the timescale rounding rule — the one factual hole in §5.
+(2) The `$strobe`/`$display`/`$monitor` table rests on a single source; authoritative,
+but uncorroborated. (3) All two-state performance evidence is from 2001–2004 on a
+simulator two decades old; a current number would have to come from the book's own
+Verilator and Icarus examples — an original contribution rather than a citation.
+(4) No post-2013 source on xprop, so the chapter should not characterize current
+practice. (5) This session's web-search allowance was exhausted before the task began,
+so discovery ran on known URLs, Internet Archive capture enumeration and
+reference-list chasing, biasing the note toward the practitioner canon. A follow-up
+pass with search available should look for post-2015 material on X-propagation and on
+whether clocking-block guidance has changed.
 
 # Part C — Simulator implementations
 
