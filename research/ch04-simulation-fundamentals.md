@@ -67,10 +67,13 @@ one source file. See Part C §3.
    *simulation time*, so paraphrasing those passages would reproduce clause text
    at one remove. Paraphrase only the authors' own exposition. Their definition
    of *timestep* is their own and is safe.
-2. **"Delta cycle" is VHDL vocabulary, not SystemVerilog.** Cummings and Salz
-   say "iterations" through the regions. Teach iteration within a timestep, and
-   if the borrowed term is mentioned at all, mark it as borrowed. The design
-   doc's own chapter line used it and is corrected.
+2. **"Delta cycle" is used in this literature but not established by it.**
+   Cummings and Salz say "iterations" through the regions throughout, and use
+   "delta-cycle" once, naturally and without ever defining it. So the concept is
+   fully sourced and the name is not: teach iteration within a timestep, and
+   mention the borrowed term once so a reader meeting it elsewhere is not lost.
+   Do not present it as this language's defined vocabulary. The design doc's own
+   chapter line used it and is corrected.
 3. **Verilator is not a cycle-based simulator.** It schedules statically at
    compile time and implements the Active and NBA regions, iterating to
    convergence; `--timing` adds coroutine suspension for delays and event
@@ -85,9 +88,15 @@ one source file. See Part C §3.
    simulator misses. What it cannot do is propagate X or compare against it.
 7. **"Icarus Verilog supports SystemVerilog" is overstated**; its README says
    the unsupported list is too large to enumerate.
-8. **Attribute simulator disagreement to implementation differences and to
-   ambiguity in the standard**, which is what the sources support, and not to
-   nondeterminism the standard deliberately permits, which none of them says.
+8. **Three mechanisms make two simulators disagree, and the sources separate
+   them, so the chapter must too.** Permitted ordering freedom, which is a real
+   race and the only one the guidelines protect against: a region's events may be
+   processed in arbitrary order, and scheduling freedom lets tools optimize the
+   order of concurrent events differently. Implementation and ambiguity
+   divergence, which the same source is explicit is *not* a defect in the
+   language. And plain non-compliance. **The inference to block is the inverse
+   one**: two simulators disagreeing does not prove a race, and the chapter's
+   worked example must not be read that way.
 9. **Cummings' race-removal figure is his estimate, not a measurement**, and
    guideline 5 is a corollary of guidelines 1 and 3 rather than something a
    source derives from a region.
@@ -158,6 +167,26 @@ materially different revisions: the original 2006 text describes **eight**
 regions, and a later revision describes **nine**, adding Re-NBA. **Cite the
 later revision** — §2.4 gives both URLs, the reason for the change, and the
 dating trap to avoid.
+
+**Sutherland was checked as an alternative route and is not one for the
+regions.** Because `sutherland-hdl.com` hosts its papers openly, its index was
+reviewed in full: **no Sutherland paper covers event scheduling, event regions
+or the stratified event queue as a primary topic.** Cummings and Salz remain the
+chapter's single citable route for the region model, and nothing rests on a
+preference between authors — the Cummings paper was recovered in full, so no
+substitute was needed.
+
+Two Sutherland, Mills and Spear papers *are* openly hosted, were retrieved in
+full, and are valuable as **independent corroboration on specific points** —
+notably the permitted-nondeterminism question (§4.1), the zero-delay lock-up
+(§3), time-zero ordering (§4.2), and a useful counterpoint on `#0` (§4.4):
+
+- "Standard Gotchas: Subtleties in Verilog and SystemVerilog," SNUG Boston 2006,
+  59 pp. [Sutherland, Mills and Spear, 2006](http://sutherland-hdl.com/papers/2006-SNUG-Boston_standard_gotchas_paper.pdf)
+  **[primary]**
+- "More Standard Gotchas: Subtleties in Verilog and SystemVerilog," SNUG San
+  Jose 2007, 44 pp. [Sutherland, Mills and Spear, 2007](http://sutherland-hdl.com/papers/2007-SNUG-SanJose_gotcha_again_paper.pdf)
+  **[primary]**
 
 ### 1. The simulation cycle and the event queue
 
@@ -438,8 +467,29 @@ sensitivity is evaluated.
 
 That makes an unusually good worked example: a two-line clock oscillator whose
 behavior — dead, or a zero-delay infinite loop — flips entirely on `=` versus
-`<=`, with the region model as the only explanation. **Verify the loop behavior
-in a real simulator before asserting it** (§8).
+`<=`, with the region model as the only explanation.
+
+**Independently corroborated, with the reader's symptom named.** Sutherland,
+Mills and Spear document this as a gotcha phrased exactly as a user would report
+it — RTL simulation locks up and time stops advancing — and give the mechanism
+for a *different* and simpler case than Cummings': a non-blocking assignment in
+a **combinational** block, where the block returns to its sensitivity list
+without blocking, the deferred update then lands and retriggers that same
+sensitivity list, and so long as the value keeps changing the simulator stays
+locked in the current simulation time. They note there are really two faults
+here — the lock-up, and the fact that the model describes combinational logic
+with a zero-delay feedback path, which would be unstable in gates — and that
+Verilog permits it deliberately, on the philosophy that engineers should be able
+to model hardware that does not work in order to analyze it.
+[Sutherland, Mills and Spear, 2007, §2.4](http://sutherland-hdl.com/papers/2007-SNUG-SanJose_gotcha_again_paper.pdf)
+**[primary]**
+
+This is the better example for the chapter: it is two lines, the symptom is
+stated in the reader's own words, and the fix (a clock edge in the sensitivity
+list, or `always_ff`) is given by the source. It also upgrades §8 item 3 from
+"mechanism sourced, behavior not" to sourced on both counts — though the example
+should still be **built and run** under `examples/` so the chapter reports real
+output rather than predicted output.
 
 ### 4. Races, and the guidelines derived from the regions
 
@@ -473,7 +523,41 @@ real implementation exhibits *some* definite order. That is the sharpest
 available statement of why "it works on my simulator" is not evidence, and it
 belongs in a Pitfall callout.
 
-#### 4.2 The three race cases the chapter needs
+**Permitted nondeterminism versus tool divergence — do not conflate these.**
+These are different mechanisms with different consequences, and both are now
+sourced, so the chapter can state them separately rather than hedging.
+
+*Nondeterminism is permitted by the language*, and two independent primary
+sources say so. Cummings and Salz state that a particular event region must be
+processed in an arbitrary order while every implementation will exhibit a
+certain order
+([Rev 1.2, §2.1](https://web.archive.org/web/20090419050008id_/http://www.sunburst-design.com/papers/CummingsSNUG2006Boston_SystemVerilog_Events.pdf),
+**[primary]**). Sutherland, Mills and Spear, listing why the languages permit
+these mistakes at all, give as one reason that Verilog and SystemVerilog event
+scheduling **allows tools to optimize the order of concurrent events
+differently**, which can lead to races in a poorly written model
+([2006, §1](http://sutherland-hdl.com/papers/2006-SNUG-Boston_standard_gotchas_paper.pdf),
+**[primary]**).
+
+*Tool divergence has other causes too*, and the same Sutherland list separates
+them cleanly — which is what makes it worth citing here. Alongside the
+scheduling-freedom reason it gives, as distinct items: that the languages
+provide freedom in **how they are implemented**, because simulation, synthesis
+and formal analysis work differently; and that **some tools are not 100 percent
+standards compliant**, which the authors explicitly say is *not* a gotcha in the
+standards even though it still produces unexpected results. A fourth listed
+reason is philosophical rather than mechanical: the languages deliberately allow
+modeling both what will and will not work in hardware.
+
+So the chapter has a defensible three-way split for two simulators disagreeing:
+**permitted ordering freedom** (the design has a race), **implementation
+differences and standard ambiguity** (legitimate divergence), and
+**non-compliance** (a tool bug). Only the first is what this chapter's guidelines
+protect against. Do not let the chapter imply that every disagreement between
+simulators is evidence of a race — nor that permitted nondeterminism is merely
+an ambiguity in the standard.
+
+#### 4.2 The race cases the chapter needs
 
 **(a) Two processes assigning one variable.** Cummings' `badcode1` shows two
 `always @(posedge clk or negedge rst_n)` blocks both assigning the same output
@@ -495,8 +579,8 @@ including two variants where the three assignments live in three separate
 other. Since `always` blocks may execute in any order, these simulate
 differently from each other while both synthesize to the same correct pipeline —
 a pre- versus post-synthesis mismatch. Rewritten with non-blocking assignments,
-*all four orderings* simulate and synthesize correctly. → **Guidelines #1, #2,
-#4.**
+*all four orderings* simulate and synthesize correctly.
+→ **Guidelines #1, #2, #4.**
 [Cummings, 2000, §§9–12](https://web.archive.org/web/20061111004954id_/http://www.sunburst-design.com/papers/CummingsSNUG2000SJ_NBA.pdf)
 **[primary]**
 
@@ -504,6 +588,23 @@ a pre- versus post-synthesis mismatch. Rewritten with non-blocking assignments,
 verification regions exist to solve; §2.1's isolation mechanism is the answer.
 Present this as the case that *cannot* be fixed by assignment discipline alone —
 it needed new regions, which is why the 2005/2007 revisions happened.
+
+**(d) Time-zero ordering — a fourth case, independently sourced, and cheap.**
+Sutherland, Mills and Spear document the belief that `initial` blocks run before
+`always` blocks (or, held just as confidently by other engineers, after them) as
+a common gotcha for new users, and state that all procedural blocks regardless
+of type become active at time zero **in any order**, with neither kind taking
+precedence — and that as each block is activated a simulator *may, but is not
+required to*, execute its statements until a timing control is reached. Their
+point about the consequence is the one the chapter wants: this false assumption
+leads engineers to write stimulus that does not give the same results on
+different simulators.
+[Sutherland, Mills and Spear, 2006, §5](http://sutherland-hdl.com/papers/2006-SNUG-Boston_standard_gotchas_paper.pdf)
+**[primary]**
+
+Worth including because it is the race a reader is most likely to have already
+hit (a reset released in an `initial` block), it needs no clock, and it pairs
+directly with the time-0 variable-initialization change in §1.
 
 #### 4.3 The derivation: each guideline from a region
 
@@ -583,6 +684,28 @@ Do not flatten this into "never use `#0`": the condemnation is about **RTL**. A
 `#0` in a *program* process, landing in Re-Inactive, is described by the same
 authors as often useful and harmless (§2.1).
 
+**A second, independent exception — worth including, because it stops the rule
+from being folklore.** Sutherland, Mills and Spear reach the same general
+verdict by a different route: `#0` is easily abused and does **not** truly
+guarantee the delayed statement runs after everything else in the time step;
+they note many Verilog trainers have said never to use it, and that alternatives
+based on non-blocking assignments give more reliable ordering. But they name a
+real exception — **event data types**, where in Verilog there was no way to
+defer an event trigger to the non-blocking queue, so `#0` was the only tool for
+a time-zero event-trigger race. SystemVerilog removes even that need with the
+non-blocking event trigger `->>`, which schedules the trigger in the
+non-blocking queue so all procedural blocks are active before it fires.
+[Sutherland, Mills and Spear, 2006, §7.2](http://sutherland-hdl.com/papers/2006-SNUG-Boston_standard_gotchas_paper.pdf)
+**[primary]**
+
+Their phrasing that `#0` "does not truly ensure" ordering is a sharper statement
+of the same point as Cummings' — it does not remove the race — and having two
+independent sources converge on it makes the chapter's claim safe. The honest
+summary for the chapter: **`#0` is not an ordering primitive.** It was used as
+one, it never reliably was one, and the constructs that *are* ordering
+primitives (non-blocking assignments, `->>`, clocking blocks) postdate the
+habit.
+
 ### 5. Historical grounding
 
 Two peer-reviewed citations are enough to establish that the event-driven
@@ -620,7 +743,9 @@ already being scheduled this way and the standard merely defined where.
 
 | Claim | Where repeated | Status |
 |---|---|---|
-| "A delta cycle is …" as standard Verilog vocabulary | Ubiquitous in blogs, forum answers and training material | **Not sourced from the Verilog/SystemVerilog literature examined.** Cummings and Salz never use the term for this concept; they say "iterations" through the regions. "Delta cycle" is a VHDL term of art. The chapter should introduce it explicitly as borrowed from VHDL, or teach "iteration within a time slot" and mention the borrowed name once. Do **not** present it as SystemVerilog terminology. |
+| "A delta cycle is …" as standard Verilog vocabulary | Ubiquitous in blogs, forum answers and training material | **Weakly attested — corrected on re-check.** Cummings and Salz do use "delta-cycle" once (Rev 1.2 §5.3), naturally and in exactly this sense: a pass through the Active region, "in any arbitrary delta-cycle". But they never define it and otherwise say "iterations". So the term is *used* in the literature, not *established* by it; it remains a VHDL import. The chapter's plan — teach "iteration within a timestep" and mention the borrowed name once — is still right, but the note should not claim the term is absent from the sources. |
+| "Two simulators disagree, therefore there is a race" | Common inference | **Sourced, and more precisely than expected — see §4.1.** Sutherland, Mills and Spear separate permitted scheduling freedom, implementation/tool-class differences, and outright non-compliance. Only the first implies a race. Do not conflate them. |
+| "The standard permits nondeterministic ordering within a region" | Widely repeated | **Now sourced twice, independently** (§4.1): Cummings and Salz on arbitrary ordering within a region, and Sutherland et al. on scheduling allowing tools to optimize concurrent-event order differently. Safe to assert, attributed to those authors rather than to the standard. |
 | "The standard requires the regions to execute in this order" | Everywhere | **Forbidden phrasing for this book.** The ordering is real, but attribute it to Cummings and Salz's account. Say "SystemVerilog schedules …", never "the standard requires …". |
 | The definition of *simulation time* | Cummings and Salz quote it | Their quoted definition is from a **draft of the standard** (their ref. [9]). Do not reuse their quotation. The chapter must state the idea in its own words. Their definition of *timestep* is their own and is safe to attribute to them. |
 | "Following the guidelines eliminates 90–100% of Verilog race conditions" | `cummings2000nba`, repeated by the 2006/2007 paper | **Sourced, but it is the author's own estimate, not a measurement.** No study is cited. If the chapter uses the figure, attribute it explicitly to Cummings as an estimate; do not present it as a measured result. |
@@ -637,6 +762,8 @@ already being scheduled this way and the standard merely defined where.
 | `cummingssalz2006events` | Same authors and title, **Rev 1.0**, SNUG Boston 2006, 40 pp. Archived at `https://web.archive.org/web/20061111005225id_/http://www.sunburst-design.com/papers/CummingsSNUG2006Boston_SystemVerilog_Events.pdf`. Accessed 2026-09-08. | §2.4 only, for the eight-region footnote. Optional — omit if the chapter does not tell the revision story. |
 | `cummings2000nba` | **Already in `refs.bib`.** Clifford E. Cummings, "Nonblocking Assignments in Verilog Synthesis, Coding Styles That Kill!," SNUG San Jose 2000, Rev 1.2. | §§3, 4.2, 4.3, 4.4 — the eight guidelines and the race examples |
 | `cummings2002nbadelays` | Clifford E. Cummings, "Verilog Nonblocking Assignments With Delays, Myths & Mysteries," SNUG Boston 2002. `http://www.sunburst-design.com/papers/CummingsSNUG2002Boston_NBAwithDelays.pdf`. **Not retrieved for this note** (Archive rate-limiting); listed because both papers above cite it as the source of worked cases behind guidelines #2 and #4. Retrieve before citing. | §4.3, if the chapter expands #2/#4 |
+| `sutherland2006gotchas` | Stuart Sutherland, Don Mills and Chris Spear, "Standard Gotchas: Subtleties in the Verilog and SystemVerilog Standards That Every Engineer Should Know," SNUG Boston 2006, 59 pp. Sutherland HDL, LCDM Engineering, Synopsys. `http://sutherland-hdl.com/papers/2006-SNUG-Boston_standard_gotchas_paper.pdf`. Accessed 2026-09-08. **Openly hosted — no archive URL needed.** | §§4.1, 4.2, 4.4 |
+| `sutherland2007gotchas` | Same authors, "More Standard Gotchas: Subtleties in the Verilog and SystemVerilog Standards That Every Engineer Should Know," SNUG San Jose 2007, 44 pp. `http://sutherland-hdl.com/papers/2007-SNUG-SanJose_gotcha_again_paper.pdf`. Accessed 2026-09-08. Note the title differs between the paper's own cover ("Gotcha Again") and the publisher index ("More Standard Gotchas"); cite the index form. | §3 |
 | `ulrich1969selective` | E. G. Ulrich, "Exclusive simulation of activity in digital networks," *Communications of the ACM*, 12(2):102–110, February 1969. DOI 10.1145/362848.362870. | §5 |
 | `szygenda1975timebased` | S. A. Szygenda and E. W. Thompson, "Digital Logic Simulation in a Time-Based, Table-Driven Environment. Part 1," *Computer*, 8(3):24–36, March 1975. DOI 10.1109/c-m.1975.218898. (Part 2, Thompson and Szygenda, 8(3):38–49, DOI 10.1109/c-m.1975.218900 — separate key `thompson1975timebased2` if both are cited.) | §5 |
 
@@ -670,10 +797,10 @@ replacing the canonical URL — a repo-wide decision worth raising, since
    own writing.
 2. **"Delta cycle" is not sourced as SystemVerilog vocabulary** (§6). Decide how
    to introduce the term before drafting.
-3. **The zero-delay infinite-loop example is not verified.** The mechanism is
-   sourced; the observable behavior is not. Build it under `examples/` and run
-   it before the chapter describes what the user sees. This is also the right
-   thing to do under the house rule that simulator output comes from `run.out`.
+3. **The zero-delay infinite-loop example** is now sourced for both mechanism
+   *and* reported symptom (§3, Sutherland et al. 2007), so this is no longer a
+   gap in the evidence — only in the artifact. Still build it under `examples/`
+   and run it, per the house rule that simulator output comes from `run.out`.
 4. **The `$display`/`$strobe` worked example must be run, not reasoned about.**
    It is the chapter's best demonstration and therefore the worst place to be
    wrong. `examples/ch04-*/` with captured output.
