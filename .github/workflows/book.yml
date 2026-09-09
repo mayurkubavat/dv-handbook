@@ -49,6 +49,13 @@ jobs:
       - uses: quarto-dev/quarto-actions/setup@v2
         with:
           tinytex: true
+        # The setup action resolves the latest Quarto and TinyTeX releases
+        # through the GitHub API. Without a token those calls are anonymous
+        # and rate-limited per runner IP, which fails the build with
+        # "Unable to determine latest release" for reasons that have nothing
+        # to do with this repository.
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Install librsvg, poppler and the book fonts
         run: |
           sudo apt-get update -q
