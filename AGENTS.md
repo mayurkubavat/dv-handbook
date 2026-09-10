@@ -114,6 +114,17 @@ Never hand-edit a state to look further along than the evidence supports.
   the published book has no access to them and no reason to care that they
   exist. A `.qmd` that names a repository path as a source is a defect.
 
+## Writing long outputs from a subagent
+A review or research note that is composed in one response and written at the
+end can be lost whole to an output limit, and that has now happened to both a
+research run and a review. Instruct any subagent producing a long document to
+**write the file early and append to it section by section**, ordered so that
+the most important part lands first: a review starts with its verdict and
+blocking findings, a research note with the question that decides the work. A
+partial file is worth far more than a lost run, and the work itself usually
+survives even when the write does not, so ask the agent to resume and append
+before re-running it from scratch.
+
 ## Separation of drafting and judging
 While `draft-chapter` runs, a local marker file exists and a tool hook denies
 edits under `research/` and `docs/specs/`. The drafter
