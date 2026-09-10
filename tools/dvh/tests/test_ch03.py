@@ -131,10 +131,10 @@ def _assert_report_text(cli):
     ])
 
 
-# --------------------------------------------------------------------------
+# ----------------------------------------------------------------------
 # Limits the tools were once wrong about. Each of these designs defeated an
 # earlier version of the walks, so each keeps its own file under tests/rtl.
-# --------------------------------------------------------------------------
+# ----------------------------------------------------------------------
 FIXTURE = pathlib.Path(__file__).parent / "rtl"
 
 
@@ -204,7 +204,7 @@ def test_an_undecidable_clock_is_reported_not_suppressed():
     domain name. An earlier version suppressed any crossing whose domain
     names shared a token, which silenced real crossings between two
     asynchronous clocks that happened to share one global enable. Failing
-    loudly is the only safe behaviour for a report a build gate trusts.
+    loudly is the only safe behavior for a report a build gate trusts.
     """
     files = [str(FIXTURE / "two_clock_gates.sv")]
     flat = design.load_flat(files, "two_clock_gates")
@@ -237,10 +237,10 @@ def test_bit_blasted_registers_are_not_collapsed():
     assert len(names) == len(clocks.clock_tree(flat)["registers"])
 
 
-# --------------------------------------------------------------------------
+# ----------------------------------------------------------------------
 # The published schemas are a contract with callers who are not this book,
 # so a change to an output that the schema does not describe must fail here.
-# --------------------------------------------------------------------------
+# ----------------------------------------------------------------------
 def test_every_command_matches_its_published_schema():
     from dvh import schema                                # noqa: PLC0415
     flat = design.load_flat(TWO_CLOCK, "top")

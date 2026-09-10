@@ -98,13 +98,13 @@ Every transaction is given an identifier where it is created, in the sequence, a
 
 | Field | Content | Where it goes |
 |---|---|---|
-| Role | `SEQ`, `DRV`, `MON`, `SB`, `RM`, `COV`, `ENV`, `TEST` | first token of the message ID |
-| Stage | `CREATE`, `SEND`, `DRIVE_BEGIN`, `DRIVE_END`, `OBSERVE`, `EXPECT`, `COMPARE_OK`, `COMPARE_FAIL`, `DROP` | second token of the ID |
+| Role | `SEQ`, `DRV`, `MON`, `SB`, `RM`, `COV`, `ENV`, `TEST` | message ID, before the first `_` |
+| Stage | `CREATE`, `SEND`, `DRIVE_BEGIN`, `DRIVE_END`, `OBSERVE`, `EXPECT`, `COMPARE_OK`, `COMPARE_FAIL`, `DROP` | message ID, everything after it |
 | Instance | the component's hierarchical name | already the report scope |
 | Transaction | `TXN=<n>`, created in the sequence, carried to the scoreboard | first token of the text |
 | Payload | `key=value` pairs, machine-parseable | rest of the text |
 
-Under that grammar the identifier and message of a driver's line are
+The delimiter is the first underscore and only the first: several stage names contain one, so a parser that splits on every underscore mis-reads `SB_COMPARE_FAIL`. Under that grammar the identifier and message of a driver's line are
 
 ```text
 [DRV_DRIVE_END] TXN=17 addr=0x40 data=0xA7
@@ -219,7 +219,7 @@ Everything above is a specification. This section is a survey of what a team can
 
 **AMIQ EDA's published tool list covers much of what @sec-appI-catalog specifies.** The company states that its development environment compiles a project into a single database of the design and verification hierarchy, with class-hierarchy and port navigation for UVM [@amiq-dvt-ide], and in January 2026 it exposed that database to programs rather than only to people, through a tool-protocol server which it says can run inside the editor for live context or "in batch mode to support fleets of AI agents in automated workflows" [@amiq-dvt-mcp-server]. Its published tool list includes design and verification hierarchy search, symbol references, the constraints attached to a random field, lint failures, simulation log messages and waveform value changes [@amiq-dvt-mcp-tools]. Its release notes run from January 2026 through August of the same year [@amiq-dvt-mcp-whatsnew]. That is close to the design in @sec-appI-substrate, built on a compiled database rather than reconstructed from a netlist, and it is worth knowing about before building anything. Two qualifications matter. The tool surface is not uniform: some operations are documented as available only to command-line clients and others only inside the graphical environment. And no language server is claimed on any page of the documentation read for this survey, which is worth recording as *not claimed where it would be expected* rather than as absent.
 
-Two adjacent AMIQ products fit the appendix directly. Its linter can emit findings as JSON, XML or CSV through a report template, which is what makes a lint result a tool output rather than a screenful of text [@amiq-verissimo-custom-report]. AMIQ states that its documentation generator compiles the code and derives documents from the project's structure rather than from comments [@amiq-specador], which is the commercial form of @sec-appI-documents.
+Two adjacent AMIQ products fit the appendix directly. Its linter can emit findings as JSON, XML or CSV through a report template, which is what makes a lint result a tool output rather than a screenful of text [@amiq-verissimo-custom-report]. AMIQ states that its documentation generator compiles the code and derives documents from the project's structure even where comments are absent [@amiq-specador], which is the commercial form of @sec-appI-documents. It reads comments where they exist; the claim is that it does not depend on them.
 
 The large vendors approach the same ground from the platform side. As described at its 2022 launch, Cadence's verification platform is organized as applications over a shared data layer, among them triage, waveform analysis across runs, and debug; the description here is that launch release, republished, because the vendor's own pages could not be retrieved for this survey [@cadence-verisium-pr-2022]. Cadence has described machine-learned regression compaction in its simulator since 2020 [@cadence-xcelium-ml-2020]. Synopsys structures its offering as coverage-space optimization, a set of assistants, and more recently an agentic layer that it describes as running verification closure autonomously [@synopsys-agentic-ai-page]. A peer-reviewed survey with a vendor co-author covers the wider landscape [@bendhaou2025survey].
 

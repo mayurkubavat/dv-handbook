@@ -31,23 +31,37 @@ if hits=$(grep -rnE '@(sec|fig|tbl)-[A-Za-z0-9-]+ +\[@' chapters/ appendices/ \
 fi
 
 # 2. Every cited key reaches the rendered text.
+#    Matched on the author's or editor's surname where there is one, and on
+#    a distinctive title word otherwise. An earlier version took whichever
+#    of author or title came first in the entry, which is field order rather
+#    than meaning, and reported dozens of false positives.
 if [[ $# -ge 1 && -f "$1" ]]; then
   keys=$(grep -rhoE '\[@[A-Za-z0-9_.:-]+' chapters/ appendices/ index.qmd \
          2>/dev/null | sed 's/^\[@//' | sort -u)
   missing=""
   for k in $keys; do
-    author=$(awk -v k="$k" '
+    entry=$(awk -v k="$k" '
       $0 ~ "^@[a-zA-Z]+\\{"k"," {found=1}
-      found && /author|title/ {print; exit}' refs.bib \
-      | sed -E 's/.*= *\{+//; s/[},].*//' | head -1)
-    [[ -z "$author" ]] && continue
-    first=$(echo "$author" | awk '{print $NF}' | tr -d '{}')
-    [[ -z "$first" ]] && continue
-    grep -qF "$first" "$1" || missing="$missing $k"
+      found {print}
+      found && /^\}/ {exit}' refs.bib)
+    [[ -z "$entry" ]] && continue
+    needle=$(sed -nE 's/^[[:space:]]*author[[:space:]]*=[[:space:]]*\{+//p' \
+             <<<"$entry" | head -1 | sed -E 's/ and .*//; s/[},].*//' \
+             | awk '{print $NF}' | tr -d '{}')
+    if [[ -z "$needle" ]]; then
+      needle=$(sed -nE 's/^[[:space:]]*title[[:space:]]*=[[:space:]]*\{+//p' \
+               <<<"$entry" | head -1 | tr -d '{}' \
+               | awk '{for(i=1;i<=NF;i++) if (length($i)>6) {print $i; exit}}')
+    fi
+    [[ -z "$needle" ]] && continue
+    grep -qiF "$needle" "$1" || missing="$missing $k"
   done
   if [[ -n "$missing" ]]; then
     echo "cited but not found in the rendered text:$missing"
-    echo "  check each by hand: a name may simply differ in the bibliography"
+    echo "  check each by hand: a name may be spelled differently, or the"
+    echo "  renderer may have hyphenated it"
+  else
+    echo "citations: every cited key appears in the rendered text"
   fi
 fi
 

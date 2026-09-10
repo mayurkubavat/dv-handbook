@@ -1,7 +1,7 @@
 // tb_race.sv -- run one design for a few cycles and print what it saw.
 //
 // The testbench is deliberately dull: it makes a clock, releases reset, and
-// prints. All the interesting behaviour is in the design under test, so any
+// prints. All the interesting behavior is in the design under test, so any
 // difference between two simulators is the design's ordering and not the
 // testbench's.
 //

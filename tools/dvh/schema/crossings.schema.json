@@ -50,7 +50,8 @@
         },
         "direct": {
           "description": "True if the sender reaches D with no logic between.",
-          "type": "boolean"
+          "type": "boolean",
+          "$comment": "And on every clock: an enable holds, not resamples."
         },
         "second_stage": {
           "description": "Same-domain registers fed directly by this one.",

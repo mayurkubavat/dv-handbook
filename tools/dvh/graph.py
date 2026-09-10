@@ -51,7 +51,7 @@ def connections(mods: dict, top: str) -> dict:
                       for k, v in sorted(edges.items())]}
 
 
-# ---------------------------------------------------------------- layout ---
+# ----------------------------------------------------------- layout ---
 # Drawing constants, in SVG units. Changing these is the only way the block
 # diagram's proportions change; nothing below hard-codes a position.
 # The diagram flows top to bottom, not left to right. A book page is
