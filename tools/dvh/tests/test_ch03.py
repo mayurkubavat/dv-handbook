@@ -302,6 +302,31 @@ def test_every_field_carries_a_description():
         assert walk(doc, command) == [], command
 
 
+def test_every_fixture_validates_and_is_located():
+    """Run every command on every design this repository ships.
+
+    The narrow version of these checks ran on one design, which had no
+    array, so a whole class of register could arrive with nowhere to point
+    and the suite stayed green while the tool emitted output its own
+    published schema rejected.
+    """
+    from dvh import schema                                # noqa: PLC0415
+    seen = 0
+    for rtl in sorted(FIXTURE.glob("*.sv")):
+        top = rtl.stem
+        flat = design.load_flat([str(rtl)], top)
+        mods = design.load_hier([str(rtl)], top)
+        tree = clocks.clock_tree(flat)
+        payloads = {"clock-tree": tree,
+                    "reset-tree": clocks.reset_tree(flat),
+                    "crossings": clocks.crossings(flat, tree),
+                    "connections": graph.connections(mods, top)}
+        for command, payload in payloads.items():
+            assert schema.validate(command, payload) == [], (top, command)
+        seen += 1
+    assert seen >= 12, seen
+
+
 def test_every_finding_carries_a_real_source_location():
     """The book claims a finding names the RTL that produced it. Prove it.
 
@@ -468,3 +493,30 @@ def test_two_muxes_over_one_pair_are_not_one_gated_clock():
     x = clocks.crossings(design.load_flat(files, "two_strong_clock_muxes"))
     assert x["unrecognized"], "a crossing between two clocks passed the gate"
     assert not any(c["same_clock_source"] for c in x["unrecognized"])
+
+
+def test_a_scan_clock_mux_does_not_escape_the_build_gate():
+    """Selection is not gating, and a test clock is still a clock.
+
+    The test clock here reaches nothing but the multiplexer, so no evidence
+    said it was a clock; it was classified as a gating enable and the
+    crossing was excused as "one clock, gated differently", exit 0.
+    """
+    files = [str(FIXTURE / "scan_clock_mux.sv")]
+    flat = design.load_flat(files, "scan_clock_mux")
+    assert clocks.crossings(flat)["unrecognized"]
+
+
+def test_a_crossing_on_a_latch_enable_is_reported():
+    """A latch has inputs other than data, and a crossing can arrive on any."""
+    files = [str(FIXTURE / "latch_enable_crossing.sv")]
+    flat = design.load_flat(files, "latch_enable_crossing")
+    assert len(clocks.crossings(flat)["unrecognized"]) == 1
+
+
+def test_an_opposite_edge_second_stage_is_not_a_synchronizer():
+    """Half a clock period is not the period the shape promises."""
+    files = [str(FIXTURE / "opposite_edge_stage.sv")]
+    flat = design.load_flat(files, "opposite_edge_stage")
+    x = clocks.crossings(flat)
+    assert not any(c["shape_recognized"] for c in x["crossings"])

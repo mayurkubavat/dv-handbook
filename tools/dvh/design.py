@@ -119,6 +119,40 @@ def _relative(src: str) -> str:
     return "|".join(out)
 
 
+def _fill_missing_src(mod: Module) -> None:
+    """Give a cell a location when the netlist dropped its own.
+
+    Lowering an array into registers synthesizes cells with no attributes at
+    all, so sixteen registers arrived with nowhere to point. The nets they
+    drive still carry a location, and that is the same line of RTL, so the
+    cell borrows it. Without this the reset report named sixteen unreset
+    registers and could say where none of them came from.
+    """
+    by_bit = {}
+    for net in mod.netnames.values():
+        src = _relative(net.get("attributes", {}).get("src", ""))
+        if not src:
+            continue
+        for b in net["bits"]:
+            if isinstance(b, int):
+                by_bit.setdefault(b, src)
+    for cell in mod.cells.values():
+        if cell.src:
+            continue
+        # Outputs first, because the net a cell drives is the closest thing
+        # to "where this cell came from"; then inputs, because a lowered
+        # array leaves its location only on the intermediate nets feeding
+        # the registers it became.
+        ordered = ([b for p, bits in cell.conns.items()
+                    if cell.dirs.get(p) == "output" for b in bits]
+                   + [b for p, bits in cell.conns.items()
+                      if cell.dirs.get(p) != "output" for b in bits])
+        for b in ordered:
+            if isinstance(b, int) and b in by_bit:
+                cell.src = by_bit[b]
+                break
+
+
 def _parse(data: dict) -> dict:
     mods = {}
     for mname, m in data["modules"].items():
@@ -131,6 +165,7 @@ def _parse(data: dict) -> dict:
                                 _relative(attrs.get("src", "")))
         mod = Module(mname, m.get("ports", {}), cells, m.get("netnames", {}))
         mod.finish()
+        _fill_missing_src(mod)
         # One naming for registers, shared by every walk: a bit-blasted
         # register must resolve to the same name registers() yields for it.
         mod.reg_of_bit = {b: name for name, cell in registers(mod)

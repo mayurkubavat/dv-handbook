@@ -113,11 +113,18 @@ def _walk_to_sources(mod: Module, bit, seen=None, any_comb=False,
         # A latch is a state element, so a path through one is not direct and
         # cannot be a synchronizer; but the crossing behind it is still a
         # crossing, so the walk continues rather than stopping here.
+        #
+        # Every input counts, not just the data. A register in one domain
+        # driving a latch's *enable*, with the latch's output sampled in
+        # another, is a crossing, and walking `D` alone reported nothing at
+        # all for it.
         out = []
-        for b in cell.conns.get("D", []):
-            for src in _walk_to_sources(mod, b, seen, any_comb, clock_roots):
-                src.through = [cell.type] + src.through
-                out.append(src)
+        for port in ("D", "EN", "ARST", "SET", "CLR"):
+            for b in cell.conns.get(port, []):
+                for src in _walk_to_sources(mod, b, seen, any_comb,
+                                            clock_roots):
+                    src.through = [cell.type] + src.through
+                    out.append(src)
         return out or [Source(mod.net(bit), "latch")]
     if cell.type in LATCH_TYPES:
         return [Source(mod.net(bit), "latch")]
@@ -131,6 +138,19 @@ def _walk_to_sources(mod: Module, bit, seen=None, any_comb=False,
                and not (skip_select and port == "S")
                for b in bits]
         control, ambiguous = [], False
+        # @sec-ch03-clocks separates gating from selection, and the walk has
+        # to as well. A gate has one clock and an enable, so demoting an
+        # input to control is right. A multiplexer selects between two
+        # clocks, so demoting either is wrong: a scan multiplexer whose test
+        # clock reaches nothing else in the design had that clock classified
+        # as an enable, and a real crossing was excused from the build gate
+        # on the strength of it. Selection therefore never demotes; where
+        # its inputs disagree, the clock is undecided and says so.
+        if clock_roots and cell.type in MUX_TYPES and not any_comb:
+            roots = {s.name for b in [b for (p, b) in ins]
+                     for s in _walk_to_sources(mod, b, set(), False, None)}
+            ambiguous = len(roots) > 1
+            clock_roots = None
         if clock_roots:
             strong, weak = clock_roots
             tiers = [(_tier(mod, b, strong, weak, any_comb), p, b)
@@ -378,9 +398,14 @@ def crossings(mod: Module, tree: dict | None = None) -> dict:
             # loud rather than silent.
             # direct connection (no logic) from src to this register's D?
             direct = _feeds_directly(mod, cell, src)
-            # does another register in this domain take it straight from here?
+            # Does another register in this domain take it straight from
+            # here, on the same clock edge? A second stage on the opposite
+            # edge gives the first only half a period to settle, which is
+            # not what @sec-ch03-cdc means by a synchronizer.
+            edge = cell.params.get("CLK_POLARITY")
             second_stage = [n for n, c in by_name.items()
                             if dom_of[n] == mine and n != name
+                            and c.params.get("CLK_POLARITY") == edge
                             and _feeds_directly(mod, c, name)]
             # Two clock nets that resolve to *one* source are one clock,
             # gated differently. That is a timing question, not a
