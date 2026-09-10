@@ -38,10 +38,10 @@ The algorithm is much older than SystemVerilog and is not a quirk of it. Event-d
 
 A timestep is divided into regions, and the order between regions is fixed. This is defined normatively in the SystemVerilog standard, which this book names and does not quote; the account here follows Cummings and Salz, whose paper is the source for everything in this section [@cummingssalz2007events].
 
-The list of names is long enough to look like something to memorize, and it is not, because it has a shape. Three regions do the design's work. Then assertions sample and evaluate. Then the same three regions repeat for the testbench. Then everything settles.
+The list of names is long enough to look like something to memorize, and it is not, because it has a shape. Assertions sample first, before anything else runs. Then three regions do the design's work. Then assertions are evaluated against what they sampled. Then the same three regions repeat for the testbench. Then everything settles.
 
 ::: {.callout-note title="Definition"}
-The **Reactive region set is the dual of the Active region set**. Reactive mirrors Active, Re-Inactive mirrors Inactive, Re-NBA mirrors NBA, and the second set runs after the first. Three regions, then assertions, then the same three again.
+Cummings and Salz put the organizing idea in one sentence: "the Reactive region set is the testbench dual of the Active region set" [@cummingssalz2007events]. Reactive mirrors Active, Re-Inactive mirrors Inactive, Re-NBA mirrors NBA, and the second set runs after the first.
 
 What lands in the second set is narrower than "the testbench", and the distinction matters: code in a `program` block goes there, and so do assertion action blocks. An ordinary module testbench, which is what most of this book's examples are, runs in Active alongside the design.
 :::
@@ -69,7 +69,7 @@ This chapter's regions example prints from several places in one timestep, so th
 ```{.text include="examples/ch04-simulation/regions/run.out"}
 ```
 
-The two Active-region lines may come out either way round on your machine, and a different simulator may swap them. That is not a defect in the tool; it is the rule. What is stable is everything the regions decide: the non-blocking target still reads as unknown in Active, and `$strobe` sees it updated.
+The two Active-region lines may come out either way round on your machine, and a different simulator may swap them. That is not a defect in the tool; it is the rule. What the regions do decide is stable: the non-blocking target still reads as *not yet updated* in Active, and `$strobe` sees it updated. That it reads as *unknown* here is a separate fact, about a four-state simulator with nothing having written the variable yet; the same testbench on a two-state tool prints a zero in that position and the ordering point is unchanged.
 :::
 
 ## Iteration within one timestep {#sec-ch04-iteration}
@@ -88,7 +88,7 @@ This book says **iteration within a timestep** for one pass around that loop. Yo
 A **race condition** exists when two or more statements scheduled in the same timestep would give different results depending on the order they run in, and the language does not fix that order.
 :::
 
-Start with the case that needs no clock and that you have probably already hit. At time zero, `initial` and `always` blocks activate in any order, with no precedence between them [@sutherland2007gotchas]. A reset released in one `initial` block and sampled in another is therefore a race, and a testbench that works today can stop working when someone adds a block above it in the file.
+Start with the case that needs no clock and that you have probably already hit. At time zero, `initial` and `always` blocks activate in any order, with no precedence between them [@sutherland2006gotchas]. A reset released in one `initial` block and sampled in another is therefore a race, and a testbench that works today can stop working when someone adds a block above it in the file.
 
 The clocked cases follow the same pattern. One variable written by two processes: both write in Active, the order is arbitrary, and the last writer wins. A value read in one process and written in another at the same edge: whether the reader sees the old value or the new one depends on which ran first, unless the write was non-blocking, in which case the update is in NBA and every reader in Active sees the old value. That last clause is not a detail. It is why the rule exists.
 
@@ -175,7 +175,7 @@ A timescale declares two things: the unit a bare delay is measured in, and the p
 
 The failure mode is what earns this a section. A mismatched timescale does not produce an obviously broken result. It produces a plausible one: a waveform with the right shapes at the wrong times, or a delay that quietly rounds away to nothing. Delays are scaled to the smallest precision used anywhere in the design, so one module's declaration changes another module's behaviour [@sutherland2007gotchas]. Simulators round delays finer than the declared precision, and this book does not state the rounding rule, because no openly readable source states one. If a design depends on the answer, measure it on the tool you use rather than trusting a rule you read somewhere.
 
-This chapter's own examples make the point against themselves. None of them declares a timescale, so the event-driven simulator reports its finish time in seconds while the other runs at nanoseconds, which is visible in the output printed earlier in this chapter. Nothing in those examples depends on it, which is exactly why it went unnoticed.
+This chapter's own examples make the point against themselves, and not in the way you might expect. None of them declares a timescale in its source. The event-driven simulator therefore falls back to its default, which is why the regions output above reports finishing "at 6 (1s)" rather than in nanoseconds. The other simulator does not fall back to anything: the build passes it a timescale on the command line, so it runs in nanoseconds for a reason no reader of the source could see. Two tools, two different answers to a question the source never asked, and one of the answers hidden in a build file. Nothing in these examples depends on it, which is exactly why nobody noticed.
 
 ## What a real simulator implements {#sec-ch04-real}
 
@@ -212,7 +212,7 @@ Three things are worth taking from that.
 
 **Lint catches this one.** Unlike the clock-domain crossing of @sec-ch03-example, which the strictest lint passed in silence, a blocking assignment in a sequential block has a warning of its own. It is off by default, which is its own lesson about default configurations, but the example turns it on and it fires. Not every bug in this book is invisible to cheap tools, and this one is not.
 
-**A disagreement is evidence, not a proof.** It is tempting to conclude that because two simulators differ the code must have a race. That inference does not hold. The sources name three ways two tools can differ on one source file: the ordering freedom the language genuinely permits, which is the real race; a difference in how each tool chose to implement something the standard leaves ambiguous; and plain non-compliance, which is a defect in a tool rather than in a language [@sutherland2007gotchas]. Only the first is what the guidelines protect you against. A disagreement is worth chasing every time and proves nothing on its own.
+**A disagreement is evidence, not a proof.** It is tempting to conclude that because two simulators differ the code must have a race. That inference does not hold. The sources name three ways two tools can differ on one source file: the ordering freedom the language genuinely permits, which is the real race; a difference in how each tool chose to implement something the standard leaves ambiguous; and plain non-compliance, which is a defect in a tool rather than in a language [@sutherland2006gotchas]. Only the first is what the guidelines protect you against. A disagreement is worth chasing every time and proves nothing on its own.
 
 **The converse is weaker still.** Agreement between two simulators does not mean code is race-free; both may happen to make the same arbitrary choice. The guidelines are what make code order-independent. Running it twice is a check on the guidelines, not a substitute for them.
 
@@ -226,7 +226,7 @@ The nearer-term version needs no research at all. If your project has more than 
 
 - A simulator is a single program working a queue. Nothing is parallel, and "at the same time" means "in the same timestep", which has an internal order.
 - A timestep is divided into regions whose order is fixed. Within a region the order is arbitrary and the language guarantees nothing.
-- The regions have a shape rather than being a list: three for the design, then assertion sampling and evaluation, then the same three for the testbench, then a read-only settling region.
+- The regions have a shape rather than being a list: assertion sampling first, then three regions for the design, then assertion evaluation, then the same three for the testbench, then a read-only settling region.
 - A non-blocking assignment is split across two regions, evaluating where it is written and updating later. Almost every race rule follows from that split.
 - A timestep is a loop, so a design can spin forever without time advancing; a non-blocking assignment in a combinational block retriggering its own sensitivity list is the usual way.
 - The eight assignment guidelines are derivable from the regions rather than being style preferences, and `#0` orders nothing: it moves the same race into a different region.
