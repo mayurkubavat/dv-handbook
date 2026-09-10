@@ -63,8 +63,12 @@ def _report(tree, resets, xings, conn) -> str:
     lines.append(f"registers without reset: {len(resets['no_reset'])}")
     for r in resets["no_reset"]:
         lines.append(f"  {r['name']}{_at(r['src'])}")
+    unknown = sum(1 for c in xings["crossings"]
+                  if not c["shape_recognized"])
+    gated = unknown - len(xings["unrecognized"])
+    tail = f", {gated} of them one clock gated differently" if gated else ""
     lines.append(f"crossings: {len(xings['crossings'])}, "
-                 f"shape not recognized: {len(xings['unrecognized'])}")
+                 f"shape not recognized: {unknown}{tail}")
     for c in sorted(xings["crossings"],
                     key=lambda c: (c["shape_recognized"], c["from"],
                                    c["to"])):

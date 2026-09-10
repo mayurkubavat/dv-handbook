@@ -439,3 +439,32 @@ def test_second_stages_sharing_a_name_are_both_counted():
     x = clocks.crossings(flat)
     assert len(x["unrecognized"]) == 2
     assert all("read together" in c["note"] for c in x["unrecognized"])
+
+
+def test_a_crossing_through_a_ram_is_reported():
+    """An array is not registers until the memory passes run.
+
+    Without them the write port is not a register, its clock is not a
+    domain, and the read port stops the data walk, so a value crossing
+    domains through a RAM is invisible with a clean exit.
+    """
+    files = [str(FIXTURE / "ram_crossing.sv")]
+    flat = design.load_flat(files, "ram_crossing")
+    tree = clocks.clock_tree(flat)
+    assert len(tree["domains"]) == 2
+    assert clocks.crossings(flat, tree)["unrecognized"]
+
+
+def test_two_muxes_over_one_pair_are_not_one_gated_clock():
+    """Equal source *sets* are not a single shared source.
+
+    Both clocks here also drive registers directly, so nothing is
+    ambiguous and the walk resolves both mux outputs to the same pair.
+    Comparing sets marked that pair "one clock, gated differently" and let
+    a real crossing past the build gate.
+    """
+    files = [str(FIXTURE / "two_strong_clock_muxes.sv")]
+    flat = design.load_flat(files, "two_strong_clock_muxes")
+    x = clocks.crossings(design.load_flat(files, "two_strong_clock_muxes"))
+    assert x["unrecognized"], "a crossing between two clocks passed the gate"
+    assert not any(c["same_clock_source"] for c in x["unrecognized"])

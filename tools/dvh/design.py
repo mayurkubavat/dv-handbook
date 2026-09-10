@@ -20,7 +20,8 @@ import subprocess
 import tempfile
 from dataclasses import dataclass, field
 
-# Sequential cell types Yosys produces after `proc` (no technology mapping).
+# Sequential cell types Yosys produces after the passes below (no
+# technology mapping).
 DFF_TYPES = {
     "$dff", "$dffe", "$adff", "$adffe", "$sdff", "$sdffe", "$sdffce",
     "$aldff", "$aldffe", "$dffsr", "$dffsre",
@@ -83,10 +84,16 @@ def _run_yosys(files, top, flatten: bool) -> dict:
     with tempfile.TemporaryDirectory() as tmp:
         out = os.path.join(tmp, "design.json")
         reads = " ".join(f"read_verilog -sv {f};" for f in files)
-        # `proc` leaves a synchronous reset as a multiplexer in front of a
-        # plain flip-flop, so without `opt_dff` every synchronously reset
-        # register is reported as having no reset at all.
-        script = f"{reads} hierarchy -check -top {top}; proc; opt_dff; "
+        # `proc` alone is not enough twice over. It leaves a synchronous
+        # reset as a multiplexer in front of a plain flip-flop, so without
+        # `opt_dff` every synchronously reset register is reported as having
+        # no reset. And it leaves an array as memory cells rather than
+        # registers, so without the memory passes a value crossing clock
+        # domains through a RAM is invisible: the write port is not a
+        # register, its clock is not a domain, and the read port stops the
+        # data walk.
+        script = (f"{reads} hierarchy -check -top {top}; proc; opt_dff; "
+                  "memory_collect; memory_map; ")
         if flatten:
             script += "flatten; "
         script += f"opt_clean; write_json {out}"

@@ -321,9 +321,17 @@ def _sources(tree: dict, name: str) -> set:
 
 
 def _feeds_directly(mod: Module, cell, source: str) -> bool:
-    """True if `source` reaches this register's D with no logic in between.
-    That is the shape a synchronizer's first stage has, and the shape any
-    correct crossing structure starts with."""
+    """True if `source` reaches this register's D with no logic in between
+    *and* this register takes it on every clock.
+
+    An enable makes this not a synchronizer stage: the value is held rather
+    than resampled, so the second stage is not giving the first a full clock
+    period to settle. Recognizing the enable matters because lowering a
+    synchronous reset also lowers an enable onto its own pin, which moved
+    the data onto D and made an enabled register look direct.
+    """
+    if any(b not in (0, "0") for b in cell.conns.get("EN", [])):
+        return False
     return any(s.kind == "register" and s.name == source and not s.through
                for b in cell.conns.get("D", [])
                for s in _walk_to_sources(mod, b, None, True, None))
@@ -374,14 +382,18 @@ def crossings(mod: Module, tree: dict | None = None) -> dict:
             second_stage = [n for n, c in by_name.items()
                             if dom_of[n] == mine and n != name
                             and _feeds_directly(mod, c, name)]
-            # Two clock nets that resolve to the same source are one clock,
-            # gated or selected differently. That is a timing question, not
-            # a metastability one. It is reported either way -- nothing is
-            # ever dropped -- but it does not trip the build gate, because
-            # every gated design would otherwise fail it.
+            # Two clock nets that resolve to *one* source are one clock,
+            # gated differently. That is a timing question, not a
+            # metastability one, and it does not trip the gate, because
+            # every gated design would otherwise fail. The test is a single
+            # shared root, not an equal set of them: two multiplexers over
+            # the same pair of asynchronous clocks reach an equal set and
+            # are not one clock, and comparing sets marked exactly that case
+            # safe. Reporting is unaffected either way; nothing is dropped.
+            roots = _sources(tree, name)
             same_source = (not unsure_pair(tree, name, src)
-                           and _sources(tree, name) == _sources(tree, src)
-                           and _sources(tree, name) != set())
+                           and len(roots) == 1
+                           and roots == _sources(tree, src))
             width = len(cell.conns.get("Q", []))
             unsure = unsure_pair(tree, name, src)
             synchronizer = (direct and bool(second_stage)
