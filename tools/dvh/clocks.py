@@ -161,6 +161,35 @@ def _walk_to_sources(mod: Module, bit, seen=None, any_comb=False,
     return [Source(f"{mod.net(bit)} (driven by {cell.type})", "unknown")]
 
 
+def _domain_key(mod: Module, cell, srcs, ambiguous: bool, name: str) -> str:
+    """What makes two registers members of one clock domain.
+
+    Identity is the *net* a clock arrives on, not the names of the sources
+    the walk reached. Names collide: two clock multiplexers selecting the
+    same pair of inputs produce two networks whose source names are equal
+    and whose clocks are opposite, and a name-based key merged them into one
+    domain and dropped the crossing between them. This was the root of a
+    defect that reappeared in three consecutive reviews, in three different
+    lines, and each earlier fix removed a consequence of it rather than the
+    cause.
+
+    A register whose clock the walk could not resolve gets an identity of
+    its own, derived from the register, so it is equal to nothing and its
+    crossings can never be dropped by a comparison.
+    """
+    if ambiguous:
+        return f"undecided clock of {name}"
+    bits = [b for b in cell.conns.get("CLK", []) if isinstance(b, int)]
+    label = "+".join(sorted({s.name for s in srcs})) or mod.net(bits[0])
+    # The label is for a person; the net keeps two same-named networks apart.
+    return f"{label}" if len(bits) != 1 else f"{label}#{bits[0]}"
+
+
+def _pretty(key: str) -> str:
+    """The part of a domain key a reader should see."""
+    return key.split("#")[0]
+
+
 def clock_tree(mod: Module) -> dict:
     """Registers grouped by clock source; each register with its clock path."""
     regs = {}
@@ -170,14 +199,14 @@ def clock_tree(mod: Module) -> dict:
         roots = sorted({s.name for s in srcs})
         gated = any(s.through for s in srcs)
         through = sorted({t for s in srcs for t in s.through})
+        unsure = any(t.startswith("ambiguous") for t in through)
         regs[name] = {"clock_sources": roots, "gated_or_muxed": gated,
                       "through": through, "src": cell.src,
-                      "clock_ambiguous": any(t.startswith("ambiguous")
-                                             for t in through)}
+                      "clock_ambiguous": unsure,
+                      "domain": _domain_key(mod, cell, srcs, unsure, name)}
     domains = {}
     for name, info in regs.items():
-        key = "+".join(info["clock_sources"])
-        domains.setdefault(key, []).append(name)
+        domains.setdefault(info["domain"], []).append(name)
     return {"domains": {k: sorted(v) for k, v in domains.items()},
             "registers": regs}
 
@@ -275,6 +304,18 @@ def _flag_converging_synchronizers(mod: Module, report: list) -> None:
                            f"different cycles")
 
 
+def unsure_pair(tree: dict, a: str, b: str) -> bool:
+    """True if either end's clock could not be resolved."""
+    regs = tree["registers"]
+    return bool(regs.get(a, {}).get("clock_ambiguous")
+                or regs.get(b, {}).get("clock_ambiguous"))
+
+
+def _sources(tree: dict, name: str) -> set:
+    """The clock source names the walk reached for one register."""
+    return set(tree["registers"].get(name, {}).get("clock_sources", []))
+
+
 def _feeds_directly(mod: Module, cell, source: str) -> bool:
     """True if `source` reaches this register's D with no logic in between.
     That is the shape a synchronizer's first stage has, and the shape any
@@ -303,8 +344,7 @@ def crossings(mod: Module, tree: dict | None = None) -> dict:
     a crossing is *safe* is a question about the specification, and
     @sec-ch03-cdc is where a person answers it."""
     tree = tree or clock_tree(mod)
-    dom_of = {r: "+".join(i["clock_sources"])
-              for r, i in tree["registers"].items()}
+    dom_of = {r: i["domain"] for r, i in tree["registers"].items()}
     by_name = {name: cell for name, cell in registers(mod)}
     report = []
     for name, cell in by_name.items():
@@ -330,15 +370,23 @@ def crossings(mod: Module, tree: dict | None = None) -> dict:
             second_stage = [n for n, c in by_name.items()
                             if dom_of[n] == mine and n != name
                             and _feeds_directly(mod, c, name)]
+            # Two clock nets that resolve to the same source are one clock,
+            # gated or selected differently. That is a timing question, not
+            # a metastability one. It is reported either way -- nothing is
+            # ever dropped -- but it does not trip the build gate, because
+            # every gated design would otherwise fail it.
+            same_source = (not unsure_pair(tree, name, src)
+                           and _sources(tree, name) == _sources(tree, src)
+                           and _sources(tree, name) != set())
             width = len(cell.conns.get("Q", []))
-            unsure = (tree["registers"].get(name, {}).get("clock_ambiguous")
-                      or tree["registers"].get(src, {}).get("clock_ambiguous"))
+            unsure = unsure_pair(tree, name, src)
             synchronizer = (direct and bool(second_stage)
                             and width == 1 and not unsure)
             report.append({"to": name, "to_domain": mine, "from": src,
                            "from_domain": dom_of[src], "width": width,
                            "direct": direct, "second_stage": second_stage,
                            "shape_recognized": synchronizer,
+                           "same_clock_source": same_source,
                            "note": ("" if synchronizer else
                                       "clock and enable not distinguishable "
                                       "here; declare the clocks" if unsure
@@ -347,5 +395,9 @@ def crossings(mod: Module, tree: dict | None = None) -> dict:
     _flag_converging_synchronizers(mod, report)
     # collapse: a crossing that lands on a synchronizer's first stage is fine;
     # flag the rest
-    unrecognized = [c for c in report if not c["shape_recognized"]]
+    # The gate trips on a shape it does not know between two different
+    # clock sources. A same-source pair stays in `crossings`, where a reader
+    # sees it, and out of the list a build fails on.
+    unrecognized = [c for c in report
+                    if not c["shape_recognized"] and not c["same_clock_source"]]
     return {"crossings": report, "unrecognized": unrecognized}

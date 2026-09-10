@@ -18,12 +18,19 @@ TWO_CLOCK = [str(RTL / f) for f in SOURCES]
 FIFO = [str(ROOT / "examples" / "ch01-what-is-dv" / "rtl" / "fifo.sv")]
 
 
+def _dom(tree, label):
+    """Registers in the one domain whose readable name is `label`."""
+    return [r for d, rs in tree["domains"].items()
+            for r in rs if clocks._pretty(d) == label]
+
+
 def test_two_clock_domains():
     tree = clocks.clock_tree(design.load_flat(TWO_CLOCK, "top"))
-    assert set(tree["domains"]) == {"bclk", "cclk"}
-    assert len(tree["domains"]["bclk"]) == 2          # en, cfg
+    labels = {clocks._pretty(d) for d in tree["domains"]}
+    assert labels == {"bclk", "cclk"}
+    assert len(_dom(tree, "bclk")) == 2          # en, cfg
     # cclk holds the synchronizer's two stages plus count, acc, last_cfg.
-    assert len(tree["domains"]["cclk"]) == 5
+    assert len(_dom(tree, "cclk")) == 5
     assert not any(r["gated_or_muxed"] for r in tree["registers"].values())
 
 
@@ -58,7 +65,7 @@ def test_single_clock_fifo_has_no_crossings():
     """The Chapter 1 FIFO is one clock domain, so there is nothing to cross."""
     flat = design.load_flat(FIFO, "fifo")
     tree = clocks.clock_tree(flat)
-    assert list(tree["domains"]) == ["clk"]
+    assert {clocks._pretty(d) for d in tree["domains"]} == {"clk"}
     assert clocks.crossings(flat, tree)["crossings"] == []
 
 
@@ -131,19 +138,22 @@ def _assert_report_text(cli):
 FIXTURE = pathlib.Path(__file__).parent / "rtl"
 
 
-def test_clock_gate_does_not_create_a_domain():
-    """A gate's enable is control, not a clock source.
+def test_a_clock_gate_does_not_fail_the_build():
+    """A gated clock is a different net and the same clock.
 
-    Treating it as a source puts the gated register in a domain of its own
-    and then reports the ordinary synchronous path into it as a crossing,
-    which would fail any real design that gates its clocks.
+    Identity is the net, so the gated register is its own domain and the
+    path into it is reported -- nothing is ever hidden. Both clocks resolve
+    to the same source, so it is marked as such and does not trip the gate,
+    because otherwise every design that gates a clock would fail.
     """
     flat = design.load_flat([str(FIXTURE / "gated_clock.sv")], "gated_clock")
     tree = clocks.clock_tree(flat)
-    assert list(tree["domains"]) == ["clk"]
-    assert sorted(tree["domains"]["clk"]) == ["q_free", "q_gated"]
+    assert all(clocks._pretty(d) == "clk" for d in tree["domains"])
     assert "gated by en" in tree["registers"]["q_gated"]["through"]
-    assert clocks.crossings(flat, tree)["unrecognized"] == []
+    x = clocks.crossings(flat, tree)
+    assert len(x["crossings"]) == 1
+    assert x["crossings"][0]["same_clock_source"]
+    assert x["unrecognized"] == []
 
 
 def test_crossing_through_a_mux_select_is_found():
@@ -401,3 +411,17 @@ def test_a_synchronous_reset_is_reported_as_a_reset():
     assert resets["no_reset"] == []
     assert resets["registers"]["q"]["kind"] == "synchronous"
     assert resets["registers"]["q"]["active"] == "high"
+
+
+def test_two_clock_muxes_over_one_pair_are_not_one_domain():
+    """Equal source names are not the same clock network.
+
+    Both muxes here select between the same two asynchronous clocks, on
+    opposite selections, so the registers never share a clock. A domain
+    keyed on source names merged them and dropped the crossing entirely.
+    """
+    files = [str(FIXTURE / "mux_selected_clocks.sv")]
+    flat = design.load_flat(files, "mux_selected_clocks")
+    tree = clocks.clock_tree(flat)
+    assert len(tree["domains"]) == 2
+    assert clocks.crossings(flat, tree)["unrecognized"]

@@ -35,13 +35,31 @@ def _at(src: str) -> str:
     return f"  [{file}:{span.split('.')[0]}]" if span else f"  [{file}]"
 
 
+def _display_names(domains) -> dict:
+    """Readable names for domains, disambiguated only where they collide.
+
+    A domain's identity is its clock net, so two different networks can
+    share a label. Printing the net every time is noise; printing it only
+    where two labels would otherwise be identical keeps the report readable
+    and still tells two networks apart when it matters.
+    """
+    from .clocks import _pretty                            # noqa: PLC0415
+    seen = {}
+    for key in domains:
+        seen.setdefault(_pretty(key), []).append(key)
+    return {key: (label if len(keys) == 1 else key)
+            for label, keys in seen.items() for key in keys}
+
+
 def _report(tree, resets, xings, conn) -> str:
     """A short human report. Everything is printed in sorted order: the
     output is included verbatim in the book, so it must not depend on the
     order a netlist reader happened to produce."""
+    show = _display_names(tree["domains"])
     lines = [f"clock domains: {len(tree['domains'])}"]
-    for dom, regs in sorted(tree["domains"].items()):
-        lines.append(f"  {dom}: {len(regs)} registers")
+    for dom, regs in sorted(tree["domains"].items(),
+                            key=lambda kv: show[kv[0]]):
+        lines.append(f"  {show[dom]}: {len(regs)} registers")
     lines.append(f"registers without reset: {len(resets['no_reset'])}")
     for r in resets["no_reset"]:
         lines.append(f"  {r['name']}{_at(r['src'])}")
@@ -54,8 +72,9 @@ def _report(tree, resets, xings, conn) -> str:
         plural = "s" if c["width"] != 1 else ""
         how = ("two-flop synchronizer" if c["shape_recognized"]
                else c["note"])
-        lines.append(f"  {mark} {c['from']} ({c['from_domain']}) -> "
-                     f"{c['to']} ({c['to_domain']}), "
+        a = show.get(c["from_domain"], c["from_domain"])
+        b = show.get(c["to_domain"], c["to_domain"])
+        lines.append(f"  {mark} {c['from']} ({a}) -> {c['to']} ({b}), "
                      f"{c['width']} bit{plural}, {how}{_at(c['src'])}")
     lines.append(f"instances: {len(conn['instances'])}, "
                  f"connections: {len(conn['edges'])}")

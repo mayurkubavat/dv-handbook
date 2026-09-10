@@ -22,7 +22,8 @@
         "second_stage",
         "shape_recognized",
         "note",
-        "src"
+        "src",
+        "same_clock_source"
       ],
       "additionalProperties": false,
       "properties": {
@@ -72,6 +73,11 @@
         "note": {
           "description": "Empty when known; else what was seen.",
           "type": "string"
+        },
+        "same_clock_source": {
+          "description": "True if both clocks resolve to the same source.",
+          "$comment": "Reported, but does not trip a gate: one clock, gated.",
+          "type": "boolean"
         }
       }
     }
