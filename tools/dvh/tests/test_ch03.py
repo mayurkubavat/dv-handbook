@@ -385,3 +385,19 @@ def test_convergence_is_followed_through_a_third_flop():
     x = clocks.crossings(flat)
     assert len(x["unrecognized"]) == 8
     assert all("read together" in c["note"] for c in x["unrecognized"])
+
+
+def test_a_synchronous_reset_is_reported_as_a_reset():
+    """`proc` alone leaves a synchronous reset as a multiplexer.
+
+    Without `opt_dff` the netlist holds a plain flip-flop and every
+    synchronously reset register in the design is reported as having no
+    reset at all, which is the reset report's headline finding and would
+    have been wrong for an entire common category.
+    """
+    files = [str(FIXTURE / "sync_reset.sv")]
+    flat = design.load_flat(files, "sync_reset")
+    resets = clocks.reset_tree(flat)
+    assert resets["no_reset"] == []
+    assert resets["registers"]["q"]["kind"] == "synchronous"
+    assert resets["registers"]["q"]["active"] == "high"
