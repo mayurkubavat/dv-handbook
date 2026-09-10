@@ -139,7 +139,7 @@ OpenTitan defines four numbered verification stages, V0 to V3, plus a security-c
 Three of the checklist's later items make the sign-off criteria of @sec-ch01 exact:
 
 - **Regression health.** At V2, the nightly regression must be 90 percent passing; at V3, 100 percent passing with a soak of at least one week, meaning a week of consecutive nightly runs with no failure [@opentitan-checklist]. Each random test runs with many seeds, one hundred by the project's own stated convention, because a test that passes with one seed has been run once [@opentitan-dv-methodology].
-- **Coverage closure.** Code coverage of each collected kind and functional coverage at 90 percent for V2 and 100 percent for V3, with the waiver rules of @sec-ch02-coverage [@opentitan-checklist].
+- **Coverage closure.** Code coverage of each collected kind and functional coverage at 90 percent for V2 and 100 percent for V3, with the waiver rules [@opentitan-checklist] of @sec-ch02-coverage.
 - **Open issues.** No high-priority issues pending at V2, every low-priority issue root-caused, and no issues pending at all at V3 [@opentitan-checklist].
 
 Two criteria from @sec-ch01 do not appear as numbers. Bug convergence, the observation that the rate of new bugs has fallen toward zero, is common practice and is discussed by Bergeron and by Wile, Goss and Roesner [@bergeron2003testbenches; @wile2005cfv]. No public project known to the author states it as a threshold. It is a judgment made in the sign-off review with the bug-rate curve on the table. The traceability condition from @sec-ch02-items, that no link in the chain is suspect, is stated by the traceability paper cited above as a necessary condition for closure [@kreisinger2024traceability].
