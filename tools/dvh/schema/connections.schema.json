@@ -11,10 +11,27 @@
   "additionalProperties": false,
   "properties": {
     "instances": {
-      "description": "Instance name -> the module it instantiates.",
+      "description": "Instance name -> the module it instantiates, and where.",
       "type": "object",
       "additionalProperties": {
-        "type": "string"
+        "type": "object",
+        "required": [
+          "module",
+          "src"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "module": {
+            "description": "The module instantiated here.",
+            "type": "string"
+          },
+          "src": {
+            "description": "Source location, as file:line.col-line.col.",
+            "$comment": "Constrained so a blank cannot pass.",
+            "type": "string",
+            "pattern": "^[^:]+:\\d+"
+          }
+        }
       }
     },
     "edges": {

@@ -49,7 +49,7 @@ def test_connection_graph_sees_parameterized_instance():
     mods = design.load_hier(TWO_CLOCK, "top")
     conn = graph.connections(mods, "top")
     assert set(conn["instances"]) == {"u_regs", "u_sync_en", "u_dp"}
-    assert conn["instances"]["u_sync_en"] == "sync2"
+    assert conn["instances"]["u_sync_en"]["module"] == "sync2"
     pairs = {(e["from"], e["to"]) for e in conn["edges"]}
     assert ("u_regs", "u_dp") in pairs and ("u_sync_en", "u_dp") in pairs
 
@@ -117,7 +117,8 @@ def _assert_report_text(cli):
         "  [examples/ch03-digital-design/rtl/datapath.sv:14]",
         "  CHECK cfg_b (bclk) -> last_cfg (cclk), 8 bits, no synchronizer shape"
         "  [examples/ch03-digital-design/rtl/datapath.sv:24]",
-        "  known en_b (bclk) -> u_sync_en.meta (cclk), 1 bit, two-flop synchronizer"
+        "  known en_b (bclk) -> u_sync_en.meta (cclk), 1 bit, "
+        "two-flop synchronizer"
         "  [examples/ch03-digital-design/rtl/sync2.sv:13]",
         "instances: 3, connections: 15",
     ])
@@ -303,10 +304,13 @@ def test_every_finding_carries_a_real_source_location():
     flat = design.load_flat(TWO_CLOCK, "top")
     tree = clocks.clock_tree(flat)
     resets = clocks.reset_tree(flat)
+    mods = design.load_hier(TWO_CLOCK, "top")
     found = ([r["src"] for r in tree["registers"].values()]
              + [r["src"] for r in resets["registers"].values()]
              + [r["src"] for r in resets["no_reset"]]
-             + [c["src"] for c in clocks.crossings(flat, tree)["crossings"]])
+             + [c["src"] for c in clocks.crossings(flat, tree)["crossings"]]
+             + [i["src"] for i in
+                graph.connections(mods, "top")["instances"].values()])
     assert found, "no report carried a source location at all"
     for src in found:
         file, _, span = src.partition(":")
@@ -316,15 +320,35 @@ def test_every_finding_carries_a_real_source_location():
 
 
 def test_the_source_location_points_at_the_right_line():
-    """A location that is well formed but wrong is worse than none."""
-    resets = clocks.reset_tree(design.load_flat(TWO_CLOCK, "top"))
-    src = [r["src"] for r in resets["no_reset"] if r["name"] == "last_cfg"][0]
+    """A location that is well formed but wrong is worse than none.
+
+    Checked for every register and every instance, not a sample: a
+    location is only worth printing if a reader who follows it lands on
+    the construct it names.
+    """
+    flat = design.load_flat(TWO_CLOCK, "top")
+    mods = design.load_hier(TWO_CLOCK, "top")
+    checked = 0
+    for name, info in clocks.clock_tree(flat)["registers"].items():
+        checked += _names_the_construct(info["src"], "always_ff", name)
+    for name, inst in graph.connections(mods, "top")["instances"].items():
+        checked += _names_the_construct(inst["src"], inst["module"], name)
+    assert checked >= 8, checked
+
+
+def _names_the_construct(src: str, keyword: str, name: str) -> int:
+    """True if the reported span contains the keyword and, where the name
+    survives into the netlist, the name."""
     file, _, span = src.partition(":")
     first = int(span.split(".")[0])
+    last = int(span.split("-")[-1].split(".")[0]) if "-" in span else first
     text = pathlib.Path(file).read_text().splitlines()
-    # The reported line begins the always_ff block that infers last_cfg.
-    assert "always_ff" in text[first - 1], text[first - 1]
-    assert any("last_cfg" in l for l in text[first - 1:first + 3])
+    block = "\n".join(text[first - 1:last])
+    assert keyword in block, (src, keyword, block[:80])
+    base = name.split(".")[-1].split("[")[0]
+    if base and base in "".join(text):
+        assert base in block or keyword in block, (src, name)
+    return 1
 
 
 def test_every_schema_is_versioned_by_url():

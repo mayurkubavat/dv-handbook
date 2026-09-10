@@ -44,7 +44,7 @@ Three consequences follow, and they are the argument for building this layer at 
 
 **Context budget.** The most expensive resource in an agent loop is the context window, and reading files to answer structural questions is the least efficient possible use of it. @sec-ch34 covers what happens to model performance as context fills. A structural query returns tens of lines where file reading returns thousands, so the tool is not merely more accurate; it leaves room for the actual problem.
 
-**Grounding.** A tool's answer comes with a provenance a person can check. The book's own tools carry the source location the netlist records for each cell into the clock tree, the reset tree and every crossing, so each of those findings names the file and line of the RTL that produced it. The connection graph does not: it reports which instance joins which, and the netlist gives it no location to pass on. A model's answer from reading source comes with a confident sentence instead of either. The chapter's whole argument about evidence rests on that difference.
+**Grounding.** A tool's answer comes with a provenance a person can check. The book's own tools carry the source location the netlist records into every report: each register in the clock and reset trees, each crossing, and each instance in the connection graph names the file and line of the RTL that produced it. That was not true when this appendix was first written, and the reason is worth keeping: the connection graph had simply never read a field the netlist was already carrying, and the sentence here explained the gap as a limit of the format rather than an omission in the code. A model's answer from reading source comes with a confident sentence instead of a location. The chapter's whole argument about evidence rests on that difference.
 
 **Failure mode.** A structural tool that cannot answer says so. A model reading source under-specifies rather than refusing, and an under-specified answer about a clock domain reads exactly like a correct one.
 
@@ -151,7 +151,7 @@ What follows is a concrete set, grouped by the model it serves. Every entry is a
 | `rtl.cone` | signal, direction, depth | fan-in or fan-out to the register frontier | Yosys |
 | `rtl.clock_tree` | top | domains, per-register clock path, gating | @sec-ch03-example |
 | `rtl.reset_tree` | top | kind, polarity, source, and the unreset registers | @sec-ch03-example |
-| `rtl.crossings` | top | crossings with classification and reason | @sec-ch03-example |
+| `rtl.crossings` | top | crossings, each with the shape recognized and a note | @sec-ch03-example |
 | `rtl.connections` | top | instance connection graph | @sec-ch03-example |
 | `rtl.lint` | files, ruleset, baseline | SARIF, filtered to new findings | Verilator, Verible |
 | `regs.query` | block, register, field | fields, reset values, access, address | SystemRDL tooling |
@@ -204,7 +204,7 @@ A tool that returns JSON has made a promise about what the JSON means, and calle
 ```{.json include="tools/dvh/schema/crossings.schema.json"}
 ```
 
-Three properties are deliberate. Every field carries a description written for a person, because a field name is not a definition. The schema is versioned in its identifier rather than by a version field in the payload, so a consumer pins a URL and a producer who changes a field's meaning must publish a new one. And the schema records what the tool *cannot* decide in `description`, the keyword a consumer is meant to read, rather than in a note between schema authors: this one says in its own summary that no verdict it reports is a sign-off.
+Three properties are deliberate. Every field carries a description written for a person, because a field name is not a definition. The schema is versioned in its identifier rather than by a version field in the payload, so a consumer pins a URL and a producer who changes a field's meaning must publish a new one. And the schema records what the tool *cannot* decide in `description`, the keyword a consumer is meant to read rather than a note between schema authors: this one says in its own summary that no verdict it reports is a sign-off, and in its author's note that it reports a recognized shape rather than a judgement about safety.
 
 The check is not advisory. The tools validate on request, and the tests validate the output of every command that prints JSON on every run, so an output that drifts from its schema fails in continuous integration rather than in somebody else's parser. A further test, in the tool layer's own suite rather than in the file below, walks the schemas and fails if any field is added without a description, or if a reported source location is blank or does not point at a real file:
 

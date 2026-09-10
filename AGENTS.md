@@ -69,6 +69,11 @@ Never hand-edit a state to look further along than the evidence supports.
 - Every number, benchmark or claim about a tool has a source: `[@key]` in
   `refs.bib`, or a `research/` note that cites a URL. No unsourced numbers.
 - Vendor marketing figures are labelled as vendor claims, never as results.
+- **When a spliced file changes, check every page that splices it.** A
+  chapter and an appendix can print the same file, and a commit that fixes
+  one page's claim about it can silently falsify another's. `grep -rn
+  'include="<path>"' chapters/ appendices/` before committing a change to
+  anything under `tools/` or `examples/`.
 - Every listing is a file under `examples/` spliced with
   ```` ```{.lang include="examples/..."} ```` ````. No code typed into prose.
 - Included source files stay at 80 columns or less; comment rulers are 72.

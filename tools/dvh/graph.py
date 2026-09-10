@@ -26,7 +26,7 @@ def connections(mods: dict, top: str) -> dict:
         # module's own name is what the reader of a block diagram wants.
         pretty = (cell.type.split("\\")[1]
                   if cell.type.startswith("$paramod") else cell.type)
-        instances[cname] = pretty
+        instances[cname] = {"module": pretty, "src": cell.src}
         child = mods[cell.type]
         for port, bits in cell.conns.items():
             d = child.ports[port]["direction"]
@@ -141,7 +141,7 @@ def draw(conn: dict, out_svg: str, title: str = "connections") -> None:
         for k, name in enumerate(names):
             x = x0 + k * (BOX_W + COL_GAP)
             boxes[name] = d.tool(x, row_y(r), name, w=BOX_W, h=BOX_H,
-                                 sub=conn["instances"][name])
+                                 sub=conn["instances"][name]["module"])
 
     store_x = mid - STORE_W / 2
     boxes["top"] = d.store(store_x, MARGIN, "inputs", w=STORE_W, h=STORE_H)

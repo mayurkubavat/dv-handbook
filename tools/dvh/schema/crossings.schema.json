@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://mayurkubavat.github.io/dv-handbook/schema/crossings-1.json",
   "title": "dvh crossings",
-  "description": "Crossings between clock domains, and their shapes.",
+  "description": "Crossings between domains. No verdict here is a sign-off.",
   "type": "object",
   "required": [
     "crossings",
@@ -93,5 +93,5 @@
       "$comment": "A shape to look at, not a bug."
     }
   },
-  "$comment": "Reports a shape, never a verdict about safety."
+  "$comment": "Reports a recognized shape, never whether a crossing is safe."
 }
