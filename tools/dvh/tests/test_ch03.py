@@ -425,3 +425,17 @@ def test_two_clock_muxes_over_one_pair_are_not_one_domain():
     tree = clocks.clock_tree(flat)
     assert len(tree["domains"]) == 2
     assert clocks.crossings(flat, tree)["unrecognized"]
+
+
+def test_second_stages_sharing_a_name_are_both_counted():
+    """Two second stages can be two bits of one declared register.
+
+    Indexing the convergence rule by name kept one crossing per name and
+    silently lost the other, so a two-bit value on per-bit chains passed as
+    two recognized shapes.
+    """
+    files = [str(FIXTURE / "shared_second_stage.sv")]
+    flat = design.load_flat(files, "shared_second_stage")
+    x = clocks.crossings(flat)
+    assert len(x["unrecognized"]) == 2
+    assert all("read together" in c["note"] for c in x["unrecognized"])

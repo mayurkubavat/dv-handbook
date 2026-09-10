@@ -268,10 +268,14 @@ def _flag_converging_synchronizers(mod: Module, report: list) -> None:
     sync = [c for c in report if c["shape_recognized"]]
     if len(sync) < 2:
         return
-    stages = {}                       # second-stage register -> its crossing
+    # A second-stage register can be shared: two bits of one declared
+    # register are two second stages under one name. Keeping one crossing
+    # per name lost the other, and a two-bit value on per-bit chains then
+    # passed as two recognized shapes.
+    stages = {}                       # second-stage register -> its crossings
     for c in sync:
         for n in c["second_stage"]:
-            stages[n] = c
+            stages.setdefault(n, []).append(c)
     # Follow the whole chain, not one link of it. A three-flop synchronizer
     # puts a register between the second stage and whatever reads it, and a
     # rule that looked only at immediate readers saw nothing there.
@@ -293,8 +297,8 @@ def _flag_converging_synchronizers(mod: Module, report: list) -> None:
         return out
 
     for name, cell in registers(mod):
-        together = {id(stages[n]): stages[n]
-                    for n in ancestors(name) if n in stages}
+        together = {id(c): c for n in ancestors(name) if n in stages
+                    for c in stages[n]}
         if len(together) < 2:
             continue
         for c in together.values():

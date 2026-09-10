@@ -8,8 +8,9 @@
 # There is no testbench here on purpose: the example is the static check.
 #
 # This example drops the -Wno-* waivers the shared recipe uses to keep UVM
-# source from failing lint, and turns on SYNCASYNCNET, which is off by
-# default and is the one warning whose description mentions clock domains.
+# source from failing lint, and turns on SYNCASYNCNET, the one off-by-
+# default warning that touches reset and clocking style. MULTIDRIVEN,
+# whose description does mention crossings, is enabled already.
 # Nothing here is waived, so a silent run is the section's point.
 EXAMPLE_LANG := sv
 VERILATOR_FLAGS := --timing --timescale 1ns/1ps -Wall \
