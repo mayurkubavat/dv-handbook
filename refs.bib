@@ -1586,3 +1586,86 @@
                   tools rather than functional verification.
                   Accessed 2026-09-07}
 }
+
+% ---------------------------------------------------------------------------
+% Chapter 4 — Simulation Fundamentals.
+% Sources from research/ch04-simulation-fundamentals.md. IEEE 1800 defines the
+% scheduling regions normatively and is paywalled; it is named and never
+% quoted, and the account of the model comes from the papers below.
+% ---------------------------------------------------------------------------
+
+@inproceedings{cummingssalz2007events,
+  author    = {Clifford E. Cummings and Arturo Salz},
+  title     = {{SystemVerilog} Event Regions, Race Avoidance and Guidelines},
+  booktitle = {Synopsys Users Group (SNUG) Boston},
+  year      = {2006},
+  url       = {http://www.sunburst-design.com/papers/CummingsSNUG2006Boston_SystemVerilog_Events.pdf},
+  note      = {Presented at SNUG Boston 2006; this book cites revision 1.2,
+               December 2007, which adds the Re-NBA region and describes
+               nine regions where revision 1.0 describes eight. Read from an
+               Internet Archive capture; the original host now redirects to
+               a registration-walled index. Accessed 2026-09-08}
+}
+
+@inproceedings{sutherland2007gotchas,
+  author    = {Stuart Sutherland and Don Mills and Chris Spear},
+  title     = {More Standard Gotchas: Subtleties in the {Verilog} and
+               {SystemVerilog} Standards That Every Engineer Should Know},
+  booktitle = {Synopsys Users Group (SNUG) San Jose},
+  year      = {2007},
+  url       = {http://sutherland-hdl.com/papers/2007-SNUG-SanJose_gotcha_again_paper.pdf},
+  note      = {The paper's own cover reads "Gotcha Again"; cited here by the
+               publisher's index title. Accessed 2026-09-08}
+}
+
+@inproceedings{sutherland2006gotchas,
+  author    = {Stuart Sutherland and Don Mills and Chris Spear},
+  title     = {Standard Gotchas: Subtleties in the {Verilog} and
+               {SystemVerilog} Standards That Every Engineer Should Know},
+  booktitle = {Synopsys Users Group (SNUG) Boston},
+  year      = {2006},
+  url       = {http://sutherland-hdl.com/papers/2006-SNUG-Boston_standard_gotchas_paper.pdf},
+  note      = {Accessed 2026-09-08}
+}
+
+@article{ulrich1969selective,
+  author  = {E. G. Ulrich},
+  title   = {Exclusive simulation of activity in digital networks},
+  journal = {Communications of the ACM},
+  volume  = {12},
+  number  = {2},
+  pages   = {102--110},
+  year    = {1969},
+  doi     = {10.1145/362848.362870}
+}
+
+@article{szygenda1975timebased,
+  author  = {S. A. Szygenda and E. W. Thompson},
+  title   = {Digital Logic Simulation in a Time-Based, Table-Driven
+             Environment. Part 1},
+  journal = {Computer},
+  volume  = {8},
+  number  = {3},
+  pages   = {24--36},
+  year    = {1975},
+  doi     = {10.1109/c-m.1975.218898}
+}
+
+@misc{verilator-internals,
+  author       = {Wilson Snyder and {Verilator contributors}},
+  title        = {Verilator Internals},
+  year         = {2026},
+  url          = {https://github.com/verilator/verilator/blob/master/docs/internals.rst},
+  note         = {Describes compile-time scheduling and which regions of the
+                  model are implemented. Accessed 2026-09-08}
+}
+
+@misc{icarus-quirks,
+  author       = {{Icarus Verilog contributors}},
+  title        = {Icarus Verilog Quirks},
+  howpublished = {GitHub, steveicarus/iverilog},
+  year         = {2026},
+  url          = {https://github.com/steveicarus/iverilog/blob/master/Documentation/usage/icarus_verilog_quirks.rst},
+  note         = {Records a deliberate change to time-zero scheduling order.
+                  Accessed 2026-09-08}
+}

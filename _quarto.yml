@@ -13,6 +13,7 @@ book:
     - chapters/ch01-what-is-dv.qmd
     - chapters/ch02-verification-planning.qmd
     - chapters/ch03-digital-design-for-verifiers.qmd
+    - chapters/ch04-simulation-fundamentals.qmd
     - chapters/ch34-generative-ai-agentic-dv.qmd
     - references.qmd
   appendices:
