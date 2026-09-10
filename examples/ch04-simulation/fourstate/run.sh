@@ -12,13 +12,13 @@ mkdir -p build
 
 echo "=== four-state, event-driven"
 iverilog -g2012 -o build/fs.vvp dut_unreset.sv tb_fourstate.sv
-vvp build/fs.vvp | grep -E '^out'
+vvp build/fs.vvp | grep -E '^(bare|if/else)'
 
 echo "=== two-state, every register starts at zero"
 verilator --binary --timing --timescale 1ns/1ps -Wno-DECLFILENAME \
     --x-initial 0 --top-module tb_fourstate -Mdir build/v0 \
     dut_unreset.sv tb_fourstate.sv >/dev/null
-./build/v0/Vtb_fourstate | grep -E '^out'
+./build/v0/Vtb_fourstate | grep -E '^(bare|if/else)'
 
 echo "=== two-state, randomized, three seeds"
 verilator --binary --timing --timescale 1ns/1ps -Wno-DECLFILENAME \
@@ -28,7 +28,7 @@ vals=""
 for s in 1 7 99; do
   printf 'seed %-3s ' $s
   v=$(./build/vu/Vtb_fourstate +verilator+rand+reset+2 +verilator+seed+$s \
-      | grep -E '^out')
+      | grep -E '^bare')
   echo "$v"
   vals="$vals$v|"
 done

@@ -41,7 +41,9 @@ A timestep is divided into regions, and the order between regions is fixed. This
 The list of names is long enough to look like something to memorize, and it is not, because it has a shape. Three regions do the design's work. Then assertions sample and evaluate. Then the same three regions repeat for the testbench. Then everything settles.
 
 ::: {.callout-note title="Definition"}
-The **Reactive region set is the testbench dual of the Active region set**. Reactive mirrors Active, Re-Inactive mirrors Inactive, Re-NBA mirrors NBA. The design gets one set, the testbench gets the other, and the second runs after the first. That symmetry is why a testbench driving from the Reactive region cannot race a design driving from the Active one: they are not in the same part of the timestep at all.
+The **Reactive region set is the dual of the Active region set**. Reactive mirrors Active, Re-Inactive mirrors Inactive, Re-NBA mirrors NBA, and the second set runs after the first. Three regions, then assertions, then the same three again.
+
+What lands in the second set is narrower than "the testbench", and the distinction matters: code in a `program` block goes there, and so do assertion action blocks. An ordinary module testbench, which is what most of this book's examples are, runs in Active alongside the design.
 :::
 
 Within that frame, the regions and what lands in each:
@@ -53,14 +55,21 @@ Within that frame, the regions and what lands in each:
 | Inactive | anything scheduled by `#0` |
 | NBA | the *update* half of non-blocking assignments |
 | Observed | evaluation of concurrent assertions |
-| Reactive | the testbench's own blocking assignments and program code |
+| Reactive | code in a `program` block, and assertion action blocks |
 | Re-Inactive, Re-NBA | the testbench's counterparts of Inactive and NBA |
 | Postponed | `$strobe` and `$monitor`; read-only, and nothing may schedule new work from here |
 
 Two entries deserve a note. A non-blocking assignment appears twice on purpose: its right side is evaluated in Active, where the statement is written, and the variable is updated later in NBA. That split is the whole of what "non-blocking" means, and most of @sec-ch04-races follows from it. And Inactive exists for a historical reason worth knowing: it was needed in early Verilog before the non-blocking region was added, and once that region existed, well-written code stopped populating Inactive at all [@cummingssalz2007events].
 
 ::: {.callout-warning title="Pitfall"}
-Only the order *between* regions may be relied on. Within a region the order is arbitrary and the language guarantees nothing about it. Two `always` blocks woken by the same edge both execute in Active, and which runs first is the simulator's choice; statements between `begin` and `end` still run in the order written, but the blocks themselves are not ordered against each other. This chapter's regions example prints from several places in one timestep, and its two Active-region lines may come out either way round on your machine. That is not a defect in the tool. It is the rule.
+Only the order *between* regions may be relied on. Within a region the order is arbitrary and the language guarantees nothing about it. Two `always` blocks woken by the same edge both execute in Active, and which runs first is the simulator's choice; statements between `begin` and `end` still run in the order written, but the blocks themselves are not ordered against each other.
+
+This chapter's regions example prints from several places in one timestep, so the ordering is observed rather than asserted:
+
+```{.text include="examples/ch04-simulation/regions/run.out"}
+```
+
+The two Active-region lines may come out either way round on your machine, and a different simulator may swap them. That is not a defect in the tool; it is the rule. What is stable is everything the regions decide: the non-blocking target still reads as unknown in Active, and `$strobe` sees it updated.
 :::
 
 ## Iteration within one timestep {#sec-ch04-iteration}
@@ -119,15 +128,15 @@ The design is a register: `q` takes `d` on every rising edge, and `d` counts up 
 
 None of that is a bug. The bug is the scoreboard that pairs the first reading with a stimulus value that has already moved on, which is the failure this chapter opened with.
 
-The language's answer is a clocking block, which names when its signals are sampled and driven: sampled a little before the edge, driven a little after it. Those skews are not arbitrary conventions. They are where a real flip-flop's setup window and clock-to-output delay are, and the construct exists to put a testbench at the same points in time as the hardware it is testing. The construct belongs to Part II; what matters here is why it exists.
+The language's answer is a clocking block, which names when its signals are sampled and driven: sampled a little before the edge, driven a little after it. Those skews are not arbitrary conventions. They are where a real flip-flop's setup window and clock-to-output delay are, and the construct exists to put a testbench at the same points in time as the hardware it is testing [@bromley2012clocking]. The construct belongs to Part II; what matters here is why it exists.
 
 ::: {.callout-warning title="Pitfall"}
-A clocking block does not "fix" testbench timing, and treating it as a fix is how people get bitten by it. The one paper devoted to using them calls them surprisingly error-prone, and the two mistakes it names are confusing a clocking variable with the underlying signal, and using the wrong assignment operator on a clocking output. What a clocking block buys is a stated sampling point. What it costs is a second name for every signal and a new class of mistake.
+A clocking block does not "fix" testbench timing, and treating it as a fix is how people get bitten by it. The one paper devoted to using them calls them "surprisingly error-prone", and the two mistakes it names are confusing a clocking variable with the underlying signal, and using the wrong assignment operator on a clocking output [@bromley2012clocking]. What a clocking block buys is a stated sampling point. What it costs is a second name for every signal and a new class of mistake.
 :::
 
 Assertions sit in this picture too, and the reason Part III can lean on them is narrower than it is usually stated. A concurrent assertion's expression is sampled in Preponed, before anything in the timestep has run, so the values it sees are those that were stable going into the edge. That is what makes an assertion immune to the read-write race that catches procedural code, and it is why sampling a testbench input one step before the edge is what makes a testbench agree with its own assertions.
 
-It does not make assertions race-free in general. An assertion's action block runs in the Reactive region as ordinary procedural code, and races there like anything else.
+It does not make assertions race-free in general. An assertion's action block runs in the Reactive region as ordinary procedural code, and races there like anything else. The guideline that follows, and the one Part III depends on, is narrow and worth stating exactly: sample a testbench input one step before the edge, and the testbench sees the same values its assertions do [@bromley2012clocking].
 
 ## Four state, two state, and what each cannot find {#sec-ch04-fourstate}
 
@@ -135,20 +144,26 @@ It does not make assertions race-free in general. An assertion's action block ru
 A **four-state** simulator gives every bit one of four values: zero, one, unknown, and high-impedance. A **two-state** simulator has only zero and one. An **unknown** is not a value hardware can hold; it is the simulator saying it does not know which value this bit has.
 :::
 
-What an unknown does when it meets an operator is the mechanism behind the X-optimism @sec-ch03 named and did not explain. Arithmetic and bitwise operators generally propagate it: unknown in, unknown out. Control flow does not. An `if` whose condition is unknown takes neither branch, so the assignments inside simply do not happen and the simulation continues with whatever the target held before. Nothing announces this. A block guarded by an unknown enable looks exactly like a block whose enable was low.
+What an unknown does when it meets an operator is the mechanism behind the X-optimism @sec-ch03 named and did not explain. Arithmetic and bitwise operators generally propagate it: unknown in, unknown out. Control flow does not, and the detail that matters is easy to get wrong.
 
-This chapter's four-state example is an unreset register read through such an enable, run three ways:
+An `if` whose condition is unknown does not take the true branch. What happens next depends on whether there is an `else`. With one, the `else` branch runs, exactly as though the condition had been false: the design proceeds down a definite path chosen by a value nobody knows. Without one, neither branch runs and the target keeps whatever it held before. A `case` on an unknown selector takes its `default` for the same reason. In every one of those, an unknown has been silently converted into a decision, and nothing announces it. That conversion is X-optimism [@sutherland2013x].
+
+Sutherland's framing of why this is worse than it sounds is the one to carry: zero, one and high-impedance are abstractions of things that exist in silicon, and an unknown is not an abstraction of anything. It is a statement about the simulator's knowledge, and a branch taken on it is a guess presented as a result [@sutherland2013x].
+
+This chapter's four-state example is an unreset register read two ways, under three initialization models. One reader uses a bare `if`; the other adds an `else`:
 
 ```{.text include="examples/ch04-simulation/fourstate/run.out"}
 ```
 
-Read those as three different questions being answered. The four-state run says the design depends on something it never initialized. The two-state run with every register starting at zero says nothing at all: the design looks like it works, and it would look like it works across ten thousand seeds. The randomized run says the result depends on the initial state, which is the same finding reached from the other direction.
+The first block is the whole argument in four lines. Under four-state simulation the bare `if` leaves its target unknown, and the missing reset is visible. The `if ... else` produces 238, which is the value in its else branch: a definite, ordinary-looking number, produced by taking a branch on a value nobody knows. Nothing in that number says a reset is missing. That is X-optimism, and it is why a design can pass a four-state regression and fail in silicon.
+
+The other two blocks are the two-state models. Starting every register at zero says nothing at all: both readers give a plausible answer, and would across ten thousand seeds. Randomizing says the result depends on the initial state, which is the same finding reached from the other direction.
 
 That last row is worth dwelling on, because two claims about two-state simulation are widely repeated and both are wrong.
 
 The first is that a two-state simulator cannot find reset bugs. It can find this class of them, and the example shows how: not by propagating an unknown, which it cannot do, but by disagreeing with itself across seeds. What it genuinely cannot do is propagate an unknown through logic, or compare a value against one.
 
-The second is that two-state simulation is much faster. The only measurement this book could find is a benchmark on a model of several million gate equivalents where the saving was about six percent, and the authors add that they had heard fifteen percent claimed and had not seen it. They also warn against quoting even their own figure once the tools have moved on, which is good advice and applies to this paragraph. Treat it as one measurement on one design, whose value is that it punctures the folklore rather than replacing it with a new number to repeat.
+The second is that two-state simulation is much faster. The only measurement this book could find is a benchmark on a model of several million gate equivalents where the saving was about six percent, and the authors add that they had heard fifteen percent claimed and had not seen it [@cummings2004twostate]. They also warn against quoting even their own figure once the tools have moved on, which is good advice and applies to this paragraph. Treat it as one measurement on one design, whose value is that it punctures the folklore rather than replacing it with a new number to repeat.
 
 ::: {.callout-tip title="In Practice"}
 The reset tests of @sec-ch03-resets are worth revisiting with this in hand. If your regression runs two-state with a fixed initial value, a missing reset is invisible to it by construction and no number of seeds will help. Randomized initialization changes that, and it is a one-flag change in most flows. It is the cheapest thing in this chapter to adopt and the easiest to assume you already have.
@@ -158,7 +173,9 @@ The reset tests of @sec-ch03-resets are worth revisiting with this in hand. If y
 
 A timescale declares two things: the unit a bare delay is measured in, and the precision delays are rounded to. Modules may declare different ones, and a design that mixes them is not an error.
 
-The failure mode is what earns this a section. A mismatched timescale does not produce an obviously broken result. It produces a plausible one: a waveform with the right shapes at the wrong times, or a delay that quietly rounds away to nothing. Simulators round delays finer than the declared precision, and this book does not state the rounding rule, because no openly readable source states one. If a design depends on the answer, measure it on the tool you use rather than trusting a rule you read somewhere.
+The failure mode is what earns this a section. A mismatched timescale does not produce an obviously broken result. It produces a plausible one: a waveform with the right shapes at the wrong times, or a delay that quietly rounds away to nothing. Delays are scaled to the smallest precision used anywhere in the design, so one module's declaration changes another module's behaviour [@sutherland2007gotchas]. Simulators round delays finer than the declared precision, and this book does not state the rounding rule, because no openly readable source states one. If a design depends on the answer, measure it on the tool you use rather than trusting a rule you read somewhere.
+
+This chapter's own examples make the point against themselves. None of them declares a timescale, so the event-driven simulator reports its finish time in seconds while the other runs at nanoseconds, which is visible in the output printed earlier in this chapter. Nothing in those examples depends on it, which is exactly why it went unnoticed.
 
 ## What a real simulator implements {#sec-ch04-real}
 

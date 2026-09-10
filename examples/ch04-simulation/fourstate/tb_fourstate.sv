@@ -7,9 +7,10 @@
 module tb_fourstate;
   logic       clk = 1'b0;
   logic       go = 1'b0;
-  logic [7:0] out;
+  logic [7:0] out_bare, out_else;
 
-  dut_unreset u (.clk(clk), .go(go), .out(out));
+  dut_unreset u (.clk(clk), .go(go),
+                 .out_bare(out_bare), .out_else(out_else));
   initial forever #5 clk = ~clk;
 
   initial begin
@@ -20,8 +21,10 @@ module tb_fourstate;
     // One run cannot tell whether a definite value is meaningful, so the
     // testbench reports what it saw and leaves the conclusion to whoever
     // compares the runs.
-    if (out === 8'hxx) $display("out is unknown");
-    else               $display("out = %0d", out);
+    if (out_bare === 8'hxx) $display("bare if: out is unknown");
+    else                    $display("bare if: out = %0d", out_bare);
+    if (out_else === 8'hxx) $display("if/else: out is unknown");
+    else                    $display("if/else: out = %0d", out_else);
     $finish;
   end
 endmodule
