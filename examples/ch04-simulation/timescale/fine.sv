@@ -3,5 +3,5 @@
 // coarse module can produce for its own.
 `timescale 1ns/1ps
 module fine;
-  initial #1.2 $display("fine:   after #1.2, $realtime=%0t", $realtime);
+  initial #1.2 $display("fine:   after #1.2, $realtime=%0.1f", $realtime);
 endmodule

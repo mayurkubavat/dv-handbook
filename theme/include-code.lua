@@ -26,5 +26,16 @@ function CodeBlock(el)
   end
   el.attributes["include"] = nil
   if not el.attributes["filename"] then el.attributes["filename"] = path end
+  -- A short block is kept whole on one page. A simulator output whose
+  -- point is the order of two tools' lines is worthless with the tools on
+  -- different pages, and three such blocks were split at a page foot. The
+  -- request is capped so a long listing still breaks where it must.
+  if FORMAT:match("latex") then
+    local _, lines = el.text:gsub("\n", "")
+    local need = math.min(lines + 3, 18)
+    return {pandoc.RawBlock("latex",
+                            "\\Needspace{" .. need .. "\\baselineskip}"),
+            el}
+  end
   return el
 end
