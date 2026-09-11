@@ -32,13 +32,13 @@ Nothing in a simulation is parallel. The hardware is, and the language reads as 
 
 This is why "at the same time" is not the same as "at the same point". Two processes woken by one clock edge are in the same timestep, and the timestep has an internal order. Almost everything in this chapter follows from that sentence.
 
-The algorithm is much older than SystemVerilog and is not a quirk of it. Event-driven simulation of digital networks, evaluating only the parts of a circuit whose inputs actually changed rather than sweeping the whole design each step, was described in the 1960s [@ulrich1969selective], and the time-ordered queue that organizes it in the 1970s [@szygenda1975timebased]. What the language adds is a specification of *which kind* of work happens where inside a timestep.
+The algorithm is much older than SystemVerilog and is not a quirk of it. Event-driven simulation of digital networks, evaluating only the parts of a circuit whose inputs actually changed rather than sweeping the whole design each step, was described in the 1960s [@ulrich1969selective], and table-driven, time-based logic simulators were being built in the 1970s [@szygenda1975timebased]. What the language adds is a specification of *which kind* of work happens where inside a timestep.
 
 ## The regions {#sec-ch04-regions}
 
 A timestep is divided into regions, and the order between regions is fixed. This is defined normatively in the SystemVerilog standard, which this book names and does not quote; the account here follows Cummings and Salz, whose paper is the source for everything in this section [@cummingssalz2007events].
 
-The list of names is long enough to look like something to memorize, and it is not, because it has a shape. Assertions sample first, before anything else runs. Then three regions do the design's work. Then assertions are evaluated against what they sampled. Then the same three regions repeat for the testbench. Then everything settles.
+The list of names is long enough to look like something to memorize, and it is not, because it has a shape. Assertions sample first, before anything else runs. Then three regions do the design's work. Then assertions are evaluated against what they sampled. Then the same three regions repeat for the testbench, which may wake the design's three again. Then everything settles.
 
 Cummings and Salz describe the Reactive set as having been "put in place to be the testbench dual of the RTL Active set of event regions", and each of its three regions as the dual of the corresponding one [@cummingssalz2007events]. Reactive mirrors Active, Re-Inactive mirrors Inactive, Re-NBA mirrors NBA, and the second set runs after the first.
 
@@ -90,7 +90,7 @@ Start with the case that needs no clock and that you have probably already hit. 
 
 The clocked cases follow the same pattern. One variable written by two processes: both write in Active, the order is arbitrary, and the last writer wins. A value read in one process and written in another at the same edge: whether the reader sees the old value or the new one depends on which ran first, unless the write was non-blocking, in which case the update is in NBA and every reader in Active sees the old value. That last clause is not a detail. It is why the rule exists.
 
-Which brings us to the eight guidelines @sec-ch03 drew on, grouped here into seven: two of them share a region and a reason, so they are argued together below. They are not folklore and they are not a style preference. Each falls out of a region, and the source derives them that way, region by region [@cummingssalz2007events; @cummings2000nba].
+Which brings us to the eight guidelines @sec-ch03 drew on, grouped here into seven: two of them share a region and a reason, so they are argued together below. They are not folklore and they are not a style preference. Six of the seven fall out of a region, and the source derives them that way, region by region; the seventh is a corollary, and is argued after the table [@cummingssalz2007events; @cummings2000nba].
 
 | Guideline | The region that explains it |
 |---|---|
@@ -132,7 +132,7 @@ The language's answer is a clocking block, which names when its signals are samp
 A clocking block does not "fix" testbench timing, and treating it as a fix is how people get bitten by it. The one paper devoted to using them calls them "surprisingly error-prone", and the two mistakes it names are confusing a clocking variable with the underlying signal, and using the wrong assignment operator on a clocking output [@bromley2012clocking]. What a clocking block buys is a stated sampling point. What it costs is a second name for every signal and a new class of mistake.
 :::
 
-Assertions sit in this picture too, and the reason Part III can lean on them is narrower than it is usually stated. A concurrent assertion's expression is sampled in Preponed, before anything in the timestep has run, so the values it sees are those that were stable going into the edge. That is what makes an assertion immune to the read-write race that catches procedural code, and it is why sampling a testbench input one step before the edge is what makes a testbench agree with its own assertions.
+Assertions sit in this picture too, and the reason Part III can lean on them is narrower than it is usually stated. A concurrent assertion's expression is sampled, in the model, in Preponed, before anything in the timestep has run, so the values it sees are those that were stable going into the edge. That is what makes an assertion immune to the read-write race that catches procedural code, and it is why sampling a testbench input one step before the edge is what makes a testbench agree with its own assertions.
 
 It does not make assertions race-free in general. An assertion's action block runs in the Reactive region as ordinary procedural code, and races there like anything else. The guideline that follows, and the one Part III depends on, is narrow and worth stating exactly: sample a testbench input one step before the edge, and the testbench sees the same values its assertions do [@bromley2012clocking].
 
@@ -146,7 +146,7 @@ What an unknown does when it meets an operator is the mechanism behind the X-opt
 
 An `if` whose condition is unknown does not take the true branch. What happens next depends on whether there is an `else`. With one, the `else` branch runs, exactly as though the condition had been false: the design proceeds down a definite path chosen by a value nobody knows. Without one, neither branch runs and the target keeps whatever it held before. A `case` on an unknown selector takes its `default`, or, where it has none, does nothing and leaves its target holding the value it already had — the same two outcomes as the `if`, for the same reason. In every one of those, an unknown has been silently converted into a decision, and nothing announces it. That conversion is X-optimism [@sutherland2013x].
 
-Sutherland's framing of why this is worse than it sounds is the one to carry. Three of the four values stand for something a voltmeter could find on a wire; the fourth, in his words, is "not an abstraction of actual silicon values" [@sutherland2013x] — it is the simulator saying it does not know. It is a statement about the simulator's knowledge, and a branch taken on it is a guess presented as a result [@sutherland2013x].
+Sutherland's framing of why this is worse than it sounds is the one to carry. Three of the four values stand for something that exists in silicon; the fourth, in his words, is "not an abstraction of actual silicon values" [@sutherland2013x] — it is the simulator saying it does not know. It is a statement about the simulator's knowledge, and a branch taken on it is a guess presented as a result [@sutherland2013x].
 
 This chapter's four-state example is an unreset register read two ways, under three initialization models. One reader uses a bare `if`; the other adds an `else`:
 
@@ -161,7 +161,7 @@ That last row is worth dwelling on, because two claims about two-state simulatio
 
 The first is that a two-state simulator cannot find reset bugs. It can find this class of them, and the example shows how: not by propagating an unknown, which it cannot do, but by disagreeing with itself across seeds. What it genuinely cannot do is propagate an unknown through logic, or compare a value against one.
 
-The second is that two-state simulation is much faster. The only measurement this book could find is a benchmark on a model of several million gate equivalents where the saving was about six percent, and the authors add that they had heard fifteen percent claimed and had not seen it [@cummings2004twostate]. They also warn against quoting even their own figure once the tools have moved on, which is good advice and applies to this paragraph. Treat it as one measurement on one design, whose value is that it punctures the folklore rather than replacing it with a new number to repeat.
+The second is that two-state simulation is much faster. The only measurement this book could find is a 2001 benchmark on a 2.4-million-gate-equivalent model, where the saving was about six percent, and the authors add that they had heard fifteen percent claimed and had not seen it [@cummings2004twostate]. They also warn against quoting even their own figure once the tools have moved on, which is good advice and applies to this paragraph. Treat it as one measurement on one design, whose value is that it punctures the folklore rather than replacing it with a new number to repeat.
 
 ::: {.callout-tip title="In Practice"}
 The reset tests of @sec-ch03-resets are worth revisiting with this in hand. If your regression runs two-state with a fixed initial value, a missing reset is invisible to it by construction and no number of seeds will help. Randomized initialization changes that, and it is a one-flag change in most flows. It is the cheapest thing in this chapter to adopt and the easiest to assume you already have.
@@ -171,7 +171,7 @@ The reset tests of @sec-ch03-resets are worth revisiting with this in hand. If y
 
 A timescale declares two things: the unit a bare delay is measured in, and the precision delays are rounded to. Modules may declare different ones, and a design that mixes them is not an error.
 
-The failure mode is what earns this a section. A mismatched timescale does not produce an obviously broken result. It produces a plausible one: a waveform with the right shapes at the wrong times, or a delay that quietly rounds away to nothing. Delays are scaled to the smallest precision used anywhere in the design, so one module's declaration changes another module's behavior [@sutherland2007gotchas]. Simulators round delays finer than the declared precision, and this book does not state the rounding rule, because no openly readable source states one. If a design depends on the answer, measure it on the tool you use rather than trusting a rule you read somewhere.
+The failure mode is what earns this a section. A mismatched timescale does not produce an obviously broken result. It produces a plausible one: a waveform with the right shapes at the wrong times, or a delay that quietly rounds away to nothing. Delays are scaled to the smallest precision used anywhere in the design [@sutherland2007gotchas], which sets the resolution of the shared time wheel; a module's own delays are still rounded to its own declared precision, so a finer module elsewhere does not change what a coarser one does. The cross-module trap is a different one, and it is about compilation rather than arithmetic: a `` `timescale `` directive is bound to neither a module nor a file, but applies to everything the compiler reads after it until the next one, so a file that declares no timescale takes whichever one was in force when it happened to be compiled. Change the order of the files on the command line and a delay in that file means something else [@sutherland2007gotchas]. Simulators round delays finer than the declared precision, and this book does not state the rounding rule, because no openly readable source states one. If a design depends on the answer, measure it on the tool you use rather than trusting a rule you read somewhere.
 
 This chapter's own examples make the point against themselves, and not in the way you might expect. None of them declares a timescale in its source. The event-driven simulator therefore falls back to its default, which is why the regions output above reports finishing "at 6 (1s)" rather than in nanoseconds. The other simulator does not fall back to anything: the build passes it a timescale on the command line, so it runs in nanoseconds for a reason no reader of the source could see. Two tools, two different answers to a question the source never asked, and one of the answers hidden in a build file. Nothing in these examples depends on it, which is exactly why nobody noticed.
 
@@ -179,34 +179,36 @@ This chapter's own examples make the point against themselves, and not in the wa
 
 The model above is what your code must be correct against. It is not, in general, what your simulator does, and the difference is documented by the tools themselves.
 
-One of this book's two simulators is event-driven and four-state, and it records a deliberate departure: it modifies scheduling at time zero, arranging one class of `always` block to run before other threads in order to remove an order dependence [@icarus-quirks]. The other decides its scheduling at compile time rather than maintaining a queue, and implements the Active and non-blocking regions of the model rather than the full set, iterating them to convergence at run time [@verilator-internals]. Its option for handling delays and event controls adds the ability to suspend a process; it does not turn it into an event-driven simulator, and an ordinary clocked block stays statically scheduled.
+One of this book's two simulators is event-driven and four-state, and it records a deliberate departure: it modifies scheduling at time zero, arranging one class of `always` block to run before other threads in order to remove an order dependence [@icarus-quirks]. The other decides its scheduling at compile time rather than maintaining a queue, and its documentation describes the design in the model's own vocabulary: the Active and non-blocking regions are where the work is placed and iterated to convergence, and the remaining regions nest around those, each iterating the loops of every region that precedes it in the scheduling order [@verilator-internals]. Its option for handling delays and event controls adds the ability to suspend a process; it does not turn it into an event-driven simulator, and an ordinary clocked block stays statically scheduled.
 
 Neither is wrong and neither is hiding anything. Both are documented, and the documentation is what to read before drawing a conclusion from a result.
 
 ::: {.callout-warning title="Pitfall"}
-Do not reason about a simulator from its category. This book's own plan described the statically scheduled tool as a cycle-based simulator, which its documentation contradicts, and correcting that changed what this chapter says. The interesting question is not *which kind* of simulator you have but *how much of the model* it implements. A tool implementing two regions of nine agrees with the model on any code that does not depend on the other seven, and that is most correct code.
+Do not reason about a simulator from its category. This book's own plan described the statically scheduled tool as a cycle-based simulator, which its documentation contradicts, and correcting that changed what this chapter says. The interesting question is not *which kind* of simulator you have but *how much of the model* it implements, and where its own documentation says the implementation departs from it. One of these tools maintains a queue at run time and the other settles most of the order before the run starts; both are documented, and neither answer is deducible from the label on the tool.
 :::
 
 ## Worked example: one race, two simulators {#sec-ch04-example}
 
 ::: {.callout-note title="Worked Example"}
-A counter and an observer on one clock, written with blocking assignments so that nothing decides which process runs first. Run under both simulators. Then the same design with two characters changed.
+A counter and an observer on one clock, written with blocking assignments so that nothing decides which process runs first. Run under both simulators. Then the same design with four characters added.
 :::
 
 ```{.systemverilog include="examples/ch04-simulation/race/racy.sv"}
 ```
 
-Both processes are woken by the same edge and both execute in Active, whose internal order is arbitrary. If the counter runs first the observer sees the new count; if the observer runs first it sees the old one. Here is what the two simulators actually report:
+Both processes are woken by the same edge and both execute in Active, whose internal order is arbitrary. If the counter runs first the observer sees the new count; if the observer runs first it sees the old one.
 
-Change the two assignment operators to non-blocking and the race is gone, because the write now lands in NBA and the read still happens in Active:
+Change the four assignment operators to non-blocking — four `<` characters, and nothing else — and the race is gone, because the write now lands in NBA and the read still happens in Active:
 
 ```{.systemverilog include="examples/ch04-simulation/race/safe.sv"}
 ```
 
+Here is what the two simulators report on both designs:
+
 ```{.text include="examples/ch04-simulation/race/run.out"}
 ```
 
-On the racy design the two simulators disagree, and not subtly: one reports a sequence that never settles into a pattern at all. On the safe one they report the same thing, and it is the thing the hardware would do.
+On the racy design they disagree, and the reader can see it in four lines. On the safe one they report the same thing, and it is the thing the hardware would do.
 
 Three things are worth taking from that.
 
@@ -249,4 +251,4 @@ The nearer-term version needs no research at all. If your project has more than 
 
 ## Further reading
 
-Cummings and Salz's paper on event regions and race avoidance is the source this chapter's account of the model follows, and it repays reading in full for the worked cases named here only in passing; note that it exists in two revisions describing eight and nine regions, and that the pages of the later one carry a venue two years earlier than its content [@cummingssalz2007events]. Cummings' earlier paper on non-blocking assignments is where the eight guidelines are stated and argued from the queue [@cummings2000nba]. The two "gotchas" papers, by Sutherland and Mills and then with Chris Spear on the second, are the best short catalog of the places where the language surprises people, and are this chapter's source for time-zero ordering, for `#0`, and for why two tools may differ [@sutherland2006gotchas; @sutherland2007gotchas]. For the algorithm underneath all of it, Ulrich's paper on simulating only the active part of a network is the origin of the technique [@ulrich1969selective], and Szygenda and Thompson describe the time-ordered queue that organizes it [@szygenda1975timebased]. Finally, both of this book's simulators document where they depart from the model, and those pages repay the ten minutes [@verilator-internals; @icarus-quirks].
+Cummings and Salz's paper on event regions and race avoidance is the source this chapter's account of the model follows, and it repays reading in full for the worked cases named here only in passing; note that it exists in two revisions describing eight and nine regions, and that every page of the later one carries SNUG Boston 2006 although revision 1.2 is dated December 2007 [@cummingssalz2007events]. Cummings' earlier paper on non-blocking assignments is where the eight guidelines are stated and argued from the queue [@cummings2000nba]. The two "gotchas" papers, by Sutherland and Mills and then with Chris Spear on the second, are the best short catalog of the places where the language surprises people, and are this chapter's source for time-zero ordering, for `#0`, and for why two tools may differ [@sutherland2006gotchas; @sutherland2007gotchas]. For the algorithm underneath all of it, Ulrich's paper on simulating only the active part of a network is the origin of the technique [@ulrich1969selective], and Szygenda and Thompson's paper is cited here for the date and the existence of the time-based, table-driven form, not for its content: it is behind a paywall and this book has not read it [@szygenda1975timebased]. Finally, both of this book's simulators document where they depart from the model, and those pages repay the ten minutes [@verilator-internals; @icarus-quirks].
