@@ -4,7 +4,7 @@
 // demoted register is reported by the ports that clock it, and the report
 // names the hidden clock.
 module hidden_clock_via_register (input logic clk1, hclk, en,
-                                  input logic [7:0] d, 
+                                  input logic [7:0] d,
                output logic [7:0] q);
   logic hg, r, gclk;
   logic [7:0] a, b;

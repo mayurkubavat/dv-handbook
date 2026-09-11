@@ -2,7 +2,7 @@
 // register. A hand-written list of the latch's data pins missed the clear
 // pin, and the same clear on a flip-flop was reported.
 module latch_async_clear (input logic aclk, bclk, input logic [7:0] d,
-                          input logic e, 
+                          input logic e,
                 output logic [7:0] q);
   logic [7:0] da;
   logic en, clr;

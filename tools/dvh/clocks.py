@@ -4,7 +4,9 @@ netlist (see design.py).
 The walks follow a net backwards from a register's clock (or reset) pin to
 its source. A source is a top-level input port or a register output (a
 divided or generated clock). Buffers, inverters, gates and multiplexers are
-walked through and recorded.
+walked through and recorded. A net with more than one driver -- two
+tri-state assignments selecting a clock -- is refused as a design the tool
+cannot answer for, rather than walked through whichever driver came last.
 
 A clock walk has to tell a gate's clock input from its enable, or every
 gated register lands in a domain of its own and an ordinary synchronous path
@@ -57,8 +59,9 @@ def clock_candidates(mod: Module, declared=()) -> tuple:
     most of the time. **Strong**: the net already drives some register's
     clock pin directly, or is a register output used as a clock (a divider),
     or is something the netlist cannot see into, which is what an analog
-    block looks like from here. **Weak**: it is an input port, which a clock
-    usually is and an enable sometimes is.
+    block looks like from here. **Weak**: it is an input port, a register's
+    output or a latch's, any of which a clock can be and an enable, a
+    divider or a held enable can be too.
 
     Strong evidence for one input is not evidence against another. Both a
     clock gate and Plassan's *blending* -- two clocks combined to make a
@@ -114,6 +117,24 @@ def clock_ports(mod: Module) -> set:
 UNKNOWN = "?"
 
 
+# The pins a register samples on its clock edge. Every *other* input can
+# change the output on its own timing: the clock, an asynchronous set,
+# clear or load, and the value an asynchronous load makes the output
+# follow while the load is high. The list is of what is excluded, because
+# the two lists of what was included -- first the clock alone, then the
+# clock and the asynchronous controls -- were each outgrown by the next
+# register pin a design used.
+SYNCHRONOUS_PINS = ("D", "EN", "SRST")
+
+
+def _timing_pins(cell) -> list:
+    """Every input of a register that can change its output on its own
+    timing rather than on the clock's: the clock, and everything not
+    sampled by it."""
+    return [p for p, d in cell.dirs.items()
+            if d == "input" and p not in SYNCHRONOUS_PINS]
+
+
 def clock_deps(mod: Module, bit, declared,
                through_registers=True) -> frozenset:
     """Which declared clocks a net's value depends on, as clock port *bits*.
@@ -126,12 +147,14 @@ def clock_deps(mod: Module, bit, declared,
     A bit of a declared clock port depends on itself -- the bit, because
     every bit of a vector port shares the port's name and a divider of
     `lane_clk[1]` is not a divider of `lane_clk[0]`. A register's output
-    depends on whatever its clock and its asynchronous pins depend on,
-    which makes a divided clock a dependent of the clock that divides it to
-    any depth; a latch's output depends on its enable and its data; with
-    `through_registers` false the walk stops at either, answering the
-    narrower question "which clocks reach here through logic alone". Any
-    combinational cell depends on the union of its inputs. An undeclared
+    depends on whatever every input it does not sample on its clock
+    depends on -- the clock, an asynchronous set, clear or load, and the
+    value a load makes it follow -- which makes a divided clock a
+    dependent of the clock that divides it to any depth; a latch's output
+    depends on its enable and its data; with `through_registers` false the
+    walk stops at either, answering the narrower question "which clocks
+    reach here through logic alone". Any combinational cell depends on the
+    union of its inputs. An undeclared
     port depends on nothing. Anything the netlist cannot see into depends
     on `UNKNOWN`, which is never mistaken for nothing.
 
@@ -167,14 +190,8 @@ def clock_deps(mod: Module, bit, declared,
         cell = mod.cells[drv[0]]
         if cell.type in DFF_TYPES:
             if through_registers:
-                # Its clock, and every pin that changes the output at its
-                # own edge: a flag set asynchronously by one clock and
-                # cleared on another depends on both, and gating a clock
-                # with it is a blend.
-                stack += cell.conns.get("CLK", [])
-                for pin, _, kind in RESET_PINS:
-                    if kind.startswith("asynchronous"):
-                        stack += cell.conns.get(pin, [])
+                stack += [x for pin in _timing_pins(cell)
+                          for x in cell.conns.get(pin, [])]
             continue
         if cell.type in LATCH_TYPES:
             if through_registers:
@@ -431,13 +448,16 @@ def clock_tree(mod: Module, declared=()) -> dict:
             # only ever reaches the gate through a register demotes no
             # port itself.
             cell = by_name[net]
-            pins = ["CLK"] + [pin for pin, _, kind in RESET_PINS
-                              if kind.startswith("asynchronous")]
-            for b in [x for pin in pins for x in cell.conns.get(pin, [])]:
+            for b in [x for pin in _timing_pins(cell)
+                      for x in cell.conns.get(pin, [])]:
                 control |= {src.name for src in
                             _walk_to_sources(mod, b, None, False, None)
                             if src.kind == "port"}
-    control = sorted(control)
+    # A declared clock is not a finding here: a clock gate whose enable is
+    # a register on that same clock demotes the register, and the port
+    # that clocks it is the declared clock. The list is for the clocks a
+    # declaration missed.
+    control = sorted(control - set(declared))
     return {"domains": {k: sorted(v) for k, v in domains.items()},
             "registers": regs, "ports_treated_as_control": control}
 

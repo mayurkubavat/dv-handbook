@@ -73,6 +73,15 @@ class Module:
                 if cell.dirs.get(port) == "output":
                     for b in bits:
                         if isinstance(b, int):
+                            # Last write won here once, so a clock net with
+                            # two tri-state drivers was walked through one
+                            # of them and the other clock vanished.
+                            if b in self.drivers:
+                                raise DesignError(
+                                    f"net {self.net(b)} in {self.name} has "
+                                    "more than one driver; the walks can "
+                                    "follow only one, so this design is "
+                                    "refused rather than half-analyzed")
                             self.drivers[b] = (cname, port)
         for pname, p in self.ports.items():
             if p["direction"] == "input":

@@ -3,7 +3,7 @@
 // the receiving register's clock depending on both domains, which fails
 // the gate, rather than as a line of its own.
 module clock_mux_select_register (input logic clk1, clk2, en, m,
-                                  input logic [7:0] d, 
+                                  input logic [7:0] d,
                output logic [7:0] q);
   logic gclk, mclk, mode;
   logic [7:0] a, b;

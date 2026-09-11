@@ -7,6 +7,8 @@ import os
 import pathlib
 import sys
 
+import pytest
+
 ROOT = pathlib.Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT / "tools"))
 
@@ -156,7 +158,8 @@ _EVERY_DESIGN = ([([str(f)], f.stem) for f in sorted(FIXTURE.glob("*.sv"))]
 
 # The clocks a specification would declare, for the fixtures whose gates
 # the netlist alone cannot resolve.
-_DECLARED = {"clock_mux_select_clock": ("clk1", "clk2"),
+_DECLARED = {"async_load_of_clock": ("clk1", "clk2"),
+             "clock_mux_select_clock": ("clk1", "clk2"),
              "clock_mux_select_gated": ("clk1", "clk2"),
              "clock_mux_select_blackbox": ("clk1",),
              "clock_mux_select_register": ("clk1", "clk2"),
@@ -1127,3 +1130,50 @@ def test_the_clock_walk_does_not_recurse():
             clocks.crossings(flat, tree, declared)
     finally:
         rtl.unlink()
+
+
+def test_a_register_depends_on_the_value_an_asynchronous_load_follows():
+    """`AD` changes the output for as long as `ALOAD` is high. The walk
+    follows every register input not sampled on the clock -- a list of what
+    is excluded, because two lists of what was included were each outgrown
+    by the next pin a design used."""
+    assert _read("async_load_of_clock", "clk1", "clk2") == 1
+    assert _read("async_load_of_clock") == 1
+    flat = design.load_flat([str(FIXTURE / "async_load_of_clock.sv")],
+                            "async_load_of_clock")
+    x = clocks.crossings(flat, None, ("clk1", "clk2"))
+    assert not any(c["same_clock_source"] for c in x["crossings"])
+    cell = dict(design.registers(flat))["flag"]
+    assert set(clocks._timing_pins(cell)) >= {"CLK", "ALOAD", "AD"}
+    assert "D" not in clocks._timing_pins(cell)
+
+
+def test_a_multiply_driven_net_is_refused_not_half_analyzed():
+    """Designs under tests/refused/ are ones the tool must decline.
+
+    A clock multiplexer written as two tri-state drivers on one net kept
+    whichever driver came last, and one clock vanished before any walk
+    began. The reader now raises, `read` exits 2, and no half-answer is
+    printed as if it were whole.
+    """
+    from dvh import cli                                    # noqa: PLC0415
+    refused = sorted((FIXTURE.parent / "refused").glob("*.sv"))
+    assert refused, "no refused designs to check"
+    for rtl in refused:
+        with pytest.raises(design.DesignError, match="more than one driver"):
+            design.load_flat([str(rtl)], rtl.stem)
+        assert cli.main(["read", rtl.stem, str(rtl)]) == 2
+        assert cli.main(["read", rtl.stem, str(rtl),
+                         "--clock", "clk1", "--clock", "clk2"]) == 2
+
+
+def test_a_declared_clock_is_not_listed_as_gating_control():
+    """A clock gate whose enable is a register on the same clock demotes
+    the register; the port that clocks it is the declared clock and is
+    not a finding. The list is for the clocks a declaration missed."""
+    flat = design.load_flat([str(FIXTURE / "async_load_of_clock.sv")],
+                            "async_load_of_clock")
+    assert clocks.clock_tree(flat, ("clk1",))["ports_treated_as_control"] \
+        == ["clk2", "ld"]
+    assert clocks.clock_tree(flat, ("clk1", "clk2"))[
+        "ports_treated_as_control"] == []

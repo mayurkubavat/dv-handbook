@@ -5,7 +5,7 @@
 module pll (input logic ref_clk, output logic clk_out);
 endmodule
 module clock_mux_select_blackbox (input logic clk1, ref_clk, en,
-                                  input logic [7:0] d, 
+                                  input logic [7:0] d,
                output logic [7:0] q, output logic t);
   logic pclk, gclk, mclk, tog;
   logic [7:0] a, b;
