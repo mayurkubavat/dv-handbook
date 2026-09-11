@@ -389,7 +389,7 @@ All accessed 2026-09-07.
 | `verilogeval-revisited` | Pinckney, N., Batten, C., Liu, M., Ren, H., et al. *Revisiting VerilogEval*, arXiv:2408.11053, 2025. https://arxiv.org/abs/2408.11053 | The standard generation benchmark, second edition |
 | `rtllm-bench` | Lu, Y., Liu, S., Zhang, Q., Xie, Z. *RTLLM*, arXiv:2308.05345, 2023. https://arxiv.org/abs/2308.05345 | Open RTL generation benchmark |
 | `vericontaminated` | Wang, Z., Shao, M., Bhandari, J., Mankali, L., et al. *VeriContaminated*, arXiv:2503.13572, 2025. https://arxiv.org/abs/2503.13572 | Benchmark scores inflated by data contamination |
-| `agentic-coverage-limits` | Patel, V., Chhabria, V., Arora, A. *Understanding Inference-Time Token Allocation and Coverage Limits in Agentic Hardware Verification*, arXiv:2604.15657, 2026. https://arxiv.org/abs/2604.15657 | Measured limits of agentic coverage closure |
+| `agentic-coverage-limits` | Patel, Vihaan; Chhabria, Vidya; Arora, Aman. *Understanding Inference-Time Token Allocation and Coverage Limits in Agentic Hardware Verification*, arXiv:2604.15657, 2026. https://arxiv.org/abs/2604.15657 | Measured limits of agentic coverage closure |
 | `opentitan-dv` | lowRISC. *Design Verification Methodology within OpenTitan*, 2026. https://github.com/lowRISC/opentitan/blob/master/doc/contributing/dv/methodology/README.md | A public, production-grade DV methodology |
 | `dvsim-tool` | lowRISC. *DVSim build and run system*, v1.52.1, 2026. https://github.com/lowRISC/dvsim | Machine-readable regression management |
 
