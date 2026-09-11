@@ -30,6 +30,15 @@ DFF_TYPES = {
 ASYNC_RESET_TYPES = {"$adff", "$adffe", "$aldff", "$aldffe",
                      "$dffsr", "$dffsre"}
 SYNC_RESET_TYPES = {"$sdff", "$sdffe", "$sdffce"}
+# Sequential cells the walks have no model for. `$ff` is a register with no
+# clock pin at all (`always_ff @($global_clock)`), `$fsm` an unextracted
+# state machine, the `$mem*` family an array the memory passes left standing.
+# Each is refused by name, because the alternative -- a register the loop
+# over registers never sees -- reported a three-register design as two and
+# never constructed the crossing onto the third.
+UNANALYZABLE_TYPES = {"$ff", "$fsm", "$anyinit", "$mem", "$mem_v2", "$memrd",
+                      "$memrd_v2", "$memwr", "$memwr_v2", "$meminit",
+                      "$meminit_v2"}
 
 
 class DesignError(Exception):
@@ -274,6 +283,13 @@ def _parse(data: dict) -> dict:
                                 c.get("connections", {}),
                                 c.get("port_directions", {}),
                                 _relative(attrs.get("src", "")))
+        bad = sorted({c.type for c in cells.values()
+                      if c.type in UNANALYZABLE_TYPES})
+        if bad:
+            raise DesignError(
+                f"{mname} contains {', '.join(bad)}, a sequential cell the "
+                "walks have no model for; the design is refused rather than "
+                "analyzed with some of its registers missing")
         mod = Module(mname, m.get("ports", {}), cells, m.get("netnames", {}),
                      _relative(m.get("attributes", {}).get("src", "")))
         mod.finish()

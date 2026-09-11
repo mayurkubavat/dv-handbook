@@ -349,7 +349,8 @@ def _classify_gate(mod: Module, cell, any_comb, clock_roots):
                         if clock_deps(mod, b, declared)]
             ambiguous = len(carrying) > 1
         if carrying and len(carrying) < len(ins):
-            control = [mod.net(b) for (p, b) in ins if (p, b) not in carrying]
+            control = [mod.net(b) for (p, b) in ins
+                       if (p, b) not in carrying and isinstance(b, int)]
             ins = carrying
         return ins, control, ambiguous, clock_roots
     strong, weak = clock_roots
@@ -357,7 +358,10 @@ def _classify_gate(mod: Module, cell, any_comb, clock_roots):
     best = max((t for t, _, _ in tiers), default=0)
     carrying = [(p, b) for (t, p, b) in tiers if t == best]
     if best and len(carrying) < len(ins):
-        control = [mod.net(b) for (p, b) in ins if (p, b) not in carrying]
+        # A constant is not gating control worth naming: a tied-off input
+        # is part of the gate, and "gated by const z" told a reader nothing.
+        control = [mod.net(b) for (p, b) in ins
+                   if (p, b) not in carrying and isinstance(b, int)]
         # Demoting an input that is itself a clock candidate is a guess,
         # not a finding: a gate blending two clocks and a gate enabling one
         # look identical here.
@@ -439,20 +443,30 @@ def clock_tree(mod: Module, declared=()) -> dict:
                if t.startswith("gated by ")}
     by_name = dict(registers(mod))
     control = set()
+    latches = {mod.net(c.conns["Q"][0]): c for c in mod.cells.values()
+               if c.type in LATCH_TYPES and c.conns.get("Q")}
     for net in demoted:
         if net in mod.ports:
             control.add(net)
-        elif net in by_name:
-            # A demoted register is reported by the ports that clock it,
-            # because that is where a hidden clock would be: a clock that
-            # only ever reaches the gate through a register demotes no
-            # port itself.
+            continue
+        # A demoted register or latch is reported by the ports that time
+        # it, because that is where a hidden clock would be: a clock that
+        # only ever reaches the gate through a register, or through a
+        # latch it holds open, demotes no port itself.
+        if net in by_name:
             cell = by_name[net]
-            for b in [x for pin in _timing_pins(cell)
-                      for x in cell.conns.get(pin, [])]:
-                control |= {src.name for src in
-                            _walk_to_sources(mod, b, None, False, None)
-                            if src.kind == "port"}
+            bits = [x for pin in _timing_pins(cell)
+                    for x in cell.conns.get(pin, [])]
+        elif net in latches:
+            cell = latches[net]
+            bits = [x for pin in _data_inputs(cell)
+                    for x in cell.conns.get(pin, [])]
+        else:
+            continue
+        for b in bits:
+            control |= {src.name for src in
+                        _walk_to_sources(mod, b, None, False, None)
+                        if src.kind == "port"}
     # A declared clock is not a finding here: a clock gate whose enable is
     # a register on that same clock demotes the register, and the port
     # that clocks it is the declared clock. The list is for the clocks a
@@ -808,6 +822,20 @@ def crossings(mod: Module, tree: dict | None = None, declared=()) -> dict:
     tree = tree or clock_tree(mod, declared)
     dom_of = {r: i["domain"] for r, i in tree["registers"].items()}
     by_name = {name: cell for name, cell in registers(mod)}
+    # Who is fed directly by whom, computed once. Asking `_feeds_directly`
+    # for every (sender, receiver) pair made the second-stage scan
+    # quadratic in the register count -- sixty-seven million calls on an
+    # eight-thousand-row array.
+    fed_by = {}
+    for rname, rcell in by_name.items():
+        if any(b not in (0, "0") for b in rcell.conns.get("EN", [])):
+            continue
+        for b in rcell.conns.get("D", []):
+            drv = mod.drivers.get(b) if isinstance(b, int) else None
+            if drv and mod.cells[drv[0]].type in DFF_TYPES:
+                src_cell = mod.cells[drv[0]]
+                src = mod.reg_of_bit.get(b, mod.net(src_cell.conns["Q"][0]))
+                fed_by.setdefault(src, set()).add(rname)
     report = []
     for name, cell in by_name.items():
         mine = dom_of[name]
@@ -836,10 +864,10 @@ def crossings(mod: Module, tree: dict | None = None, declared=()) -> dict:
             # edge gives the first only half a period to settle, which is
             # not what @sec-ch03-cdc means by a synchronizer.
             edge = cell.params.get("CLK_POLARITY")
-            second_stage = [n for n, c in by_name.items()
-                            if dom_of[n] == mine and n != name
-                            and c.params.get("CLK_POLARITY") == edge
-                            and _feeds_directly(mod, c, name)]
+            second_stage = sorted(
+                n for n in fed_by.get(name, ())
+                if dom_of[n] == mine and n != name
+                and by_name[n].params.get("CLK_POLARITY") == edge)
             # Two clock nets that resolve to *one* source are one clock,
             # gated differently. That is a timing question, not a
             # metastability one, and it does not trip the gate, because

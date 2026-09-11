@@ -158,7 +158,8 @@ _EVERY_DESIGN = ([([str(f)], f.stem) for f in sorted(FIXTURE.glob("*.sv"))]
 
 # The clocks a specification would declare, for the fixtures whose gates
 # the netlist alone cannot resolve.
-_DECLARED = {"async_load_of_clock": ("clk1", "clk2"),
+_DECLARED = {"hidden_clock_via_latch": ("clk1",),
+             "async_load_of_clock": ("clk1", "clk2"),
              "clock_mux_select_clock": ("clk1", "clk2"),
              "clock_mux_select_gated": ("clk1", "clk2"),
              "clock_mux_select_blackbox": ("clk1",),
@@ -1160,7 +1161,8 @@ def test_a_multiply_driven_net_is_refused_not_half_analyzed():
     refused = sorted((FIXTURE.parent / "refused").glob("*.sv"))
     assert refused, "no refused designs to check"
     for rtl in refused:
-        with pytest.raises(design.DesignError, match="more than one driver"):
+        with pytest.raises(design.DesignError,
+                           match="more than one driver|no model for"):
             design.load_flat([str(rtl)], rtl.stem)
         assert cli.main(["read", rtl.stem, str(rtl)]) == 2
         assert cli.main(["read", rtl.stem, str(rtl),
@@ -1177,3 +1179,33 @@ def test_a_declared_clock_is_not_listed_as_gating_control():
         == ["clk2", "ld"]
     assert clocks.clock_tree(flat, ("clk1", "clk2"))[
         "ports_treated_as_control"] == []
+
+
+def test_a_hidden_clock_behind_a_latch_is_named():
+    flat = design.load_flat([str(FIXTURE / "hidden_clock_via_latch.sv")],
+                            "hidden_clock_via_latch")
+    assert "hclk" in clocks.clock_tree(flat, ("clk1",))[
+        "ports_treated_as_control"]
+    assert _read("hidden_clock_via_latch", "clk1", "hclk") == 1
+
+
+def test_the_second_stage_scan_is_linear():
+    """Asking `_feeds_directly` per (sender, receiver) pair made the scan
+    quadratic: sixty-seven million calls on an eight-thousand-row array.
+    A wide array now takes seconds, and the answer is the same."""
+    import time                                            # noqa: PLC0415
+    lines = ["module wide (input logic wclk, rclk, we, input logic [11:0] wa, "
+             "ra, input logic [7:0] wd, output logic [7:0] rd);",
+             "  logic [7:0] mem [4096];",
+             "  always_ff @(posedge wclk) if (we) mem[wa] <= wd;",
+             "  always_ff @(posedge rclk) rd <= mem[ra];", "endmodule"]
+    rtl = FIXTURE.parent / "wide.sv"
+    rtl.write_text("\n".join(lines) + "\n")
+    try:
+        flat = design.load_flat([str(rtl)], "wide")
+        t0 = time.monotonic()
+        x = clocks.crossings(flat, None, ("wclk", "rclk"))
+        assert time.monotonic() - t0 < 30
+        assert len(x["crossings"]) == 4096
+    finally:
+        rtl.unlink()
