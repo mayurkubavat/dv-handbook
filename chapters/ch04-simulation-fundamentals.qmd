@@ -101,7 +101,7 @@ Which brings us to the eight guidelines @sec-ch03 drew on, grouped here into sev
 | Use `$strobe` rather than `$display` for values assigned non-blocking | Postponed against Active. `$display` runs before the updates; `$strobe` runs after all of them. |
 | Do not use `#0` | Inactive, the one region the authors say to avoid. |
 
-One guideline in the list, "do not mix blocking and non-blocking assignments in one block", is a corollary of the first two rather than something a region implies: a block models sequential logic or combinational logic, and the rules for those differ. It is worth knowing which of the eight rest on the model and which rest on the other seven.
+One guideline in the list — "Do not mix blocking and nonblocking assignments in the same always block" [@cummings2000nba] — is a corollary of the first two rather than something a region implies: a block models sequential logic or combinational logic, and the rules for those differ. It is worth knowing which of the eight rest on the model and which rest on the other seven.
 
 ::: {.callout-warning title="Pitfall"}
 `#0` is not an ordering primitive, and reaching for it to fix a race is the most reliable way to make one harder to find. It does not remove the race; it renames it. The question changes from "which block runs first in Active" to "which block runs first in Inactive", and nothing has been decided. Two independent sources say so [@cummings2000nba; @sutherland2006gotchas].
@@ -148,14 +148,24 @@ An `if` whose condition is unknown does not take the true branch. What happens n
 
 Sutherland's framing of why this is worse than it sounds is the one to carry. Three of the four values stand for something that exists in silicon; the fourth, in his words, is "not an abstraction of actual silicon values" [@sutherland2013x] — it is the simulator saying it does not know. It is a statement about the simulator's knowledge, and a branch taken on it is a guess presented as a result [@sutherland2013x].
 
-This chapter's four-state example is an unreset register read two ways, under three initialization models. One reader uses a bare `if`; the other adds an `else`:
+This chapter's four-state example is an unreset register read two ways, under three initialization models. One reader uses a bare `if`; the other adds an `else`. Under four-state simulation first:
 
-```{.text include="examples/ch04-simulation/fourstate/run.out"}
+```{.text include="examples/ch04-simulation/fourstate/run.out" lines="1-3"}
 ```
 
-The first block is the whole argument in two lines. Under four-state simulation the bare `if` leaves its target unknown, and the missing reset is visible. The `if ... else` produces 238, which is the value in its else branch: a definite, ordinary-looking number, produced by taking a branch on a value nobody knows. Nothing in that number says a reset is missing. That is X-optimism, and it is why a design can pass a four-state regression and fail in silicon.
+That block is the whole argument in two lines. Under four-state simulation the bare `if` leaves its target unknown, and the missing reset is visible. The `if ... else` produces 238, which is the value in its else branch: a definite, ordinary-looking number, produced by taking a branch on a value nobody knows. Nothing in that number says a reset is missing. That is X-optimism, and it is why a design can pass a four-state regression and fail in silicon.
 
-The other two blocks are the two-state models. Starting every register at zero says nothing at all: both readers give a plausible answer, and would on every run, because there is nothing for a seed to change. Randomizing says the result depends on the initial state, which is the same finding reached from the other direction.
+The other two runs are the two-state models. Starting every register at zero:
+
+```{.text include="examples/ch04-simulation/fourstate/run.out" lines="4-6"}
+```
+
+That says nothing at all: both readers give a plausible answer, and would on every run, because there is nothing for a seed to change. Randomizing the initial state instead:
+
+```{.text include="examples/ch04-simulation/fourstate/run.out" lines="7-11"}
+```
+
+That says the result depends on the initial state, which is the same finding reached from the other direction.
 
 That last row is worth dwelling on, because two claims about two-state simulation are widely repeated and both are wrong.
 
@@ -186,7 +196,7 @@ Every figure in that output is in nanoseconds. The event-driven tool rounds the 
 
 The cross-module trap is a different one, and it is about compilation rather than arithmetic. The directive is a property of the compilation, not of a module: whichever one the compiler last read is the one in force, so a file that declares none inherits from whatever happened to precede it on the command line, and reordering the file list changes what its delays mean [@sutherland2007gotchas].
 
-This chapter's other four examples make the point against themselves, and not in the way you might expect. None of those four declares a timescale in its source. The event-driven simulator therefore falls back to its default, which is why the regions output above reports finishing "at 6 (1s)" rather than in nanoseconds. The other falls back too, to one picosecond, and the only reason it runs in nanoseconds there is that those builds pass it a timescale on the command line — a reason no reader of the source could see. Two tools, two silent defaults twelve orders of magnitude apart, and one of the answers hidden in a build file. Sutherland reads the standard as permitting exactly this: in his words, "a compiler might, or might not, apply a default time unit" when no timescale has been specified at all [@sutherland2007gotchas], which is why the same design can behave differently on two tools for a reason nothing in it records. Nothing in those four examples depends on it, which is exactly why nobody noticed.
+This chapter's other four examples make the point against themselves, and not in the way you might expect. None of those four declares a timescale in its source. The event-driven simulator therefore falls back to its default, which is why the regions output above reports finishing "at 6 (1s)" rather than in nanoseconds. The other falls back too, to one picosecond, and the only reason it runs in nanoseconds there is that those builds pass it a timescale on the command line — a reason no reader of the source could see. Two tools, two silent defaults twelve orders of magnitude apart, and one of the answers hidden in a build file. Sutherland, Mills and Spear read the standard as permitting exactly this: in their words, "a compiler might, or might not, apply a default time unit" when no timescale has been specified at all [@sutherland2007gotchas], which is why the same design can behave differently on two tools for a reason nothing in it records. Nothing in those four examples depends on it, which is exactly why nobody noticed.
 
 ## What a real simulator implements {#sec-ch04-real}
 
@@ -228,7 +238,7 @@ Three things are worth taking from that.
 
 **Lint catches this one.** Unlike the clock-domain crossing of @sec-ch03-example, which the lint settings that chapter used passed in silence, a blocking assignment in a sequential block has a warning of its own. It is off by default, which is its own lesson about default configurations, but the example turns it on and it fires. Not every bug in this book is invisible to cheap tools, and this one is not.
 
-**A disagreement is evidence, not a proof.** It is tempting to conclude that because two simulators differ the code must have a race. That inference does not hold. The sources name three ways two tools can differ on one source file: the ordering freedom the language genuinely permits, which is the real race; the freedom the standards leave in how a tool implements the language, which exists because simulators, synthesizers and formal tools have to work differently; and plain non-compliance, which is a defect in a tool rather than in a language [@sutherland2006gotchas]. The sequel adds a fourth, ambiguity in the standard's own text, which is a defect in neither [@sutherland2007gotchas]. Only the first is what the guidelines protect you against. A disagreement is worth chasing every time and proves nothing on its own.
+**A disagreement is evidence, not a proof.** It is tempting to conclude that because two simulators differ the code must have a race. That inference does not hold. The sources name three ways two tools can differ on one source file: the ordering freedom the language genuinely permits, which is the real race; the freedom the standards leave in how a tool implements the language, which exists because simulators, synthesizers and formal tools have to work differently; and plain non-compliance, which is a defect in a tool rather than in a language [@sutherland2006gotchas]. The sequel adds a fourth, ambiguity in the standard's own text [@sutherland2007gotchas]. Only the first is what the guidelines protect you against. A disagreement is worth chasing every time and proves nothing on its own.
 
 **The converse is weaker still.** Agreement between two simulators does not mean code is race-free; both may happen to make the same arbitrary choice. The guidelines are what make code order-independent. Running it twice is a check on the guidelines, not a substitute for them.
 

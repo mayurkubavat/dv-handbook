@@ -44,9 +44,13 @@ function CodeBlock(el)
   -- tools on different pages, and three such blocks were split at a page
   -- foot. Source listings are left to break: asking for space for them
   -- left a third of a page blank ahead of one.
-  if FORMAT:match("latex") and el.classes:includes("text") then
+  -- A source listing may break, but not after two lines at a page foot:
+  -- it asks for five, which no page can fail to give without a visible
+  -- blank, so an orphaned header line cannot happen.
+  if FORMAT:match("latex") then
     local _, lines = el.text:gsub("\n", "")
-    local need = math.min(lines + 3, 18)
+    local need = 5
+    if el.classes:includes("text") then need = math.min(lines + 3, 18) end
     return {pandoc.RawBlock("latex",
                             "\\Needspace{" .. need .. "\\baselineskip}"),
             el}
