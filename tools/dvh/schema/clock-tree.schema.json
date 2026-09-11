@@ -6,7 +6,8 @@
   "type": "object",
   "required": [
     "domains",
-    "registers"
+    "registers",
+    "ports_treated_as_control"
   ],
   "additionalProperties": false,
   "properties": {
@@ -65,7 +66,9 @@
             "description": "Clock nets the walk ended on, as bit numbers.",
             "$comment": "A vector clock port's bits all share one name.",
             "type": "array",
-            "items": {"type": "string"}
+            "items": {
+              "type": "string"
+            }
           },
           "clock_ambiguous": {
             "description": "True where the walk could not resolve the clock.",
@@ -78,6 +81,14 @@
             "type": "string"
           }
         }
+      }
+    },
+    "ports_treated_as_control": {
+      "description": "Input ports the walk read as gating control at a gate.",
+      "$comment": "A clock that only appears gated looks like an enable here.",
+      "type": "array",
+      "items": {
+        "type": "string"
       }
     }
   },

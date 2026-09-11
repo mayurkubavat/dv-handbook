@@ -156,7 +156,18 @@ _EVERY_DESIGN = ([([str(f)], f.stem) for f in sorted(FIXTURE.glob("*.sv"))]
 
 # The clocks a specification would declare, for the fixtures whose gates
 # the netlist alone cannot resolve.
-_DECLARED = {"divided_blend": ("clk1", "clk2"),
+_DECLARED = {"blackbox_clock_blend": ("clk1",),
+             "buffered_clock_blend": ("clk1", "clk2"),
+             "xnor_clock_blend": ("clk1", "clk2"),
+             "divider_blackbox_blend": ("clk1",),
+             "per_bit_buffered_clock": ("aclk", "bclk"),
+             "vector_clock_divider": ("lane_clk",),
+             "latch_async_clear": ("aclk", "bclk"),
+             "latch_clock_gate": ("clk",),
+             "gated_clock_bypass": ("clk",),
+             "hidden_clock": ("clk1",),
+             "generate_block_array": ("wclk", "rclk"),
+             "divided_blend": ("clk1", "clk2"),
              "per_bit_mixed_roots": ("aclk", "bclk"),
              "latch_destination": ("aclk", "bclk"),
              "kept_instance": ("aclk", "bclk"),
@@ -964,3 +975,95 @@ def test_keep_hierarchy_on_an_instance_is_stripped_too():
     x = clocks.crossings(flat, None, ("aclk", "bclk"))
     assert [c["from"] for c in x["crossings"]] == ["u_lane.a"]
     assert x["unrecognized"]
+
+
+def _read(top, *clks):
+    """`dvh read` on a fixture, as the build gate would run it."""
+    from dvh import cli                                    # noqa: PLC0415
+    argv = ["read", top, str(FIXTURE / f"{top}.sv")]
+    for c in clks:
+        argv += ["--clock", c]
+    return cli.main(argv)
+
+
+def test_a_dependency_the_netlist_cannot_see_is_not_control():
+    """Unknown is a different answer from none.
+
+    A clock blended with a black-box output, a declared clock arriving
+    through a black-box buffer, a clock through a cell the pass-through set
+    did not list, and a divider gated by a black-box clock all read as one
+    clock gated, because the second input depended on no *declared* clock.
+    Each is a blend, declared or not.
+    """
+    for top, clks in (("blackbox_clock_blend", ("clk1",)),
+                      ("buffered_clock_blend", ("clk1", "clk2")),
+                      ("xnor_clock_blend", ("clk1", "clk2")),
+                      ("divider_blackbox_blend", ("clk1",))):
+        assert _read(top) == 1, top
+        assert _read(top, *clks) == 1, top
+        flat = design.load_flat([str(FIXTURE / f"{top}.sv")], top)
+        x = clocks.crossings(flat, None, clks)
+        assert not any(c["same_clock_source"] for c in x["crossings"]), top
+
+
+def test_clock_dependencies_are_bits_not_port_names():
+    """A divider of `lane_clk[1]` is not a divider of `lane_clk[0]`."""
+    assert _read("vector_clock_divider", "lane_clk") == 1
+    flat = design.load_flat([str(FIXTURE / "vector_clock_divider.sv")],
+                            "vector_clock_divider")
+    bits = flat.ports["lane_clk"]["bits"]
+    assert clocks.clock_deps(flat, bits[0], ("lane_clk",)) == {bits[0]}
+    assert clocks.clock_deps(flat, bits[1], ("lane_clk",)) == {bits[1]}
+
+
+def test_a_latch_cleared_from_another_domain_is_a_crossing():
+    """Every latch input except the enable is data, enumerated."""
+    flat = design.load_flat([str(FIXTURE / "latch_async_clear.sv")],
+                            "latch_async_clear")
+    x = clocks.crossings(flat, None, ("aclk", "bclk"))
+    assert [(c["from"], c["to"]) for c in x["unrecognized"]] == [("clr", "q")]
+
+
+def test_the_two_gated_clocks_the_chapter_describes_pass_declared():
+    """A latch-based clock gate and a gate with a bypass multiplexer are
+    each one clock, gated. Undeclared they are undecided; declared they
+    pass, which is what a declaration is for."""
+    for top in ("latch_clock_gate", "gated_clock_bypass"):
+        assert _read(top) == 1, top
+        assert _read(top, "clk") == 0, top
+
+
+def test_per_bit_chains_from_a_buffered_clock_are_one_boundary():
+    """A sender whose clock the netlist cannot see into has an unknown
+    relation to every other sender into the same receiver."""
+    flat = design.load_flat([str(FIXTURE / "per_bit_buffered_clock.sv")],
+                            "per_bit_buffered_clock")
+    x = clocks.crossings(flat, None, ("aclk", "bclk"))
+    assert len(x["crossings"]) == 2
+    assert not any(c["shape_recognized"] for c in x["crossings"])
+
+
+def test_ports_read_as_control_are_reported():
+    """A clock that only ever appears gated is, to the netlist, an enable.
+
+    The tool cannot tell, and does not pretend to: the ports it demoted are
+    listed, so a reader sees a clock among them. `hidden_clock` passes with
+    only `clk1` declared, and its report names `clk2`.
+    """
+    flat = design.load_flat([str(FIXTURE / "hidden_clock.sv")],
+                            "hidden_clock")
+    tree = clocks.clock_tree(flat, ("clk1",))
+    assert tree["ports_treated_as_control"] == ["clk2"]
+    assert _read("hidden_clock", "clk1") == 0
+    plain = clocks.clock_tree(design.load_flat(TWO_CLOCK, "top"))
+    assert plain["ports_treated_as_control"] == []
+
+
+def test_an_array_in_a_generate_block_points_at_its_declaration():
+    flat = design.load_flat([str(FIXTURE / "generate_block_array.sv")],
+                            "generate_block_array")
+    text = (FIXTURE / "generate_block_array.sv").read_text().splitlines()
+    for r in clocks.reset_tree(flat)["no_reset"]:
+        if ".mem[" in r["name"]:
+            line = int(r["src"].partition(":")[2].split(".")[0])
+            assert "logic [7:0] mem [0:3];" in text[line - 1], r

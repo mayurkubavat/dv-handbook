@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import subprocess
 import tempfile
 from dataclasses import dataclass, field
@@ -247,7 +248,10 @@ def _from_memory(mod: str, name: str, memories: dict) -> str:
     # with `$flatten\u_store.`; the memory, whose name is public, gets the
     # first form, so the second has to be reduced to it before they match.
     path = path.removeprefix("$flatten\\")
-    memid = path + rest.split("[")[0].split("$")[0]
+    # The index and the counter come last; an array declared in a generate
+    # block is `lane[0].mem[3]$25`, so the split is from the right.
+    m = re.match(r"^(.*)\[\d+\]\$\d+$", rest)
+    memid = path + (m.group(1) if m else rest.split("[")[0].split("$")[0])
     return memories.get(f"{mod}\n{memid}", "")
 
 

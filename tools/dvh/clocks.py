@@ -8,11 +8,16 @@ walked through and recorded.
 
 A clock walk has to tell a gate's clock input from its enable, or every
 gated register lands in a domain of its own and an ordinary synchronous path
-across a clock gate is reported as a crossing. It does that by first finding
-the primary clocks -- ports that drive some register's clock pin with no
-logic in between -- and then, at each gate, following only the inputs whose
-cone reaches one of them. The other inputs are gating control, and are
-recorded in `through` rather than in the domain name.
+across a clock gate is reported as a crossing. Nothing in a netlist settles
+that: `clk & en` and `clk1 & clk2` are the same gate. So the walk has two
+modes. Undeclared, it scores evidence -- a net that drives a clock pin
+directly is strong, a port or a register output is weak -- and wherever it
+would have to demote an input that could itself be a clock, it reports the
+gate as undecided instead. Declared (`--clock`), it asks `clock_deps` which
+declared clocks each input depends on, which is a definition rather than a
+guess: control depends on nothing the gate lacks, a blend depends on
+something it does. Demoted inputs are recorded in `through`, and the ports
+among them are listed in the report.
 """
 from __future__ import annotations
 
@@ -102,36 +107,46 @@ def clock_ports(mod: Module) -> set:
             if isinstance(b, int) and b in mod.port_of_bit}
 
 
-def clock_deps(mod: Module, bit, declared, memo=None,
+# A dependency the netlist cannot resolve: a black box, a memory, an undriven
+# net. It is not the same answer as "depends on no clock", and treating it
+# as that answer made a phase-locked loop's output -- the chapter's own
+# example of a primary clock -- into gating control.
+UNKNOWN = "?"
+
+
+def clock_deps(mod: Module, bit, declared,
                through_registers=True) -> frozenset:
-    """Which of the declared clocks a net's value depends on.
+    """Which declared clocks a net's value depends on, as clock port *bits*.
 
     This replaces the question the evidence heuristic kept getting wrong.
     "Is this net a clock?" has no answer in a netlist: `clk & en` and
     `clk1 & clk2` are the same gate. "Which declared clocks does this net
     depend on?" is a definition, and it separates the two cases by itself.
 
-    A declared clock port depends on itself. A register's output depends on
-    whatever its own clock depends on -- which makes a divided clock a
-    dependent of the clock that divides it, to any depth. Combinational
-    logic depends on the union of its inputs. Everything else -- an
-    undeclared port, a black box, a constant -- depends on nothing. With
-    `through_registers` false the walk stops at a register, which answers
-    the narrower question "which clocks reach here through logic alone".
+    A bit of a declared clock port depends on itself -- the bit, because
+    every bit of a vector port shares the port's name and a divider of
+    `lane_clk[1]` is not a divider of `lane_clk[0]`. A register's output,
+    and a latch's, depends on whatever its clock or enable and data depend
+    on, which makes a divided clock a dependent of the clock that divides it
+    to any depth; with `through_registers` false the walk stops at either,
+    answering the narrower question "which clocks reach here through logic
+    alone". Any combinational cell depends on the union of its inputs. An
+    undeclared port depends on nothing. Anything the netlist cannot see
+    into depends on `UNKNOWN`, which is never mistaken for nothing.
 
     At a gate feeding a clock pin, the inputs that reach a declared clock
-    through logic alone are the gate's clocks. Every other input is
-    compared against them: one that depends on nothing, or only on clocks
-    the gate already has, is synchronous control -- an enable, or a divider
-    of the same clock -- and the result is one domain gated, which is what
-    a clock gate is. One that depends on a clock the gate does not have
-    makes a blend: a new domain, which is what @sec-ch03-clocks says
-    blending is. No shape has to be recognized for either answer.
+    through logic alone are the gate's clocks. Every other input is compared
+    against them: one that depends on nothing, or only on clocks the gate
+    already has, is synchronous control -- an enable, or a divider of the
+    same clock -- and the result is one domain gated, which is what a clock
+    gate is. One that depends on a clock the gate does not have, or on
+    something unknown, makes a blend: a new domain, which is what
+    @sec-ch03-clocks says blending is. No shape has to be recognized.
+
+    Iterative, with the clock pins of registers on the same worklist: a
+    twelve-hundred-stage ripple counter feeding a gate ended a recursive
+    version with `RecursionError`.
     """
-    memo = {} if memo is None else memo
-    if bit in memo:
-        return memo[bit]
-    memo[bit] = frozenset()             # guard against a combinational loop
     out, seen, stack = set(), set(), [bit]
     while stack:
         b = stack.pop()
@@ -139,22 +154,30 @@ def clock_deps(mod: Module, bit, declared, memo=None,
             continue
         seen.add(b)
         if mod.port_of_bit.get(b) in declared:
-            out.add(mod.port_of_bit[b])
+            out.add(b)
+            continue
+        if b in mod.port_of_bit:            # an undeclared port: control
             continue
         drv = mod.drivers.get(b)
         if drv is None:
+            out.add(UNKNOWN)
             continue
         cell = mod.cells[drv[0]]
         if cell.type in DFF_TYPES:
             if through_registers:
-                for c in cell.conns.get("CLK", []):
-                    out |= clock_deps(mod, c, declared, memo)
+                stack += cell.conns.get("CLK", [])
             continue
-        if cell.type in PASS_THROUGH or cell.type in LATCH_TYPES:
+        if cell.type in LATCH_TYPES:
+            if through_registers:
+                stack += [x for p, bs in cell.conns.items()
+                          if cell.dirs.get(p) == "input" for x in bs]
+            continue
+        if cell.type.startswith("$") and not cell.type.startswith("$mem"):
             stack += [x for p, bs in cell.conns.items()
                       if cell.dirs.get(p) == "input" for x in bs]
-    memo[bit] = frozenset(out)
-    return memo[bit]
+            continue
+        out.add(UNKNOWN)                    # a black box, a memory
+    return frozenset(out)
 
 
 def _tier(mod: Module, bit, strong, weak, any_comb) -> int:
@@ -169,7 +192,7 @@ def _tier(mod: Module, bit, strong, weak, any_comb) -> int:
     # A register output is weak evidence exactly as a port is: a divider
     # and an enable register are the same shape, and demoting one of them
     # in silence excused a clock blended with a divided clock from the gate.
-    return 1 if any(s.name in weak or s.kind == "register"
+    return 1 if any(s.name in weak or s.kind in ("register", "latch")
                     for s in srcs) else 0
 
 
@@ -236,21 +259,32 @@ def _walk_to_sources(mod: Module, bit, seen=None, any_comb=False,
         # as an enable, and a real crossing was excused from the build gate
         # on the strength of it. Selection therefore never demotes; where
         # its inputs disagree, the clock is undecided and says so.
-        if clock_roots and cell.type in MUX_TYPES and not any_comb:
+        told = bool(clock_roots) and clock_roots[0] is CLOCK_BITS
+        if clock_roots and cell.type in MUX_TYPES and not any_comb and told:
+            # Declared: the selection is undecided only where its inputs
+            # depend on different clocks. A gated clock with a bypass
+            # multiplexer around the gate selects between one clock and a
+            # gated copy of it, and is one clock.
+            deps = {clock_deps(mod, b, clock_roots[1]) for (p, b) in ins}
+            ambiguous = len(deps) > 1
+        elif clock_roots and cell.type in MUX_TYPES and not any_comb:
             roots = {s.name for b in [b for (p, b) in ins]
                      for s in _walk_to_sources(mod, b, set(), False, None)}
             ambiguous = len(roots) > 1
             clock_roots = None
-        if clock_roots and clock_roots[0] is CLOCK_BITS:
+        if told:
             # Declared: which clocks each input depends on settles it, and
-            # an input depending on none of them is control.
+            # an input depending on none of them is control. An input that
+            # depends on something the netlist cannot see into is never
+            # control: it may be a clock, and the gate is then a blend.
             declared = clock_roots[1]
-            direct = {(p, b): clock_deps(mod, b, declared, {}, False)
+            direct = {(p, b): clock_deps(mod, b, declared, False)
                       for (p, b) in ins}
-            have = frozenset().union(*direct.values())
-            if have:
+            have = frozenset().union(*direct.values()) - {UNKNOWN}
+            if any(direct.values()):
                 carrying = [(p, b) for (p, b) in ins
                             if direct[(p, b)]
+                            or UNKNOWN in clock_deps(mod, b, declared)
                             or not clock_deps(mod, b, declared) <= have]
             else:
                 # No input reaches a clock through logic alone: every
@@ -360,8 +394,18 @@ def clock_tree(mod: Module, declared=()) -> dict:
     domains = {}
     for name, info in regs.items():
         domains.setdefault(info["domain"], []).append(name)
+    # Every input port the walk demoted to gating control at a gate feeding
+    # a clock pin, printed so a reader can see a clock among them. The
+    # completeness check on a declaration can only know a clock that drives
+    # a clock pin directly; a clock that only ever appears gated is, to the
+    # netlist, an enable, and the one defense is to say which ports were
+    # read that way.
+    control = sorted({t.removeprefix("gated by ")
+                      for info in regs.values() for t in info["through"]
+                      if t.startswith("gated by ")
+                      and t.removeprefix("gated by ") in mod.ports})
     return {"domains": {k: sorted(v) for k, v in domains.items()},
-            "registers": regs}
+            "registers": regs, "ports_treated_as_control": control}
 
 
 # The control pin that forces a register to a value, per kind of register
@@ -565,9 +609,26 @@ def _flag_parallel_synchronizers(mod: Module, report: list,
         return (frozenset(regs.get(c["from"], {}).get("root_bits", [])),
                 frozenset(regs.get(c["to"], {}).get("root_bits", [])))
 
+    # A sender clocked by something the netlist cannot see into -- a
+    # black-box clock buffer, say -- has an unknown relation to every other
+    # sender into the same receiver, so it cannot be shown to cross a
+    # different boundary from any of them. Its group is merged with theirs.
+    cells = dict(registers(mod))
+    opaque = {c["from"] for c in sync
+              if any(s.kind == "unknown" for s in _walk_to_sources(
+                  mod, cells[c["from"]].conns["CLK"][0], None, False, None))}
     groups = {}
     for c in sync:
-        groups.setdefault(boundary(c), []).append(c)
+        frm, to = boundary(c)
+        groups.setdefault((frozenset() if c["from"] in opaque else frm, to),
+                          []).append(c)
+    for (frm, to), group in list(groups.items()):
+        if not frm:
+            for (f2, t2), other in groups.items():
+                if t2 == to and f2:
+                    group.extend(other)
+                    other.clear()
+    groups = {k: v for k, v in groups.items() if v}
     for group in groups.values():
         if len(group) < 2:
             continue
@@ -643,7 +704,11 @@ def _latch_crossings(mod: Module, dom_of: dict) -> list:
                   for r in _cone_registers(mod, b) if r in dom_of}
         mine = (next(iter(enable)) if len(enable) == 1
                 else f"undecided enable of {label}")
-        data = {r for p in ("D", "AD") for b in cell.conns.get(p, [])
+        # Every input except the enable, enumerated: a hand-written list
+        # of data pins missed an asynchronous clear arriving from another
+        # domain, which is a crossing whether or not it is on a data pin.
+        data = {r for p in _data_inputs(cell) if p != "EN"
+                for b in cell.conns.get(p, [])
                 for r in _cone_registers(mod, b)}
         for src in sorted(data):
             theirs = dom_of.get(src, "unresolved clock")
@@ -754,8 +819,10 @@ def crossings(mod: Module, tree: dict | None = None, declared=()) -> dict:
                            "shape_recognized": synchronizer,
                            "same_clock_source": same_source,
                            "note": ("" if synchronizer else
-                                      "clock and enable not distinguishable "
-                                      "here; declare the clocks" if unsure
+                                      ("clock and enable not distinguishable "
+                                       + ("from the netlist" if declared else
+                                          "here; declare the clocks"))
+                                      if unsure
                                       else "no synchronizer shape"),
                            "src": cell.src})
     report += _latch_crossings(mod, dom_of)

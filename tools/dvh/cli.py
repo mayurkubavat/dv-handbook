@@ -65,6 +65,9 @@ def _report(tree, resets, xings, conn) -> str:
     for dom, regs in sorted(tree["domains"].items(),
                             key=lambda kv: show[kv[0]]):
         lines.append(f"  {show[dom]}: {len(regs)} registers")
+    if tree.get("ports_treated_as_control"):
+        lines.append("ports treated as gating control: "
+                     + ", ".join(tree["ports_treated_as_control"]))
     lines.append(f"registers without reset: {len(resets['no_reset'])}")
     for r in resets["no_reset"]:
         lines.append(f"  {r['name']}{_at(r['src'])}")
