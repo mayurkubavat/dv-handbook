@@ -98,6 +98,26 @@ def _emit(command: str, payload: dict, check: bool) -> int:
 
 
 def main(argv=None) -> int:
+    """Exit 0 clean, 1 findings, 2 the tool could not answer.
+
+    The three are kept apart because a project that gates its build on this
+    has to tell them apart. An earlier version let an unreadable file and an
+    unanticipated register type escape as a Python traceback and exit 1 --
+    the same code a finding uses -- so a crash read as a crossing.
+    """
+    try:
+        return _main(argv)
+    except design.DesignError as e:
+        print(f"dvh: {e}", file=sys.stderr)
+        return 2
+    except Exception as e:                                 # noqa: BLE001
+        print(f"dvh: {type(e).__name__}: {e}", file=sys.stderr)
+        print("dvh: this is a defect in the tool, not a finding about the "
+              "design", file=sys.stderr)
+        return 2
+
+
+def _main(argv) -> int:
     ap = argparse.ArgumentParser(prog="dvh")
     ap.add_argument("command", choices=["clock-tree", "reset-tree",
                                         "crossings", "connections", "read"])

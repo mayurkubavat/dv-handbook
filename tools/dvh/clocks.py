@@ -40,6 +40,7 @@ MUX_TYPES = ("$mux", "$pmux", "$_MUX_")
 class Source:
     name: str            # port name or register name
     kind: str            # "port" | "register" | "constant" | "unknown"
+    bit: object = None   # the net the walk ended on, as the netlist numbers it
     through: list = field(default_factory=list)   # cell types walked through
 
 
@@ -94,19 +95,19 @@ def _walk_to_sources(mod: Module, bit, seen=None, any_comb=False,
     that look like clocks, so an enable does not join the domain name."""
     seen = seen if seen is not None else set()
     if not isinstance(bit, int):
-        return [Source(f"const {bit}", "constant")]
+        return [Source(f"const {bit}", "constant", bit)]
     if bit in seen:
         return []
     seen.add(bit)
     if bit in mod.port_of_bit:
-        return [Source(mod.port_of_bit[bit], "port")]
+        return [Source(mod.port_of_bit[bit], "port", bit)]
     drv = mod.drivers.get(bit)
     if drv is None:
-        return [Source(mod.net(bit), "unknown")]
+        return [Source(mod.net(bit), "unknown", bit)]
     cell = mod.cells[drv[0]]
     if cell.type in DFF_TYPES:
         return [Source(mod.reg_of_bit.get(bit, mod.net(cell.conns["Q"][0])),
-                       "register")]
+                       "register", bit)]
     combinational = (cell.type not in DFF_TYPES
                      and not cell.type.startswith("$mem"))
     if cell.type in LATCH_TYPES and any_comb:
@@ -119,15 +120,15 @@ def _walk_to_sources(mod: Module, bit, seen=None, any_comb=False,
         # another, is a crossing, and walking `D` alone reported nothing at
         # all for it.
         out = []
-        for port in ("D", "EN", "ARST", "SET", "CLR"):
+        for port in _data_inputs(cell):
             for b in cell.conns.get(port, []):
                 for src in _walk_to_sources(mod, b, seen, any_comb,
                                             clock_roots):
                     src.through = [cell.type] + src.through
                     out.append(src)
-        return out or [Source(mod.net(bit), "latch")]
+        return out or [Source(mod.net(bit), "latch", bit)]
     if cell.type in LATCH_TYPES:
-        return [Source(mod.net(bit), "latch")]
+        return [Source(mod.net(bit), "latch", bit)]
     if cell.type in PASS_THROUGH or (any_comb and combinational):
         # A multiplexer's select is not a clock, so the clock walk skips it.
         # A data cone must follow it: a foreign register steering a mux is a
@@ -178,7 +179,7 @@ def _walk_to_sources(mod: Module, bit, seen=None, any_comb=False,
             if ambiguous:
                 s.through += ["ambiguous: clock not distinguishable here"]
         return out
-    return [Source(f"{mod.net(bit)} (driven by {cell.type})", "unknown")]
+    return [Source(f"{mod.net(bit)} (driven by {cell.type})", "unknown", bit)]
 
 
 def _domain_key(mod: Module, cell, srcs, ambiguous: bool, name: str) -> str:
@@ -220,9 +221,16 @@ def clock_tree(mod: Module) -> dict:
         gated = any(s.through for s in srcs)
         through = sorted({t for s in srcs for t in s.through})
         unsure = any(t.startswith("ambiguous") for t in through)
+        # Root *bits*, not names. A vector clock port gives every one of
+        # its bits the same source name, so comparing names made two clocks
+        # on one port look like one clock. The bits come from the same walk
+        # that produced the names, so the two can never disagree about which
+        # inputs of a gate carried the clock.
+        root_bits = sorted({str(src.bit) for src in srcs})
         regs[name] = {"clock_sources": roots, "gated_or_muxed": gated,
                       "through": through, "src": cell.src,
                       "clock_ambiguous": unsure,
+                      "root_bits": root_bits,
                       "domain": _domain_key(mod, cell, srcs, unsure, name)}
     domains = {}
     for name, info in regs.items():
@@ -231,19 +239,37 @@ def clock_tree(mod: Module) -> dict:
             "registers": regs}
 
 
+# The control pin that forces a register to a value, per kind of register
+# the netlist can produce, most specific first: a register with both a set
+# and a clear is reported by its clear. The pin is looked for on the cell
+# rather than deduced from its type, because the deduction was wrong the
+# first time a design used a register type it had not anticipated -- an
+# asynchronous *load*, whose pins are ALOAD and AD, was classified as an
+# asynchronous reset and then looked for a CLR pin that does not exist.
+# An asynchronous load is reported as what it is: it forces a value, not a
+# constant, so it is not a reset and a reader should not read it as one.
+RESET_PINS = (("CLR", "CLR_POLARITY", "asynchronous"),
+              ("ARST", "ARST_POLARITY", "asynchronous"),
+              ("SET", "SET_POLARITY", "asynchronous set"),
+              ("ALOAD", "ALOAD_POLARITY", "asynchronous load"),
+              ("SRST", "SRST_POLARITY", "synchronous"))
+
+
 def reset_tree(mod: Module) -> dict:
     """Every register's reset: kind, polarity, source; and the ones without."""
     out, none = {}, []
     for name, cell in registers(mod):
-        if cell.type in ASYNC_RESET_TYPES:
-            pin = "ARST" if "ARST" in cell.conns else "CLR"
-            pol = cell.params.get("ARST_POLARITY",
-                                  cell.params.get("CLR_POLARITY", "1"))
-            kind = "asynchronous"
-        elif cell.type in SYNC_RESET_TYPES:
-            pin, kind = "SRST", "synchronous"
-            pol = cell.params.get("SRST_POLARITY", "1")
+        found = [r for r in RESET_PINS if r[0] in cell.conns]
+        if found:
+            pin, polarity, kind = found[0]
+            pol = cell.params.get(polarity, "1")
         else:
+            if cell.type in ASYNC_RESET_TYPES | SYNC_RESET_TYPES:
+                raise AssertionError(
+                    f"{cell.type} is listed as a register with a reset but "
+                    f"carries none of {[r[0] for r in RESET_PINS]}; add its "
+                    "pin to RESET_PINS rather than letting it read as "
+                    "unreset")
             # The unreset registers are the finding a reader acts on, so
             # they carry a location like every other finding.
             none.append({"name": name, "src": cell.src})
@@ -261,10 +287,25 @@ def reset_tree(mod: Module) -> dict:
             "no_reset": sorted(none, key=lambda r: r["name"])}
 
 
+def _data_inputs(cell) -> list:
+    """Every input of a cell except its clock.
+
+    Enumerated from the netlist rather than named, because a hand-written
+    list is wrong the first time the netlist produces a cell the list did
+    not anticipate. Two separate crossings went unreported that way: one
+    arriving on a latch's enable, and one folded onto a flip-flop's
+    synchronous reset by an optimisation added for an unrelated reason. The
+    clock is excluded because a value arriving on it is a clock question,
+    which the clock walk answers.
+    """
+    return [p for p, d in cell.dirs.items()
+            if d == "input" and p not in ("CLK",)]
+
+
 def _data_cone_registers(mod: Module, cell) -> set[str]:
-    """Registers feeding this register's D (and EN) inputs, through logic."""
+    """Registers reaching any of this register's data inputs, through logic."""
     found = set()
-    for port in ("D", "EN"):
+    for port in _data_inputs(cell):
         for b in cell.conns.get(port, []):
             for s in _walk_to_sources(mod, b, None, True, None):
                 if s.kind == "register":
@@ -272,18 +313,26 @@ def _data_cone_registers(mod: Module, cell) -> set[str]:
     return found
 
 
-def _flag_converging_synchronizers(mod: Module, report: list) -> None:
-    """Demote one-bit synchronizers that are read together.
+def _flag_parallel_synchronizers(mod: Module, report: list) -> None:
+    """Demote one-bit synchronizers that run in parallel across one boundary.
 
     Each chain is individually the right shape, which is why a purely
     structural rule accepts them. What makes a set of them wrong is that
-    something downstream reads them as one value: the bits resolve
-    independently, so a reader can see a combination the sender never sent.
+    something reads them as one value: the bits resolve independently, so a
+    reader can see a combination the sender never sent.
 
-    Convergence is the signal, not the sending register's name. Grouping by
-    name would miss a value carried on eight separately declared flops and
-    would wrongly flag two unrelated controls that happen to share one
-    declared vector.
+    Two rules, in that order of preference. The first finds a register that
+    reads two chains together and names it, which is the specific finding a
+    reader can act on. The second demotes any remaining set of chains that
+    share a boundary -- same sending domain, same receiving domain -- even
+    when nothing inside this netlist reads them together, because a value
+    can leave through the module's ports and be reassembled by whatever
+    instantiates it. That version of the design is the one the chapter's own
+    exercise names, and the earlier rule accepted all eight bits of it: the
+    convergence test was one register wide, so a bus that left the block
+    never met a reader. The second rule can group two genuinely independent
+    controls, which is why its note says the netlist does not settle the
+    question rather than asserting a defect.
     """
     sync = [c for c in report if c["shape_recognized"]]
     if len(sync) < 2:
@@ -326,6 +375,20 @@ def _flag_converging_synchronizers(mod: Module, report: list) -> None:
             c["note"] = (f"{len(together)} one-bit synchronizers are read "
                            f"together by {name}; their bits can resolve in "
                            f"different cycles")
+    groups = {}
+    for c in sync:
+        groups.setdefault((c["from_domain"], c["to_domain"]), []).append(c)
+    for (frm, to), group in groups.items():
+        if len(group) < 2:
+            continue
+        still = [c for c in group if c["shape_recognized"]]
+        for c in still:
+            c["shape_recognized"] = False
+            c["note"] = (f"{len(group)} one-bit synchronizers cross from "
+                           f"{frm} to {to} in parallel; if they carry one "
+                           f"value its bits can resolve in different "
+                           f"cycles, and the netlist does not say whether "
+                           f"they do")
 
 
 def unsure_pair(tree: dict, a: str, b: str) -> bool:
@@ -415,10 +478,13 @@ def crossings(mod: Module, tree: dict | None = None) -> dict:
             # the same pair of asynchronous clocks reach an equal set and
             # are not one clock, and comparing sets marked exactly that case
             # safe. Reporting is unaffected either way; nothing is dropped.
-            roots = _sources(tree, name)
+            mine_roots = set(tree["registers"].get(name, {})
+                             .get("root_bits", []))
+            their_roots = set(tree["registers"].get(src, {})
+                              .get("root_bits", []))
             same_source = (not unsure_pair(tree, name, src)
-                           and len(roots) == 1
-                           and roots == _sources(tree, src))
+                           and len(mine_roots) == 1
+                           and mine_roots == their_roots)
             width = len(cell.conns.get("Q", []))
             unsure = unsure_pair(tree, name, src)
             synchronizer = (direct and bool(second_stage)
@@ -433,7 +499,7 @@ def crossings(mod: Module, tree: dict | None = None) -> dict:
                                       "here; declare the clocks" if unsure
                                       else "no synchronizer shape"),
                            "src": cell.src})
-    _flag_converging_synchronizers(mod, report)
+    _flag_parallel_synchronizers(mod, report)
     # collapse: a crossing that lands on a synchronizer's first stage is fine;
     # flag the rest
     # The gate trips on a shape it does not know between two different

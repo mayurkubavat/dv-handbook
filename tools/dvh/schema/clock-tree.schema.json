@@ -30,6 +30,7 @@
           "gated_or_muxed",
           "through",
           "src",
+          "root_bits",
           "clock_ambiguous",
           "domain"
         ],
@@ -59,6 +60,12 @@
             "$comment": "Constrained so a blank or a non-location cannot pass.",
             "type": "string",
             "pattern": "^[^:]+:\\d+"
+          },
+          "root_bits": {
+            "description": "The nets the clock walk ended on, as netlist bit numbers rendered as strings.",
+            "$comment": "Two clocks can share a source *name* -- every bit of a vector clock port carries the port's name -- so identity is the net.",
+            "type": "array",
+            "items": {"type": "string"}
           },
           "clock_ambiguous": {
             "description": "True when clock and enable were not separable.",

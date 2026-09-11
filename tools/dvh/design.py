@@ -31,6 +31,10 @@ ASYNC_RESET_TYPES = {"$adff", "$adffe", "$aldff", "$aldffe",
 SYNC_RESET_TYPES = {"$sdff", "$sdffe", "$sdffce"}
 
 
+class DesignError(Exception):
+    """The design could not be read. Not a finding about the design."""
+
+
 @dataclass
 class Cell:
     name: str
@@ -47,6 +51,7 @@ class Module:
     ports: dict          # port name -> {"direction": ..., "bits": [...]}
     cells: dict          # cell name -> Cell
     netnames: dict       # net name -> {"bits": [...], "hide_name": 0/1}
+    src: str = ""        # the module declaration, the last resort location
     bit_names: dict = field(default_factory=dict)   # bit id -> best net name
     drivers: dict = field(default_factory=dict)    # bit id -> (cell, port)
     port_of_bit: dict = field(default_factory=dict)  # bit id -> input port
@@ -81,6 +86,9 @@ class Module:
 
 
 def _run_yosys(files, top, flatten: bool) -> dict:
+    missing = [f for f in files if not os.path.isfile(f)]
+    if missing:
+        raise DesignError(f"no such file: {', '.join(missing)}")
     with tempfile.TemporaryDirectory() as tmp:
         out = os.path.join(tmp, "design.json")
         reads = " ".join(f"read_verilog -sv {f};" for f in files)
@@ -92,15 +100,57 @@ def _run_yosys(files, top, flatten: bool) -> dict:
         # domains through a RAM is invisible: the write port is not a
         # register, its clock is not a domain, and the read port stops the
         # data walk.
+        # A second dump, taken before the memory passes run. `memory_map`
+        # synthesizes the registers an array becomes and gives them no
+        # attributes, so the only record of where that array was declared is
+        # on the `$mem_v2` cell that exists only in this earlier picture.
+        # Without it a lowered register had to borrow a location from a net
+        # it touched, and what it borrowed was the line the *clock port* was
+        # declared on -- a location that is well formed, passes every
+        # schema, and sends a reader to the wrong place.
+        mem = os.path.join(tmp, "memories.json")
         script = (f"{reads} hierarchy -check -top {top}; proc; opt_dff; "
-                  "memory_collect; memory_map; ")
+                  f"memory_collect; write_json {mem}; memory_map; ")
         if flatten:
             script += "flatten; "
         script += f"opt_clean; write_json {out}"
-        subprocess.run(["yosys", "-q", "-p", script], check=True,
-                       capture_output=True, text=True)
+        try:
+            subprocess.run(["yosys", "-q", "-p", script], check=True,
+                           capture_output=True, text=True)
+        except FileNotFoundError as e:
+            raise DesignError("yosys is not on PATH") from e
+        except subprocess.CalledProcessError as e:
+            # Yosys's own message names the line it could not read, which is
+            # what a reader needs; the Python traceback around it is not.
+            last = (e.stderr or e.stdout or "").strip().splitlines()
+            raise DesignError(last[-1] if last else
+                              "yosys could not read the design") from e
         with open(out) as f:
-            return json.load(f)
+            design = json.load(f)
+        with open(mem) as f:
+            design["dvh_memories"] = _memory_src(json.load(f))
+        return design
+
+
+def _memory_src(data: dict) -> dict:
+    """Where each array was declared, keyed by the name Yosys gives it.
+
+    A memory keeps its declared name through `memory_map`: the registers it
+    becomes are cells called `$memory\\mem[0]$25`. Two modules can declare
+    arrays of the same name, and after flattening there is nothing left in
+    the cell name to say which module a given register came from, so a name
+    that is claimed by two different lines is dropped rather than guessed
+    at. Pointing a reader at the wrong array is worse than pointing nowhere.
+    """
+    found = {}
+    for m in data.get("modules", {}).values():
+        for name, cell in m.get("cells", {}).items():
+            if not cell["type"].startswith("$mem"):
+                continue
+            src = _relative(cell.get("attributes", {}).get("src", ""))
+            if src:
+                found.setdefault(name, set()).add(src)
+    return {k: next(iter(v)) for k, v in found.items() if len(v) == 1}
 
 
 def _relative(src: str) -> str:
@@ -119,15 +169,24 @@ def _relative(src: str) -> str:
     return "|".join(out)
 
 
-def _fill_missing_src(mod: Module) -> None:
+def _fill_missing_src(mod: Module, memories: dict | None = None) -> None:
     """Give a cell a location when the netlist dropped its own.
 
     Lowering an array into registers synthesizes cells with no attributes at
-    all, so sixteen registers arrived with nowhere to point. The nets they
-    drive still carry a location, and that is the same line of RTL, so the
-    cell borrows it. Without this the reset report named sixteen unreset
-    registers and could say where none of them came from.
+    all, so sixteen registers arrived with nowhere to point. Three sources
+    are tried, in decreasing order of how well they answer "where did this
+    register come from", and none of them is an input net: an earlier
+    version borrowed from inputs as well, and on a lowered array the input
+    it found first was the clock, so every one of those sixteen registers
+    pointed at the line the clock port was declared on.
+
+    1. The array the register came from, recovered from the picture of the
+       design taken before the memory passes ran.
+    2. The net the cell drives, which is declared on the line the register
+       is written on.
+    3. The module's own declaration, which is coarse but true.
     """
+    memories = memories or {}
     by_bit = {}
     for net in mod.netnames.values():
         src = _relative(net.get("attributes", {}).get("src", ""))
@@ -139,18 +198,31 @@ def _fill_missing_src(mod: Module) -> None:
     for cell in mod.cells.values():
         if cell.src:
             continue
-        # Outputs first, because the net a cell drives is the closest thing
-        # to "where this cell came from"; then inputs, because a lowered
-        # array leaves its location only on the intermediate nets feeding
-        # the registers it became.
-        ordered = ([b for p, bits in cell.conns.items()
-                    if cell.dirs.get(p) == "output" for b in bits]
-                   + [b for p, bits in cell.conns.items()
-                      if cell.dirs.get(p) != "output" for b in bits])
-        for b in ordered:
+        cell.src = _from_memory(cell.name, memories)
+        if cell.src:
+            continue
+        for b in [b for p, bits in cell.conns.items()
+                  if cell.dirs.get(p) == "output" for b in bits]:
             if isinstance(b, int) and b in by_bit:
                 cell.src = by_bit[b]
                 break
+        if not cell.src:
+            cell.src = mod.src
+
+
+def _from_memory(name: str, memories: dict) -> str:
+    """The array a lowered register came from, if its cell name names one.
+
+    `memory_map` names the registers it makes `$memory\\mem[0]$25`, and
+    flattening prefixes the instance path. The array's own name is what lies
+    between the marker and the index.
+    """
+    marker = "$memory\\"
+    if marker not in name:
+        return ""
+    rest = name.split(marker, 1)[1]
+    memid = rest.split("[")[0].split("$")[0]
+    return memories.get(memid, "") or memories.get("\\" + memid, "")
 
 
 def _parse(data: dict) -> dict:
@@ -163,9 +235,10 @@ def _parse(data: dict) -> dict:
                                 c.get("connections", {}),
                                 c.get("port_directions", {}),
                                 _relative(attrs.get("src", "")))
-        mod = Module(mname, m.get("ports", {}), cells, m.get("netnames", {}))
+        mod = Module(mname, m.get("ports", {}), cells, m.get("netnames", {}),
+                     _relative(m.get("attributes", {}).get("src", "")))
         mod.finish()
-        _fill_missing_src(mod)
+        _fill_missing_src(mod, data.get("dvh_memories", {}))
         # One naming for registers, shared by every walk: a bit-blasted
         # register must resolve to the same name registers() yields for it.
         mod.reg_of_bit = {b: name for name, cell in registers(mod)

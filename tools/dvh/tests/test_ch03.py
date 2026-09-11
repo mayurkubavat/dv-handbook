@@ -368,21 +368,40 @@ def test_the_source_location_points_at_the_right_line():
         checked += _names_the_construct(info["src"], "always_ff", name)
     for name, inst in graph.connections(mods, "top")["instances"].items():
         checked += _names_the_construct(inst["src"], inst["module"], name)
+    # Every fixture, not one design. The narrow version ran on the only
+    # design in the repository whose registers all come from an `always_ff`
+    # the netlist kept a location for, so a register that had to borrow one
+    # could point anywhere and this stayed green.
+    for rtl in sorted(FIXTURE.glob("*.sv")):
+        tree = clocks.clock_tree(design.load_flat([str(rtl)], rtl.stem))
+        for name, info in tree["registers"].items():
+            checked += _names_the_construct(
+                info["src"],
+                ("always_ff", "always", name.split(".")[-1].split("[")[0]),
+                name)
     assert checked >= 8, checked
 
 
-def _names_the_construct(src: str, keyword: str, name: str) -> int:
-    """True if the reported span contains the keyword and, where the name
-    survives into the netlist, the name."""
+def _names_the_construct(src: str, keyword, name: str) -> int:
+    """True if the reported span contains one of the keywords and, where the
+    name survives into the netlist, the name.
+
+    More than one keyword is allowed because a register does not have to
+    come from an `always_ff`: an array lowered to flip-flops points at the
+    line the array was declared on, which is where a reader wants to be
+    sent and contains no procedural block at all.
+    """
+    words = (keyword,) if isinstance(keyword, str) else tuple(keyword)
     file, _, span = src.partition(":")
     first = int(span.split(".")[0])
     last = int(span.split("-")[-1].split(".")[0]) if "-" in span else first
     text = pathlib.Path(file).read_text().splitlines()
     block = "\n".join(text[first - 1:last])
-    assert keyword in block, (src, keyword, block[:80])
+    hit = [w for w in words if w in block]
+    assert hit, (src, words, block[:80])
     base = name.split(".")[-1].split("[")[0]
     if base and base in "".join(text):
-        assert base in block or keyword in block, (src, name)
+        assert base in block or hit, (src, name)
     return 1
 
 
@@ -520,3 +539,189 @@ def test_an_opposite_edge_second_stage_is_not_a_synchronizer():
     flat = design.load_flat(files, "opposite_edge_stage")
     x = clocks.crossings(flat)
     assert not any(c["shape_recognized"] for c in x["crossings"])
+
+
+def test_the_data_walk_takes_every_input_the_netlist_offers():
+    """Assert the rule, not the design that last broke it.
+
+    Three crossings were dropped one at a time, each by a hand-written list
+    of port names that the next design outgrew: one arriving on a latch's
+    enable, one folded onto a synchronous clear, one on an asynchronous
+    load's value. A test naming the design that found the third would catch
+    the fourth only after it shipped. This names the rule instead -- every
+    input a register has except its clock is walked -- so a register type
+    the list never anticipated fails here.
+    """
+    pins = set()
+    for rtl in sorted(FIXTURE.glob("*.sv")):
+        flat = design.load_flat([str(rtl)], rtl.stem)
+        for _, cell in design.registers(flat):
+            walked = set(clocks._data_inputs(cell))
+            declared = {p for p, d in cell.dirs.items() if d == "input"}
+            assert declared - walked == {"CLK"}, (rtl.stem, cell.type)
+            pins |= declared
+    # And the directory must keep exercising the pins that were missed, so
+    # the rule above is asserted over something wider than a plain D.
+    assert {"D", "SRST", "ARST", "ALOAD", "AD"} <= pins, sorted(pins)
+
+
+def test_a_register_whose_reset_pin_is_unknown_says_so():
+    """A register type nobody anticipated must fail loudly, not crash.
+
+    `$aldff` was listed as a register with an asynchronous reset and has
+    none -- it has an asynchronous load -- so every command that built a
+    reset tree died with `KeyError: 'CLR'`, which a build gate cannot tell
+    from a finding. The pin is now read off the cell, and a type that
+    carries no pin the table knows names itself in the message.
+    """
+    for rtl in sorted(FIXTURE.glob("*.sv")):
+        flat = design.load_flat([str(rtl)], rtl.stem)
+        clocks.reset_tree(flat)                  # must not raise
+        for _, cell in design.registers(flat):
+            has = [p for p, _, _ in clocks.RESET_PINS if p in cell.conns]
+            claims = cell.type in (design.ASYNC_RESET_TYPES
+                                   | design.SYNC_RESET_TYPES)
+            assert bool(has) == claims, (rtl.stem, cell.type, has)
+
+
+def test_an_asynchronous_load_is_not_reported_as_a_reset():
+    """It forces another signal's value, so calling it a reset misstates it."""
+    flat = design.load_flat([str(FIXTURE / "async_load.sv")], "async_load")
+    resets = clocks.reset_tree(flat)
+    assert resets["registers"]["dout"]["kind"] == "asynchronous load"
+    assert resets["registers"]["dout"]["sources"] == ["load"]
+    # The loaded value crosses a clock boundary, and arrives on AD.
+    x = clocks.crossings(flat)
+    assert [c["from"] for c in x["crossings"]] == ["staged"]
+    assert x["unrecognized"]
+
+
+def test_two_clocks_on_one_vector_port_are_two_clocks():
+    """Names collide; nets do not, so identity is the net.
+
+    Every bit of `input logic [1:0] lane_clk` carries the port's name, so a
+    comparison of clock source *names* found one clock here and excused an
+    eight-bit unsynchronized crossing between two asynchronous clocks from
+    the build gate. A multi-lane block receiving one clock per lane on one
+    port is ordinary, and it was the shape the tool was least able to see.
+    """
+    flat = design.load_flat([str(FIXTURE / "vector_clock.sv")],
+                            "vector_clock")
+    tree = clocks.clock_tree(flat)
+    regs = tree["registers"]
+    assert regs["stage"]["clock_sources"] == regs["dout"]["clock_sources"]
+    assert regs["stage"]["root_bits"] != regs["dout"]["root_bits"]
+    x = clocks.crossings(flat, tree)
+    assert len(x["crossings"]) == 1
+    assert not x["crossings"][0]["same_clock_source"]
+    assert x["unrecognized"], "an asynchronous crossing must fail the gate"
+
+
+def test_two_clocks_out_of_one_black_box_are_two_clocks():
+    """The same collapse by the other route the chapter's definition names.
+
+    A primary clock is a design input or the output of a block the netlist
+    cannot see into. Both forms can carry two clocks on one net name, so
+    fixing only the port half would have left the gate passing here.
+    """
+    flat = design.load_flat([str(FIXTURE / "blackbox_clocks.sv")],
+                            "blackbox_clocks")
+    tree = clocks.clock_tree(flat)
+    regs = tree["registers"]
+    assert regs["a"]["clock_sources"] == regs["b"]["clock_sources"]
+    assert regs["a"]["root_bits"] != regs["b"]["root_bits"]
+    x = clocks.crossings(flat, tree)
+    assert not x["crossings"][0]["same_clock_source"]
+    assert x["unrecognized"]
+
+
+def test_same_clock_source_is_only_ever_claimed_of_one_net():
+    """The flag that keeps a crossing out of the build gate, over everything.
+
+    It is the only route by which a reported crossing is excused, so it is
+    asserted across the whole directory rather than on the design that last
+    broke it: it may be true only where both ends reached one identical
+    clock net.
+    """
+    checked = 0
+    for rtl in sorted(FIXTURE.glob("*.sv")):
+        flat = design.load_flat([str(rtl)], rtl.stem)
+        tree = clocks.clock_tree(flat)
+        for c in clocks.crossings(flat, tree)["crossings"]:
+            if not c["same_clock_source"]:
+                continue
+            ends = [tree["registers"][c["to"]]["root_bits"],
+                    tree["registers"][c["from"]]["root_bits"]]
+            assert len(ends[0]) == 1 and ends[0] == ends[1], (rtl.stem, c)
+            checked += 1
+    assert checked, "no fixture exercises the flag that excuses a crossing"
+
+
+def test_a_crossing_onto_a_synchronous_clear_is_reported():
+    """`opt_dff` folds `if (flag) q <= 0;` onto $sdff's SRST pin.
+
+    That is the pass the tool runs so a synchronous reset is not missed, and
+    it moved an ordinary one-bit control crossing off the data pins. Whether
+    the tool saw a real crossing then depended on whether the receiving
+    register happened to have an asynchronous reset as well.
+    """
+    flat = design.load_flat([str(FIXTURE / "sync_reset_crossing.sv")],
+                            "sync_reset_crossing")
+    x = clocks.crossings(flat)
+    assert [c["from"] for c in x["crossings"]] == ["flag"]
+    assert x["unrecognized"]
+
+
+def test_per_bit_synchronizers_leaving_through_ports_are_rejected():
+    """The convergence test was one register wide.
+
+    Eight one-bit chains carrying one value were demoted only when some
+    register downstream read them together, so a bus reassembled by whatever
+    instantiates the block met no reader and all eight were reported as
+    recognized synchronizers. The rule is now the boundary, not the reader.
+    """
+    flat = design.load_flat([str(FIXTURE / "parallel_bit_sync.sv")],
+                            "parallel_bit_sync")
+    x = clocks.crossings(flat)
+    assert len(x["crossings"]) == 8
+    assert not any(c["shape_recognized"] for c in x["crossings"])
+    assert len(x["unrecognized"]) == 8
+    assert "in parallel" in x["crossings"][0]["note"]
+
+
+def test_a_lowered_array_points_at_its_declaration():
+    """Not at the line its clock port was declared on.
+
+    `memory_map` gives the registers it synthesizes no attributes at all, so
+    each one borrowed a location from a net it touched, and the first net it
+    found was the clock: sixteen registers all pointing at a port list. The
+    location now comes from the array itself, recovered before the memory
+    passes run, and it survives flattening, which prefixes the instance path
+    onto every cell name.
+    """
+    for top, line in (("ram_crossing", "logic [7:0] mem [16];"),
+                      ("sub_array", "logic [7:0] ram [16];")):
+        flat = design.load_flat([str(FIXTURE / f"{top}.sv")], top)
+        regs = clocks.reset_tree(flat)["no_reset"]
+        lowered = [r for r in regs if "[" in r["name"]]
+        assert lowered, top
+        for r in lowered:
+            file, _, span = r["src"].partition(":")
+            text = pathlib.Path(file).read_text().splitlines()
+            assert line in text[int(span.split(".")[0]) - 1], (top, r)
+
+
+def test_a_tool_failure_is_not_reported_as_a_finding():
+    """Three exit codes, kept apart: 0 clean, 1 findings, 2 cannot answer.
+
+    A project that gates its build on this has to tell them apart, and an
+    earlier version could not: an unreadable file and a register type the
+    code had not anticipated both arrived as a Python traceback and exit 1,
+    which is the code a crossing uses.
+    """
+    from dvh import cli                                    # noqa: PLC0415
+    assert cli.main(["read", "nope", str(FIXTURE / "no_such_file.sv")]) == 2
+    assert cli.main(["read", "gated_clock",
+                     str(FIXTURE / "gated_clock.sv")]) == 0
+    assert cli.main(["read", "vector_clock",
+                     str(FIXTURE / "vector_clock.sv")]) == 1

@@ -25,10 +25,13 @@
         "additionalProperties": false,
         "properties": {
           "kind": {
-            "description": "Whether reset takes effect on a clock edge.",
+            "description": "Whether the control takes effect on a clock edge, and whether it is a reset at all.",
+            "$comment": "An asynchronous set forces ones and an asynchronous load forces another signal's value; neither is a reset, and reporting them as one would misstate the design.",
             "enum": [
               "asynchronous",
-              "synchronous"
+              "synchronous",
+              "asynchronous set",
+              "asynchronous load"
             ]
           },
           "active": {
