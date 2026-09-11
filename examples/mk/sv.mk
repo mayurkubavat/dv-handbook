@@ -50,7 +50,8 @@ else
 	$(VERILATOR) --lint-only $(VERILATOR_FLAGS) \
 	    $(UVM_DEFINES) $(UVM_INCDIR) $(UVM_SOURCE) $(SOURCES) \
 	    --top-module $(TOP)
-	@echo "verilator --lint-only $(VERILATOR_FLAGS)" | fold -sw 72
+	@echo "verilator --lint-only $(VERILATOR_FLAGS)" | fold -sw 72 \
+	    | sed 's/ *$$//'
 	@echo "no warnings"
 endif
 

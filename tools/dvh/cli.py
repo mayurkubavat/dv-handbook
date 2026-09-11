@@ -128,24 +128,33 @@ def _main(argv) -> int:
     ap.add_argument("--svg", default=None)
     ap.add_argument("--validate", action="store_true",
                     help="check the output against its schema")
+    ap.add_argument("--clock", action="append", default=[], metavar="NAME",
+                    help="a clock of this design, from its specification; "
+                         "repeat for each. Without these the walk has to "
+                         "guess which input of a gate is the clock, and "
+                         "says so where it cannot tell")
     args = ap.parse_args(argv)
+    clk = tuple(args.clock)
 
     if args.command in ("clock-tree", "reset-tree", "crossings", "read"):
         flat = design.load_flat(args.files, args.top)
     if args.command == "clock-tree":
-        return _emit(args.command, clocks.clock_tree(flat), args.validate)
+        return _emit(args.command, clocks.clock_tree(flat, clk),
+                     args.validate)
     if args.command == "reset-tree":
-        return _emit(args.command, clocks.reset_tree(flat), args.validate)
+        return _emit(args.command, clocks.reset_tree(flat, clk),
+                     args.validate)
     if args.command == "crossings":
-        return _emit(args.command, clocks.crossings(flat), args.validate)
+        return _emit(args.command, clocks.crossings(flat, None, clk),
+                     args.validate)
     mods = design.load_hier(args.files, args.top)
     conn = graph.connections(mods, args.top)
     if args.svg:
         graph.draw(conn, args.svg, f"{args.top} connections")
     if args.command == "connections":
         return _emit(args.command, conn, args.validate)
-    tree = clocks.clock_tree(flat)
-    resets = clocks.reset_tree(flat)
+    tree = clocks.clock_tree(flat, clk)
+    resets = clocks.reset_tree(flat, clk)
     xings = clocks.crossings(flat, tree)
     print(_report(tree, resets, xings, conn))
     return 1 if xings["unrecognized"] else 0

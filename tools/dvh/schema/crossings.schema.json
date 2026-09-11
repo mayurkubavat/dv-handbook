@@ -97,8 +97,7 @@
       "type": "array",
       "items": {
         "$ref": "#/$defs/crossing"
-      },
-      "$comment": "A shape to look at, not a bug."
+      }
     }
   },
   "$comment": "Reports a recognized shape, never whether a crossing is safe."

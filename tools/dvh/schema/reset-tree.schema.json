@@ -20,6 +20,7 @@
           "active",
           "sources",
           "through",
+          "controls",
           "src"
         ],
         "additionalProperties": false,
@@ -53,6 +54,40 @@
             "type": "array",
             "items": {
               "type": "string"
+            }
+          },
+          "controls": {
+            "description": "Every forcing control the register carries.",
+            "$comment": "A register can have two: a set and a clear.",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["pin", "kind", "active", "sources", "through"],
+              "additionalProperties": false,
+              "properties": {
+                "pin": {
+                  "description": "The cell pin it arrives on.",
+                  "type": "string"
+                },
+                "kind": {
+                  "description": "What it does, and when.",
+                  "type": "string"
+                },
+                "active": {
+                  "description": "The level that asserts it.",
+                  "enum": ["high", "low"]
+                },
+                "sources": {
+                  "description": "Sorted roots the control traces back to.",
+                  "type": "array",
+                  "items": {"type": "string"}
+                },
+                "through": {
+                  "description": "Cells and gating the walk passed.",
+                  "type": "array",
+                  "items": {"type": "string"}
+                }
+              }
             }
           },
           "src": {

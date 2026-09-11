@@ -44,7 +44,7 @@ class Source:
     through: list = field(default_factory=list)   # cell types walked through
 
 
-def clock_candidates(mod: Module) -> tuple:
+def clock_candidates(mod: Module, declared=()) -> tuple:
     """Two tiers of evidence that a net is carrying a clock, not control.
 
     At a gate feeding a clock pin, one input is the clock and the others are
@@ -55,13 +55,23 @@ def clock_candidates(mod: Module) -> tuple:
     block looks like from here. **Weak**: it is an input port, which a clock
     usually is and an enable sometimes is.
 
-    Where the strong evidence is absent and more than one input is merely a
-    port, the two are genuinely indistinguishable from the RTL, and the walk
-    says so rather than guessing. That is not a defect in the tool; it is
-    @sec-ch03-clocks' point that the relationship between clocks is a
-    property of the specification. Pass the clock names in and the question
-    does not arise.
+    Strong evidence for one input is not evidence against another. Both a
+    clock gate and Plassan's *blending* -- two clocks combined to make a
+    third -- are one gate with one input that drives registers elsewhere and
+    one that does not, and nothing in the netlist separates them. So where
+    the walk demotes an input that is itself a clock candidate, it says the
+    choice was a guess rather than making it silently; an earlier version
+    reported a blended clock as "one clock, gated differently" and passed
+    the build on an unsynchronized crossing between two unrelated clocks.
+
+    That is not a defect in the tool; it is @sec-ch03-clocks' point that the
+    relationship between clocks is a property of the specification. Declare
+    the clocks -- `--clock` on the command line -- and the question does not
+    arise: a declared name is the only strong evidence, everything else is
+    control, and nothing is left to a guess.
     """
+    if declared:
+        return set(declared), set()
     strong, used_as_clock = set(), set()
     for _, cell in registers(mod):
         for b in cell.conns.get("CLK", []):
@@ -161,6 +171,12 @@ def _walk_to_sources(mod: Module, bit, seen=None, any_comb=False,
             if best and len(carrying) < len(ins):
                 control = [mod.net(b) for (p, b) in ins
                            if (p, b) not in carrying]
+                # Demoting an input that is itself a clock candidate is a
+                # guess, not a finding. A gate blending two clocks and a
+                # gate enabling one look identical here: in both, one input
+                # drives registers elsewhere and the other does not.
+                ambiguous = any(t >= 1 for (t, p, b) in tiers
+                                if (p, b) not in carrying)
                 ins = carrying
             elif best == 1 and len(carrying) > 1:
                 # Several ports and no stronger evidence: from the RTL alone
@@ -211,10 +227,14 @@ def _pretty(key: str) -> str:
     return key.split("#")[0]
 
 
-def clock_tree(mod: Module) -> dict:
-    """Registers grouped by clock source; each register with its clock path."""
+def clock_tree(mod: Module, declared=()) -> dict:
+    """Registers grouped by clock source; each register with its clock path.
+
+    `declared` is the design's clock names, from the specification. Given
+    them, the walk stops guessing which input of a gate is the clock.
+    """
     regs = {}
-    prim = clock_candidates(mod)
+    prim = clock_candidates(mod, declared)
     for name, cell in registers(mod):
         srcs = _walk_to_sources(mod, cell.conns["CLK"][0], None, False, prim)
         roots = sorted({s.name for s in srcs})
@@ -255,7 +275,7 @@ RESET_PINS = (("CLR", "CLR_POLARITY", "asynchronous"),
               ("SRST", "SRST_POLARITY", "synchronous"))
 
 
-def reset_tree(mod: Module) -> dict:
+def reset_tree(mod: Module, declared=()) -> dict:
     """Every register's reset: kind, polarity, source; and the ones without."""
     out, none = {}, []
     for name, cell in registers(mod):
@@ -274,15 +294,24 @@ def reset_tree(mod: Module) -> dict:
             # they carry a location like every other finding.
             none.append({"name": name, "src": cell.src})
             continue
-        prim = clock_candidates(mod)
-        srcs = []
-        for b in cell.conns[pin]:      # $dffsr's set/reset are per-bit vectors
-            srcs += _walk_to_sources(mod, b, None, False, prim)
-        out[name] = {"kind": kind,
-                     "active": "high" if str(pol).endswith("1") else "low",
-                     "sources": sorted({s.name for s in srcs}),
-                     "through": sorted({t for s in srcs for t in s.through}),
-                     "src": cell.src}
+        prim = clock_candidates(mod, declared)
+
+        def control(pin, polarity, kind):   # noqa: PLR1704
+            srcs = []
+            for b in cell.conns[pin]:       # set and reset are per-bit
+                srcs += _walk_to_sources(mod, b, None, False, prim)
+            pol = cell.params.get(polarity, "1")
+            return {"pin": pin, "kind": kind,
+                    "active": "high" if str(pol).endswith("1") else "low",
+                    "sources": sorted({s.name for s in srcs}),
+                    "through": sorted({t for s in srcs for t in s.through})}
+
+        # A register can carry more than one, and `$dffsr` carries two: an
+        # asynchronous set and an asynchronous clear. Reporting only the
+        # first left the other's source out of the report entirely.
+        controls = [control(*r) for r in found]
+        out[name] = dict(controls[0], controls=controls, src=cell.src)
+        del out[name]["pin"]
     return {"registers": out,
             "no_reset": sorted(none, key=lambda r: r["name"])}
 
@@ -294,7 +323,7 @@ def _data_inputs(cell) -> list:
     list is wrong the first time the netlist produces a cell the list did
     not anticipate. Two separate crossings went unreported that way: one
     arriving on a latch's enable, and one folded onto a flip-flop's
-    synchronous reset by an optimisation added for an unrelated reason. The
+    synchronous reset by an optimization added for an unrelated reason. The
     clock is excluded because a value arriving on it is a clock question,
     which the clock walk answers.
     """
@@ -303,17 +332,41 @@ def _data_inputs(cell) -> list:
 
 
 def _data_cone_registers(mod: Module, cell) -> set[str]:
-    """Registers reaching any of this register's data inputs, through logic."""
-    found = set()
+    """Registers reaching any of this register's data inputs, through logic.
+
+    Iterative, which the general walk cannot be: that one prefixes each cell
+    type onto the path it came by, so its answer depends on the route, while
+    this one only asks which registers are back there. A fifteen-hundred-deep
+    exclusive-or chain -- which nothing can collapse -- ended the run with a
+    `RecursionError` when this recursed.
+
+    Deliberately not cached. A first attempt stored each pass's whole result
+    against every net the pass touched, which is an over-approximation, and
+    it promptly invented three crossings in the book's own example design.
+    The cost that made caching tempting was somewhere else: see
+    `_feeds_directly`.
+    """
+    found, seen, stack = set(), set(), []
     for port in _data_inputs(cell):
-        for b in cell.conns.get(port, []):
-            for s in _walk_to_sources(mod, b, None, True, None):
-                if s.kind == "register":
-                    found.add(s.name)
+        stack += list(cell.conns.get(port, []))
+    while stack:
+        bit = stack.pop()
+        if not isinstance(bit, int) or bit in seen:
+            continue
+        seen.add(bit)
+        if bit in mod.port_of_bit or bit not in mod.drivers:
+            continue
+        drv = mod.cells[mod.drivers[bit][0]]
+        if drv.type in DFF_TYPES:
+            found.add(mod.reg_of_bit.get(bit, mod.net(drv.conns["Q"][0])))
+            continue
+        stack += [b for p in _data_inputs(drv)
+                  for b in drv.conns.get(p, [])]
     return found
 
 
-def _flag_parallel_synchronizers(mod: Module, report: list) -> None:
+def _flag_parallel_synchronizers(mod: Module, report: list,
+                                 tree: dict) -> None:
     """Demote one-bit synchronizers that run in parallel across one boundary.
 
     Each chain is individually the right shape, which is why a purely
@@ -349,20 +402,22 @@ def _flag_parallel_synchronizers(mod: Module, report: list) -> None:
     # puts a register between the second stage and whatever reads it, and a
     # rule that looked only at immediate readers saw nothing there.
     feeds = {n: _data_cone_registers(mod, c) for n, c in registers(mod)}
-    reach = {}
 
-    def ancestors(name, seen=None):
-        seen = seen if seen is not None else set()
-        if name in reach:
-            return reach[name]
-        out = set()
-        for p in feeds.get(name, ()):  # noqa: PLR1704
-            if p in seen:
-                continue
-            seen.add(p)
-            out.add(p)
-            out |= ancestors(p, seen)
-        reach[name] = out
+    def ancestors(name):
+        """Every register upstream of this one, however far back.
+
+        No memo. An earlier version cached while sharing one `seen` set down
+        the recursion, so a nested call pruned nodes an outer call had
+        already visited and then stored the pruned answer as if it were
+        complete. The traversal order came from a Python set, so which
+        answer got cached depended on the interpreter's hash seed.
+        """
+        out, stack = set(), [name]
+        while stack:
+            for p in feeds.get(stack.pop(), ()):
+                if p not in out:
+                    out.add(p)
+                    stack.append(p)
         return out
 
     for name, cell in registers(mod):
@@ -375,12 +430,25 @@ def _flag_parallel_synchronizers(mod: Module, report: list) -> None:
             c["note"] = (f"{len(together)} one-bit synchronizers are read "
                            f"together by {name}; their bits can resolve in "
                            f"different cycles")
+    # The boundary is the pair of clock *nets*, not the pair of domain keys.
+    # One clock gated two ways is two domain keys, so two chains off it were
+    # two groups of one and neither rule fired: two bits of one value,
+    # synchronized separately across one physical boundary, came back as two
+    # recognized synchronizers. The roots are already in the clock tree,
+    # which is how `same_clock_source` knows the same thing.
+    def boundary(c):
+        regs = tree["registers"]
+        return (frozenset(regs.get(c["from"], {}).get("root_bits", [])),
+                frozenset(regs.get(c["to"], {}).get("root_bits", [])))
+
     groups = {}
     for c in sync:
-        groups.setdefault((c["from_domain"], c["to_domain"]), []).append(c)
-    for (frm, to), group in groups.items():
+        groups.setdefault(boundary(c), []).append(c)
+    for group in groups.values():
         if len(group) < 2:
             continue
+        frm = _pretty(group[0]["from_domain"])
+        to = _pretty(group[0]["to_domain"])
         still = [c for c in group if c["shape_recognized"]]
         for c in still:
             c["shape_recognized"] = False
@@ -415,19 +483,29 @@ def _feeds_directly(mod: Module, cell, source: str) -> bool:
     """
     if any(b not in (0, "0") for b in cell.conns.get("EN", [])):
         return False
-    return any(s.kind == "register" and s.name == source and not s.through
-               for b in cell.conns.get("D", [])
-               for s in _walk_to_sources(mod, b, None, True, None))
+    # One hop, not a cone walk. "With no logic in between" is a statement
+    # about the driver of this bit and nothing further back, and asking it
+    # as a full backward walk made the run time grow with the square of a
+    # lowered memory array: every call re-walked the whole read multiplexer.
+    for b in cell.conns.get("D", []):
+        drv = mod.drivers.get(b) if isinstance(b, int) else None
+        if drv is None:
+            continue
+        c = mod.cells[drv[0]]
+        if c.type in DFF_TYPES and source == mod.reg_of_bit.get(
+                b, mod.net(c.conns["Q"][0])):
+            return True
+    return False
 
 
-def crossings(mod: Module, tree: dict | None = None) -> dict:
+def crossings(mod: Module, tree: dict | None = None, declared=()) -> dict:
     """Registers that receive data from a register in another clock domain,
     and whether the receiving structure *matches a shape this tool knows*.
 
     The distinction is the whole design of this report, and it was learned
     the hard way. An earlier version answered "is this crossing safe", which
-    is a judgement, and every defect it ever had was in making that
-    judgement: a shape nobody had taught it was called safe, and once a rule
+    is a judgment, and every defect it ever had was in making that
+    judgment: a shape nobody had taught it was called safe, and once a rule
     meant to remove a false alarm silenced a real crossing entirely.
 
     So it answers a smaller question it can actually answer. `shape_recognized`
@@ -438,7 +516,7 @@ def crossings(mod: Module, tree: dict | None = None) -> dict:
     suppressed, and where the walk cannot resolve a clock it says so. Whether
     a crossing is *safe* is a question about the specification, and
     @sec-ch03-cdc is where a person answers it."""
-    tree = tree or clock_tree(mod)
+    tree = tree or clock_tree(mod, declared)
     dom_of = {r: i["domain"] for r, i in tree["registers"].items()}
     by_name = {name: cell for name, cell in registers(mod)}
     report = []
@@ -499,7 +577,7 @@ def crossings(mod: Module, tree: dict | None = None) -> dict:
                                       "here; declare the clocks" if unsure
                                       else "no synchronizer shape"),
                            "src": cell.src})
-    _flag_parallel_synchronizers(mod, report)
+    _flag_parallel_synchronizers(mod, report, tree)
     # collapse: a crossing that lands on a synchronizer's first stage is fine;
     # flag the rest
     # The gate trips on a shape it does not know between two different

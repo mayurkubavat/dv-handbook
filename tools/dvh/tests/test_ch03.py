@@ -144,23 +144,98 @@ FIXTURE = pathlib.Path(__file__).parent / "rtl"
 _EVERY_DESIGN = ([([str(f)], f.stem) for f in sorted(FIXTURE.glob("*.sv"))]
                  + [(TWO_CLOCK, "top"), (FIFO, "fifo")])
 
+# The clocks a specification would declare, for the fixtures whose gates
+# the netlist alone cannot resolve.
+_DECLARED = {"gated_clock": ("clk",),
+             "shared_enable_clocks": ("aclk", "bclk"),
+             "blended_clock": ("clk1", "clk2"),
+             "gate_built_clock_mux": ("clk1", "clk2"),
+             "per_bit_behind_gates": ("aclk", "bclk")}
 
-def test_a_clock_gate_does_not_fail_the_build():
-    """A gated clock is a different net and the same clock.
 
-    Identity is the net, so the gated register is its own domain and the
-    path into it is reported -- nothing is ever hidden. Both clocks resolve
-    to the same source, so it is marked as such and does not trip the gate,
-    because otherwise every design that gates a clock would fail.
+def test_a_clock_gate_is_undecided_until_the_clocks_are_declared():
+    """Which input of a gate is the clock is not in the netlist.
+
+    `clk & en` and `clk1 & clk2` are the same gate: one input drives
+    registers elsewhere and the other does not. The walk once read strong
+    evidence for one input as evidence against the other, and so reported a
+    *blended* clock -- two clocks combined to make a third -- as one clock
+    gated differently, and passed the build on an unsynchronized crossing
+    between two unrelated clocks.
+
+    So undeclared, the gate is undecided and the path into it fails. Declare
+    the clocks and the question does not arise: the enable is not one, the
+    gated register is on the declared clock, and the design passes.
     """
     flat = design.load_flat([str(FIXTURE / "gated_clock.sv")], "gated_clock")
     tree = clocks.clock_tree(flat)
-    assert all(clocks._pretty(d) == "clk" for d in tree["domains"])
-    assert "gated by en" in tree["registers"]["q_gated"]["through"]
+    assert tree["registers"]["q_gated"]["clock_ambiguous"]
     x = clocks.crossings(flat, tree)
     assert len(x["crossings"]) == 1
-    assert x["crossings"][0]["same_clock_source"]
-    assert x["unrecognized"] == []
+    assert not x["crossings"][0]["same_clock_source"]
+    assert x["unrecognized"]
+
+    told = clocks.clock_tree(flat, ("clk",))
+    assert all(clocks._pretty(d) == "clk" for d in told["domains"])
+    assert "gated by en" in told["registers"]["q_gated"]["through"]
+    assert not told["registers"]["q_gated"]["clock_ambiguous"]
+    y = clocks.crossings(flat, told)
+    assert len(y["crossings"]) == 1
+    assert y["crossings"][0]["same_clock_source"]
+    assert not y["unrecognized"], "a gated design must not fail the gate"
+
+
+def test_a_blended_clock_is_not_one_clock_gated_differently():
+    """Two clocks combined to make a third, and a clock multiplexer built
+    from gates rather than from a multiplexer cell.
+
+    Both were reported as one clock gated differently and both passed the
+    build on an eight-bit unsynchronized crossing. The multiplexer is the
+    worse of the two, because the walk had a rule that selection never
+    demotes an input -- and that rule keyed on a `$mux` cell, which a
+    glitch-free clock multiplexer written out of gates never produces.
+    """
+    for top in ("blended_clock", "gate_built_clock_mux"):
+        flat = design.load_flat([str(FIXTURE / f"{top}.sv")], top)
+        tree = clocks.clock_tree(flat)
+        x = clocks.crossings(flat, tree)
+        assert len(x["crossings"]) == 1, top
+        assert not x["crossings"][0]["same_clock_source"], top
+        assert x["unrecognized"], top
+        # And with the clocks declared, both are two domains rather than
+        # one, so the crossing still fails -- it is a real one.
+        told = clocks.crossings(flat, None, ("clk1", "clk2"))
+        assert told["unrecognized"], top
+
+
+def test_a_kept_submodule_does_not_hide_the_design():
+    """`keep_hierarchy` stops `flatten`, and the top module then holds none
+    of the registers. The report said the design had no clocks and no
+    crossings, and the build passed on a design containing both."""
+    flat = design.load_flat([str(FIXTURE / "kept_hierarchy.sv")],
+                            "kept_hierarchy")
+    assert len(list(design.registers(flat))) == 2
+    x = clocks.crossings(flat)
+    assert [c["from"] for c in x["crossings"]] == ["u_lane.a"]
+    assert x["unrecognized"]
+
+
+def test_per_bit_chains_behind_two_clock_gates_are_one_boundary():
+    """One clock gated two ways is two domain keys and one boundary.
+
+    The rule that demotes parallel one-bit chains grouped them by domain
+    key, so two chains off one physical clock were two groups of one and
+    neither rule fired: two bits of one value, synchronized separately,
+    came back as two recognized synchronizers. The grouping is now the pair
+    of clock nets, which is what the boundary physically is.
+    """
+    flat = design.load_flat([str(FIXTURE / "per_bit_behind_gates.sv")],
+                            "per_bit_behind_gates")
+    x = clocks.crossings(flat, None, ("aclk", "bclk"))
+    assert len(x["crossings"]) == 2
+    assert not any(c["shape_recognized"] for c in x["crossings"])
+    assert "in parallel" in x["crossings"][0]["note"]
+    assert len(x["unrecognized"]) == 2
 
 
 def test_crossing_through_a_mux_select_is_found():
@@ -664,7 +739,10 @@ def test_same_clock_source_is_only_ever_claimed_of_one_net():
     checked = 0
     for rtl in sorted(FIXTURE.glob("*.sv")):
         flat = design.load_flat([str(rtl)], rtl.stem)
-        tree = clocks.clock_tree(flat)
+        # With the clocks declared, because the flag can only ever be true
+        # of a design whose gates resolved -- which is the point of
+        # declaring them.
+        tree = clocks.clock_tree(flat, _DECLARED.get(rtl.stem, ()))
         for c in clocks.crossings(flat, tree)["crossings"]:
             if not c["same_clock_source"]:
                 continue
@@ -754,7 +832,7 @@ def test_a_tool_failure_is_not_reported_as_a_finding():
     """
     from dvh import cli                                    # noqa: PLC0415
     assert cli.main(["read", "nope", str(FIXTURE / "no_such_file.sv")]) == 2
-    assert cli.main(["read", "gated_clock",
+    assert cli.main(["read", "gated_clock", "--clock", "clk",
                      str(FIXTURE / "gated_clock.sv")]) == 0
     assert cli.main(["read", "vector_clock",
                      str(FIXTURE / "vector_clock.sv")]) == 1

@@ -118,10 +118,17 @@ def _run_yosys(files, top, flatten: bool) -> dict:
         mem = os.path.join(tmp, "memories.json")
         script = (f"{reads} hierarchy -check -top {top}; proc; opt_dff; "
                   "memory_collect; design -save premap; ")
-        script += "flatten; " if flatten else ""
+        # `flatten` honors `keep_hierarchy`, and a submodule carrying it is
+        # left as an instance: every register inside it is in a module the
+        # walks never look at, so a design whose crossing lives in a kept
+        # block reported no clocks, no registers and no crossings, and the
+        # gate passed. The attribute is a synthesis instruction and has no
+        # bearing on what the design does, so it is removed first.
+        unkeep = "setattr -mod -unset keep_hierarchy; "
+        script += (unkeep + "flatten; ") if flatten else ""
         script += f"write_json {mem}; design -load premap; memory_map; "
         if flatten:
-            script += "flatten; "
+            script += unkeep + "flatten; "
         script += f"opt_clean; write_json {out}"
         try:
             subprocess.run(["yosys", "-q", "-p", script], check=True,
@@ -264,7 +271,22 @@ def _parse(data: dict) -> dict:
 
 def load_flat(files, top) -> Module:
     """The flattened top module, for clock, reset and cone walks."""
-    return _parse(_run_yosys(files, top, flatten=True))[top]
+    mods = _parse(_run_yosys(files, top, flatten=True))
+    flat = mods[top]
+    # Belt and braces, because this does not depend on knowing every
+    # attribute Yosys honors: if anything is still instantiated, the walks
+    # are about to analyze a fraction of the design and say nothing about
+    # the rest. That is the one answer a gate must never get quietly.
+    # A black box is the exception, and the only one: it has no contents to
+    # analyze, which is what makes it a black box, and the walks already
+    # treat its outputs as sources they cannot see behind.
+    left = sorted({c.type for c in flat.cells.values()
+                   if c.type in mods and mods[c.type].cells})
+    if left:
+        raise DesignError(
+            f"{top} still instantiates {', '.join(left)} after flattening, "
+            "so the registers inside them would not be analyzed at all")
+    return flat
 
 
 def load_hier(files, top) -> dict:
