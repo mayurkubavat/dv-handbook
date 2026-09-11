@@ -120,13 +120,14 @@ def _assert_report_text(cli):
         "registers without reset: 1",
         "  last_cfg  [examples/ch03-digital-design/rtl/datapath.sv:24]",
         "crossings: 3, shape not recognized: 2",
-        "  CHECK cfg_b (bclk) -> acc (cclk), 8 bits, no synchronizer shape"
-        "  [examples/ch03-digital-design/rtl/datapath.sv:14]",
-        "  CHECK cfg_b (bclk) -> last_cfg (cclk), 8 bits, no synchronizer shape"
-        "  [examples/ch03-digital-design/rtl/datapath.sv:24]",
+        "  CHECK cfg_b (bclk) -> acc (cclk), 8 bits, no synchronizer shape",
+        "         [examples/ch03-digital-design/rtl/datapath.sv:14]",
+        "  CHECK cfg_b (bclk) -> last_cfg (cclk), 8 bits, "
+        "no synchronizer shape",
+        "         [examples/ch03-digital-design/rtl/datapath.sv:24]",
         "  known en_b (bclk) -> u_sync_en.meta (cclk), 1 bit, "
-        "two-flop synchronizer"
-        "  [examples/ch03-digital-design/rtl/sync2.sv:13]",
+        "two-flop synchronizer",
+        "         [examples/ch03-digital-design/rtl/sync2.sv:13]",
         "instances: 3, connections: 15",
     ])
 
@@ -141,12 +142,25 @@ FIXTURE = pathlib.Path(__file__).parent / "rtl"
 # chapter's two-clock example, and the FIFO Chapter 1 builds on. The claims
 # the book makes about source locations are claims about all of these, so
 # the tests that check those claims run over all of these.
+EX = ROOT / "examples"
 _EVERY_DESIGN = ([([str(f)], f.stem) for f in sorted(FIXTURE.glob("*.sv"))]
-                 + [(TWO_CLOCK, "top"), (FIFO, "fifo")])
+                 + [(TWO_CLOCK, "top"), (FIFO, "fifo"),
+                    ([str(EX / "appF-counter" / "rtl" / "counter.sv")],
+                     "counter"),
+                    ([str(EX / "ch04-simulation" / "race" / "racy.sv")],
+                     "racy"),
+                    ([str(EX / "ch04-simulation" / "race" / "safe.sv")],
+                     "safe"),
+                    ([str(EX / "ch04-simulation" / "fourstate" /
+                          "dut_unreset.sv")], "dut_unreset")])
 
 # The clocks a specification would declare, for the fixtures whose gates
 # the netlist alone cannot resolve.
-_DECLARED = {"gated_clock": ("clk",),
+_DECLARED = {"divided_blend": ("clk1", "clk2"),
+             "per_bit_mixed_roots": ("aclk", "bclk"),
+             "latch_destination": ("aclk", "bclk"),
+             "kept_instance": ("aclk", "bclk"),
+             "gated_clock": ("clk",),
              "shared_enable_clocks": ("aclk", "bclk"),
              "blended_clock": ("clk1", "clk2"),
              "gate_built_clock_mux": ("clk1", "clk2"),
@@ -179,7 +193,7 @@ def test_a_clock_gate_is_undecided_until_the_clocks_are_declared():
     assert all(clocks._pretty(d) == "clk" for d in told["domains"])
     assert "gated by en" in told["registers"]["q_gated"]["through"]
     assert not told["registers"]["q_gated"]["clock_ambiguous"]
-    y = clocks.crossings(flat, told)
+    y = clocks.crossings(flat, told, ("clk",))
     assert len(y["crossings"]) == 1
     assert y["crossings"][0]["same_clock_source"]
     assert not y["unrecognized"], "a gated design must not fail the gate"
@@ -298,11 +312,22 @@ def test_an_undecidable_clock_is_reported_not_suppressed():
 
 def test_a_crossing_through_a_latch_is_still_reported():
     """A latch is state, so the path is not a synchronizer -- but stopping
-    the walk at one would hide the crossing altogether, which is worse."""
+    the walk at one would hide the crossing altogether, which is worse.
+
+    Two findings, not one. The path *through* the latch to the receiving
+    flip-flop is one; the latch itself is the other, because a latch is
+    also a destination and its enable decides when the data is caught. Here
+    the enable is a top-level port, so which domain opens the latch is not
+    something the netlist says, and the report says that rather than
+    assuming it.
+    """
     files = [str(FIXTURE / "crossing_via_latch.sv")]
     flat = design.load_flat(files, "crossing_via_latch")
     x = clocks.crossings(flat)
-    assert len(x["unrecognized"]) == 1
+    onto_latch = [c for c in x["unrecognized"] if c["to"] == "lat"]
+    assert len(onto_latch) == 1
+    assert "undecided enable" in onto_latch[0]["to_domain"]
+    assert len(x["unrecognized"]) == 2
 
 
 def test_bit_blasted_registers_are_not_collapsed():
@@ -743,7 +768,8 @@ def test_same_clock_source_is_only_ever_claimed_of_one_net():
         # of a design whose gates resolved -- which is the point of
         # declaring them.
         tree = clocks.clock_tree(flat, _DECLARED.get(rtl.stem, ()))
-        for c in clocks.crossings(flat, tree)["crossings"]:
+        declared = _DECLARED.get(rtl.stem, ())
+        for c in clocks.crossings(flat, tree, declared)["crossings"]:
             if not c["same_clock_source"]:
                 continue
             ends = [tree["registers"][c["to"]]["root_bits"],
@@ -836,3 +862,105 @@ def test_a_tool_failure_is_not_reported_as_a_finding():
                      str(FIXTURE / "gated_clock.sv")]) == 0
     assert cli.main(["read", "vector_clock",
                      str(FIXTURE / "vector_clock.sv")]) == 1
+
+
+def test_a_clock_blended_with_a_divided_clock_is_two_clocks():
+    """A register clocked by a clock is itself a clock, to any depth.
+
+    The evidence heuristic counted a divider as a clock only where its
+    output drove a clock pin with no logic between, which excludes every
+    divider that feeds a gate -- so a clock blended with a divided clock
+    scored as one clock gated differently and the crossing was excused.
+    With the clocks declared the question is settled by definition, and the
+    answer is that the gate has two clocks on it.
+    """
+    flat = design.load_flat([str(FIXTURE / "divided_blend.sv")],
+                            "divided_blend")
+    for declared in ((), ("clk1", "clk2")):
+        x = clocks.crossings(flat, clocks.clock_tree(flat, declared),
+                             declared)
+        assert len(x["crossings"]) == 1, declared
+        assert not x["crossings"][0]["same_clock_source"], declared
+        assert x["unrecognized"], declared
+
+
+def test_a_declaration_is_all_or_nothing():
+    """A clock left out is reclassified as control, which can only remove
+    findings, so a partial declaration was quieter than none at all -- and a
+    misspelled one was the safest of the three. Both are now refused."""
+    from dvh import cli                                    # noqa: PLC0415
+    rtl = str(FIXTURE / "divided_blend.sv")
+    assert cli.main(["read", "divided_blend", "--clock", "clk1", rtl]) == 2
+    assert cli.main(["read", "divided_blend", "--clock", "nope", rtl]) == 2
+    assert cli.main(["read", "divided_blend", rtl]) == 1
+    assert cli.main(["read", "divided_blend", "--clock", "clk1",
+                     "--clock", "clk2", rtl]) == 1
+    assert clocks.clock_ports(
+        design.load_flat([rtl], "divided_blend")) == {"clk1", "clk2"}
+
+
+def test_per_bit_chains_with_different_clock_roots_are_one_boundary():
+    """A gate whose enable the netlist cannot see into scored as highly as
+    the clock beside it, so two chains off one clock reported different
+    roots and the rule that groups them by boundary split them in two."""
+    flat = design.load_flat([str(FIXTURE / "per_bit_mixed_roots.sv")],
+                            "per_bit_mixed_roots")
+    undeclared = clocks.crossings(flat)
+    assert len(undeclared["crossings"]) == 2
+    assert undeclared["unrecognized"], "an unresolved gate must be reported"
+    told = clocks.crossings(flat, None, ("aclk", "bclk"))
+    assert len(told["crossings"]) == 2
+    assert not any(c["shape_recognized"] for c in told["crossings"])
+    assert "in parallel" in told["crossings"][0]["note"]
+
+
+def test_a_latch_at_the_end_of_a_crossing_is_reported():
+    """A latch has no clock, so the domain that decides when the data is
+    captured is its enable's. Eight bits leaving one domain into a latch
+    held open by another's enable reported as a clean design, because the
+    loop that asks about destinations only visited flip-flops."""
+    flat = design.load_flat([str(FIXTURE / "latch_destination.sv")],
+                            "latch_destination")
+    x = clocks.crossings(flat, None, ("aclk", "bclk"))
+    onto = [c for c in x["crossings"] if c["from"] == "a"]
+    assert len(onto) == 1
+    assert onto[0]["width"] == 8
+    assert "latch" in onto[0]["note"]
+    assert not onto[0]["shape_recognized"]
+    assert x["unrecognized"]
+
+
+def test_a_reset_net_is_walked_as_a_reset_not_as_a_clock():
+    """Yosys builds an ordinary set/reset flop's SET and CLR nets out of
+    multiplexers whose select carries the reset, and the clock walk skips a
+    select because a select is not a clock. The reported reset source was a
+    pair of constants, and neither reset signal was ever named."""
+    flat = design.load_flat([str(FIXTURE / "set_reset_flop.sv")],
+                            "set_reset_flop")
+    reg = clocks.reset_tree(flat)["registers"]["q"]
+    by_pin = {c["pin"]: c for c in reg["controls"]}
+    assert by_pin["CLR"]["sources"] == ["r"]
+    assert "s" in by_pin["SET"]["sources"]
+    for c in reg["controls"]:
+        assert not any("clock" in t for t in c["through"]), c
+
+
+def test_a_register_with_only_an_asynchronous_load_has_no_reset():
+    """It forces another signal's value, not a constant. The JSON said so
+    and the human report said the design had no unreset registers."""
+    flat = design.load_flat([str(FIXTURE / "async_load_only.sv")],
+                            "async_load_only")
+    resets = clocks.reset_tree(flat)
+    assert [r["name"] for r in resets["no_reset"]] == ["q"]
+    assert resets["registers"]["q"]["kind"] == "asynchronous load"
+
+
+def test_keep_hierarchy_on_an_instance_is_stripped_too():
+    """`-mod` reaches a module's attribute; the bare form reaches a cell's,
+    and `flatten` honors either."""
+    flat = design.load_flat([str(FIXTURE / "kept_instance.sv")],
+                            "kept_instance")
+    assert len(list(design.registers(flat))) == 2
+    x = clocks.crossings(flat, None, ("aclk", "bclk"))
+    assert [c["from"] for c in x["crossings"]] == ["u_lane.a"]
+    assert x["unrecognized"]

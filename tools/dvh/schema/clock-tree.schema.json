@@ -68,7 +68,7 @@
             "items": {"type": "string"}
           },
           "clock_ambiguous": {
-            "description": "True when clock and enable were not separable.",
+            "description": "True where the walk could not resolve the clock.",
             "$comment": "Such findings are reported as undecided.",
             "type": "boolean"
           },

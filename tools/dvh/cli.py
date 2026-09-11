@@ -13,15 +13,18 @@ schema URL may want to as well.
 
 Every command but `read` prints JSON validated against a published schema;
 `read` prints a short human report instead, so it can gate a commit: it
-exits 0 when there is nothing to review, 1 when some crossing's shape is not
-recognized, and 2 when the tool could not answer at all. The third is not a
-finding about the design, and a gate has to tell it from one.
+exits 0 when there is nothing to review, 1 when the run has a finding, and 2
+when the tool could not answer at all. The third is not a finding about the
+design, and a gate has to tell it from one. A crossing between two clocks that
+a declaration shows to be one net is printed and is not a finding; every other
+crossing is one.
 """
 from __future__ import annotations
 
 import argparse
 import json
 import sys
+import textwrap
 
 from . import clocks, design, graph, schema
 
@@ -80,8 +83,16 @@ def _report(tree, resets, xings, conn) -> str:
                else c["note"])
         a = show.get(c["from_domain"], c["from_domain"])
         b = show.get(c["to_domain"], c["to_domain"])
-        lines.append(f"  {mark} {c['from']} ({a}) -> {c['to']} ({b}), "
-                     f"{c['width']} bit{plural}, {how}{_at(c['src'])}")
+        # Wrapped, because the chapter prints this block verbatim on a
+        # portrait page and a note runs well past it. The location always
+        # takes a line of its own, so where a line breaks does not depend
+        # on how long the path back to the file happens to be.
+        lines.append(textwrap.fill(
+            f"{mark} {c['from']} ({a}) -> {c['to']} ({b}), "
+            f"{c['width']} bit{plural}, {how}",
+            width=78, initial_indent="  ", subsequent_indent="        "))
+        if c["src"]:
+            lines.append(f"       {_at(c['src'])}")
     lines.append(f"instances: {len(conn['instances'])}, "
                  f"connections: {len(conn['edges'])}")
     return "\n".join(lines)
@@ -138,6 +149,27 @@ def _main(argv) -> int:
 
     if args.command in ("clock-tree", "reset-tree", "crossings", "read"):
         flat = design.load_flat(args.files, args.top)
+        # A declaration is only worth having if it is checked. A misspelled
+        # `--clock` used to be accepted in silence, and because a
+        # declaration can remove a finding, the misspelling was the safer
+        # of the two answers -- which is the wrong way round.
+        missing = [c for c in clk if c not in flat.ports]
+        if missing:
+            raise design.DesignError(
+                f"{args.top} has no port named {', '.join(missing)}; "
+                "--clock names a clock port of the design")
+        # An incomplete list is the other half of the same problem, and it is
+        # worse than a misspelling: a clock left out is reclassified as
+        # control, which can only remove findings. `--clock clk1` on a
+        # two-clock design was byte-identical to declaring both, and passed
+        # the build on a real crossing. So a declaration is all or nothing.
+        undeclared = sorted(clocks.clock_ports(flat) - set(clk)) if clk else []
+        if undeclared:
+            raise design.DesignError(
+                "--clock is incomplete: "
+                f"{', '.join(undeclared)} drives a clock pin directly and "
+                "was not declared. Declare every clock or none; a partial "
+                "declaration can only remove findings")
     if args.command == "clock-tree":
         return _emit(args.command, clocks.clock_tree(flat, clk),
                      args.validate)
@@ -155,7 +187,7 @@ def _main(argv) -> int:
         return _emit(args.command, conn, args.validate)
     tree = clocks.clock_tree(flat, clk)
     resets = clocks.reset_tree(flat, clk)
-    xings = clocks.crossings(flat, tree)
+    xings = clocks.crossings(flat, tree, clk)
     print(_report(tree, resets, xings, conn))
     return 1 if xings["unrecognized"] else 0
 

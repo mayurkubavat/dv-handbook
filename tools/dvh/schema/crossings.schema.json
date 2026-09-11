@@ -49,8 +49,7 @@
           "minimum": 1
         },
         "direct": {
-          "description": "The sender reaches D directly, on every clock.",
-          "$comment": "False behind an enable: a held value is not resampled.",
+          "description": "Direct to D on every clock; false behind an enable.",
           "type": "boolean"
         },
         "second_stage": {
@@ -69,14 +68,14 @@
         "shape_recognized": {
           "description": "True if this matches a known shape.",
           "type": "boolean",
-          "$comment": "Two-flop, and not one of several carrying one value."
+          "$comment": "Two-flop, and not one of several across a boundary."
         },
         "note": {
           "description": "Empty when known; else what was seen.",
           "type": "string"
         },
         "same_clock_source": {
-          "description": "Both clocks resolve to one net, as a gate does.",
+          "description": "Both clocks resolved to one net, declaration given.",
           "$comment": "The net, not the name: a vector port's bits share one.",
           "type": "boolean"
         }
@@ -92,8 +91,7 @@
       }
     },
     "unrecognized": {
-      "description": "Crossings this run fails on: all but same_clock_source.",
-      "$comment": "Absence is not correctness; see shape_recognized.",
+      "description": "All but same_clock_source; absence is not correctness.",
       "type": "array",
       "items": {
         "$ref": "#/$defs/crossing"

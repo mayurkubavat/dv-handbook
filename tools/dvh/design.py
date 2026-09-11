@@ -124,7 +124,12 @@ def _run_yosys(files, top, flatten: bool) -> dict:
         # block reported no clocks, no registers and no crossings, and the
         # gate passed. The attribute is a synthesis instruction and has no
         # bearing on what the design does, so it is removed first.
-        unkeep = "setattr -mod -unset keep_hierarchy; "
+        # Both forms: `-mod` reaches a module's attribute and the bare form
+        # reaches a cell's, and `flatten` honors either. Stripping only the
+        # module form turned the ordinary way of keeping one instance out of
+        # a flatten into a tool that could not answer at all.
+        unkeep = ("setattr -mod -unset keep_hierarchy; "
+                  "setattr -unset keep_hierarchy; ")
         script += (unkeep + "flatten; ") if flatten else ""
         script += f"write_json {mem}; design -load premap; memory_map; "
         if flatten:
