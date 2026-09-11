@@ -20,6 +20,7 @@ Link every note from `STATUS.md` → "Research references" with what it feeds.
 | `agentic-dv-tools-amiq-others.md` | AMIQ EDA (DVT IDE, DVT MCP Server and its 39 tools, Verissimo, Specador), Siemens, Aldec | done (2026-09-07, ~2.8k words) | Appendix on the agent tool layer |
 | `agentic-dv-tools-open.md` | Open and academic: MCP servers for hardware, parsers and elaborators, waveform libraries, benchmarks; maturity table with licences and last activity | done (2026-09-07, ~3.9k words, 54 URLs) | Appendix on the agent tool layer |
 | `ch04-simulation-fundamentals.md` | Event queue and timestep, scheduling regions, races and the assignment guidelines derived from them, testbench/design sampling, clocking and program blocks, assertion sampling, four-state vs two-state, timescale, and what Verilator and Icarus actually implement | done (2026-09-09, ~16.8k words in three parts) | Ch. 4 |
+| `ch05-testbench-language.md` | Testbench types and the two-state/four-state boundary, aggregates, structs/enums, interfaces and virtual interfaces, classes as the language defines them with the Ch.5/Ch.6 line, and a measured Verilator/Icarus support matrix for every construct (57 probes) | done (2026-09-11, ~15.7k words in three parts) | Ch. 5; Ch. 6 (virtual-dispatch pitfall); Ch. 7 (randomization needs an SMT solver) |
 
 ## Conventions
 - Cite as `[Source, YYYY-MM-DD](URL)`; separate vendor claims from peer-reviewed results.
