@@ -156,7 +156,13 @@ _EVERY_DESIGN = ([([str(f)], f.stem) for f in sorted(FIXTURE.glob("*.sv"))]
 
 # The clocks a specification would declare, for the fixtures whose gates
 # the netlist alone cannot resolve.
-_DECLARED = {"blackbox_clock_blend": ("clk1",),
+_DECLARED = {"clock_mux_select_clock": ("clk1", "clk2"),
+             "clock_mux_select_gated": ("clk1", "clk2"),
+             "clock_mux_select_blackbox": ("clk1",),
+             "clock_mux_select_register": ("clk1", "clk2"),
+             "async_set_by_other_clock": ("clk1", "clk2"),
+             "hidden_clock_via_register": ("clk1",),
+             "blackbox_clock_blend": ("clk1",),
              "buffered_clock_blend": ("clk1", "clk2"),
              "xnor_clock_blend": ("clk1", "clk2"),
              "divider_blackbox_blend": ("clk1",),
@@ -1067,3 +1073,57 @@ def test_an_array_in_a_generate_block_points_at_its_declaration():
         if ".mem[" in r["name"]:
             line = int(r["src"].partition(":")[2].split(".")[0])
             assert "logic [7:0] mem [0:3];" in text[line - 1], r
+
+
+def test_a_multiplexer_select_is_an_input_like_any_other():
+    """Under a declaration every input of a gate is asked which clocks it
+    depends on, the select included. "A select is not a clock" was the
+    wrong question: a second clock on the select is a blend."""
+    for top, clks in (("clock_mux_select_clock", ("clk1", "clk2")),
+                      ("clock_mux_select_gated", ("clk1", "clk2")),
+                      ("clock_mux_select_blackbox", ("clk1",)),
+                      ("clock_mux_select_register", ("clk1", "clk2"))):
+        assert _read(top) == 1, top
+        assert _read(top, *clks) == 1, top
+    # And the bypass multiplexer, whose select depends on nothing, still
+    # passes: the select is control there.
+    assert _read("gated_clock_bypass", "clk") == 0
+
+
+def test_a_register_depends_on_its_asynchronous_pins_too():
+    """A flag set by one clock's edge and cleared on another depends on
+    both, so gating the second with it is a blend."""
+    assert _read("async_set_by_other_clock", "clk1", "clk2") == 1
+    flat = design.load_flat([str(FIXTURE / "async_set_by_other_clock.sv")],
+                            "async_set_by_other_clock")
+    x = clocks.crossings(flat, None, ("clk1", "clk2"))
+    assert not any(c["same_clock_source"] for c in x["crossings"])
+
+
+def test_a_hidden_clock_behind_a_register_is_named():
+    """No port is demoted at the gate -- the register is -- so a demoted
+    register is reported by the ports that clock it."""
+    flat = design.load_flat([str(FIXTURE / "hidden_clock_via_register.sv")],
+                            "hidden_clock_via_register")
+    tree = clocks.clock_tree(flat, ("clk1",))
+    assert "hclk" in tree["ports_treated_as_control"]
+
+
+def test_the_clock_walk_does_not_recurse():
+    """A fifteen-hundred-gate chain on a clock net, declared and not."""
+    lines = ["module chain (input logic clk, a, input logic d, "
+             "output logic q);", "  logic [1500:0] c;", "  assign c[0] = clk;"]
+    lines += [f"  assign c[{i}] = c[{i-1}] ^ a;" for i in range(1, 1501)]
+    lines += ["  logic r;", "  always_ff @(posedge c[1500]) r <= d;",
+              "  assign q = r;", "endmodule"]
+    rtl = FIXTURE.parent / "chain.sv"
+    rtl.write_text("\n".join(lines) + "\n")
+    try:
+        flat = design.load_flat([str(rtl)], "chain")
+        for declared in ((), ("clk",)):
+            tree = clocks.clock_tree(flat, declared)
+            assert tree["registers"]["q"]["clock_sources"], declared
+            clocks.reset_tree(flat, declared)
+            clocks.crossings(flat, tree, declared)
+    finally:
+        rtl.unlink()

@@ -75,7 +75,7 @@
           "type": "string"
         },
         "same_clock_source": {
-          "description": "Both clocks resolved to one net, declaration given.",
+          "description": "Every clock at both ends is one declared net.",
           "$comment": "The net, not the name: a vector port's bits share one.",
           "type": "boolean"
         }
