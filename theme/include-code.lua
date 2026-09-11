@@ -23,14 +23,28 @@ function CodeBlock(el)
   else
     el.text = f:read("a"):gsub("\t", "    "):gsub("%s+$", "")
     f:close()
+    -- lines="a-b" splices a range, so one output file can follow each of
+    -- the designs it reports on instead of arriving as one block after both.
+    local range = el.attributes["lines"]
+    if range then
+      local a, b = range:match("^(%d+)%-(%d+)$")
+      local kept, i = {}, 0
+      for line in (el.text .. "\n"):gmatch("(.-)\n") do
+        i = i + 1
+        if i >= tonumber(a) and i <= tonumber(b) then kept[#kept + 1] = line end
+      end
+      el.text = table.concat(kept, "\n")
+      el.attributes["lines"] = nil
+    end
   end
   el.attributes["include"] = nil
   if not el.attributes["filename"] then el.attributes["filename"] = path end
-  -- A short block is kept whole on one page. A simulator output whose
-  -- point is the order of two tools' lines is worthless with the tools on
-  -- different pages, and three such blocks were split at a page foot. The
-  -- request is capped so a long listing still breaks where it must.
-  if FORMAT:match("latex") then
+  -- A short *output* block is kept whole on one page. A simulator output
+  -- whose point is the order of two tools' lines is worthless with the
+  -- tools on different pages, and three such blocks were split at a page
+  -- foot. Source listings are left to break: asking for space for them
+  -- left a third of a page blank ahead of one.
+  if FORMAT:match("latex") and el.classes:includes("text") then
     local _, lines = el.text:gsub("\n", "")
     local need = math.min(lines + 3, 18)
     return {pandoc.RawBlock("latex",
