@@ -282,7 +282,14 @@ The structural insight the chapter should lead with is the authors' own: the
 is the dual of Active, Re-Inactive of Inactive, Re-NBA of NBA. Three regions for
 the design, then assertions, then the same three regions again for the
 testbench, then the strobe. That symmetry turns nine names into one idea, and
-the authors state it in exactly those terms.
+the authors make this point, though **not in the compressed sentence above,
+which is this note's own wording and must not be quoted as theirs**. What they
+write is that the Reactive set was "put in place to be the testbench dual of the
+RTL Active set of event regions" (Rev 1.2 §10.1), and that each of its regions
+"is the reactive region set dual of" the corresponding Active, Inactive or NBA
+region (§§2.2.8--2.2.10). A draft of Ch.4 quoted the compression as though it
+were theirs, which is exactly the second-hand trap this note warns about
+elsewhere, arriving from a different direction.
 [Cummings and Salz, Rev 1.2, §§2.2.7–2.2.10 and §10.1](https://web.archive.org/web/20090419050008id_/http://www.sunburst-design.com/papers/CummingsSNUG2006Boston_SystemVerilog_Events.pdf)
 **[primary]**
 
