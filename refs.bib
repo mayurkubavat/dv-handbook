@@ -311,6 +311,17 @@
   note         = {Cited via public summary; obtain the RTCA document for clause-level claims}
 }
 
+@misc{opentitan-dv-configs,
+  author       = {{lowRISC contributors (OpenTitan project)}},
+  title        = {{OpenTitan} per-block simulation configurations
+                  ({hw/ip/*/dv/*\_sim\_cfg.hjson})},
+  howpublished = {OpenTitan repository},
+  year         = {2026},
+  url          = {https://github.com/lowRISC/opentitan/tree/master/hw/ip},
+  note         = {One regression configuration per IP block, consumed by
+                  dvsim. Accessed 2026-09-10}
+}
+
 @misc{opentitan-dv-methodology,
   author       = {{lowRISC contributors (OpenTitan project)}},
   title        = {{OpenTitan} Design Verification Methodology},
@@ -1202,7 +1213,9 @@
   title        = {Yosys manual: backends ({write\_json})},
   year         = {2026},
   url          = {https://yosyshq.readthedocs.io/projects/yosys/en/latest/cmd/index_backends.html},
-  note         = {Accessed 2026-09-07}
+  note         = {The pass itself is at
+                  https://github.com/YosysHQ/yosys/blob/main/backends/json/json.cc.
+                  Accessed 2026-09-10}
 }
 
 @misc{yosys-regcells,
@@ -1236,7 +1249,7 @@
   url          = {https://sv-lang.com/},
   note         = {Source at https://github.com/MikePopoloski/slang; the
                   standalone pyslang repository was archived 2025-01-18 and
-                  packaging moved upstream. Accessed 2026-09-07}
+                  packaging moved upstream. Accessed 2026-09-10}
 }
 
 % --- Vendor product pages (labelled as vendor claims in the text) ----------
@@ -1463,7 +1476,7 @@
 @misc{wave-mcp,
   author       = {{Tencent Penglai Lab}},
   title        = {wave-mcp: a tool-protocol server for {RTL} waveform debug},
-  howpublished = {GitHub, MIT licence},
+  howpublished = {GitHub, MIT license},
   year         = {2026},
   url          = {https://github.com/Tencent/wave-mcp},
   note         = {Version 0.2.3, 2026-09-05. New at time of writing.
@@ -1491,7 +1504,7 @@
 @misc{treesitter-sv,
   author       = {Gonzalo Larumbe},
   title        = {tree-sitter-systemverilog},
-  howpublished = {GitHub, MIT licence},
+  howpublished = {GitHub, MIT license},
   year         = {2026},
   url          = {https://github.com/gmlarumbe/tree-sitter-systemverilog},
   note         = {Version 0.4.0, 2026-07-17. Accessed 2026-09-07}
@@ -1530,8 +1543,10 @@
 @misc{cvdp-benchmark,
   author       = {Nathaniel Pinckney and Chenhui Deng and Chia-Tung Ho and
                   Yun-Da Tsai and others},
-  title        = {Comprehensive {Verilog} Design Problems: A Next-Generation
-                  Benchmark Dataset},
+  title        = {Comprehensive {Verilog} Design Problems: A
+                  Next-Generation Benchmark Dataset for Evaluating Large
+                  Language Models and Agents on {RTL} Design and
+                  Verification},
   howpublished = {arXiv:2506.14074},
   year         = {2025},
   url          = {https://arxiv.org/abs/2506.14074},
@@ -1578,8 +1593,9 @@
 @misc{assertllm,
   author       = {Wenji Fang and Mengming Li and Min Li and Zhiyuan Yan
                   and others},
-  title        = {{AssertLLM}: Generating Hardware Verification Assertions
-                  from Design Specifications},
+  title        = {{AssertLLM}: Generating and Evaluating Hardware
+                  Verification Assertions from Design Specifications via
+                  Multi-{LLMs}},
   howpublished = {arXiv:2402.00386},
   year         = {2026},
   url          = {https://arxiv.org/abs/2402.00386},

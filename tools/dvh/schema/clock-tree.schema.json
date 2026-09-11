@@ -62,8 +62,8 @@
             "pattern": "^[^:]+:\\d+"
           },
           "root_bits": {
-            "description": "The nets the clock walk ended on, as netlist bit numbers rendered as strings.",
-            "$comment": "Two clocks can share a source *name* -- every bit of a vector clock port carries the port's name -- so identity is the net.",
+            "description": "Clock nets the walk ended on, as bit numbers.",
+            "$comment": "A vector clock port's bits all share one name.",
             "type": "array",
             "items": {"type": "string"}
           },

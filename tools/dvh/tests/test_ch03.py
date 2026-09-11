@@ -137,6 +137,13 @@ def _assert_report_text(cli):
 # ----------------------------------------------------------------------
 FIXTURE = pathlib.Path(__file__).parent / "rtl"
 
+# Every design the repository ships: the tool's own regression fixtures, the
+# chapter's two-clock example, and the FIFO Chapter 1 builds on. The claims
+# the book makes about source locations are claims about all of these, so
+# the tests that check those claims run over all of these.
+_EVERY_DESIGN = ([([str(f)], f.stem) for f in sorted(FIXTURE.glob("*.sv"))]
+                 + [(TWO_CLOCK, "top"), (FIFO, "fifo")])
+
 
 def test_a_clock_gate_does_not_fail_the_build():
     """A gated clock is a different net and the same clock.
@@ -336,16 +343,19 @@ def test_every_finding_carries_a_real_source_location():
     locations are checked for existence, for shape, and for pointing at a
     file that exists.
     """
-    flat = design.load_flat(TWO_CLOCK, "top")
-    tree = clocks.clock_tree(flat)
-    resets = clocks.reset_tree(flat)
-    mods = design.load_hier(TWO_CLOCK, "top")
-    found = ([r["src"] for r in tree["registers"].values()]
-             + [r["src"] for r in resets["registers"].values()]
-             + [r["src"] for r in resets["no_reset"]]
-             + [c["src"] for c in clocks.crossings(flat, tree)["crossings"]]
-             + [i["src"] for i in
-                graph.connections(mods, "top")["instances"].values()])
+    found = []
+    for files, top in _EVERY_DESIGN:
+        flat = design.load_flat(files, top)
+        tree = clocks.clock_tree(flat)
+        resets = clocks.reset_tree(flat)
+        mods = design.load_hier(files, top)
+        found += ([r["src"] for r in tree["registers"].values()]
+                  + [r["src"] for r in resets["registers"].values()]
+                  + [r["src"] for r in resets["no_reset"]]
+                  + [c["src"] for c in
+                     clocks.crossings(flat, tree)["crossings"]]
+                  + [i["src"] for i in
+                     graph.connections(mods, top)["instances"].values()])
     assert found, "no report carried a source location at all"
     for src in found:
         file, _, span = src.partition(":")
@@ -361,25 +371,36 @@ def test_the_source_location_points_at_the_right_line():
     location is only worth printing if a reader who follows it lands on
     the construct it names.
     """
-    flat = design.load_flat(TWO_CLOCK, "top")
-    mods = design.load_hier(TWO_CLOCK, "top")
-    checked = 0
-    for name, info in clocks.clock_tree(flat)["registers"].items():
-        checked += _names_the_construct(info["src"], "always_ff", name)
-    for name, inst in graph.connections(mods, "top")["instances"].items():
-        checked += _names_the_construct(inst["src"], inst["module"], name)
-    # Every fixture, not one design. The narrow version ran on the only
-    # design in the repository whose registers all come from an `always_ff`
-    # the netlist kept a location for, so a register that had to borrow one
+    # Every design the repository ships, and every report that carries a
+    # location, not one design and one command. The narrow version ran on
+    # the only design whose registers all come from an `always_ff` the
+    # netlist kept a location for, so a register that had to borrow one
     # could point anywhere and this stayed green.
-    for rtl in sorted(FIXTURE.glob("*.sv")):
-        tree = clocks.clock_tree(design.load_flat([str(rtl)], rtl.stem))
+    checked = 0
+    for files, top in _EVERY_DESIGN:
+        flat = design.load_flat(files, top)
+        tree = clocks.clock_tree(flat)
         for name, info in tree["registers"].items():
-            checked += _names_the_construct(
-                info["src"],
-                ("always_ff", "always", name.split(".")[-1].split("[")[0]),
-                name)
+            checked += _names_the_construct(info["src"], _words(name), name)
+        for r in clocks.reset_tree(flat)["no_reset"]:
+            checked += _names_the_construct(r["src"], _words(r["name"]),
+                                            r["name"])
+        for c in clocks.crossings(flat, tree)["crossings"]:
+            checked += _names_the_construct(c["src"], _words(c["to"]),
+                                            c["to"])
+        for name, inst in graph.connections(mods := design.load_hier(
+                files, top), top)["instances"].items():
+            checked += _names_the_construct(inst["src"], inst["module"], name)
+        assert mods
     assert checked >= 8, checked
+
+
+def _words(name: str) -> tuple:
+    """What a register's location may name: the block it is written in, or
+    its own declaration. An array lowered to flip-flops points at the line
+    the array was declared on, which contains no procedural block at all."""
+    return ("always_ff", "always", "assign",
+            name.split(".")[-1].split("[")[0])
 
 
 def _names_the_construct(src: str, keyword, name: str) -> int:
@@ -399,9 +420,6 @@ def _names_the_construct(src: str, keyword, name: str) -> int:
     block = "\n".join(text[first - 1:last])
     hit = [w for w in words if w in block]
     assert hit, (src, words, block[:80])
-    base = name.split(".")[-1].split("[")[0]
-    if base and base in "".join(text):
-        assert base in block or hit, (src, name)
     return 1
 
 
@@ -699,16 +717,31 @@ def test_a_lowered_array_points_at_its_declaration():
     passes run, and it survives flattening, which prefixes the instance path
     onto every cell name.
     """
-    for top, line in (("ram_crossing", "logic [7:0] mem [16];"),
-                      ("sub_array", "logic [7:0] ram [16];")):
+    for top, want in (("ram_crossing", {"mem": "logic [7:0] mem [16];"}),
+                      ("sub_array",
+                       {"u_store.ram": "logic [7:0] ram [16];"}),
+                      # Two modules declaring an array of the same name are
+                      # kept apart by the instance path, not merged into one
+                      # ambiguous key and then dropped. Each register must
+                      # land on the declaration in *its own* module, which
+                      # is why the two expected lines differ only by the
+                      # value assigned three lines below them.
+                      ("two_arrays_one_name",
+                       {"u_a.mem": "8'hAA", "u_b.mem": "8'hBB"})):
         flat = design.load_flat([str(FIXTURE / f"{top}.sv")], top)
         regs = clocks.reset_tree(flat)["no_reset"]
         lowered = [r for r in regs if "[" in r["name"]]
         assert lowered, top
         for r in lowered:
+            key = r["name"].split("[")[0]
+            assert key in want, (top, r)
             file, _, span = r["src"].partition(":")
             text = pathlib.Path(file).read_text().splitlines()
-            assert line in text[int(span.split(".")[0]) - 1], (top, r)
+            first = int(span.split(".")[0]) - 1
+            # The array declaration, or the three lines under it that say
+            # which of the two modules this is.
+            block = "\n".join(text[first:first + 4])
+            assert want[key] in block, (top, r, block)
 
 
 def test_a_tool_failure_is_not_reported_as_a_finding():

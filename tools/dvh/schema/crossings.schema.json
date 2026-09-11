@@ -49,7 +49,8 @@
           "minimum": 1
         },
         "direct": {
-          "description": "True if the sender reaches D with no logic between and the receiving register takes it on every clock; an enable makes this false, because the value is held rather than resampled.",
+          "description": "The sender reaches D directly, on every clock.",
+          "$comment": "False behind an enable: a held value is not resampled.",
           "type": "boolean"
         },
         "second_stage": {
@@ -75,8 +76,8 @@
           "type": "string"
         },
         "same_clock_source": {
-          "description": "True if both clocks resolve to one identical clock net, as a gated clock does. This is the only flag that keeps a reported crossing out of `unrecognized`, so it is the only route by which a crossing does not fail the run.",
-          "$comment": "The test is the net, not the source name: every bit of a vector clock port, and of a black box's clock output bus, carries one name.",
+          "description": "Both clocks resolve to one net, as a gate does.",
+          "$comment": "The net, not the name: a vector port's bits share one.",
           "type": "boolean"
         }
       }
@@ -91,7 +92,8 @@
       }
     },
     "unrecognized": {
-      "description": "The crossings this run fails on: every crossing except those whose two clocks are one net. A crossing here is not necessarily a defect, and one absent from here is not necessarily correct -- see `shape_recognized`.",
+      "description": "Crossings this run fails on: all but same_clock_source.",
+      "$comment": "Absence is not correctness; see shape_recognized.",
       "type": "array",
       "items": {
         "$ref": "#/$defs/crossing"

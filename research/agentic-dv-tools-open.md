@@ -123,7 +123,7 @@ a tool layer wants underneath it.
 
 **tree-sitter-systemverilog** — [gmlarumbe/tree-sitter-systemverilog, GitHub, 2026-09-07](https://github.com/gmlarumbe/tree-sitter-systemverilog).
 MIT, 58 stars, v0.4.0 released 2026-07-17, last commit 2026-07-20. One primary
-maintainer, Gustavo Larumbe — worth stating, since bus factor rather than
+maintainer, Gonzalo Larumbe — worth stating, since bus factor rather than
 abandonment is the risk here. An incremental, error-tolerant grammar: right for
 editor-style navigation of *broken* code, wrong for anything needing elaboration
 or types, where slang or Surelog belong.

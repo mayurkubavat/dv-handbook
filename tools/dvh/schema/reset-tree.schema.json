@@ -25,8 +25,8 @@
         "additionalProperties": false,
         "properties": {
           "kind": {
-            "description": "Whether the control takes effect on a clock edge, and whether it is a reset at all.",
-            "$comment": "An asynchronous set forces ones and an asynchronous load forces another signal's value; neither is a reset, and reporting them as one would misstate the design.",
+            "description": "What forces the register, and when.",
+            "$comment": "A set or a load is not a reset and is not called one.",
             "enum": [
               "asynchronous",
               "synchronous",

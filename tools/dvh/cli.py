@@ -12,8 +12,10 @@ printed (see schema.py). The tests always do; a caller that has pinned a
 schema URL may want to as well.
 
 Every command but `read` prints JSON validated against a published schema;
-`read` prints a short human report instead, and exits 1 if any crossing is
-a crossing's shape is not recognized, so it can gate a commit.
+`read` prints a short human report instead, so it can gate a commit: it
+exits 0 when there is nothing to review, 1 when some crossing's shape is not
+recognized, and 2 when the tool could not answer at all. The third is not a
+finding about the design, and a gate has to tell it from one.
 """
 from __future__ import annotations
 

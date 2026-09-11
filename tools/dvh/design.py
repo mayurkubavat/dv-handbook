@@ -108,9 +108,18 @@ def _run_yosys(files, top, flatten: bool) -> dict:
         # it touched, and what it borrowed was the line the *clock port* was
         # declared on -- a location that is well formed, passes every
         # schema, and sends a reader to the wrong place.
+        # The earlier picture is flattened when the final one is, so a
+        # memory is keyed by the same instance path the registers it becomes
+        # will carry. Without that, two modules each declaring an array
+        # called `mem` -- ordinary RTL -- were one ambiguous key, the
+        # location was dropped as unsafe to guess, and the registers fell
+        # through to the *top* module's declaration: a location in a
+        # different module from the array it claims to name.
         mem = os.path.join(tmp, "memories.json")
         script = (f"{reads} hierarchy -check -top {top}; proc; opt_dff; "
-                  f"memory_collect; write_json {mem}; memory_map; ")
+                  "memory_collect; design -save premap; ")
+        script += "flatten; " if flatten else ""
+        script += f"write_json {mem}; design -load premap; memory_map; "
         if flatten:
             script += "flatten; "
         script += f"opt_clean; write_json {out}"
@@ -133,24 +142,25 @@ def _run_yosys(files, top, flatten: bool) -> dict:
 
 
 def _memory_src(data: dict) -> dict:
-    """Where each array was declared, keyed by the name Yosys gives it.
+    """Where each array was declared, keyed by module and by the name Yosys
+    gives the memory.
 
-    A memory keeps its declared name through `memory_map`: the registers it
-    becomes are cells called `$memory\\mem[0]$25`. Two modules can declare
-    arrays of the same name, and after flattening there is nothing left in
-    the cell name to say which module a given register came from, so a name
-    that is claimed by two different lines is dropped rather than guessed
-    at. Pointing a reader at the wrong array is worse than pointing nowhere.
+    A memory keeps its name through `memory_map`: the registers it becomes
+    are cells called `$memory\\mem[0]$25`, and flattening prefixes the
+    instance path onto both the memory and those registers alike. Keying by
+    the module as well as the name is what keeps two arrays called `mem` in
+    two different modules apart.
     """
     found = {}
-    for m in data.get("modules", {}).values():
+    for mname, m in data.get("modules", {}).items():
         for name, cell in m.get("cells", {}).items():
             if not cell["type"].startswith("$mem"):
                 continue
             src = _relative(cell.get("attributes", {}).get("src", ""))
             if src:
-                found.setdefault(name, set()).add(src)
-    return {k: next(iter(v)) for k, v in found.items() if len(v) == 1}
+                found.setdefault((mname, name), set()).add(src)
+    return {f"{mod}\n{name}": next(iter(v))
+            for (mod, name), v in found.items() if len(v) == 1}
 
 
 def _relative(src: str) -> str:
@@ -198,7 +208,7 @@ def _fill_missing_src(mod: Module, memories: dict | None = None) -> None:
     for cell in mod.cells.values():
         if cell.src:
             continue
-        cell.src = _from_memory(cell.name, memories)
+        cell.src = _from_memory(mod.name, cell.name, memories)
         if cell.src:
             continue
         for b in [b for p, bits in cell.conns.items()
@@ -210,19 +220,23 @@ def _fill_missing_src(mod: Module, memories: dict | None = None) -> None:
             cell.src = mod.src
 
 
-def _from_memory(name: str, memories: dict) -> str:
+def _from_memory(mod: str, name: str, memories: dict) -> str:
     """The array a lowered register came from, if its cell name names one.
 
-    `memory_map` names the registers it makes `$memory\\mem[0]$25`, and
-    flattening prefixes the instance path. The array's own name is what lies
-    between the marker and the index.
+    `memory_map` names the registers it makes `$memory\\mem[0]$25`. Anything
+    before that marker is the instance path flattening added, and the memory
+    carries the same path, so the two are looked up together.
     """
     marker = "$memory\\"
     if marker not in name:
         return ""
-    rest = name.split(marker, 1)[1]
-    memid = rest.split("[")[0].split("$")[0]
-    return memories.get(memid, "") or memories.get("\\" + memid, "")
+    path, rest = name.split(marker, 1)
+    # Flattening prefixes a public name with `u_store.` and a generated one
+    # with `$flatten\u_store.`; the memory, whose name is public, gets the
+    # first form, so the second has to be reduced to it before they match.
+    path = path.removeprefix("$flatten\\")
+    memid = path + rest.split("[")[0].split("$")[0]
+    return memories.get(f"{mod}\n{memid}", "")
 
 
 def _parse(data: dict) -> dict:
