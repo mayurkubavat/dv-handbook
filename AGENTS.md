@@ -96,6 +96,16 @@ Never hand-edit a state to look further along than the evidence supports.
 - Cite the primary source for every fact, figure and quotation: `[@key]` with a
   full `refs.bib` entry (author, title, venue or publisher, year, URL, access
   date). Surveys are cited by edition. Secondary retellings are not sources.
+- A DOI is a locator: an entry that carries one needs no URL and no access date.
+  Where a paper's own URL has since died, the entry keeps the canonical URL and
+  its `note` says where the paper was actually read. A reader who clicks gets
+  nothing either way; a reader who searches gets the paper.
+- Check the *whole* author field and the *whole* title against the document
+  itself, not against a note about it. `scripts/check-citations.sh` matches a
+  surname and nothing else, so a wrong given name, a wrong title and an author
+  who does not belong on the paper all pass it. Three of those reached print in
+  one chapter. A surname with a particle is braced -- `{Ben Dhaou}, Imed` --
+  because BibTeX otherwise reads the particle as a middle name.
 - Write in the book's own words. Paraphrase from understanding, never by
   rewording a passage sentence by sentence. Direct quotation is limited to a
   sentence or two, in quotation marks, with the citation on the same line.

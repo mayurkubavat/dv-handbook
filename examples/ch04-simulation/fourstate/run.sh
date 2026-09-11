@@ -28,7 +28,7 @@ vals=""
 for s in 1 7 99; do
   printf 'seed %-3s ' $s
   v=$(./build/vu/Vtb_fourstate +verilator+rand+reset+2 +verilator+seed+$s \
-      | grep -E '^bare')
+      | grep -E '^(bare|if/else)' | tr '\n' ' ' | sed 's/ *$//')
   echo "$v"
   vals="$vals$v|"
 done

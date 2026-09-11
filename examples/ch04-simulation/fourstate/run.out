@@ -5,7 +5,7 @@ if/else: out = 238
 bare if: out = 2
 if/else: out = 2
 === two-state, randomized, three seeds
-seed 1   bare if: out = 56
-seed 7   bare if: out = 197
-seed 99  bare if: out = 14
+seed 1   bare if: out = 56 if/else: out = 56
+seed 7   bare if: out = 197 if/else: out = 197
+seed 99  bare if: out = 14 if/else: out = 14
 the result changes with the seed: the missing reset is visible here too

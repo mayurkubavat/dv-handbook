@@ -25,7 +25,7 @@ All three come from one model. This chapter is that model: what a simulator does
 ## What a simulator actually does {#sec-ch04-model}
 
 ::: {.callout-note title="Definition"}
-A **process** is a thread of execution in the design or the testbench: an `always` block, an `initial` block, a continuous assignment. An **event** is something that wakes a process or updates a value. A **timestep** is all the work a simulator does at one value of simulation time. Simulation time advances only when no events remain to be processed at the current time.
+A **process** is a thread of execution in the design or the testbench: an `always` block, an `initial` block, a continuous assignment. An **event** is something that wakes a process or updates a value. A **timestep** is all the work a simulator does at one value of simulation time. Simulation time advances only when no events remain to be processed at the current time [@cummingssalz2007events].
 :::
 
 Nothing in a simulation is parallel. The hardware is, and the language reads as though the code were, but the simulator is a single program working through a queue. It takes an event, runs whatever that event wakes, collects the events that work produced, and repeats. When nothing is left for the current time, and only then, time moves to the next moment that has anything scheduled.
@@ -40,11 +40,9 @@ A timestep is divided into regions, and the order between regions is fixed. This
 
 The list of names is long enough to look like something to memorize, and it is not, because it has a shape. Assertions sample first, before anything else runs. Then three regions do the design's work. Then assertions are evaluated against what they sampled. Then the same three regions repeat for the testbench. Then everything settles.
 
-::: {.callout-note title="Definition"}
 Cummings and Salz describe the Reactive set as having been "put in place to be the testbench dual of the RTL Active set of event regions", and each of its three regions as the dual of the corresponding one [@cummingssalz2007events]. Reactive mirrors Active, Re-Inactive mirrors Inactive, Re-NBA mirrors NBA, and the second set runs after the first.
 
 What lands in the second set is narrower than "the testbench", and the distinction matters: code in a `program` block goes there, and so do assertion action blocks. An ordinary module testbench, which is what most of this book's examples are, runs in Active alongside the design.
-:::
 
 Within that frame, the regions and what lands in each:
 
@@ -92,7 +90,7 @@ Start with the case that needs no clock and that you have probably already hit. 
 
 The clocked cases follow the same pattern. One variable written by two processes: both write in Active, the order is arbitrary, and the last writer wins. A value read in one process and written in another at the same edge: whether the reader sees the old value or the new one depends on which ran first, unless the write was non-blocking, in which case the update is in NBA and every reader in Active sees the old value. That last clause is not a detail. It is why the rule exists.
 
-Which brings us to the eight guidelines @sec-ch03 quoted. They are not folklore and they are not a style preference. Each falls out of a region, and the source derives them that way, region by region [@cummingssalz2007events; @cummings2000nba].
+Which brings us to the eight guidelines @sec-ch03 drew on, grouped here into seven: two of them share a region and a reason, so they are argued together below. They are not folklore and they are not a style preference. Each falls out of a region, and the source derives them that way, region by region [@cummingssalz2007events; @cummings2000nba].
 
 | Guideline | The region that explains it |
 |---|---|
@@ -146,9 +144,9 @@ A **four-state** simulator gives every bit one of four values: zero, one, unknow
 
 What an unknown does when it meets an operator is the mechanism behind the X-optimism @sec-ch03 named and did not explain. Arithmetic and bitwise operators generally propagate it: unknown in, unknown out. Control flow does not, and the detail that matters is easy to get wrong.
 
-An `if` whose condition is unknown does not take the true branch. What happens next depends on whether there is an `else`. With one, the `else` branch runs, exactly as though the condition had been false: the design proceeds down a definite path chosen by a value nobody knows. Without one, neither branch runs and the target keeps whatever it held before. A `case` on an unknown selector takes its `default` for the same reason. In every one of those, an unknown has been silently converted into a decision, and nothing announces it. That conversion is X-optimism [@sutherland2013x].
+An `if` whose condition is unknown does not take the true branch. What happens next depends on whether there is an `else`. With one, the `else` branch runs, exactly as though the condition had been false: the design proceeds down a definite path chosen by a value nobody knows. Without one, neither branch runs and the target keeps whatever it held before. A `case` on an unknown selector takes its `default`, or, where it has none, does nothing and leaves its target holding the value it already had — the same two outcomes as the `if`, for the same reason. In every one of those, an unknown has been silently converted into a decision, and nothing announces it. That conversion is X-optimism [@sutherland2013x].
 
-Sutherland's framing of why this is worse than it sounds is the one to carry: zero, one and high-impedance are abstractions of things that exist in silicon, and an unknown is not an abstraction of anything. It is a statement about the simulator's knowledge, and a branch taken on it is a guess presented as a result [@sutherland2013x].
+Sutherland's framing of why this is worse than it sounds is the one to carry. Three of the four values stand for something a voltmeter could find on a wire; the fourth, in his words, is "not an abstraction of actual silicon values" [@sutherland2013x] — it is the simulator saying it does not know. It is a statement about the simulator's knowledge, and a branch taken on it is a guess presented as a result [@sutherland2013x].
 
 This chapter's four-state example is an unreset register read two ways, under three initialization models. One reader uses a bare `if`; the other adds an `else`:
 
@@ -157,7 +155,7 @@ This chapter's four-state example is an unreset register read two ways, under th
 
 The first block is the whole argument in four lines. Under four-state simulation the bare `if` leaves its target unknown, and the missing reset is visible. The `if ... else` produces 238, which is the value in its else branch: a definite, ordinary-looking number, produced by taking a branch on a value nobody knows. Nothing in that number says a reset is missing. That is X-optimism, and it is why a design can pass a four-state regression and fail in silicon.
 
-The other two blocks are the two-state models. Starting every register at zero says nothing at all: both readers give a plausible answer, and would across ten thousand seeds. Randomizing says the result depends on the initial state, which is the same finding reached from the other direction.
+The other two blocks are the two-state models. Starting every register at zero says nothing at all: both readers give a plausible answer, and would on every run, because there is nothing for a seed to change. Randomizing says the result depends on the initial state, which is the same finding reached from the other direction.
 
 That last row is worth dwelling on, because two claims about two-state simulation are widely repeated and both are wrong.
 
@@ -200,13 +198,15 @@ A counter and an observer on one clock, written with blocking assignments so tha
 
 Both processes are woken by the same edge and both execute in Active, whose internal order is arbitrary. If the counter runs first the observer sees the new count; if the observer runs first it sees the old one. Here is what the two simulators actually report:
 
-```{.text include="examples/ch04-simulation/race/run.out"}
-```
-
-They disagree, and not subtly: one reports a sequence that never settles into a pattern at all. Change the two assignment operators to non-blocking and both report the same thing, and it is the thing the hardware would do.
+Change the two assignment operators to non-blocking and the race is gone, because the write now lands in NBA and the read still happens in Active:
 
 ```{.systemverilog include="examples/ch04-simulation/race/safe.sv"}
 ```
+
+```{.text include="examples/ch04-simulation/race/run.out"}
+```
+
+On the racy design the two simulators disagree, and not subtly: one reports a sequence that never settles into a pattern at all. On the safe one they report the same thing, and it is the thing the hardware would do.
 
 Three things are worth taking from that.
 
