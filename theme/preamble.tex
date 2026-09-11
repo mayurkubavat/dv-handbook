@@ -20,6 +20,11 @@
 
 % Captions: sans, small, label in bold blue.
 \usepackage{caption}
+% KOMA's default `numbers=autoendperiod` puts a period after any number that
+% already contains one, so "Table 1.1" became "Table 1.1." and `labelsep`
+% added a second: every table and figure in the book printed a doubled
+% period. The separator is set here, so the automatic one is turned off.
+\KOMAoptions{numbers=noenddot}
 \captionsetup{font={small,sf}, labelfont={bf,color=siliconblue}, labelsep=period}
 
 % Slightly tighter code blocks and a hair more paragraph air.
