@@ -1,0 +1,95 @@
+<!-- OUTLINE: not yet approved -->
+# The SystemVerilog Testbench Language {#sec-ch05}
+
+*A one-line epigraph, then the Learning objectives box.*
+
+::: {.callout-note title="Learning objectives"}
+*After this chapter the reader can: choose two-state or four-state for a testbench variable and say what each hides; pick the right aggregate for a job and know its cost; declare a protocol as a packed struct and an enum; connect a testbench to a design through an interface and hold it through a virtual interface; explain what a class handle is, what `new` does, and when an object dies; read the difference between an automatic and a static lifetime off a declaration; sample and drive at a clock edge through a clocking block; and state, for each of those constructs, which of the book's two open simulators runs it.*
+:::
+
+## A reset that never happened
+
+*The reader can explain how a testbench variable declared `bit rst_n` made an asynchronous reset vanish without a warning — the design started at zero, zero was legal, and the tool had nothing to say — and can name the two-line fix. (Motivation; the 2006 gotchas §3.1 story from research Part A §1.)*
+
+## Two kinds of value {#sec-ch05-types}
+
+*The reader can state the testbench type rule and why it is the inverse of the RTL rule: two-state for what the testbench computes (stimulus, counters, scoreboards), four-state for what it observes, because a two-state variable converts an incoming X to a legal zero. The reader can list the integral types by value set, width and signedness without looking them up, and can say why `int` versus `logic signed [31:0]` is a choice about value set, not width. (Part A §1–§2; ties to @sec-ch04-fourstate, which is about the simulator — this is about the declaration at the boundary.)*
+
+### What a two-state variable cannot see
+
+*The reader can predict the four two-state traps — missed reset, enum lock-up, hidden unconnected input, hidden out-of-bounds read — from one principle: starts at zero, and zero is legal. (Pitfall callout.)*
+
+## Aggregates: arrays, queues, associative arrays {#sec-ch05-aggregates}
+
+*The reader can choose between a fixed array, a dynamic array, a queue and an associative array by asking what the index is and whether the size is known, can use each one's methods, and can give the asymptotic cost of the operations a scoreboard performs without quoting a number no source measures. (Part A §3. In Practice callout: the OpenTitan memory model as a real associative array.)*
+
+## Naming things: `struct`, `union`, `enum`, `typedef`, `string` {#sec-ch05-structs}
+
+*The reader can declare a bus transaction as a packed struct and read its fields by name and as a vector, can say when a union is honest and when it is a cast in disguise, and can explain the enum hole: a static cast forces an out-of-range value where `$cast` and `.next()` refuse it. (Part A §4.)*
+
+## Interfaces {#sec-ch05-interfaces}
+
+*The reader can write an interface with modports for the design side and the testbench side, can explain why the design guide calls interfaces problematic while the verification guide mandates them (a design bundles related signals; a testbench bundles unrelated ones), and can hold an interface from a class through a virtual interface — knowing it is a variable, not a structure, so it can be null and must match its parameters. (Part A §5. Pitfall callout: the three virtual-interface failures and their one cause. Connection strategy is deferred to @sec-ch10.)*
+
+## Classes: handles and objects {#sec-ch05-classes}
+
+*The reader can draw the difference between a handle and the object it names, predict what `=` copies (the handle) and what a copy method must do (shallow, then deep), say what the standard guarantees about an object's death (reclaimed when unreachable; no timing, no destructor) and what one tool actually does (reference counting, which never frees a cycle), and use `this`, static properties and static methods correctly. (Part B §1–§4. Definition callout. The line to @sec-ch06 is drawn here: inheritance, virtual methods and polymorphism are the next chapter's; `$cast` appears here only as the enum and handle check.)*
+
+## Automatic and static; passing by reference {#sec-ch05-lifetime}
+
+*The reader can read the lifetime of a variable off where it is declared — class methods automatic by default, module and package tasks static — can explain why a `ref` argument is illegal on a static task, and can spot the three lifetime bugs from the gotchas catalogue: the static watchdog, the mailbox alias, the handle assigned inside an `input` argument. (Part B §5, §7. Pitfall callout.)*
+
+## Clocking blocks: the testbench's clock edge {#sec-ch05-clocking}
+
+*The reader can write a clocking block that samples before the edge and drives after it, can say which scheduling region each side lands in (this is @sec-ch04-boundary made concrete), and can explain what a `program` block adds and why the book's testbenches are modules anyway. (Research note for Chapter 4, Part B §2; Part C for which tool runs it.)*
+
+## What runs where {#sec-ch05-tools}
+
+*The reader can look up, for every construct in this chapter, whether Verilator 5.030 with `--timing` and Icarus 13.0 compile it, run it, or refuse it, and can name the two constructs on which one tool runs and prints the wrong answer in silence — four-state values under Verilator, and virtual dispatch under Icarus. The reader knows that constrained randomization runs on neither tool as installed, and why (an SMT solver), which is where @sec-ch07 begins. (Part C §1, §4; `@tbl-ch05-support`, drawn from the measured matrix with every cell citable. In Practice callout: what a lint-only pass with slang adds.)*
+
+## Worked example: one transaction, from the design's port to the scoreboard {#sec-ch05-example}
+
+*The reader can trace one packet from a packed-struct field through an interface port, into a class handle, onto a queue, and out to a comparison — and can run it. The FIFO of @sec-ch01 is the design; the testbench is a module holding a virtual interface, a transaction class, a queue as the scoreboard and a clocking block at the boundary; it runs under Verilator. A second listing, the reset-that-never-happened, runs under both tools and shows four-state catching it and two-state not. (Worked Example callout.)*
+
+::: {.callout-important title="Future Directions"}
+*The reader can say what changes when the testbench language is generated rather than written: a type system this strict is exactly what a program can check, and the open parsers that accept the full language (slang) make the checks cheap; the constructs a simulator does not run are the ones an agent's tools must refuse rather than emit. (Ties to the tool-layer appendix.)*
+:::
+
+## Summary
+
+*One bullet per section, each a sentence the reader could defend.*
+
+## Exercises
+
+*Six, in the Exercise callout:*
+1. *Declare the same counter `bit` and `logic`, drive it from an unreset source, and show what each prints on both tools.*
+2. *Replace a queue scoreboard with an associative array keyed by address; say what got cheaper and what got harder.*
+3. *Write a packed struct for the FIFO's write transaction and a `$cast`-guarded enum for its state; make the static cast fail.*
+4. *Take the worked example's interface, add a second modport, and connect a second testbench to it through a virtual interface; make it null and read the error.*
+5. *Convert a static module task to automatic and pass it a `ref` argument; then explain in one paragraph why the first version would not compile.*
+6. *Take the support matrix and add a row for a construct not in it, with the probe that measured it.*
+
+## Further reading
+
+*Sutherland & Mills (2013) on synthesizable versus verification types; the two gotchas papers; Spear & Tumbush 3rd ed. (basic OOP chapters); Rich (2012) on virtual interfaces; the lowRISC DV style guide; the Verilator and Icarus language-support pages.*
+
+## Planned examples
+
+Directory `examples/ch05-testbench-language/`. Every example runs on the free toolchain; the tool it runs on is stated, from the measured matrix.
+
+- `twostate-reset/` (SystemVerilog, **both tools**, `run_both.sh` pattern from `examples/ch04-simulation/race/`) — the motivating bug: `bit rst_n` versus `logic rst_n`; the four-state half is meaningful on Icarus only and the listing says so.
+- `aggregates/` (SystemVerilog, both tools for arrays and queues; associative array section `REQUIRES verilator`) — one transaction stored four ways, with the operations a scoreboard does.
+- `structs-enums/` (SystemVerilog, both tools) — packed struct as a bus field; the enum hole with `$cast` (`$cast` `REQUIRES verilator`).
+- `interface-vif/` (SystemVerilog, `REQUIRES verilator`: interface as a module port and virtual interfaces are unsupported on Icarus 13.0) — interface, two modports, a class holding a virtual interface, the null-handle failure shown.
+- `class-handles/` (SystemVerilog, both tools) — `new`, alias versus copy, null, static member, automatic versus static task, `ref` on an automatic task.
+- `clocking/` (SystemVerilog, `REQUIRES verilator`) — a clocking block sampling before and driving after the edge, with the Chapter 4 regions example as its reference.
+- `packet-fifo/` (SystemVerilog, `REQUIRES verilator`) — the worked example on the Chapter 1 FIFO.
+- `support-matrix/` (Python, both tools) — the probe runner that regenerates `@tbl-ch05-support` from the 57 probes, so the table cannot drift from the tools.
+
+## Sources
+
+- `research/ch05-testbench-language.md` — Part A (types, aggregates, structs, interfaces), Part B (classes, lifetime, the Chapter 6 line, defect catalogue), Part C (the measured matrix, documented versus measured support, slang and cocotb).
+- `research/ch04-simulation-fundamentals.md` Part B §2 — clocking and program blocks.
+- `refs.bib`, existing: `sutherland2006gotchas`, `sutherland2007gotchas`, `sutherland2013x`, `verilator-languages`, `verilator-changes`, `icarus-quirks`, `slang-docs`, `cocotb-docs`, `lowrisc-verilogstyle`, `opentitan-dv-methodology`.
+- `refs.bib`, to add at drafting from the note's Key sources: `sutherlandmills2013synth`, `rich2012missinglink`, `spear2012svfv`, `lowrisc-dv-style`, `opentitan-tl-if`, `opentitan-mem-model`, `verilator-issue-4651`, `icarus-issue-464`, `icarus-issue-792`, `icarus-pr-1348`, `verilator-languages-5030`, `icarus-release-13`.
+- Open before drafting: verify the IEEE 1800-2023 clause numbers the note inferred from the 2017 edition against the standard's text (IEEE GET).
