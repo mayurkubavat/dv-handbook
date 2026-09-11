@@ -45,6 +45,11 @@ format:
     monofont: "JetBrains Mono"
     monofontoptions:
       - Scale=0.82
+      # JetBrains Mono ships programming ligatures, so `<=` rendered as a
+      # single glyph in every listing and in verbatim simulator output. A
+      # chapter that tells the reader to change four `<` characters printed
+      # a page with no `<` on it.
+      - "RawFeature=-calt"
     fontsize: 10pt
     linestretch: 1.12
     include-in-header: theme/preamble.tex

@@ -153,7 +153,7 @@ This chapter's four-state example is an unreset register read two ways, under th
 ```{.text include="examples/ch04-simulation/fourstate/run.out"}
 ```
 
-The first block is the whole argument in four lines. Under four-state simulation the bare `if` leaves its target unknown, and the missing reset is visible. The `if ... else` produces 238, which is the value in its else branch: a definite, ordinary-looking number, produced by taking a branch on a value nobody knows. Nothing in that number says a reset is missing. That is X-optimism, and it is why a design can pass a four-state regression and fail in silicon.
+The first block is the whole argument in two lines. Under four-state simulation the bare `if` leaves its target unknown, and the missing reset is visible. The `if ... else` produces 238, which is the value in its else branch: a definite, ordinary-looking number, produced by taking a branch on a value nobody knows. Nothing in that number says a reset is missing. That is X-optimism, and it is why a design can pass a four-state regression and fail in silicon.
 
 The other two blocks are the two-state models. Starting every register at zero says nothing at all: both readers give a plausible answer, and would on every run, because there is nothing for a seed to change. Randomizing says the result depends on the initial state, which is the same finding reached from the other direction.
 
@@ -171,15 +171,28 @@ The reset tests of @sec-ch03-resets are worth revisiting with this in hand. If y
 
 A timescale declares two things: the unit a bare delay is measured in, and the precision delays are rounded to. Modules may declare different ones, and a design that mixes them is not an error.
 
-The failure mode is what earns this a section. A mismatched timescale does not produce an obviously broken result. It produces a plausible one: a waveform with the right shapes at the wrong times, or a delay that quietly rounds away to nothing. Delays are scaled to the smallest precision used anywhere in the design [@sutherland2007gotchas], which sets the resolution of the shared time wheel; a module's own delays are still rounded to its own declared precision, so a finer module elsewhere does not change what a coarser one does. The cross-module trap is a different one, and it is about compilation rather than arithmetic: a `` `timescale `` directive is bound to neither a module nor a file, but applies to everything the compiler reads after it until the next one, so a file that declares no timescale takes whichever one was in force when it happened to be compiled. Change the order of the files on the command line and a delay in that file means something else [@sutherland2007gotchas]. Simulators round delays finer than the declared precision, and this book does not state the rounding rule, because no openly readable source states one. If a design depends on the answer, measure it on the tool you use rather than trusting a rule you read somewhere.
+The failure mode is what earns this a section. A mismatched timescale does not produce an obviously broken result. It produces a plausible one: a waveform with the right shapes at the wrong times, or a delay that quietly rounds away to nothing. Delays are scaled to the smallest precision used anywhere in the design [@sutherland2007gotchas], which sets the resolution of the shared time wheel. What a module does with a delay finer than *its own* declared precision is a separate question, and this book does not state a rule for it, because no openly readable source states one and the two simulators here do not agree. That is worth seeing rather than asserting. A module declaring nanosecond precision waits `#1.4`, in a design that also contains a module declaring picoseconds:
 
-This chapter's own examples make the point against themselves, and not in the way you might expect. None of them declares a timescale in its source. The event-driven simulator therefore falls back to its default, which is why the regions output above reports finishing "at 6 (1s)" rather than in nanoseconds. The other simulator does not fall back to anything: the build passes it a timescale on the command line, so it runs in nanoseconds for a reason no reader of the source could see. Two tools, two different answers to a question the source never asked, and one of the answers hidden in a build file. Nothing in these examples depends on it, which is exactly why nobody noticed.
+```{.systemverilog include="examples/ch04-simulation/timescale/coarse.sv"}
+```
+
+```{.systemverilog include="examples/ch04-simulation/timescale/fine.sv"}
+```
+
+```{.text include="examples/ch04-simulation/timescale/run.out"}
+```
+
+The event-driven tool rounds the `#1.4` to 1 ns; the statically scheduled one leaves it at 1.4 ns, while its own `$time` still reports 1 ns on the same event. The consequence is not a rounding detail. The `fine` module's print falls between the two answers, so the two tools emit the two lines in opposite orders — on identical source, containing no race. Anything ordered against a delay in a coarser module is therefore tool-dependent, and the only way to know is to run it.
+
+The cross-module trap is a different one, and it is about compilation rather than arithmetic. The directive is a property of the compilation, not of a module: whichever one the compiler last read is the one in force, so a file that declares none inherits from whatever happened to precede it on the command line, and reordering the file list changes what its delays mean [@sutherland2007gotchas].
+
+This chapter's own examples make the point against themselves, and not in the way you might expect. None of them declares a timescale in its source. The event-driven simulator therefore falls back to its default, which is why the regions output above reports finishing "at 6 (1s)" rather than in nanoseconds. The other falls back too, to one picosecond, and the only reason it reports nanoseconds here is that the build passes it a timescale on the command line — a reason no reader of the source could see. Two tools, two silent defaults twelve orders of magnitude apart, and one of the answers hidden in a build file. The standard permits exactly this: where no timescale has been specified, a compiler may or may not apply a default time unit, which is why the same design can behave differently on two tools for a reason nothing in it records [@sutherland2007gotchas]. Nothing in these examples depends on it, which is exactly why nobody noticed.
 
 ## What a real simulator implements {#sec-ch04-real}
 
 The model above is what your code must be correct against. It is not, in general, what your simulator does, and the difference is documented by the tools themselves.
 
-One of this book's two simulators is event-driven and four-state, and it records a deliberate departure: it modifies scheduling at time zero, arranging one class of `always` block to run before other threads in order to remove an order dependence [@icarus-quirks]. The other decides its scheduling at compile time rather than maintaining a queue, and its documentation describes the design in the model's own vocabulary: the Active and non-blocking regions are where the work is placed and iterated to convergence, and the remaining regions nest around those, each iterating the loops of every region that precedes it in the scheduling order [@verilator-internals]. Its option for handling delays and event controls adds the ability to suspend a process; it does not turn it into an event-driven simulator, and an ordinary clocked block stays statically scheduled.
+One of this book's two simulators is event-driven and four-state, and it records a deliberate departure: it modifies scheduling at time zero, arranging one class of `always` block to run before other threads in order to remove an order dependence [@icarus-quirks]. The other decides its scheduling at compile time rather than maintaining a queue, and its documentation describes the design in the model's own vocabulary, while warning that its internal regions are not the standard's: the Active and non-blocking regions are where the work is placed and iterated to convergence, and the later regions "nest around these in the same manner" [@verilator-internals] — each outer one re-running everything inside it until nothing changes. Its option for handling delays and event controls adds the ability to suspend a process; it does not turn it into an event-driven simulator, and an ordinary clocked block stays statically scheduled.
 
 Neither is wrong and neither is hiding anything. Both are documented, and the documentation is what to read before drawing a conclusion from a result.
 
@@ -208,25 +221,25 @@ Here is what the two simulators report on both designs:
 ```{.text include="examples/ch04-simulation/race/run.out"}
 ```
 
-On the racy design they disagree, and the reader can see it in four lines. On the safe one they report the same thing, and it is the thing the hardware would do.
+On the racy design they disagree. On the safe one they report the same thing, and it is the thing the hardware would do.
 
 Three things are worth taking from that.
 
-**Lint catches this one.** Unlike the clock-domain crossing of @sec-ch03-example, which the strictest lint passed in silence, a blocking assignment in a sequential block has a warning of its own. It is off by default, which is its own lesson about default configurations, but the example turns it on and it fires. Not every bug in this book is invisible to cheap tools, and this one is not.
+**Lint catches this one.** Unlike the clock-domain crossing of @sec-ch03-example, which the lint settings that chapter used passed in silence, a blocking assignment in a sequential block has a warning of its own. It is off by default, which is its own lesson about default configurations, but the example turns it on and it fires. Not every bug in this book is invisible to cheap tools, and this one is not.
 
 **A disagreement is evidence, not a proof.** It is tempting to conclude that because two simulators differ the code must have a race. That inference does not hold. The sources name three ways two tools can differ on one source file: the ordering freedom the language genuinely permits, which is the real race; a difference in how each tool chose to implement something the standard leaves ambiguous; and plain non-compliance, which is a defect in a tool rather than in a language [@sutherland2006gotchas]. Only the first is what the guidelines protect you against. A disagreement is worth chasing every time and proves nothing on its own.
 
 **The converse is weaker still.** Agreement between two simulators does not mean code is race-free; both may happen to make the same arbitrary choice. The guidelines are what make code order-independent. Running it twice is a check on the guidelines, not a substitute for them.
 
 ::: {.callout-important title="Future Directions"}
-The gap this section walks through is a gap in what gets measured. There are public benchmarks for whether tools *parse* the language the same way, and this book found none that tests whether they *execute* it the same way, which is where the interesting disagreements are. A differential tester for runtime semantics, generating race-free designs and checking that conforming simulators agree on them, is a piece of open infrastructure that does not exist and could.
+The gap this section walks through is a gap in what gets measured. This book found no public benchmark that tests whether two tools *execute* the language the same way, which is where the interesting disagreements are. A differential tester for runtime semantics, generating race-free designs and checking that conforming simulators agree on them, is a piece of open infrastructure that does not exist and could.
 
 The nearer-term version needs no research at all. If your project has more than one simulator, running a subset of the regression under both and diffing is a check nobody has to write, and every difference it finds is either a real ordering dependency in your code or a real difference between your tools. Both are worth knowing before silicon.
 :::
 
 ## Summary
 
-- A simulator is a single program working a queue. Nothing is parallel, and "at the same time" means "in the same timestep", which has an internal order.
+- The model is a single program working a queue. Nothing is parallel, and "at the same time" means "in the same timestep", which has an internal order.
 - A timestep is divided into regions whose order is fixed. Within a region the order is arbitrary and the language guarantees nothing.
 - The regions have a shape rather than being a list: assertion sampling first, then three regions for the design, then assertion evaluation, then the same three for the testbench, then a read-only settling region.
 - A non-blocking assignment is split across two regions, evaluating where it is written and updating later. Almost every race rule follows from that split.

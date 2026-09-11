@@ -1,0 +1,8 @@
+=== event-driven simulator
+coarse: after #1.4, $time=1000 $realtime=1.000000
+fine:   after #1.2, $realtime=1200
+coarse: after #1.6, $time=3000 $realtime=3.000000
+=== statically scheduled simulator
+fine:   after #1.2, $realtime=1200
+coarse: after #1.4, $time=1000 $realtime=1.400000
+coarse: after #1.6, $time=3000 $realtime=3.000000
