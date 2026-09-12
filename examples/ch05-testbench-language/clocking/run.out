@@ -1,4 +1,4 @@
-t=5000  read q=0 (settled before this edge)  drive d=10
-t=15000  read q=1 (settled before this edge)  drive d=11
-t=25000  read q=11 (settled before this edge)  drive d=21
-t=35000  read q=12
+t=5 ns  read q=0 (settled before this edge)  drive d=10
+t=15 ns  read q=1 (settled before this edge)  drive d=11
+t=25 ns  read q=11 (settled before this edge)  drive d=21
+t=35 ns  read q=12

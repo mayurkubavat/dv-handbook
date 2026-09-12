@@ -9,17 +9,20 @@ queues | i05a_queue_basic.sv
 packed structs | i06a_struct_positional.sv
 packed unions | p07_union.sv
 enums and their methods | p08_enum.sv
+`$cast` on an enum | enum_dynamic_cast.sv
 strings | i09c_string_core.sv
 interface, used hierarchically | j10a_interface_hier_only.sv
 interface as a module port, with modport | j10b_interface_port_modport_port.sv
 virtual interface | p11_vif.sv
 class: new, handles, properties | j12a_class_scalar.sv
-static properties and methods | i13a_static_instance_call.sv
+static member, read through an instance | i13a_static_instance_call.sv
+static member, read through `cls::` | static_scope_operator.sv
 parameterized class | p14_paramclass.sv
 inheritance, method called on the derived handle | inherit_derived_handle.sv
 virtual method, call through a base handle | j15a_virtual_dispatch.sv
 nested class | k03_nested_class.sv
 clocking block | p16_clocking.sv
+modport carrying a clocking block | modport_clocking.sv
 program block | p17_program.sv
 randomize(), no constraints | i18a_rand_noconstraint.sv
 randomize() with a constraint | k14_rand_inside_with.sv

@@ -2,7 +2,7 @@ fixed: 4 entries; dyn: 5 entries after new[5](dyn)
 queue after push/push/push_front/insert: '{'h0, 'h1, 'hff, 'h2}  size=4
 pop_front -> 00; q[$] (last) = 02
 assoc: 3 entries, exists(1000h)=1 exists(1234h)=0
-  byaddr[4096] = 55
-  byaddr[8192] = 66
-  byaddr[-1] = 77
+  byaddr[1000] = 55
+  byaddr[2000] = 66
+  byaddr[ffffffff] = 77
 after delete(2000h): 2 entries

@@ -1,4 +1,4 @@
-before new: a is      null
+before new: a is null
 after b.payload = 22h: a=22 b=22 c=11
 objects made: 2 (a and c; b named a)
 after a = null: b still names the object
