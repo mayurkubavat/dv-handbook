@@ -44,7 +44,7 @@ module tb_fifo_env;
     end
     // test 2: override -- a derived driver, one virtual step overridden
     begin
-      inverting_driver d = new;
+      rotating_driver d = new;
       drv = d;
       run_test("override");
     end

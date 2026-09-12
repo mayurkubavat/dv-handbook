@@ -25,7 +25,7 @@ class even_maker extends packet_maker;
 endclass
 
 // --- test 2: the virtual-step hole --------------------------------------
-class inverting_driver extends driver;
+class rotating_driver extends driver;
   virtual task before_send(packet p);
     p.word.kind = 2'(p.word.kind + 1) % 3;  // change one step, keep the loop
   endtask
