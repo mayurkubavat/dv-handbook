@@ -35,8 +35,8 @@ class error_packet extends packet;
 endclass
 
 class idle_packet extends packet;
-  // No constructor: the implicit one calls super.new() with no arguments,
-  // which is an error here because packet::new needs one. So it is given.
+  // Without a constructor the implicit super.new() would have no argument
+  // to give packet::new, so one is written.
   function new(); super.new(0); kind = "idle"; endfunction
 endclass
 

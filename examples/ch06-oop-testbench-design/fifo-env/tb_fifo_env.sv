@@ -42,11 +42,11 @@ module tb_fifo_env;
       drv = new; drv.maker = m;
       run_test("factory");
     end
-    // test 2: strategy -- a derived driver, one hook overridden
+    // test 2: override -- a derived driver, one virtual step overridden
     begin
       inverting_driver d = new;
       drv = d;
-      run_test("strategy");
+      run_test("override");
     end
     // test 3: callback -- a hook object the driver only calls
     begin

@@ -81,7 +81,12 @@ for d in $DIRS; do
            && ! grep -qF -- "$expect_output" "$d/run.log"; then
         run="fail (failed, but not with '$expect_output')"
       else run="pass (failed as expected)"; fi
-    elif [[ $rc -ne 0 ]]; then run="fail"; fi
+    elif [[ $rc -ne 0 ]]; then run="fail"
+    # A passing example may also pin a line it must print, so that a tool
+    # missing from the machine cannot leave a half-run recorded as a pass.
+    elif [[ -n "$expect_output" ]] \
+         && ! grep -qF -- "$expect_output" "$d/run.log"; then
+      run="fail (passed, but without '$expect_output')"; fi
   fi
   if [[ "$lint" == "fail" || "$run" == fail* ]]; then ((fail++))
   else ((pass++)); fi

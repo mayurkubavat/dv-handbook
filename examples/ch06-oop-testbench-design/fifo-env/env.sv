@@ -2,14 +2,14 @@
 // a test can fill without editing this file.
 //
 //   packet        the transaction; `legal` is the contract a derived class
-//                 must keep, and `describe` is virtual so a derived packet
-//                 prints itself
+//                 must keep -- kind 3 is reserved and never legal -- and
+//                 `describe` is virtual so a derived packet prints itself
 //   packet_maker  the factory: `create(i)` returns a base handle, and a
 //                 test substitutes a maker that returns a derived packet
 //   packet_cb     the callback: a hook object the driver calls before each
 //                 send, for checks the test owns and the driver does not
 //   driver        the template method: `run` is the algorithm; `before_send`
-//                 is the strategy hook a test overrides
+//                 is the virtual step a test overrides
 //   scoreboard    a queue of expected packets and a comparison
 typedef struct packed {
   logic [1:0] kind;
@@ -22,7 +22,7 @@ class packet;
     word.kind = kind; word.seq = seq;
   endfunction
   virtual function bit legal();          // the substitution contract
-    return 1;
+    return word.kind != 2'd3;
   endfunction
   virtual function string describe();
     return $sformatf("kind=%0d seq=%0d", word.kind, word.seq);
@@ -31,7 +31,7 @@ endclass
 
 class packet_maker;                       // the factory
   virtual function packet create(int i);
-    packet p = new(i[1:0], i[5:0]);
+    packet p = new(2'(i % 3), i[5:0]);   // kinds 0..2 only: never 3
     return p;
   endfunction
 endclass
@@ -60,7 +60,7 @@ class driver;
       vif.cb.wr_en   <= 0;
     end
   endtask
-  virtual task before_send(packet p);     // the strategy hook: overridable
+  virtual task before_send(packet p);     // the virtual step: overridable
   endtask
 endclass
 

@@ -15,7 +15,6 @@ override declared without the `virtual` keyword | o27_override_without_virtual.s
 virtual call through a base-typed property of another object | o38_virtual_handle_property.sv
 virtual call on a base-typed function argument | o39_virtual_arg_passed.sv
 virtual calls inside `fork ... join` | o24_virtual_in_fork.sv
-virtual method called from the base constructor | o26_virtual_from_ctor.sv
 `virtual class` with a `pure virtual` method | o11_pure_virtual.sv
 `interface class` and `implements` | o12_interface_class.sv
 one class implementing two interface classes | o13_implements_two.sv

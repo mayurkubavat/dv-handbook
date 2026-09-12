@@ -1,7 +1,7 @@
 // tests.sv -- three tests, each filling one hole in the environment.
 //
 // None of them edits env.sv. The factory test substitutes a derived
-// packet with a stricter contract; the strategy test changes what the
+// packet with a stricter contract; the override test changes what the
 // driver does before each send; the callback test attaches a check the
 // driver knows nothing about.
 
@@ -19,15 +19,15 @@ class even_packet extends packet;         // a subtype: stricter, still legal
 endclass
 class even_maker extends packet_maker;
   virtual function packet create(int i);
-    even_packet p = new(i[1:0], i[5:0]);
+    even_packet p = new(2'(i % 3), i[5:0]);
     return p;
   endfunction
 endclass
 
-// --- test 2: the strategy hole ------------------------------------------
+// --- test 2: the virtual-step hole --------------------------------------
 class inverting_driver extends driver;
   virtual task before_send(packet p);
-    p.word.kind = ~p.word.kind;           // change one step, keep the loop
+    p.word.kind = 2'(p.word.kind + 1) % 3;  // change one step, keep the loop
   endtask
 endclass
 

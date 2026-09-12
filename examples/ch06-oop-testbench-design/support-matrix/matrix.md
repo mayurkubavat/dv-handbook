@@ -14,14 +14,13 @@
 | virtual call through a base-typed property of another object | no build — Method name nesting is not supported yet. | runs |
 | virtual call on a base-typed function argument | wrong | runs |
 | virtual calls inside `fork ... join` | wrong | runs |
-| virtual method called from the base constructor | wrong | wrong |
 | `virtual class` with a `pure virtual` method | no build — syntax error | runs |
 | `interface class` and `implements` | no build — syntax error | runs |
 | one class implementing two interface classes | no build — syntax error | runs |
 | `$cast` down the hierarchy, matching object | no run | runs |
 | `$cast` down the hierarchy, mismatched object | no run | runs |
 | `new src` through a base handle holding a derived object | no run | wrong |
-| `clone()` as a virtual method constructing its own class | no build — SORRY: Compare class handles not implemented | runs |
+| `clone()` as a virtual method constructing its own class | wrong | runs |
 | parameterized class, type parameter | no build — syntax error | runs |
 | parameterized class, value parameter | no build — syntax error | runs |
 | parameterized class specialized twice | no build — syntax error | runs |
@@ -34,4 +33,4 @@
 | method called on a handle-typed property (composition) | no build — Method name nesting is not supported yet. | runs |
 | handle identity: `==`, `!=`, `!= null` | no build — SORRY: Compare class handles not implemented | runs |
 
-: What each open simulator does with the object-oriented constructs this chapter teaches, measured by running one probe per row with the flags the book's build uses and checking the printed values. Of 33 constructs, 3 run on both, 28 on Verilator only, 0 on Icarus only and 2 on neither. Regenerated from the probes on every run. {#tbl-ch06-support}
+: What each open simulator does with the object-oriented constructs this chapter teaches, measured by running one probe per row with the flags the book's build uses and checking the printed values. Of 32 constructs, 3 run on both, 28 on Verilator only, 0 on Icarus only and 1 on neither. Regenerated from the probes on every run. {#tbl-ch06-support}

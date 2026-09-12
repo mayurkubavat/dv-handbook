@@ -5,7 +5,9 @@
 # simulator in turn and labels the output rather than leaving the reader to
 # run two commands and remember which was which. It ends with a verdict line
 # saying whether the two agreed, which is what the chapter quotes.
-set -uo pipefail
+# -e: a simulator that fails to build or run ends the script here, so a
+# verdict is never printed about a comparison that did not happen.
+set -euo pipefail
 cd "$(dirname "$0")"
 BUILD=build; mkdir -p $BUILD
 
