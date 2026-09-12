@@ -1,0 +1,3 @@
+static task, two callers: 11 21  (expected 11 21)
+automatic task, two callers: 11 21  (expected 11 21)
+after bump(ref v): v=101

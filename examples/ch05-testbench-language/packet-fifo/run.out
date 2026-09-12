@@ -1,0 +1,13 @@
+sent     #0 kind=0 seq=0
+received #0 kind=0 seq=0  ok
+sent     #1 kind=1 seq=1
+received #1 kind=1 seq=1  ok
+sent     #2 kind=2 seq=2
+received #2 kind=2 seq=2  ok
+sent     #3 kind=3 seq=3
+received #3 kind=3 seq=3  ok
+sent     #4 kind=0 seq=4
+received #4 kind=0 seq=4  ok
+sent     #5 kind=1 seq=5
+received #5 kind=1 seq=5  ok
+packets made: 6, left on scoreboard: 0, errors: 0

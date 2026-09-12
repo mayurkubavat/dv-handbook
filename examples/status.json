@@ -1,6 +1,6 @@
 {
-  "checked": "2026-09-11T06:52:45Z",
-  "pass": 18,
+  "checked": "2026-09-12T03:28:04Z",
+  "pass": 27,
   "fail": 0,
   "skipped_run": 2,
   "examples": [
@@ -125,6 +125,69 @@
     },
     {
       "dir": "examples/ch04-simulation/timescale",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch05-testbench-language/aggregates",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch05-testbench-language/class-handles",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch05-testbench-language/clocking",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch05-testbench-language/interface-vif",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch05-testbench-language/lifetime",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch05-testbench-language/packet-fifo",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch05-testbench-language/structs-enums",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch05-testbench-language/support-matrix",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch05-testbench-language/twostate-reset",
       "lint": "pass",
       "run": "pass",
       "requires": "",

@@ -1,0 +1,16 @@
+=== tb_bit
+--- event-driven, four-state simulator
+tb_bit:   q=xx, no clock edge yet (reset never happened)
+--- statically scheduled, two-state simulator
+tb_bit:   q=00, no clock edge yet (reset never happened)
+=== tb_logic
+--- event-driven, four-state simulator
+tb_logic: q=a5, no clock edge yet (reset happened)
+--- statically scheduled, two-state simulator
+tb_logic: q=00, no clock edge yet (reset never happened)
+=== tb_fixed
+--- event-driven, four-state simulator
+tb_fixed: q=a5, no clock edge yet (reset happened)
+--- statically scheduled, two-state simulator
+tb_fixed: q=a5, no clock edge yet (reset happened)
+verdict: only the manufactured edge resets on both simulators

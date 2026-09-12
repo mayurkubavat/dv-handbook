@@ -1,0 +1,31 @@
+# label | probe file. One line per row of the chapter's table.
+# Each probe uses one construct and as little else as possible, so that a
+# refusal is a refusal of that construct and not of something beside it.
+2-state and 4-state integral types | p01_types.sv
+fixed and packed arrays | p02_arrays.sv
+dynamic arrays | p03_dynarray.sv
+associative arrays | p04_assoc.sv
+queues | i05a_queue_basic.sv
+packed structs | i06a_struct_positional.sv
+packed unions | p07_union.sv
+enums and their methods | p08_enum.sv
+strings | i09c_string_core.sv
+interface, used hierarchically | j10a_interface_hier_only.sv
+interface as a module port, with modport | j10b_interface_port_modport_port.sv
+virtual interface | p11_vif.sv
+class: new, handles, properties | j12a_class_scalar.sv
+static properties and methods | i13a_static_instance_call.sv
+parameterized class | p14_paramclass.sv
+inheritance, method called on the derived handle | inherit_derived_handle.sv
+virtual method, call through a base handle | j15a_virtual_dispatch.sv
+nested class | k03_nested_class.sv
+clocking block | p16_clocking.sv
+program block | p17_program.sv
+randomize(), no constraints | i18a_rand_noconstraint.sv
+randomize() with a constraint | k14_rand_inside_with.sv
+solve-before and soft constraints | k06_solve_before_soft.sv
+covergroup inside a class | k08_covergroup_in_class.sv
+event, fork and join | j19a_event_fork.sv
+mailbox, typed | j19b_mailbox_typed.sv
+queues and arrays of handles | j20a_handle_array_init.sv
+interface class | p21_ifaceclass.sv

@@ -1,0 +1,29 @@
+2-state and 4-state integral types             icarus: runs      verilator: wrong
+fixed and packed arrays                        icarus: runs      verilator: runs
+dynamic arrays                                 icarus: runs      verilator: runs
+associative arrays                             icarus: no build  verilator: runs
+queues                                         icarus: runs      verilator: runs
+packed structs                                 icarus: runs      verilator: runs
+packed unions                                  icarus: runs      verilator: runs
+enums and their methods                        icarus: runs      verilator: runs
+strings                                        icarus: runs      verilator: runs
+interface, used hierarchically                 icarus: runs      verilator: runs
+interface as a module port, with modport       icarus: no build  verilator: runs
+virtual interface                              icarus: no build  verilator: runs
+class: new, handles, properties                icarus: runs      verilator: runs
+static properties and methods                  icarus: runs      verilator: runs
+parameterized class                            icarus: no build  verilator: runs
+inheritance, method called on the derived handle icarus: runs      verilator: runs
+virtual method, call through a base handle     icarus: wrong     verilator: runs
+nested class                                   icarus: no build  verilator: no build
+clocking block                                 icarus: no build  verilator: runs
+program block                                  icarus: runs      verilator: runs
+randomize(), no constraints                    icarus: no build  verilator: runs
+randomize() with a constraint                  icarus: no build  verilator: wrong
+solve-before and soft constraints              icarus: no build  verilator: wrong
+covergroup inside a class                      icarus: no build  verilator: no build
+event, fork and join                           icarus: runs      verilator: runs
+mailbox, typed                                 icarus: no build  verilator: runs
+queues and arrays of handles                   icarus: no run    verilator: runs
+interface class                                icarus: no build  verilator: runs
+28 constructs: 13 run on both, 10 on Verilator only, 1 on Icarus only, 4 on neither

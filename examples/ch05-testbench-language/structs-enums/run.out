@@ -1,0 +1,5 @@
+raw=a123beef tag=a addr=123 data=beef
+after fields.tag = F: raw=f123beef
+IDLE.next() = BUSY, num()=3
+$cast(s, 3) returned 0; s is still IDLE
+state_t'(3): s=3 name=""

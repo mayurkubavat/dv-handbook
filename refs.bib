@@ -1759,3 +1759,121 @@
   note      = {Written as the successor to Turpin's 2003 paper.
                Accessed 2026-09-08}
 }
+
+% --- Chapter 5: the testbench language --------------------------------
+@inproceedings{sutherlandmills2013synth,
+  author    = {Stuart Sutherland and Don Mills},
+  title     = {Synthesizing {SystemVerilog}: Busting the Myth that
+               {SystemVerilog} is only for Verification},
+  booktitle = {Synopsys Users Group (SNUG) Silicon Valley},
+  year      = {2013},
+  url       = {http://sutherland-hdl.com/papers/2013-SNUG-SV_Synthesizable-SystemVerilog_paper.pdf},
+  note      = {Data types \S 2, interfaces \S 8. Accessed 2026-09-11}
+}
+
+@inproceedings{rich2012missinglink,
+  author    = {David Rich},
+  title     = {The Missing Link: The Testbench to {DUT} Connection},
+  booktitle = {Design and Verification Conference (DVCon)},
+  year      = {2012},
+  url       = {https://dvcon-proceedings.org/wp-content/uploads/the-missing-link-the-testbench-to-dut-connection.pdf},
+  note      = {Author affiliated with Mentor Graphics; the paper is
+               technical exposition, not a product claim.
+               Accessed 2026-09-11}
+}
+
+@book{spear2012svfv,
+  author    = {Chris Spear and Greg Tumbush},
+  title     = {{SystemVerilog} for Verification: A Guide to Learning the
+               Testbench Language Features},
+  edition   = {3},
+  publisher = {Springer},
+  address   = {New York},
+  year      = {2012},
+  doi       = {10.1007/978-1-4614-0715-7},
+  isbn      = {978-1-4614-0714-0},
+  url       = {https://doi.org/10.1007/978-1-4614-0715-7},
+  note      = {Ch. 2 ``Data Types'' (pp. 25--67), Ch. 4 ``Connecting the
+               Testbench and Design'' (pp. 87--129), Ch. 10 ``Advanced
+               Interfaces'' (pp. 363--384); chapter titles and pages from
+               Crossref. Accessed 2026-09-11}
+}
+
+@misc{lowrisc-dv-style,
+  author       = {{lowRISC contributors}},
+  title        = {{lowRISC} Design Verification Coding Style Guide},
+  howpublished = {GitHub, lowRISC/style-guides},
+  year         = {2026},
+  url          = {https://github.com/lowRISC/style-guides/blob/master/DVCodingStyle.md},
+  note         = {Apache-2.0. Accessed 2026-09-11}
+}
+
+@misc{opentitan-mem-model,
+  author       = {{lowRISC contributors (OpenTitan project)}},
+  title        = {{OpenTitan} \texttt{mem\_model}: associative-array memory model},
+  howpublished = {GitHub, lowRISC/opentitan, hw/dv/sv/mem\_model/mem\_model.sv},
+  year         = {2026},
+  url          = {https://github.com/lowRISC/opentitan/blob/master/hw/dv/sv/mem_model/mem_model.sv},
+  note         = {Apache-2.0. Accessed 2026-09-11}
+}
+
+@misc{opentitan-tl-if,
+  author       = {{lowRISC contributors (OpenTitan project)}},
+  title        = {{OpenTitan} {TileLink} agent interface (\texttt{tl\_if.sv}),
+                  configuration and agent sources},
+  howpublished = {GitHub, lowRISC/opentitan, hw/dv/sv/tl\_agent/},
+  year         = {2026},
+  url          = {https://github.com/lowRISC/opentitan/tree/master/hw/dv/sv/tl_agent},
+  note         = {Apache-2.0. Accessed 2026-09-11}
+}
+
+@misc{verilator-issue-4651,
+  author       = {{Verilator contributors}},
+  title        = {Garbage collector},
+  howpublished = {GitHub, verilator/verilator, issue 4651},
+  year         = {2023},
+  url          = {https://github.com/verilator/verilator/issues/4651},
+  note         = {Opened 2023-10-31; the maintainers record that
+                  reference counting cannot free the parent/child handle
+                  cycles a UVM component tree forms. Accessed 2026-09-11}
+}
+
+@misc{icarus-issue-464,
+  author       = {{Icarus Verilog contributors}},
+  title        = {{SystemVerilog} interface as a module port},
+  howpublished = {GitHub, steveicarus/iverilog, issue 464},
+  year         = {2021},
+  url          = {https://github.com/steveicarus/iverilog/issues/464},
+  note         = {Open since 2021-01-02; the fix in pull request 1348 was
+                  merged after the v13.0 release. Accessed 2026-09-11}
+}
+
+@misc{icarus-pr-1348,
+  author       = {{Icarus Verilog contributors}},
+  title        = {Support interfaces as module ports},
+  howpublished = {GitHub, steveicarus/iverilog, pull request 1348},
+  year         = {2026},
+  url          = {https://github.com/steveicarus/iverilog/pull/1348},
+  note         = {Merged 2026-05-16, after the v13.0 tag of 2026-03-02, so
+                  the released simulator this book measures does not carry
+                  it. Accessed 2026-09-11}
+}
+
+@misc{icarus-issue-792,
+  author       = {{Icarus Verilog contributors}},
+  title        = {Associative arrays},
+  howpublished = {GitHub, steveicarus/iverilog, issue 792},
+  year         = {2022},
+  url          = {https://github.com/steveicarus/iverilog/issues/792},
+  note         = {Open since 2022-11-20. Accessed 2026-09-11}
+}
+
+@misc{icarus-release-13,
+  author       = {{Icarus Verilog contributors}},
+  title        = {{Icarus Verilog} v13.0},
+  howpublished = {GitHub, steveicarus/iverilog, release tag v13\_0},
+  year         = {2026},
+  url          = {https://github.com/steveicarus/iverilog/releases/tag/v13_0},
+  note         = {Tagged 2026-03-02; the version measured in this book.
+                  Accessed 2026-09-11}
+}
