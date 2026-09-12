@@ -3,7 +3,7 @@
 // A clocking block names a clock and says, for each signal, when the
 // testbench reads it and when its writes land. `input #1step` reads the
 // value from just before the edge; `output #0` writes just after it. The
-// testbench then never races the design at the edge (@sec-ch04-boundary):
+// testbench then never races the design at the edge:
 // it reads what the design had settled and drives what the design will
 // see next.
 module dut_inc (input logic clk, input logic [7:0] d, output logic [7:0] q);

@@ -99,8 +99,8 @@ def main():
         md.append(f"| {label} | {iv}{' — ' + iw if iw else ''} | "
                   f"{vl}{' — ' + vw if vw else ''} |")
     md.append("")
-    md.append(": What each open simulator does with the constructs this "
-              "chapter teaches, measured by running one probe per row with "
+    md.append(": What each open simulator does with the testbench-language "
+              "constructs of this Part, measured by running one probe per row with "
               "the flags the book's build uses and checking the printed "
               f"values. Of {len(rows)} constructs, {both} run on both, "
               f"{vonly} on Verilator only, {ionly} on Icarus only and "

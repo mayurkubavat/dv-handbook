@@ -5,7 +5,7 @@
 // variable started at. The published two-line form does the second write
 // with a non-blocking assignment in the same timestep; the event-driven
 // simulator sees that edge and the statically scheduled one, which
-// compares values between evaluations, does not (@sec-ch04-real). An edge
+// compares values between evaluations, does not. An edge
 // across time is seen by both.
 module tb_fixed;
   logic       clk = 0;

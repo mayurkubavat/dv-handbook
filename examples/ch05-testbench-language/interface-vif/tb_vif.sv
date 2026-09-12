@@ -1,9 +1,9 @@
 // tb_vif.sv -- a class holding the interface through a virtual interface.
 //
 // A virtual interface is a variable whose value is a handle to an interface
-// instance. Like any variable it starts null, and using it then is the
-// single cause of every virtual-interface failure a testbench has. So the
-// driver checks before it drives, and the testbench shows both outcomes:
+// instance. Like any variable it starts null and is typed, and every
+// virtual-interface failure a testbench has is a variable's failure. So
+// the driver checks before it drives, and the testbench shows both outcomes:
 // once before the handle is set, once after.
 class driver;
   virtual bus_if.tb vif;

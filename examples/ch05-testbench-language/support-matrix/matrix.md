@@ -25,7 +25,7 @@
 | program block | runs | runs |
 | randomize(), no constraints | no build — Error: randomize is not a method of class txn. | runs |
 | randomize() with a constraint | no build — syntax error | wrong |
-| solve-before and soft constraints, given a solver | no build — syntax error | wrong |
+| solve-before and soft constraints, no solver installed | no build — syntax error | wrong |
 | covergroup inside a class | no build — syntax error | no build — Unsupported: covergroup |
 | event, fork and join | runs | runs |
 | mailbox | no build — syntax error | runs |
@@ -33,4 +33,4 @@
 | queue of handles | no build — Sorry: Queue of type | runs |
 | interface class | no build — syntax error | runs |
 
-: What each open simulator does with the constructs this chapter teaches, measured by running one probe per row with the flags the book's build uses and checking the printed values. Of 32 constructs, 13 run on both, 13 on Verilator only, 1 on Icarus only and 5 on neither. Regenerated from the probes on every run. {#tbl-ch05-support}
+: What each open simulator does with the testbench-language constructs of this Part, measured by running one probe per row with the flags the book's build uses and checking the printed values. Of 32 constructs, 13 run on both, 13 on Verilator only, 1 on Icarus only and 5 on neither. Regenerated from the probes on every run. {#tbl-ch05-support}

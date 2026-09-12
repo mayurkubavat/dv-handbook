@@ -26,7 +26,7 @@ modport carrying a clocking block | modport_clocking.sv
 program block | p17_program.sv
 randomize(), no constraints | i18a_rand_noconstraint.sv
 randomize() with a constraint | k14_rand_inside_with.sv
-solve-before and soft constraints, given a solver | k06_solve_before_soft.sv
+solve-before and soft constraints, no solver installed | k06_solve_before_soft.sv
 covergroup inside a class | k08_covergroup_in_class.sv
 event, fork and join | j19a_event_fork.sv
 mailbox | j19b_mailbox_typed.sv
