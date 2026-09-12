@@ -3,7 +3,8 @@
 // The argument is a reference into the caller's variable rather than a
 // copy of it, so the task writes the caller's `v`. The standard allows
 // `ref` only on an automatic subroutine; the reason this book gives is
-// that a static one has nowhere safe to keep the reference between calls. Neither of this book's tools
+// that a static one has nowhere safe to keep the reference between
+// calls. Neither of this book's tools
 // enforces that rule: one accepts `ref` on a static task in silence, the
 // other rejects `ref` altogether, which is why this file runs on the
 // default simulator only.
