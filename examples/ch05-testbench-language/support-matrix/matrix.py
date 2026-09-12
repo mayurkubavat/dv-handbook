@@ -39,6 +39,9 @@ def classify(rc, out, build_ok):
         # Keep the message, not the path and line that precede it.
         err = re.sub(r"^.*?:\d+(:\d+)?:\s*", "", err.strip())
         err = re.sub(r"^(%Error(-\w+)?|error|sorry):\s*", "", err)
+        # A compiler that prints a type's internals after a backtick has
+        # said what matters before it.
+        err = err.split("`")[0].rstrip(" :,")
         return "no build", err[:56]
     if re.search(r"PROBE .* PASS", out):
         return "runs", ""

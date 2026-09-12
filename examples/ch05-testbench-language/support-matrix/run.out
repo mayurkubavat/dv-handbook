@@ -23,10 +23,11 @@ modport carrying a clocking block              icarus: no build  verilator: no b
 program block                                  icarus: runs      verilator: runs
 randomize(), no constraints                    icarus: no build  verilator: runs
 randomize() with a constraint                  icarus: no build  verilator: wrong
-solve-before and soft constraints              icarus: no build  verilator: wrong
+solve-before and soft constraints, given a solver icarus: no build  verilator: wrong
 covergroup inside a class                      icarus: no build  verilator: no build
 event, fork and join                           icarus: runs      verilator: runs
-mailbox, typed                                 icarus: no build  verilator: runs
-queues and arrays of handles                   icarus: no run    verilator: runs
+mailbox                                        icarus: no build  verilator: runs
+fixed array of handles                         icarus: no run    verilator: runs
+queue of handles                               icarus: no build  verilator: runs
 interface class                                icarus: no build  verilator: runs
-31 constructs: 13 run on both, 12 on Verilator only, 1 on Icarus only, 5 on neither
+32 constructs: 13 run on both, 13 on Verilator only, 1 on Icarus only, 5 on neither

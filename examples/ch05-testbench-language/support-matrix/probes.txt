@@ -15,7 +15,7 @@ interface, used hierarchically | j10a_interface_hier_only.sv
 interface as a module port, with modport | j10b_interface_port_modport_port.sv
 virtual interface | p11_vif.sv
 class: new, handles, properties | j12a_class_scalar.sv
-static member, read through an instance | i13a_static_instance_call.sv
+static member, read through an instance | static_via_instance.sv
 static member, read through `cls::` | static_scope_operator.sv
 parameterized class | p14_paramclass.sv
 inheritance, method called on the derived handle | inherit_derived_handle.sv
@@ -26,9 +26,10 @@ modport carrying a clocking block | modport_clocking.sv
 program block | p17_program.sv
 randomize(), no constraints | i18a_rand_noconstraint.sv
 randomize() with a constraint | k14_rand_inside_with.sv
-solve-before and soft constraints | k06_solve_before_soft.sv
+solve-before and soft constraints, given a solver | k06_solve_before_soft.sv
 covergroup inside a class | k08_covergroup_in_class.sv
 event, fork and join | j19a_event_fork.sv
-mailbox, typed | j19b_mailbox_typed.sv
-queues and arrays of handles | j20a_handle_array_init.sv
-interface class | p21_ifaceclass.sv
+mailbox | j19b_mailbox_typed.sv
+fixed array of handles | j20a_handle_array_init.sv
+queue of handles | queue_of_handles.sv
+interface class | interface_class.sv

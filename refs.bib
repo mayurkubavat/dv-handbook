@@ -1095,7 +1095,7 @@
 % --- OpenTitan / lowRISC ---------------------------------------------------
 @misc{lowrisc-verilog-style,
   author       = {{lowRISC contributors}},
-  title        = {{Verilog} Coding Style Guide},
+  title        = {{lowRISC} {Verilog} Coding Style Guide},
   howpublished = {GitHub, lowRISC/style-guides},
   year         = {2026},
   url          = {https://github.com/lowRISC/style-guides/blob/master/VerilogCodingStyle.md},
@@ -1793,10 +1793,9 @@
   doi       = {10.1007/978-1-4614-0715-7},
   isbn      = {978-1-4614-0714-0},
   url       = {https://doi.org/10.1007/978-1-4614-0715-7},
-  note      = {Ch. 2 ``Data Types'' (pp. 25--67), Ch. 4 ``Connecting the
-               Testbench and Design'' (pp. 87--129), Ch. 10 ``Advanced
-               Interfaces'' (pp. 363--384); chapter titles and pages from
-               Crossref. Accessed 2026-09-11}
+  note      = {Ch. 5 ``Basic OOP'' (pp. 131--167) and Ch. 8 ``Advanced
+               OOP and Testbench Guidelines'' (pp. 273--321), per the
+               publisher's chapter records. Accessed 2026-09-11}
 }
 
 @misc{lowrisc-dv-style,
@@ -1834,7 +1833,7 @@
   howpublished = {GitHub, verilator/verilator, issue 4651},
   year         = {2023},
   url          = {https://github.com/verilator/verilator/issues/4651},
-  note         = {Opened 2023-10-31; the maintainers record that
+  note         = {Opened 2023-10-31; the issue's author records that
                   reference counting cannot free the parent/child handle
                   cycles a UVM component tree forms. Accessed 2026-09-11}
 }
@@ -1887,4 +1886,44 @@
   year         = {2026},
   url          = {https://github.com/lowRISC/opentitan/blob/master/hw/ip/tlul/rtl/tlul_pkg.sv},
   note         = {Apache-2.0. Accessed 2026-09-11}
+}
+
+@misc{icarus-issue-465,
+  author       = {{Icarus Verilog contributors}},
+  title        = {{SV}: interface -- parsing support for clocking block,
+                  modport?},
+  howpublished = {GitHub, steveicarus/iverilog, issue 465},
+  year         = {2021},
+  url          = {https://github.com/steveicarus/iverilog/issues/465},
+  note         = {Open since 2021-01-02. Accessed 2026-09-11}
+}
+
+@misc{icarus-issue-166,
+  author       = {{Icarus Verilog contributors}},
+  title        = {Does icarus support {SV} virtual interface?},
+  howpublished = {GitHub, steveicarus/iverilog, issue 166},
+  year         = {2017},
+  url          = {https://github.com/steveicarus/iverilog/issues/166},
+  note         = {Open since 2017-10-04. Accessed 2026-09-11}
+}
+
+@misc{icarus-issue-291,
+  author       = {{Icarus Verilog contributors}},
+  title        = {Parameterized class not supported},
+  howpublished = {GitHub, steveicarus/iverilog, issue 291},
+  year         = {2019},
+  url          = {https://github.com/steveicarus/iverilog/issues/291},
+  note         = {Open since 2019-12-26. Accessed 2026-09-11}
+}
+
+@misc{opentitan-cip-scoreboard,
+  author       = {{lowRISC contributors (OpenTitan project)}},
+  title        = {{OpenTitan} \texttt{cip\_base\_scoreboard}: the base
+                  scoreboard of the comportable-IP library},
+  howpublished = {GitHub, lowRISC/opentitan,
+                  hw/dv/sv/cip\_lib/cip\_base\_scoreboard.sv},
+  year         = {2026},
+  url          = {https://github.com/lowRISC/opentitan/blob/master/hw/dv/sv/cip_lib/cip_base_scoreboard.sv},
+  note         = {Holds one \texttt{mem\_model} per memory, keyed by name.
+                  Apache-2.0. Accessed 2026-09-11}
 }
