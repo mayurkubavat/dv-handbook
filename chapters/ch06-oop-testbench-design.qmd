@@ -1,95 +1,196 @@
-<!-- OUTLINE: not yet approved -->
 # Object-Oriented Testbench Design {#sec-ch06}
 
-*A one-line epigraph, then the Learning objectives box.*
+*A base class fixes an algorithm and leaves named holes; a test fills one.*
 
 ::: {.callout-note title="Learning objectives"}
-*After this chapter the reader can: derive a class from another and say what `super.new` must do and when; predict which method body a call runs, through which handle, and say why `virtual` changes the answer; declare an abstract class and an interface class and choose between them; cast down a hierarchy safely and copy an object without losing its type; read a parameterized class as a family of distinct types and name the three consequences that has in a UVM testbench; recognize the one idea under the factory, strategy, template-method, singleton and callback patterns and find each in a testbench that exists; state the substitution property that decides whether a subclass is a subtype; and say, for every construct here, which of the book's two simulators runs it and which one runs it and prints the wrong answer.*
+After this chapter you can derive a class from another and say what `super.new` must do and when; predict which method body a call runs, through which handle, and say why `virtual` changes the answer; declare an abstract class and an interface class and choose between them; cast down a hierarchy safely and copy an object without losing its type; read a parameterized class as a family of distinct types and name the consequences that has in a testbench; recognize the one idea under the factory, strategy, template-method, singleton and callback patterns and find each in a testbench that exists; state the substitution property that decides whether a subclass is a subtype; and say, for every construct here, which of the book's two simulators runs it and which runs it and prints the wrong answer.
 :::
 
 ## One object, three answers
 
-*The reader can explain how a single leaf object, asked the same question through three handles of three declared types, answered three different ways on a simulator that compiled the design without a warning — because that simulator accepts the word `virtual` and ignores it — and can say why a testbench that "passed" there had tested nothing. (Motivation: Part C's o08 probe and the maintainer's own statement on Icarus issue #421. The chapter's examples therefore run on Verilator, and the Icarus column is what silence looks like.)*
+One leaf object. Three handles naming it, declared as the leaf's class, its parent and its grandparent. One virtual method, asked the same question through each. The language's answer is one number three times, because a virtual call is dispatched on the object, not on the declaration of the handle it came through. Here is what the book's two simulators say:
+
+```{.systemverilog include="examples/ch06-oop-testbench-design/three-handles/tb_three_handles.sv"}
+```
+
+```{.text include="examples/ch06-oop-testbench-design/three-handles/run.out"}
+```
+
+The event-driven simulator gave three different answers and compiled the file without a warning. Its tracker records why, in a maintainer's words: the `virtual` keyword is accepted by the parser and otherwise ignored, and that is true of virtual methods [@icarus-issue-421]. A testbench built on virtual methods and run there does not fail; it runs the base class's code everywhere and reports that everything passed. @sec-ch05-tools measured that cell once; this chapter is where it matters, because every construct from here to the end of Part III depends on `virtual` doing what the standard says.
+
+So this chapter's examples run on Verilator, and where a listing runs on both tools it is to print the silent answer beside the right one. The rest of the chapter is what `virtual` is *for*.
 
 ## Extending a class {#sec-ch06-extends}
 
-*The reader can write `extends`, chain constructors with `super.new` and state the three rules the compilers enforce with quotable diagnostics — `super.new` first, no explicit `super.new` when the `extends` clause carries arguments, an implicit no-argument call otherwise — and can tell overriding from hiding by asking whether the method was declared `virtual`. (Part A §1–§2.)*
+A class extends another with `extends`, and the derived class is the base plus what it adds. Its constructor must reach the base's constructor first. The rules are three, and both of this book's compilers state them in their diagnostics: a `super.new` call must be the first statement of the derived constructor; when the `extends` clause itself carries constructor arguments, an explicit `super.new` is an error; and when the derived constructor says nothing, an implicit `super.new()` with no arguments is called — which is itself an error if the base constructor needs one [@ieee1800-2023].
+
+The other thing a derived class does is redeclare a method the base already has, and the word `virtual` on the base's declaration decides what that means. Without it, the derived method *hides* the base's: a call through a base handle still runs the base body. With it, the derived method *overrides*: the call runs the derived body whatever the handle's declared type.
+
+```{.systemverilog include="examples/ch06-oop-testbench-design/extends-chain/tb_extends.sv"}
+```
+
+```{.text include="examples/ch06-oop-testbench-design/extends-chain/run.out"}
+```
+
+Through `p`, the base handle, `describe` runs the base body and prints no code, while `tag` runs the derived body: the first was hidden and the second overridden, and the only difference between them in the source is one word.
 
 ## What `virtual` changes {#sec-ch06-virtual}
 
-*The reader can predict, for a call through a base handle, which body runs with and without `virtual`; can explain the template-method shape — a base algorithm calling virtual steps — and why it is the one shape a testbench cannot do without; and can say what happens when a virtual method is called from a base-class constructor, and why the answer is "don't". (Part A §2, §6; Part C's dispatch rows. Definition callout. Pitfall: the sixteen cells.)*
+::: {.callout-note title="Definition"}
+A **virtual method** is dispatched on the run-time class of the object, not on the declared class of the handle. A call through a base handle to a virtual method runs the most-derived override the object has. A call to a non-virtual method runs the body the handle's declared class sees [@ieee1800-2023].
+:::
+
+That one rule is what lets a testbench be written *once*. A driver's loop — reset, get a transaction, drive it, repeat — is the same for every protocol; what one transaction looks like on the wires is not. Put the loop in a base class as an ordinary method, put the per-transaction step in the same class as a virtual method with a default body, and a derived driver changes the step without touching the loop. Gamma and colleagues call this shape the template method [@gamma1994patterns]; a verification engineer meets it before knowing its name, because it is how a UVM component's phases work — `run_phase` and its siblings are virtual methods the library calls and the user overrides [@uvm-core-component] — and it is the shape of OpenTitan's base driver, whose `run_phase` forks a reset handler and a get-and-drive loop that its derived drivers fill in [@opentitan-dv-lib].
+
+```{.systemverilog include="examples/ch06-oop-testbench-design/template-method/tb_template.sv"}
+```
+
+```{.text include="examples/ch06-oop-testbench-design/template-method/run.out"}
+```
+
+The derived handle is the only handle in that file, and the event-driven simulator still ran the base's step, because the call to `step` is made from base-class code and that tool binds every call to the class whose code makes it. The template method is the shape that tool gets wrong even when no base handle appears anywhere.
+
+::: {.callout-warning title="Pitfall"}
+One more shape, wrong on both tools and worth avoiding on any: a virtual method called from the *base* class's constructor. The derived part of the object has not been constructed when the base constructor runs, so whatever an override reads there is not yet set. Both of this book's simulators run the base body in that case; the standard's text on the point was not consulted for this book, and the guidance does not need it: do not call a virtual method from a constructor.
+:::
 
 ## Abstract classes and interface classes {#sec-ch06-abstract}
 
-*The reader can declare a `virtual class` with pure virtual methods and an `interface class` a class `implements`, and can choose between them by the one difference that matters: a class extends one base and implements many interfaces. (Part A §3.)*
+Sometimes the base class has no sensible default for a step — a shape has no area until it is a particular shape — and the honest declaration is a `pure virtual` method: a promise every concrete subclass must keep, in a class that cannot itself be constructed, which is what `virtual class` declares. An `interface class` is the same promise with nothing else: no data, no bodies, only method signatures, and a class `implements` as many of them as it likes while it `extends` exactly one base [@ieee1800-2023].
+
+```{.systemverilog include="examples/ch06-oop-testbench-design/abstract-interface/tb_abstract.sv"}
+```
+
+```{.text include="examples/ch06-oop-testbench-design/abstract-interface/run.out"}
+```
+
+The choice between them is that one difference. Extend a base for shared state and shared code; implement an interface class for a shared contract that unrelated classes can each keep. A scoreboard that can compare anything printable does not care what else the thing is.
+
+::: {.callout-tip title="In Practice"}
+UVM's base object declares `create` and `get_type_name` as promises in its documentation and gives them default bodies in its source: the contract is a convention the registration macros satisfy, not a `pure virtual` the compiler enforces [@uvm-core-object]. That is the pattern to expect in a library that predates interface classes, and the reason a class that forgets its registration macro compiles and then fails at run time.
+:::
 
 ## Casting down, copying across {#sec-ch06-cast-copy}
 
-*The reader can up-cast implicitly, down-cast with `$cast` and read its return, and can write a `clone` that is a virtual method constructing its own class — and can explain why `new src` through a base handle is not a polymorphic copy on the simulator this book measures, and which release fixed it. (Part A §4–§5; Part C's copy rows; Verilator issue #7105. Pitfall.)*
+Assigning a derived handle to a base handle needs no cast, because the object is a base object and more. Going the other way asks a question the compiler cannot answer — is the object behind this base handle really one of those? — so `$cast` asks it at run time, and answers no by returning zero and leaving the target handle untouched [@ieee1800-2023].
+
+Copying is where the type is lost. `new src` copies the object *the handle's declared type says is there*; on the simulator this book measures, a base handle holding a derived object yields a base object, and a virtual call on the copy runs the base body [@verilator-issue-7105]. The fix landed in Verilator's 5.046 release, sixteen months after the 5.030 this book runs [@verilator-changes]. A copy that keeps its type is a virtual method that constructs its own class — every override of `clone` calls its own `new` — which is what UVM's `clone` does, calling `create` to construct the right class and then `copy` to fill it, with a virtual `do_copy` hook whose overrides must call `super.do_copy` so each level copies its own fields [@uvm-core-object].
+
+```{.systemverilog include="examples/ch06-oop-testbench-design/cast-clone/tb_cast_clone.sv"}
+```
+
+```{.text include="examples/ch06-oop-testbench-design/cast-clone/run.out"}
+```
+
+::: {.callout-warning title="Pitfall"}
+`new base` printed `packet` for an object that is an `error_packet`. Nothing warned. A scoreboard that stores copies made that way compares base fields only and never sees the error code; a test that passes on this tool and fails on a newer one has found the difference between a copy and a clone.
+:::
 
 ## Parameterized classes as a design tool {#sec-ch06-param}
 
-*The reader can read `box #(pkt)` as a type distinct from `box #(cmd)` and name the three consequences UVM and OpenTitan document: one static pool per specialization, create-by-wrapper-then-`$cast`, and no type name for name-based factory operations; and can say why OpenTitan's base driver cannot be abstract. (Part B §2. In Practice.)*
+A parameterized class is a family. `box #(int)` and `box #(string)` are not two views of one class but two classes, each its own type, each with its own static members and its own place in the hierarchy [@ieee1800-2023].
+
+```{.systemverilog include="examples/ch06-oop-testbench-design/param-classes/tb_param.sv"}
+```
+
+```{.text include="examples/ch06-oop-testbench-design/param-classes/run.out"}
+```
+
+Two specializations, two counters. That rule is what makes typed composition possible — a driver parameterized by its transaction type holds a `T` and not a base handle, and the compiler checks every use — and it has three consequences a UVM testbench meets. A configuration database parameterized by type keeps one pool per specialization, which is why a value set through `uvm_config_db #(int)` is not found by a read through `uvm_config_db #(bit [31:0])`, and why lowRISC's guide restricts what may pass through it [@accellera2015uvmref; @lowrisc-dv-style]. A factory that creates by type must create the base specialization and `$cast` the result, which is the idiom in OpenTitan's base test [@opentitan-dv-base-test]. And the registration macro for a parameterized class registers no type *name*, so the operations that find a class by its name string — a test selected on the command line, an override by name — cannot see it [@accellera2015uvmref].
+
+::: {.callout-tip title="In Practice"}
+OpenTitan's base driver is parameterized by its transaction and configuration types, and its own source says it would make more sense as an abstract class but cannot be one: a type parameter's default must be a concrete class the compiler can instantiate [@opentitan-dv-lib]. That is the cost of the family in one sentence, and it is paid knowingly.
+:::
 
 ## One idea, five patterns {#sec-ch06-patterns}
 
-*The reader can state the idea — a base class fixes an algorithm and leaves named holes — and name the hole each pattern fills: which class (factory), what a step does (strategy, template method), knob values (configuration object), behavior in a component the test does not own (callback). For each, the reader can open the file in OpenTitan or UVM where it lives. (Part B §3–§8. In Practice callouts pointing at `dv_base_driver::run_phase`, `uvm_policy`, `uvm_coreservice_t`.)*
+The patterns a testbench is built from have names — factory, strategy, template method, singleton, callback [@gamma1994patterns] — and one idea under all of them. A base class fixes an algorithm and leaves named holes, and a test fills a hole without editing the algorithm. What differs is which hole:
+
+- **Which class** to construct: the *factory*. The environment asks for an object by a base type and gets whatever the test substituted. UVM's factory does this by type and by name, with overrides that a test installs before the environment builds [@accellera2015uvmug].
+- **What a step does**: the *template method* above, and its cousin the *strategy*, where the step is a separate object handed in rather than a method overridden. UVM's comparison, copy and print policies are strategies passed as arguments [@accellera2015uvmref].
+- **Knob values**: a *configuration object* the environment reads and the test writes.
+- **Behavior in a component the test does not own**: a *callback*, a hook object the component calls at a named point, so a test adds a check to a driver it cannot subclass because someone else's test already did.
+- **One of something**: the *singleton* — a root, a resource database — reached through a static `get()`.
+
+Every one of those is visible in code the reader can open: the driver's `run_phase` in OpenTitan's DV library is the template method, five lines long, with its mandatory and optional hooks named in the header comment [@opentitan-dv-lib]; UVM's core-service object is the singleton, with a setter that is the seam a test uses to substitute one [@uvm-core]. The worked example below builds all of them on one FIFO.
 
 ### The singleton, and what it costs
 
-*The reader can say why a root and a resource database are singletons, and what the substitution seam costs a test that wants two of them. (Part B §7.)*
+A testbench has one root and one configuration database because a component asks for them without being told where they are. The price is the one everything global costs: a test that wants two environments with two databases has to unpick a decision the library made once. UVM's core service exists to make that substitution possible without editing the library [@uvm-core]; a testbench that reaches the database directly has given the option away.
 
 ## When a subclass is not a subtype {#sec-ch06-lsp}
 
-*The reader can state the substitution property in verification terms — an object of the derived class must be usable wherever the base is expected — and can tell an override that keeps it (adding a constraint) from one that breaks it (loosening one, or a `do_compare` that skips `super`), which the factory will substitute without complaint. (Part B §9; Liskov 1987, the UVM factory's precondition, lowRISC's rule.)*
+Inheritance lets a derived object stand in for a base one wherever the base is expected. Whether it *should* is a different question, and Liskov's formulation is the one to carry: an object of the derived type must be usable wherever an object of the base type is, without the program that uses it being able to tell the difference [@liskov1987hierarchy]. In verification terms, a derived transaction must still be a legal transaction. Adding a constraint keeps that — every randomized instance the derived class produces is one the base class could have produced. Loosening a constraint breaks it, and so does an override of a comparison that forgets to call `super`, because the base's fields are no longer compared. The factory will substitute either kind without complaint: UVM's requirement is that the override be polymorphically compatible with the original, which is a statement about types, not about contracts [@accellera2015uvmref]; lowRISC's rule that a derived sequence item must still result in a legal transaction when randomized is the contract stated for one class of object [@lowrisc-dv-style].
+
+::: {.callout-warning title="Pitfall"}
+Deep hierarchies fail this test by accumulation: each level's override of `do_compare` or `do_copy` that forgets `super` drops one level's fields, and nothing reports it. The advice against inheriting for code reuse rather than for substitution is not specific to this language — a widely used style guide says to prefer composition and to keep inheritance for the case where the derived object *is* one of the base [@google-cpp-style] — and a transaction class is the place a testbench most often ignores it.
+:::
 
 ## What runs where {#sec-ch06-tools}
 
-*The reader can look up, for every construct in the chapter, what each simulator does with it — 51 rows, measured — and can read the catalog of silent wrong results as a list of the tests a tool cannot be trusted to run. (Part C. `@tbl-ch06-support`, regenerated from the probes on every run, as Chapter 5's is.)*
+The table below is @sec-ch05-tools's table for this chapter's constructs: one probe per row, run under both simulators with the flags the book's build uses, a row saying *runs* only if the probe printed the values it expected. It is regenerated on every build by the same runner Chapter 5 ships, with this chapter's probes.
+
+{{< include /examples/ch06-oop-testbench-design/support-matrix/matrix.md >}}
+
+Two columns of it are the chapter's argument. Every virtual-dispatch row is *wrong* under Icarus — through a base handle, through a property, through an argument, inside a fork, across a level that does not override, from a base method, and with the override declared without the keyword — which is what a tool that ignores `virtual` looks like measured; its own tracker records the mechanism and a comment that virtual methods would need changes in its runtime as well [@icarus-issue-421; @icarus-issue-292]. A class-handle `$cast` was proposed and closed without merging [@icarus-pr-1447]; the assignment of a derived handle to a base one is a still-open issue there, though the release this book runs elaborated it [@icarus-issue-422]. And Verilator, which runs every other row, has the one `new src` cell and the constructor-time call, both discussed above.
+
+::: {.callout-tip title="In Practice"}
+Composition is the row a reader will not think to look up. A method called through a handle-typed property — `env.drv.run()`, the ordinary shape of every environment ever written — does not compile on the event-driven tool, so the worked example below cannot run there at all, and the chapter says so rather than showing three silent passes. A parser that accepts the whole language elaborates every probe in this table without complaint, which is the lint pass @sec-ch05-tools recommended and the reason it is not a simulator.
+:::
 
 ## Worked example: one environment, three tests {#sec-ch06-example}
 
-*The reader can trace how one environment for the Chapter 1 FIFO — a base driver with a template-method `run`, a base transaction, a scoreboard — is driven three ways by three tests that override one hook each: a factory override substituting a derived transaction with an added constraint, a strategy override changing what a driver step does, and a callback adding a check the test does not own. The environment file never changes. Runs on Verilator; the same three tests on Icarus print the base behavior for all three, in silence. (Worked Example callout.)*
+::: {.callout-note title="Worked Example"}
+An environment for the FIFO of @sec-ch01, written once: a transaction with a virtual contract, a factory, a callback hook, a driver whose `run` is a template method with a strategy hook, and a scoreboard. Three tests each fill one hole — the factory substitutes a derived transaction with a stricter contract, the strategy overrides one step, the callback attaches a count the driver knows nothing about — and the environment file is never edited.
+:::
+
+The environment. Each class has one hole, and the comment at the top names it:
+
+```{.systemverilog include="examples/ch06-oop-testbench-design/fifo-env/env.sv"}
+```
+
+The three tests, each a derived class that fills one hole. The even packet is a subtype in Liskov's sense: everything it produces is a legal packet, and its `legal` is stricter, not looser:
+
+```{.systemverilog include="examples/ch06-oop-testbench-design/fifo-env/tests.sv"}
+```
+
+The testbench builds the environment once and runs each test by choosing which maker, which driver and which callback to construct:
+
+```{.systemverilog include="examples/ch06-oop-testbench-design/fifo-env/tb_fifo_env.sv"}
+```
+
+```{.text include="examples/ch06-oop-testbench-design/fifo-env/run.out"}
+```
+
+Three tests, three holes, zero edits to the environment, and the callback's count is evidence the third test collected from a driver it never subclassed. Read the strategy test's line once more: it inverted every packet's kind before sending, and the scoreboard still reports zero errors — because the scoreboard compares against what the driver *sent*, which the hook changed too. Whether that is what the test meant is a question about the test, and this chapter's next-to-last section is where the answer comes from.
 
 ::: {.callout-important title="Future Directions"}
-*The reader can say why the substitution property is the thing a program can check about generated test code: an agent that derives a transaction class can be asked, mechanically, whether the derived class still randomizes to a legal transaction and still compares through `super` — and why the sixteen silent cells are a specification of what such an agent must refuse to emit for a flow on that tool.*
+The substitution property is the thing a program can check about generated test code. An agent that derives a transaction class can be asked, mechanically, whether the derived class still randomizes to a legal transaction and whether its overrides still call `super`; a parser that elaborates the whole language can answer the first for any constraint set and the second by reading the override. And the *wrong* cells in the table above are a specification: for a flow that runs on that tool, they are the constructs an agent must refuse to emit, because a testbench that uses them there will report success for tests it did not run. The tool-layer appendix develops both.
 :::
 
 ## Summary
 
-*One bullet per section.*
+- A derived constructor reaches the base's first: `super.new` as the first statement, none at all when the `extends` clause carries the arguments, an implicit no-argument call otherwise.
+- Without `virtual` a redeclared method hides; with it, it overrides, and a call dispatches on the object rather than the handle. The template method — a base algorithm calling virtual steps — is what that rule is for.
+- Do not call a virtual method from a constructor.
+- Extend one base for shared state and code; implement any number of interface classes for a shared contract.
+- `$cast` answers the down-cast question at run time and says no with a zero. `new src` copies the handle's declared type on this book's Verilator; a clone is a virtual method that constructs its own class.
+- Every specialization of a parameterized class is a distinct type, with its own statics, its own factory registration and its own configuration pool.
+- One idea under five patterns: a base class fixes an algorithm and leaves named holes — which class, what a step does, knob values, behavior in a component the test does not own, one of something.
+- A subclass is a subtype when it can stand in for the base without the program telling; stricter constraints keep that, looser ones and forgotten `super` calls break it, and the factory cannot tell the difference.
+- The event-driven simulator ignores `virtual` and refuses composition; this chapter's examples run on Verilator, and the table says which cells are silently wrong on each.
 
 ## Exercises
 
-*Six, in the Exercise callout:*
-1. *Remove `virtual` from the worked example's hook and run it on both simulators; explain why the outputs now agree, and why that is worse.*
-2. *Write a second derived transaction that loosens the base constraint; show that the factory substitutes it and the scoreboard does not object; then make the scoreboard object.*
-3. *Replace the `clone` method with `new src` and find the test that breaks on the book's Verilator; say which release fixes it.*
-4. *Give `box #(pkt)` a static counter and show, with two specializations, that there are two counters.*
-5. *Turn one test's strategy override into a callback and say what the environment had to expose for it.*
-6. *Add a row to the support table for a construct not in it, with its probe, and classify it.*
+::: {.callout-note title="Exercise"}
+1. Remove `virtual` from the template method's `step` and run the example on both simulators. Explain why the outputs now agree, and why that is worse.
+2. Write a second derived packet whose `legal` is *looser* than the base's. Show that the factory substitutes it and the scoreboard reports zero errors; then change the scoreboard so that it objects.
+3. Replace `clone` in the cast-and-clone example with `new src` throughout and find the line of output that changes. Say which Verilator release would change it back.
+4. Give `box #(T)` a static queue of every value ever boxed and show, with two specializations, that there are two queues.
+5. Turn the strategy test into a callback: what did the environment have to expose, and what could the callback no longer do?
+6. Add a row to the support table for a construct not in it — a virtual method with a default argument, say — with its probe, and classify it.
+:::
 
 ## Further reading
 
-*Spear & Tumbush's advanced-OOP chapter (by title); the UVM 1.2 user guide and class reference for the factory and policies; Liskov (1987); the lowRISC DV style guide; the Icarus tracker records that state what the tool ignores; Verilator's `Changes` for what 5.046 fixed.*
-
-## Planned examples
-
-Directory `examples/ch06-oop-testbench-design/`. Every example runs on Verilator; the ones marked *both* also run on Icarus through a `run_both.sh`, to show its answer beside Verilator's.
-
-- `three-handles/` (SystemVerilog, **both**) — the motivating bug: one leaf object, three handles, `virtual` present; Verilator prints one answer three times, Icarus prints three.
-- `extends-chain/` (SystemVerilog, both) — `super.new` chaining, explicit and implicit, and hiding versus overriding.
-- `template-method/` (SystemVerilog, both) — a base `run` calling virtual steps; correct on Verilator, base steps on Icarus.
-- `abstract-interface/` (SystemVerilog, Verilator) — a `virtual class` with a pure virtual method and an `interface class` implemented twice.
-- `cast-clone/` (SystemVerilog, Verilator) — `$cast` down with success and failure; `clone` as a virtual constructor versus `new src`.
-- `param-classes/` (SystemVerilog, Verilator) — two specializations, two static counters; `$cast` between specializations fails.
-- `fifo-env/` (SystemVerilog, Verilator; Icarus lines through `run_both.sh`) — the worked example: environment, three tests, one hook each.
-- `support-matrix/` (Python, both) — the 51-probe runner from Part C, regenerating `@tbl-ch06-support`.
-
-## Sources
-
-- `research/ch06-oop-testbench-design.md` — Part A (inheritance, dispatch, abstract and interface classes, cast, copy), Part B (parameterized classes, the patterns, substitutability, the Python track), Part C (the measured matrix and the catalog of silent wrong results).
-- `research/ch05-testbench-language.md` Part B — the Chapter 5 / Chapter 6 line.
-- `refs.bib`, existing: `ieee1800-2023`, `spear2012svfv`, `sutherland2006gotchas`, `lowrisc-dv-style`, `verilator-languages`, `verilator-changes`, `icarus-quirks`, `opentitan-tl-if`.
-- `refs.bib`, to add at drafting from the note's Key sources: Icarus issues #421, #292, #422, PRs #469, #1447, #1416; Verilator issue #7105; UVM 1.2 user guide and class reference; IEEE 1800.2-2020; Liskov 1987; Gamma et al. by edition; OpenTitan `dv_base_driver.sv`, `dv_base_test.sv`, `tl_seq_item.sv`; UVM `uvm_object.svh`, `uvm_factory.svh`, `uvm_coreservice.svh`.
-- Escalated to the author before drafting: (1) the note reads a lowRISC style rule as contradicted by OpenTitan's own base classes — a claim about a named project that the chapter will not make unless the author confirms it; (2) IEEE 1800-2023 §8.7/§8.20 text (constructor-time dispatch; `new` copies the source's type) is unread, so the chapter says "don't" rather than what the standard requires.
+Spear and Tumbush's chapter titled "Advanced OOP and Testbench Guidelines" is the standard text's treatment of inheritance in a testbench [@spear2012svfv]. Gamma, Helm, Johnson and Vlissides is where the pattern names come from, and the book to read for the idea under them [@gamma1994patterns]. Liskov's 1987 keynote is the source of the substitution property, in her words [@liskov1987hierarchy]. The UVM 1.2 user guide and class reference are where the factory, the policies and the phases are specified for the library Part III uses [@accellera2015uvmug; @accellera2015uvmref], and the lowRISC DV style guide is a production statement of how they are used [@lowrisc-dv-style]. For what the two open simulators do, the Icarus tracker records what the tool ignores [@icarus-issue-421] and Verilator's change log records what 5.046 fixed [@verilator-changes]; the table above is the measurement of both.

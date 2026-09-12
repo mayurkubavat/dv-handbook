@@ -1,6 +1,6 @@
 {
-  "checked": "2026-09-12T04:37:49Z",
-  "pass": 28,
+  "checked": "2026-09-12T17:52:31Z",
+  "pass": 36,
   "fail": 0,
   "skipped_run": 2,
   "examples": [
@@ -195,6 +195,62 @@
     },
     {
       "dir": "examples/ch05-testbench-language/twostate-reset",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch06-oop-testbench-design/abstract-interface",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch06-oop-testbench-design/cast-clone",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch06-oop-testbench-design/extends-chain",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch06-oop-testbench-design/fifo-env",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch06-oop-testbench-design/param-classes",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch06-oop-testbench-design/support-matrix",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch06-oop-testbench-design/template-method",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch06-oop-testbench-design/three-handles",
       "lint": "pass",
       "run": "pass",
       "requires": "",

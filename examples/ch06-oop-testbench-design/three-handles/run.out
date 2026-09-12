@@ -1,0 +1,5 @@
+--- event-driven simulator
+sides via a=0 b=99 c=3  (one object, three handles)
+--- statically scheduled simulator
+sides via a=3 b=3 c=3  (one object, three handles)
+verdict: the simulators disagree on one virtual call

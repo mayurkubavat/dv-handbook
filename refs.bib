@@ -1927,3 +1927,253 @@
   note         = {Holds one \texttt{mem\_model} per memory, keyed by name.
                   Apache-2.0. Accessed 2026-09-11}
 }
+
+% --- Chapter 6: object-oriented testbench design ----------------------
+@misc{icarus-issue-421,
+  author       = {{Icarus Verilog contributors}},
+  title        = {{SV}: abstract class not working as expected},
+  howpublished = {GitHub, steveicarus/iverilog, issue 421},
+  year         = {2020},
+  url          = {https://github.com/steveicarus/iverilog/issues/421},
+  note         = {Opened 2020-12-13, closed 2022-12-17. The maintainer's
+                  comment of 2020-12-14 records that the virtual keyword
+                  is accepted by the parser but otherwise ignored, for
+                  classes and for methods. Accessed 2026-09-11}
+}
+
+@misc{icarus-issue-292,
+  author       = {{Icarus Verilog contributors}},
+  title        = {Issue in calling class methods},
+  howpublished = {GitHub, steveicarus/iverilog, issue 292},
+  year         = {2019},
+  url          = {https://github.com/steveicarus/iverilog/issues/292},
+  note         = {Open since 2019-12-27; the comment of 2023-01-16 records
+                  that virtual-method support requires changes in vvp.
+                  Accessed 2026-09-11}
+}
+
+@misc{icarus-issue-422,
+  author       = {{Icarus Verilog contributors}},
+  title        = {{SV}: issue with type compatibility across inheritance
+                  tree},
+  howpublished = {GitHub, steveicarus/iverilog, issue 422},
+  year         = {2020},
+  url          = {https://github.com/steveicarus/iverilog/issues/422},
+  note         = {Opened 2020-12-13; open as of 2026-09-11. Base-handle
+                  assignment from a derived handle rejected; maintainer
+                  comment: no support for polymorphism. Accessed
+                  2026-09-11}
+}
+
+@misc{icarus-pr-469,
+  author       = {Srinivasan Venkataramanan},
+  title        = {Added parse-only support for pure virtual methods},
+  howpublished = {GitHub, steveicarus/iverilog, pull request 469},
+  year         = {2021},
+  url          = {https://github.com/steveicarus/iverilog/pull/469},
+  note         = {Opened 2021-01-04; open and unmerged as of 2026-09-11.
+                  Accessed 2026-09-11}
+}
+
+@misc{icarus-pr-1447,
+  author       = {{Icarus Verilog contributors}},
+  title        = {{SV}: class-handle \$cast and static \$typename},
+  howpublished = {GitHub, steveicarus/iverilog, pull request 1447},
+  year         = {2026},
+  url          = {https://github.com/steveicarus/iverilog/pull/1447},
+  note         = {Closed unmerged 2026-07-21. Accessed 2026-09-11}
+}
+
+@misc{icarus-pr-1416,
+  author       = {{Icarus Verilog contributors}},
+  title        = {{SV}: class queue/darray property foundation},
+  howpublished = {GitHub, steveicarus/iverilog, pull request 1416},
+  year         = {2026},
+  url          = {https://github.com/steveicarus/iverilog/pull/1416},
+  note         = {Merged 2026-07-12, after the v13.0 tag of 2026-03-02.
+                  Accessed 2026-09-11}
+}
+
+@misc{verilator-issue-7105,
+  author       = {{Verilator contributors}},
+  title        = {Fix new <obj> shallow copy not preserving polymorphic
+                  runtime type},
+  howpublished = {GitHub, verilator/verilator, issue 7105},
+  year         = {2026},
+  url          = {https://github.com/verilator/verilator/issues/7105},
+  note         = {Opened 2026-02-19; fix released in Verilator 5.046,
+                  2026-02-28. Accessed 2026-09-11}
+}
+
+@misc{uvm-core-object,
+  author       = {{Accellera Systems Initiative}},
+  title        = {{UVM} core library: \texttt{uvm\_object}
+                  (\texttt{src/base/uvm\_object.svh})},
+  howpublished = {GitHub, accellera-official/uvm-core},
+  year         = {2026},
+  url          = {https://github.com/accellera-official/uvm-core/blob/main/src/base/uvm_object.svh},
+  note         = {Implementation of IEEE 1800.2-2020; \texttt{copy},
+                  \texttt{do\_copy}, \texttt{clone} documentation and
+                  bodies. Apache-2.0. Accessed 2026-09-11}
+}
+
+@misc{uvm-core-component,
+  author       = {{Accellera Systems Initiative}},
+  title        = {{UVM} core library: \texttt{uvm\_component}
+                  (\texttt{src/base/uvm\_component.svh})},
+  howpublished = {GitHub, accellera-official/uvm-core},
+  year         = {2026},
+  url          = {https://github.com/accellera-official/uvm-core/blob/main/src/base/uvm_component.svh},
+  note         = {Virtual phase methods and the rule that overrides call
+                  \texttt{super}. Apache-2.0. Accessed 2026-09-11}
+}
+
+@misc{uvm-core,
+  author       = {{Accellera Systems Initiative}},
+  title        = {{UVM} Core Library ({uvm-core}), {IEEE} 1800.2-2020 reference implementation},
+  howpublished = {GitHub, accellera-official/uvm-core},
+  year         = {2026},
+  url          = {https://github.com/accellera-official/uvm-core},
+  note         = {Apache-2.0. Files cited: src/base/uvm\_factory.svh,
+                  uvm\_registry.svh, uvm\_object.svh, uvm\_policy.svh,
+                  uvm\_callback.svh, uvm\_component.svh, uvm\_root.svh,
+                  uvm\_coreservice.svh, uvm\_config\_db.svh,
+                  src/comps/uvm\_driver.svh, src/seq/uvm\_sequence\_base.svh,
+                  src/macros/uvm\_sequence\_defines.svh. Accessed 2026-09-11}
+}
+
+@misc{opentitan-tl-seq-item,
+  author       = {{lowRISC contributors (OpenTitan project)}},
+  title        = {{OpenTitan} \texttt{tl\_seq\_item}: the {TileLink}
+                  transaction class},
+  howpublished = {GitHub, lowRISC/opentitan,
+                  hw/dv/sv/tl\_agent/tl\_seq\_item.sv},
+  year         = {2026},
+  url          = {https://github.com/lowRISC/opentitan/blob/master/hw/dv/sv/tl_agent/tl_seq_item.sv},
+  note         = {Hand-written \texttt{do\_compare} with \$cast and
+                  \texttt{super}; field macros for copy. Apache-2.0.
+                  Accessed 2026-09-11}
+}
+
+@misc{opentitan-dv-base-test,
+  author       = {{lowRISC contributors (OpenTitan project)}},
+  title        = {{OpenTitan} \texttt{dv\_base\_test}},
+  howpublished = {GitHub, lowRISC/opentitan,
+                  hw/dv/sv/dv\_lib/dv\_base\_test.sv},
+  year         = {2026},
+  url          = {https://github.com/lowRISC/opentitan/blob/master/hw/dv/sv/dv_lib/dv_base_test.sv},
+  note         = {Factory-created configuration object down-cast with a
+                  fatal check. Apache-2.0. Accessed 2026-09-11}
+}
+
+@misc{opentitan-dv-lib,
+  author       = {{lowRISC contributors (OpenTitan project)}},
+  title        = {{OpenTitan} {DV} base library: \texttt{dv\_lib} and \texttt{dv\_base\_agent}},
+  howpublished = {GitHub, lowRISC/opentitan, hw/dv/sv/dv\_lib and hw/dv/sv/dv\_base\_agent},
+  year         = {2026},
+  url          = {https://github.com/lowRISC/opentitan/tree/master/hw/dv/sv/dv_lib},
+  note         = {Apache-2.0. Files cited: dv\_base\_env.sv, dv\_base\_test.sv,
+                  dv\_base\_scoreboard.sv, dv\_base\_vseq.sv,
+                  dv\_base\_agent/dv\_base\_agent.sv, dv\_base\_driver.sv.
+                  Accessed 2026-09-11}
+}
+
+@book{gamma1994patterns,
+  author    = {Erich Gamma and Richard Helm and Ralph Johnson and John Vlissides},
+  title     = {Design Patterns: Elements of Reusable Object-Oriented Software},
+  edition   = {1},
+  publisher = {Addison-Wesley},
+  address   = {Reading, MA},
+  year      = {1994},
+  isbn      = {978-0-201-63361-0},
+  url       = {https://www.informit.com/store/design-patterns-elements-of-reusable-object-oriented-9780201633610},
+  note      = {Cited by edition; publisher's record accessed 2026-09-11},
+  note = {Accessed 2026-09-11}
+}
+
+@misc{accellera2015uvmug,
+  author       = {{Accellera Systems Initiative}},
+  title        = {Universal Verification Methodology ({UVM}) 1.2 User's Guide},
+  howpublished = {Accellera},
+  year         = {2015},
+  url          = {https://www.accellera.org/images/downloads/standards/uvm/uvm_users_guide_1.2.pdf},
+  note         = {Dated 2015-10-08. Accessed 2026-09-11}
+}
+
+@misc{accellera2015uvmref,
+  author       = {{Accellera Systems Initiative}},
+  title        = {Universal Verification Methodology ({UVM}) 1.2 Class Reference},
+  howpublished = {Accellera},
+  year         = {2015},
+  url          = {https://www.accellera.org/images/downloads/standards/uvm/UVM_Class_Reference_Manual_1.2.pdf},
+  note         = {Accessed 2026-09-11}
+}
+
+@misc{ieee1800.2-2020,
+  author       = {{IEEE}},
+  title        = {{IEEE} Std 1800.2-2020, {IEEE} Standard for Universal
+                  Verification Methodology Language Reference Manual},
+  howpublished = {IEEE Standards Association},
+  year         = {2020},
+  url          = {https://standards.ieee.org/ieee/1800.2/7567/},
+  note         = {Approved 2020-06-04, published 2020-09-14. Available at no
+                  cost through the IEEE GET program courtesy of Accellera
+                  (\url{https://www.accellera.org/downloads/ieee}). Clause
+                  numbers in this note are those the uvm-core sources annotate
+                  (\texttt{@uvm-ieee 1800.2-2020 auto}); the text itself was
+                  not consulted. Accessed 2026-09-11}
+}
+
+@inproceedings{liskov1987hierarchy,
+  author    = {Barbara Liskov},
+  title     = {Data Abstraction and Hierarchy},
+  booktitle = {Addendum to the Proceedings on Object-Oriented Programming
+               Systems, Languages and Applications (OOPSLA '87 Addendum)},
+  publisher = {ACM},
+  year      = {1987},
+  pages     = {17--34},
+  doi       = {10.1145/62138.62141},
+  url       = {https://doi.org/10.1145/62138.62141},
+  note      = {Keynote address. Accessed 2026-09-11}
+}
+
+@misc{google-cpp-style,
+  author       = {{Google}},
+  title        = {Google {C++} Style Guide},
+  howpublished = {google.github.io/styleguide},
+  year         = {2026},
+  url          = {https://google.github.io/styleguide/cppguide.html#Inheritance},
+  note         = {Section ``Inheritance''. Accessed 2026-09-11}
+}
+
+@misc{cummings2012factory,
+  author       = {Clifford E. Cummings and Heath Chambers},
+  title        = {The {OVM/UVM} Factory \& Factory Overrides: How They Work --
+                  Why They Are Important},
+  howpublished = {SNUG Silicon Valley},
+  year         = {2012},
+  url          = {https://www.paradigm-works.com/papers/},
+  note         = {Listed in the authors' technical library (rev. 1.2,
+                  January 2013); text not consulted. Accessed 2026-09-11}
+}
+
+@misc{cocotb-bus,
+  author       = {{cocotb contributors}},
+  title        = {cocotb-bus: pre-packaged testbenching tools and reusable bus interfaces for cocotb},
+  howpublished = {GitHub, cocotb/cocotb-bus},
+  year         = {2026},
+  url          = {https://github.com/cocotb/cocotb-bus/blob/master/src/cocotb_bus/drivers/__init__.py},
+  note         = {BSD-3-Clause. Accessed 2026-09-11}
+}
+
+@misc{pyuvm,
+  author       = {Ray Salemi and {pyuvm contributors}},
+  title        = {pyuvm: the {UVM} written in Python},
+  howpublished = {GitHub, pyuvm/pyuvm},
+  year         = {2026},
+  url          = {https://github.com/pyuvm/pyuvm},
+  note         = {Files cited: README.md, src/pyuvm/\_s08\_factory\_classes.py,
+                  \_s05\_base\_classes.py, \_utility\_classes.py.
+                  Accessed 2026-09-11}
+}
+

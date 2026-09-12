@@ -1,0 +1,34 @@
+`extends` with an explicit `super.new(args)`   icarus: runs      verilator: runs
+`extends` with the implicit `super.new()`      icarus: runs      verilator: runs
+non-virtual method hidden, called through a base handle icarus: runs      verilator: runs
+virtual function through a base handle         icarus: wrong     verilator: runs
+virtual task through a base handle             icarus: wrong     verilator: runs
+virtual void function setting a property, base handle icarus: wrong     verilator: runs
+override calling `super.f()`, through a base handle icarus: wrong     verilator: runs
+virtual dispatch two levels deep, root and middle handles icarus: wrong     verilator: runs
+virtual call from a non-virtual base method (template) icarus: wrong     verilator: runs
+virtual dispatch across a level that does not override icarus: wrong     verilator: runs
+override declared without the `virtual` keyword icarus: wrong     verilator: runs
+virtual call through a base-typed property of another object icarus: no build  verilator: runs
+virtual call on a base-typed function argument icarus: wrong     verilator: runs
+virtual calls inside `fork ... join`           icarus: wrong     verilator: runs
+virtual method called from the base constructor icarus: wrong     verilator: wrong
+`virtual class` with a `pure virtual` method   icarus: no build  verilator: runs
+`interface class` and `implements`             icarus: no build  verilator: runs
+one class implementing two interface classes   icarus: no build  verilator: runs
+`$cast` down the hierarchy, matching object    icarus: no run    verilator: runs
+`$cast` down the hierarchy, mismatched object  icarus: no run    verilator: runs
+`new src` through a base handle holding a derived object icarus: no run    verilator: wrong
+`clone()` as a virtual method constructing its own class icarus: no build  verilator: runs
+parameterized class, type parameter            icarus: no build  verilator: runs
+parameterized class, value parameter           icarus: no build  verilator: runs
+parameterized class specialized twice          icarus: no build  verilator: runs
+class extending a specialized parameterized base icarus: no build  verilator: runs
+static member of a specialization              icarus: no build  verilator: runs
+queue of base handles, iterated with a virtual call icarus: no build  verilator: runs
+factory: static function returning a base handle icarus: no build  verilator: runs
+singleton: static handle and static `get()`    icarus: no build  verilator: runs
+callback hook object with a virtual method     icarus: no build  verilator: runs
+method called on a handle-typed property (composition) icarus: no build  verilator: runs
+handle identity: `==`, `!=`, `!= null`         icarus: no build  verilator: runs
+33 constructs: 3 run on both, 28 on Verilator only, 0 on Icarus only, 2 on neither

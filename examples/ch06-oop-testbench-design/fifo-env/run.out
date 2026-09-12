@@ -1,0 +1,4 @@
+factory   6 packets, 0 errors, last sent: all checked
+strategy  6 packets, 0 errors, last sent: all checked
+callback  6 packets, 0 errors, last sent: all checked
+          callback counted kinds: '{'h2, 'h2, 'h1, 'h1} 

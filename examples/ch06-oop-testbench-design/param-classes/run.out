@@ -1,0 +1,2 @@
+box#(int) made 3, box#(string) made 1
+int_box::made == box#(int)::made: 1

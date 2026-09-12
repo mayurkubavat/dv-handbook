@@ -1,0 +1,4 @@
+$cast(back, base) -> 1; back.code=500
+$cast(back, plain) -> 0; back still names id=1
+new base       -> tag packet
+base.clone()   -> tag error_packet

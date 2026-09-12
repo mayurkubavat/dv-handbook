@@ -15,6 +15,7 @@ book:
     - chapters/ch03-digital-design-for-verifiers.qmd
     - chapters/ch04-simulation-fundamentals.qmd
     - chapters/ch05-testbench-language.qmd
+    - chapters/ch06-oop-testbench-design.qmd
     - chapters/ch34-generative-ai-agentic-dv.qmd
     - references.qmd
   appendices:

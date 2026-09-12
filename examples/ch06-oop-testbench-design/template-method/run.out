@@ -1,0 +1,5 @@
+--- event-driven simulator
+total after run(4): 6  (doubling: 12; base: 6)
+--- statically scheduled simulator
+total after run(4): 12  (doubling: 12; base: 6)
+verdict: the simulators disagree on the template method

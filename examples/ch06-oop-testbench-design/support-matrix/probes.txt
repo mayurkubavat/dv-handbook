@@ -1,0 +1,36 @@
+# label | probe file. One line per row of the chapter's table.
+# Each probe uses one construct and as little else as possible, so that a
+# refusal is a refusal of that construct and not of something beside it.
+`extends` with an explicit `super.new(args)` | o01_super_new_explicit.sv
+`extends` with the implicit `super.new()` | o02_super_new_implicit.sv
+non-virtual method hidden, called through a base handle | o03_hide_nonvirtual.sv
+virtual function through a base handle | o04_virtual_function.sv
+virtual task through a base handle | o05_virtual_task.sv
+virtual void function setting a property, base handle | o06_virtual_void.sv
+override calling `super.f()`, through a base handle | o07_super_in_virtual.sv
+virtual dispatch two levels deep, root and middle handles | o08_virtual_two_levels.sv
+virtual call from a non-virtual base method (template) | o09_virtual_from_base_method.sv
+virtual dispatch across a level that does not override | o10_virtual_middle_gap.sv
+override declared without the `virtual` keyword | o27_override_without_virtual.sv
+virtual call through a base-typed property of another object | o38_virtual_handle_property.sv
+virtual call on a base-typed function argument | o39_virtual_arg_passed.sv
+virtual calls inside `fork ... join` | o24_virtual_in_fork.sv
+virtual method called from the base constructor | o26_virtual_from_ctor.sv
+`virtual class` with a `pure virtual` method | o11_pure_virtual.sv
+`interface class` and `implements` | o12_interface_class.sv
+one class implementing two interface classes | o13_implements_two.sv
+`$cast` down the hierarchy, matching object | o14_cast_success.sv
+`$cast` down the hierarchy, mismatched object | o15_cast_failure.sv
+`new src` through a base handle holding a derived object | o44_shallow_copy_polymorphic.sv
+`clone()` as a virtual method constructing its own class | o17_clone_convention.sv
+parameterized class, type parameter | o18_param_type.sv
+parameterized class, value parameter | o19_param_value.sv
+parameterized class specialized twice | o20_param_specialized_twice.sv
+class extending a specialized parameterized base | o21_param_base_class.sv
+static member of a specialization | o22_param_static_member.sv
+queue of base handles, iterated with a virtual call | o29_polymorphic_queue.sv
+factory: static function returning a base handle | o30_factory_static.sv
+singleton: static handle and static `get()` | o31_singleton.sv
+callback hook object with a virtual method | o34_callback_hook.sv
+method called on a handle-typed property (composition) | o41_method_call_on_property.sv
+handle identity: `==`, `!=`, `!= null` | o40_handle_equality.sv
