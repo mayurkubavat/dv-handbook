@@ -1282,7 +1282,7 @@ exited zero (measured, this note, Verilator 5.030 and Icarus 13.0,
 | Parameterized class `#(type T, int N)` (p14) | runs | **unsupported** (syntax error at `class fifo #(`) | — |
 | Inheritance with `extends`, `super.new` (p15, i15a) | runs | compiles | — |
 | **Virtual method called through a base handle** (j15a–h) | runs | **wrong result**: the base-class body runs in all six variants (int return, void, in a task, property-setting) | Icarus: related open issue on `base = derived` handle compatibility [#422, 2020-12-13](https://github.com/steveicarus/iverilog/issues/422) |
-| `$cast` to a derived handle (p15) | runs | **unsupported** (vvp: "System task/function $cast() is not defined") | Icarus: class-handle `$cast` PR open, unmerged [PR #1447](https://github.com/steveicarus/iverilog/pull/1447) |
+| `$cast` to a derived handle (p15) | runs | **unsupported** (vvp: "System task/function $cast() is not defined") | Icarus: class-handle `$cast` PR closed without merging on 2026-07-21 (correction recorded 2026-09-11 from the Chapter 6 research) [PR #1447](https://github.com/steveicarus/iverilog/pull/1447) |
 | Clocking block in an interface: `@(b.cb)`, `cb.sig <=`, sampled `cb.in` (p16) | runs (lint: `UNDRIVEN` on the interface signal driven through a module port) | **unsupported** ("Invalid module item" at `clocking`) | Verilator manual does not mention clocking blocks; Changes 5.028 "Support clocking blocks in virtual interfaces" |
 | `modport tb (clocking cb)` (p16 first form) | **unsupported** (`%Error-UNSUPPORTED: Modport clocking`) | (not reached) | — |
 | `program` block driving a DUT (p17) | runs | runs | Verilator lists `program` as supported; Icarus ships `program*.v` tests |
