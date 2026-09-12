@@ -1,5 +1,5 @@
 # Chapter 6: the support matrix, regenerated from the probes on every run.
-# Runs every probe under both simulators; about three minutes.
+# Runs every probe under both simulators; about a minute.
 EXAMPLE_LANG := python
 TOP          := matrix.py
 SOURCES      := matrix.py
