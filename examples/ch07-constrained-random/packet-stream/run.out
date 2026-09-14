@@ -1,0 +1,4 @@
+seed 3: 64 packets, 0 errors; kinds 0:34 1:24 2:6 3:0
+seed 4: 64 packets, 0 errors; kinds 0:38 1:15 2:11 3:0
+seed 3: 64 packets, 0 errors; kinds 0:34 1:24 2:6 3:0
+verdict: every packet checked; the mix follows the seed

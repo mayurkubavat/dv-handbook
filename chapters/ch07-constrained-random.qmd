@@ -1,82 +1,213 @@
-<!-- OUTLINE: not yet approved -->
 # Constrained-Random Stimulus {#sec-ch07}
 
-*Epigraph, then the "Learning objectives" note: after this chapter you can write a class whose stimulus is drawn by `randomize()` under constraints, check every call, say what a solver promises and what it does not, measure a distribution instead of trusting it, and reproduce any run from its seed.*
+*A constraint names a set; a solver picks from it; only a measurement says what was picked.*
+
+::: {.callout-note title="Learning objectives"}
+After this chapter you can write a class whose stimulus is drawn by `randomize()` under constraints and check every call; write each constraint form and name the three arithmetic mistakes that make one silently weak; say what a constraint solver promises and what it does not, and measure a distribution instead of trusting it; reproduce a run from its seed on the simulator that produced it and say which code changes leave a sequence alone; and read the chapter's support table to choose which tool runs which example.
+:::
 
 ## The constraint was right and the stimulus was wrong
 
-*The reader can state why a `randomize()` that compiled and returned 1 proves nothing about what stimulus was generated. Opens with a documented case from an open simulator's own tracker: a value constrained to `0..2^16` whose low bits almost never came out set, found by coverage, fixed by changing the sampler and not the constraint [@verilator-issue-8024; @verilator-pr8042]. The chapter's thesis in one paragraph: constraints describe a legal set, a solver picks from it, and only measurement tells you what was picked.*
+In May 2026 the maintainer of an open simulator filed a bug against its own constraint solver: a constraint limiting a value to `0...1<<16` "nearly never produces all lower 16 bits getting set" [@verilator-issue-7563]. The constraint was correct. Every value the solver returned satisfied it. `randomize()` returned 1 every time. What was wrong was the *distribution*: the fix's description explains that "An SMT solver returns _some_ satisfying model, not a uniform one: for `value < 2^N` it keeps returning the boundary value `K-1`, so the free bits read the same pattern on every `randomize()`", and its reproducer measured the low bits set in 65–90% of trials where about 50% was expected [@verilator-pr-7684]. Nothing in the language had been violated. The test that found it was a coverage measurement, not a failing check.
+
+That is the whole chapter in one bug. A constraint describes a legal set of values. A solver returns members of that set, and the standard leaves it free to return any of them. What stimulus a test actually generated is therefore a fact about the tool, the release and the seed, and the only way to know it is to count. Every listing in this chapter prints a count beside its constraint, and the worked example ends with a histogram, because a mix that was asked for is a mix to be measured.
 
 ## Why randomize at all {#sec-ch07-why}
 
-*The reader can say what constrained-random stimulus buys over directed tests, what it costs (a checker and coverage, because the test no longer knows the answer), and why the evidence for it is methodological rather than measured. The directed-versus-random argument as the methodology books state it, cited by edition [@bergeron2006testbenches; @bergeron2005vmm]; the honest note that no controlled study of effectiveness was found, so the chapter does not print a number. Links back to Chapter 1's seeded FIFO failure and forward to coverage in Part II.*
+A directed test knows the answer before it runs. It writes a fixed sequence, and its check is the sequence's known consequence. Chapter 1's directed FIFO test was one such: it wrote eight entries and read them back, and it passed, on a design with a bug in it (@sec-ch01-example). The random test in the same section found the bug at the twenty-eighth cycle, because it did something the directed test's author had not thought to do — write and read at once, with the queue near full — and because it carried a *reference model* against which every observation was checked.
+
+Those are the two halves of the trade. Random stimulus reaches states nobody enumerated, which is the point; and because the test no longer knows the answer, something else has to. That something is a checker — a scoreboard, a model, an assertion — plus a way of knowing what the random stimulus actually covered, which is the subject of Part II's coverage chapters. Constrained-random verification is the name for the method that pairs the two, and the constraints are what keep the random stimulus inside the design's legal envelope so that every draw is a valid transaction rather than a rejected one.
+
+The book's methodology sources argue for this method at length, and their argument is a methodological one rather than a measured one: the standard works on the subject describe the practice and its rationale, and are listed under further reading, but no controlled study of constrained-random effectiveness against directed testing was found in the course of writing this chapter, so the chapter prints no number for it. What it can show is mechanism: how a constraint is written, what a solver does with it, and what a test must do to know what it got.
 
 ## The randomization methods {#sec-ch07-methods}
 
-*The reader can declare `rand` and `randc` members, call `randomize()` and `randomize() with`, use `pre_randomize`/`post_randomize`, randomize one member or a scope variable with `std::randomize`, and check every call. The first Pitfall is silent failure: on 0 the call changes nothing, the only symptom is stale values, and an ignored return value forces a `void'` cast that hides it [@sutherland2007gotchas; @yehia2014crgotchas]; the In Practice box is the macro a production library wraps every call in [@opentitan-dv-lib; @lowrisc-dv-style]. `randc` is presented as a per-variable promise for small exhaustive enumerations and nothing more [@yehia2014crgotchas].*
+A class member declared `rand` is a variable the class's `randomize()` method will assign; one declared `randc` is assigned too, and cycles through every value of its range before repeating one. `randomize()` solves the class's constraint blocks and the inline constraint of a `randomize() with { ... }` call together, assigns every `rand` and `randc` member a value that satisfies them, and returns 1. If no assignment satisfies them it returns 0 [@ieee1800-2023]. The 2007 gotchas paper states the consequence in five words: on failure "the variables are not randomized" [@sutherland2007gotchas]. Yehia's 2014 catalog adds that the attempt is atomic, all-or-none — no random variable is updated when any constraint fails — and that an ignored return value forces a `void'()` cast, which is exactly what hides the failure [@yehia2014crgotchas].
+
+```{.systemverilog include="examples/ch07-constrained-random/randomize-check/tb_randomize_check.sv"}
+```
+
+```{.text include="examples/ch07-constrained-random/randomize-check/run.out"}
+```
+
+The first call is legal and picks a value in the set. The second adds an inline constraint that no value can satisfy together with the class's own: the call returns 0, and `len` is still 54, the value from the call before. The third throws that return value away with `void'()`. The tool prints a warning — Verilator's `UNSATCONSTR` names the constraint it could not satisfy [@verilator-warnings] — but the warning goes to the log, and nothing in the testbench can act on it; the object carries a stale value into whatever comes next. The fourth is the checked idiom, and the failure count at the end is the difference between a testbench that knows and one that does not.
+
+::: {.callout-warning title="Pitfall"}
+`randomize()` fails silently. It returns 0, changes no variable, and the only symptom is a value left over from the previous call — often a legal-looking one. A test that does not read the return value can run to completion on stale stimulus and report a pass. Every `randomize()` in this book is checked, and the production idiom is a macro that checks for you: OpenTitan's `DV_CHECK_RANDOMIZE_FATAL` wraps the call in a fatal check, with variants for the inline-constraint, `std::` and member forms, and its style guide says the macros "must be used for all randomization functionality" [@opentitan-dv-lib; @lowrisc-dv-style].
+:::
+
+Two hooks bracket the call. `pre_randomize()` runs before solving and `post_randomize()` after, and both are virtual, so a derived class can prepare state or derive fields from the drawn ones; the worked example uses `post_randomize` to copy its drawn fields into the word the environment sends. The call can also be narrowed: `randomize(a)` randomizes only `a` and treats the other `rand` members as fixed for that call, and `std::randomize(v)` draws a variable that belongs to no class, with or without an inline constraint [@ieee1800-2023]. `rand_mode(0)` on a member takes it out of randomization until switched back, and `constraint_mode(0)` on a block turns the block off; the checked-call listing uses the second to make its contradiction go away.
+
+`randc` is a smaller promise than it looks. Yehia's reading of the standard is that it "only describes the cyclic nature of the values produced by individual randc variables, while it says nothing about any kind of cyclic behavior of solutions from multiple related randc variables"; `randc` variables are solved before `rand` ones, and a constraint tying two of them together forces the solver to break a cycle or fail [@yehia2014crgotchas]. The measurement:
+
+```{.systemverilog include="examples/ch07-constrained-random/randc/tb_randc.sv"}
+```
+
+```{.text include="examples/ch07-constrained-random/randc/run.out"}
+```
+
+The single `randc` walks all eight values once per cycle, as promised; the second cycle here is the first one's order begun from a different point, which is a property of this tool and not a promise of the language. The pair tied by `x == y` never fails — sixteen calls, none returned 0 — and `x` never leaves the four values `y` can take. The sixteen-value cycle the declaration promised did not happen, and nothing said so. The chapter's rule: use `randc` for a small exhaustive enumeration on its own, and never constrain it against anything.
 
 ## Constraint blocks {#sec-ch07-constraints}
 
-*The reader can write each constraint form — `inside`, relations, `dist` with `:=` and `:/`, implication and `if`/`else`, `foreach`, `solve … before`, `soft`, `unique` — and turn a block or a variable off with `constraint_mode` and `rand_mode`. One listing per form, printed values beside each.*
+A constraint block is a named set of expressions over the class's variables, and `randomize()` must satisfy all of them at once. The forms the language provides are few, and one listing holds one small class per form, each constraining one thing so that what the testbench prints for it is the effect of that form alone:
+
+```{.systemverilog include="examples/ch07-constrained-random/constraint-forms/forms.sv"}
+```
+
+```{.systemverilog include="examples/ch07-constrained-random/constraint-forms/tb_forms.sv"}
+```
+
+```{.text include="examples/ch07-constrained-random/constraint-forms/run.out"}
+```
+
+Read the output against the forms. `inside` with a list of ranges and values is membership, and two hundred draws visited all fifteen members. A relation between two variables holds as written. The two `dist` forms differ in what the weight attaches to: with `:=` every value in the range gets the weight, so the four values of `[0:3]` together outweigh the single value 9 by four to one, and with `:/` the range shares one weight, so the range and the value came out even. Implication makes `v` zero whenever `s` is one, and `if`/`else` chooses between two regimes by a drawn variable. `foreach` constrains every element, and an element's relation to its predecessor is written with the index. `soft` supplies a default that an inline constraint overrides without a contradiction. `unique` makes the elements of an array differ.
+
+`solve s before v` is the line to look at twice. It is a distribution request: solve `s` first, so that the values of `s` are drawn on their own merits and `v` follows, rather than the pair being drawn from the joint solution set, in which `s = 1` has one solution and `s = 0` has two hundred and fifty-six. On the release this book runs the request changed nothing measurable: the last two lines of the output draw the implication class and the solve-before class two thousand times each, and `s` was 1 eight times without the request and never with it. The change log carries `solve … before` entries across several releases [@verilator-changes]; none of them changed this measurement. That is the pattern the rest of the chapter repeats: what a constraint asks for and what the tool delivers are two facts, and the second is measured.
 
 ### Constraints are expressions, and the arithmetic is integer
 
-*The reader can name the three arithmetic mistakes that make a constraint silently weak: a chained relation `lo < x < hi` that constrains only `hi`, an integer weight `1/11` that is zero, and an unsigned subtraction that wraps a range into always or never [@sutherland2007gotchas; @yehia2014crgotchas]. Each is shown as a measured histogram, and the rule each teaches is stated once: one relation per statement, `:/` for ranges, cast before subtracting — with the production idiom that does exactly that [@opentitan-dv-constraints].*
+Every entry in the two gotcha catalogs about a "surprising distribution" is an integer-arithmetic fact rather than a solver quirk, and three account for most of them. A chained relation `lo < x < hi` parses as `(lo < x) < hi`: a one-bit result compared with `hi`, true whenever `hi` exceeds 1, which constrains `x` not at all [@sutherland2007gotchas]. A weight written as a fraction, `[0:10] :/ 1/11`, is integer division, and the weight is zero [@yehia2014crgotchas]. A subtraction on unsigned operands wraps when the subtrahend is larger, so a constraint that meant "within four of" admits only one side of the relation, plus whatever wraps back in from the far end [@yehia2014crgotchas].
+
+```{.systemverilog include="examples/ch07-constrained-random/arithmetic/tb_arithmetic.sv"}
+```
+
+```{.text include="examples/ch07-constrained-random/arithmetic/run.out"}
+```
+
+The counts say which form holds. The chained relation put 34 of 1000 draws in the interval, which is the unconstrained rate for nine values out of 256; the split form put all 1000 there. The fractional weight put none in `[0:10]`; the integer one put half. The unsigned subtraction admitted six draws with `b > a` — the six where `b - a` was at least 253, so that the wrapped difference came back under 4 — and the signed form admitted four hundred. Verilator's lint flags the chained relation before any of this runs, as a width mismatch between a one-bit comparison and an eight-bit value; the listing keeps the constraint under a marked waiver so that the solver's answer to it can be shown. The rules the three teach are short: one relation per statement; `:/` with an integer for a range; cast to a signed type before subtracting. The last is the production idiom in so many words — a constraint in OpenTitan's base configuration casts two unsigned frequencies to `int` before taking their difference, with a comment saying why [@opentitan-dv-constraints].
+
+::: {.callout-tip title="In Practice"}
+Constraint style is also solver time. The lowRISC DV style guide's advice is to avoid loops inside constraints, replace a `foreach` with an `inside` where the set can be written out, prefer bit masks to modulus, and split a constraint that "becomes too complex" so that its variables are randomized separately [@lowrisc-dv-style].
+:::
 
 ## What a solver does, and what it does not promise {#sec-ch07-solver}
 
-*The reader can explain how `randomize()` reaches an SMT solver (Verilator writes SMT-LIB to `z3` and reads a model back), why a satisfying assignment is not a uniform one, what `dist` asks for and what it can deliver, and how to measure a distribution before trusting it. The pipeline from the open tool's documentation and source [@verilator-random-runtime; @verilator-install; @demoura2008z3; @barrett2017smtlib26]; uniform sampling as a research problem the tool imports [@kitchen2007stimulus; @chakraborty2015unigen2; @verilator-pr8042]; a measured example of 10,000 draws under one constraint, printed as a histogram, on the release this book runs. Pitfall: a distribution is a request, not a guarantee, and the language does not promise uniformity [@ieee1800-2023].*
+Verilator does not solve constraints itself. At run time it writes the class's constraints, in the SMT-LIB language that the satisfiability-modulo-theories community standardized [@barrett2017smtlib26], to an external solver over a pipe, reads a model back, and assigns it; the solver it looks for by default is z3 [@demoura2008z3], run as `z3 --in`, and the `VERILATOR_SOLVER` environment variable names another [@verilator-random-runtime; @verilator-environment]. The installation guide says the solver is required for constrained randomization and not at build time [@verilator-install]. The pipeline can be seen by taking the solver away:
+
+```{.systemverilog include="examples/ch07-constrained-random/no-solver/tb_nosolver.sv"}
+```
+
+```{.text include="examples/ch07-constrained-random/no-solver/run_nosolver.sh"}
+```
+
+```{.text include="examples/ch07-constrained-random/no-solver/run.out"}
+```
+
+With the solver, three draws in the set. Without it, a warning that the tool could not talk to its solver, three calls returning 0, and `len` still at the forbidden 99 it was given before the first call — the silent failure of @sec-ch07-methods, produced by the environment rather than by a contradiction. A test that did not check would have run on 99.
+
+What the solver returns is where the language stops promising. A constraint's solution set is a set; the standard does not say the solver must sample it uniformly, and the opening bug of this chapter is what a correct solver does when nothing asks it to: it returns *a* satisfying model, and left to itself an SMT solver returns the same corner of the set every time [@verilator-pr-7684]. Sampling uniformly from the solutions of a set of constraints is a research problem — it has a literature in verification [@kitchen2007stimulus] and in satisfiability [@chakraborty2015unigen2] — and the release this book runs imported a published algorithm for it, UniGen2, because the previous sampler "can produce visibly skewed distributions and provide lower coverage of the solution space" [@verilator-pr8042; @verilator-changes]. The measurement, on this release:
+
+```{.systemverilog include="examples/ch07-constrained-random/distribution/tb_distribution.sv"}
+```
+
+```{.text include="examples/ch07-constrained-random/distribution/run.out"}
+```
+
+Ten thousand draws of a sixteen-bit value under `v < 16'h8000`, and each of the low eight bits set in 49–50% of them: the distribution the opening bug's reporter expected and did not get, on the release before this one. Then two `dist` constraints over the same three ranges. With `:/` the ranges share weights one, one and two, and the counts come out in that ratio. With `:=` every value carries its weight, so the third range, with a hundred and fifty-six values at weight two, dominates the first, with ten values at weight one, by thirty-one to one — and the counts follow that too. On this release, with this solver, both forms are honored; the change log dates that to the 5.048 release, under the entry for constraint distributions [@verilator-changes].
+
+::: {.callout-warning title="Pitfall"}
+A distribution is a request. `dist`, `solve … before` and `soft` describe how the solver should prefer among legal values, and a tool may honor them, approximate them, or accept them and change nothing: Verilator documents a `CONSTRAINTIGN` warning for a constraint form it has ignored [@verilator-warnings], the release before this book's baseline issued it for all three of these, and the current one still changes nothing measurable for `solve … before`. `randomize()` returns 1 in every case, because every value returned was legal. The check that finds this is a histogram, and the test that has no histogram has no idea what it generated. The standard does not promise uniformity either [@ieee1800-2023]; a tool's own bug tracker is where the promise it does make is written down, release by release [@verilator-issue-8024].
+:::
 
 ## Seeds, random stability and reproducibility {#sec-ch07-seeds}
 
-*The reader can reproduce a failing run from its seed on the simulator that produced it, say which code changes leave a sequence unchanged and which perturb it, and say plainly what nobody promises. The standard's model — one generator per thread and per object, children seeded from parents, `srandom` and `get_randstate`/`set_randstate` as the escape hatches [@yehia2014crgotchas; @efody2012randstability]; UVM's re-seeding by type name and instance path [@accellera2014uvm12src]; a regression manager's seed as a 32-bit number in the run's name [@dvsim-repo]; cocotb's seed [@cocotb-init-seed]. The lowRISC rule on `$random` and `$dist_*` in one sentence [@lowrisc-dv-style]. Pitfall, measured: `$urandom(seed)` on the release this book runs does not replay the sequence that follows it, and on the previous release the call was optimized away when its result went unused [@verilator-issue-5703]; the reader is shown what does replay.*
+A random test is worth keeping only if a failure can be run again. The mechanism is the seed, and the language's model of where randomness comes from decides what a seed reproduces. Every thread — each `initial` and `always` block, each branch of a `fork` — and every class object has its own random number generator. A thread's generator feeds `$urandom`, `$urandom_range`, `std::randomize`, `randcase` and `shuffle`, and seeds every thread and object it creates; an object's generator serves only that object's `randomize()`, and advances only when it is called. So an object's sequence depends on the state of the thread that constructed it and on its own earlier `randomize()` calls, and on nothing else [@yehia2014crgotchas; @efody2012randstability]. Efody names the property this buys *random stability*, "the resistance of random results to code changes", and separates it explicitly from the ability to repeat a run with identical code, which "depends on the vendor's simulator code" [@efody2012randstability].
+
+Two escape hatches reseed a generator by hand: `srandom(seed)` on an object or on a process handle, and the pair `get_randstate`/`set_randstate` that saves and restores one. The listing asks three generators for the same values twice:
+
+```{.systemverilog include="examples/ch07-constrained-random/seeds/tb_seeds.sv"}
+```
+
+```{.text include="examples/ch07-constrained-random/seeds/run_seeds.sh"}
+```
+
+```{.text include="examples/ch07-constrained-random/seeds/run.out"}
+```
+
+Two objects given `srandom(7)` draw the same sequence; two threads that each call `process::self().srandom(11)` draw the same sequence. The third line is the one to remember: `$urandom(42)` called twice in one thread, with the result used each time, did *not* replay the values that followed it on this release. On the previous release the call was optimized away altogether when its result went unused, which was filed and fixed [@verilator-issue-5703]; on this one it is executed, and the sequence still differs. The chapter does not say what the tool intends by that; it says what it measured, and that `srandom` is the call that replays. The last four lines are the simulator's own seed: the run's first draw changes when `+verilator+seed+` changes and comes back when the seed does [@verilator-exe-sim].
+
+That last mechanism is what a regression layers everything on. A seed is a 32-bit number the simulator accepts; OpenTitan's regression manager draws 256 bits and masks them to 32 because "Systemverilog accepts seeds with a maximum size of 32 bits", passes the result as the simulator's seed argument, and names the run directory after it, so that a failing run is reproduced by its name [@dvsim-repo; @opentitan-dvsim-tool-cfgs]. UVM then reseeds every object from a hash of its type name and instance path together with the global seed, which is what makes adding a component *not* perturb its neighbors' sequences [@accellera2014uvm12src]. cocotb seeds Python's `random` module once per run from `COCOTB_RANDOM_SEED`, or from the clock when it is unset, and reports the seed at the start of every log [@cocotb-init-seed]:
+
+```{.python include="examples/ch07-constrained-random/cocotb-random/test_stream.py"}
+```
+
+```{.text include="examples/ch07-constrained-random/cocotb-random/run.out" lines="9-16"}
+```
+
+No solver is involved: the weights are a `random.choices` call, the stimulus is Python's, and the seed in the log line is the one to pass back to repeat the run.
+
+::: {.callout-tip title="In Practice"}
+The lowRISC DV style guide's rule on the subject is one sentence with its reason attached: `$random` and `$dist_*` "are not part of the SystemVerilog random stability model and can break simulation reproducibility", and `$srandom` "is not part of the SystemVerilog standard" [@lowrisc-dv-style]. Use `$urandom` and `$urandom_range`, `srandom` on an object or a process, and the simulator's seed argument; and say plainly, when a colleague asks, that reproducing a run across two simulators, or across two releases of one, is a thing nobody promises [@yehia2014crgotchas].
+:::
 
 ## What runs where {#sec-ch07-tools}
 
-*The reader can read the chapter's support table — one probe per row, Icarus 13.0 beside Verilator 5.052 with the solver the book's environment carries — and choose an example's tool from it. Icarus has no `randomize` [@icarus-issue-369]; Verilator without a solver on its path returns from `randomize()` without solving, shown by one example run with the solver removed rather than asserted. The z3 wheel is the one-line install the table depends on [@z3-solver-pypi]. Every earlier release that silently discarded a construct is named from the change log [@verilator-changes].*
+The table is @sec-ch05-tools's table for this chapter's constructs, one probe per row, run under Icarus with `-g2012` and under Verilator with the flags the book's build uses and the solver on the path, a row saying *runs* only if the probe printed the values it expected. The column header names the solver, because the table was measured with it and would look different without.
+
+{{< include /examples/ch07-constrained-random/support-matrix/matrix.md >}}
+
+The Icarus column is one fact repeated: there is no `randomize()`. Its tracker has carried the question since 2020, and the maintainer's answer is that "there is no support for the randomize() method" [@icarus-issue-369]; `$urandom` and a range function written by hand run, and so does everything the cocotb example does, because the stimulus never reaches the simulator as a constraint. So every SystemVerilog example in this chapter runs on Verilator, and their Makefiles say so; the Python one runs on Icarus.
+
+The Verilator column is what a solver-backed release does with the language as of the release this book runs: twenty-eight of thirty-one constructs, including the distribution forms an earlier baseline discarded. The one *wrong* cell is the `$urandom(seed)` measurement of @sec-ch07-seeds. The z3 the column depends on is one `pip install z3-solver` — the wheel ships a `z3` binary next to the Python it was installed with [@z3-solver-pypi] — and Appendix F records where the book's environment puts it (@sec-appF-cocotb).
 
 ## Worked example: a constrained packet stream, measured {#sec-ch07-example}
 
-*The reader can build a packet class with layered constraints, drive a stream of them into the FIFO environment of the previous chapter, check every `randomize()`, print the histogram of what was generated, and replay one seed's failure exactly. The example reuses Chapter 6's environment shape (maker, driver, scoreboard) so the only new thing is the stimulus; it ends with `+verilator+seed+` reproducing a chosen run [@verilator-exe-sim].*
+The previous chapter built an environment with named holes: a maker that decides which packet to build, a callback the driver calls before each send, a scoreboard that checks (@sec-ch06-example). This chapter fills two of the holes and touches nothing else. A derived packet draws its own fields under constraints, a maker checks every draw, and a callback counts what went by.
+
+```{.systemverilog include="examples/ch07-constrained-random/packet-stream/rand_packet.sv"}
+```
+
+Three things in `rand_packet` are the chapter's rules applied. The contract the base class stated as a method — kind 3 is never legal — is restated as a constraint, so the solver never produces what the scoreboard would reject. The mix is a `dist` with `:/` weights, six-three-one across the three legal kinds, which is a request to be measured. And `post_randomize` copies the drawn fields into the word the driver sends, so the environment sees the packet it always saw. The maker checks each `randomize()` and stops the run if one fails; the callback keeps a histogram by kind.
+
+```{.systemverilog include="examples/ch07-constrained-random/packet-stream/tb_packet_stream.sv"}
+```
+
+```{.text include="examples/ch07-constrained-random/packet-stream/run_stream.sh"}
+```
+
+```{.text include="examples/ch07-constrained-random/packet-stream/run.out"}
+```
+
+Sixty-four packets, zero errors, and a histogram in each line. Under seed 3 the mix came out 34, 24 and 6 across the three kinds against a request of six, three, one in sixty-four — 38, 19 and 6 — which is a mix, not the ratio; the counts are what sixty-four draws of a weighted die look like, and a reader who wants the ratio to the percent runs more packets. Under seed 4 it came out differently. Under seed 3 again it came out exactly as the first time, to the packet, which is the reproducibility the rest of a regression is built on: the seed is in the run's name, and a failure under it is a failure that can be run again.
+
+::: {.callout-note title="Worked Example"}
+What the three runs establish, in order: that the constraints held (no packet of kind 3, no `randomize()` returned 0, the scoreboard matched every word); that the mix was measured rather than assumed; and that the run is a function of its seed. A production version of this test adds one thing the chapter has not built yet — coverage of the mix as a target rather than a printout — and that is Part II's next subject.
+:::
 
 ## Future directions
 
-*The reader can place three things on the horizon without the chapter claiming results for them: the sampler research the open tool has just imported, portable stimulus as a standard for describing stimulus once (Part IV), and the generated-stimulus tooling Part VII measures. No numbers.*
+::: {.callout-important title="Future Directions"}
+Three things are on the horizon, and the chapter claims no result for any of them. The sampler the open tool imported this year is one of a family of near-uniform sampling algorithms, and the distance between "a satisfying model" and "a uniform draw" is where solver-backed randomization is still moving. Portable stimulus is a standard for describing stimulus once and generating it for several platforms, and Part IV takes it up. And Part VII measures the generated-stimulus tooling that treats a constraint set as something a model writes; what the tooling produces is a constraint, and everything in this chapter about checking, measuring and seeding applies to it unchanged.
+:::
 
 ## Summary
 
-*Eight bullets: check every call; a constraint is a set; the arithmetic is integer; a solver picks, it does not spread; measure before trusting; a seed reproduces a run on one tool; stability is a property of code structure; the table says which tool runs what.*
+- Check every `randomize()`. It returns 0 and changes nothing when the constraints cannot be met, and the only symptom is a stale value; the tool's warning goes to the log, not to the code.
+- A constraint block names a set. `inside`, relations, implication, `if`/`else`, `foreach` and `unique` define it; `dist`, `solve … before` and `soft` describe a preference among its members.
+- The arithmetic is integer: one relation per statement, `:/` with an integer weight for a range, cast before subtracting.
+- A solver picks a member of the set, and nothing in the language says which. Uniformity is a tool property, delivered by a sampler the tool chose, and it changed between two releases of the tool this book runs.
+- A distribution is a request. Measure it with a histogram, or do not claim it.
+- Every thread and every object has its own generator; `srandom` replays one, and the simulator's seed argument replays a run. `$urandom(seed)` did not replay on the release measured.
+- Random stability is a property of code structure — what constructs what, in what order — and reproducibility across simulators or releases is promised by nobody.
+- Icarus has no `randomize()`; Verilator has it with a solver on the path, and runs twenty-eight of the chapter's thirty-one constructs on the release this book measures.
 
 ## Exercises
 
-*1. Remove one `void'` and one check from the worked example and find the stale value by reading the output alone.*
-*2. Rewrite `lo < x < hi` three ways and print a histogram for each.*
-*3. Weight a `dist` with `:=` and then `:/` over the same ranges and explain the two histograms from the definitions.*
-*4. Take the solver off the path and run the constraint-forms example; say from the output alone what was solved and what was not.*
-*5. Add one `rand` member to the packet class and show, with two seeds, which other members' sequences changed and why.*
-*6. Reproduce the worked example's failing seed on the other simulator, or explain from the table why you cannot.*
+::: {.callout-note title="Exercise"}
+1. Remove one `void'()` and one check from the worked example's maker and find the stale value by reading the output alone. Say which line of the output changed and which did not.
+2. Rewrite `lo < x < hi` three ways — split, with `inside`, and with a pair of implications — and print a histogram for each over a thousand draws.
+3. Weight a `dist` with `:=` and then `:/` over the same three ranges and explain the two histograms from the definitions of the two operators before running them; then run them.
+4. Take the solver off the path and run the constraint-forms example. Say, from the output alone, which values were solved and which were left over from the previous call.
+5. Add one `rand` member to `rand_packet` and run the stream under seed 3. Say which other members' sequences changed and why, using the generator model of @sec-ch07-seeds.
+6. Reproduce the worked example's seed-3 run on the other simulator, or explain from the table why that is not possible and what the cocotb example does instead.
+:::
 
 ## Further reading
 
-*The two gotcha papers by name and author [@sutherland2007gotchas; @yehia2014crgotchas]; the random-stability paper [@efody2012randstability]; the sampling paper the tool adopted [@chakraborty2015unigen2]; the standard's clause on constrained randomization, cited by edition [@ieee1800-2023].*
-
-## Planned examples
-
-Directory `examples/ch07-constrained-random/`. Every SystemVerilog example runs on Verilator 5.052 with `z3` on the path (the book's `dvbook` environment); the Makefile of each says so, and one example measures the same code with the solver removed.
-
-- `randomize-check/` (sv): contradictory constraints return 0; the unchecked call leaves stale values; the checked wrapper reports.
-- `constraint-forms/` (sv): one small class per form — `inside`, relations, `dist :=` and `:/`, implication, `if`/`else`, `foreach`, `solve before`, `soft` overridden inline, `unique`, `constraint_mode`, `rand_mode`, `randomize() with` — values printed beside each.
-- `arithmetic/` (sv): the chained relation, the integer weight and the unsigned wrap, each as a histogram over many draws.
-- `distribution/` (sv): 10,000 draws under one range constraint, histogram printed; the same with `dist` weights; what the sampler on this release does with each.
-- `no-solver/` (python runner over sv): the constraint-forms probe built once and run with `VERILATOR_SOLVER` pointed at nothing, so the warning and the unsolved values are spliced output.
-- `seeds/` (sv, two-tool where Icarus runs it): `$urandom(seed)`, `srandom` on an object and on a process, `+verilator+seed+` replay; the measured non-replay is its Pitfall's output.
-- `randc/` (sv): a `randc` cycle over a 3-bit variable; the same variable constrained against another, and what the solver does.
-- `packet-stream/` (sv): the worked example — constrained packet class, Chapter 6's environment shape, histogram, seed replay.
-- `cocotb-random/` (python, Icarus): `COCOTB_RANDOM_SEED`, Python's `random`, and the seed line cocotb prints.
-- `support-matrix/` (python): the 31 probes measured in the research note, run under both tools with the book's flags and the solver present; `matrix.md` spliced as `@tbl-ch07-support`.
-
-## Sources
-
-- `research/ch07-constrained-random.md` — Part A (language, gotcha catalog, random stability), Part B (method, solver, distributions, seeds), Part C (measured support on 5.030 with and without a solver), Part D (re-measured on 5.052 with z3: 28 of 31 run; `$urandom(seed)` wrong; Icarus unchanged).
-- `refs.bib` keys, all present: `sutherland2007gotchas`, `yehia2014crgotchas`, `efody2012randstability`, `bergeron2006testbenches`, `bergeron2005vmm`, `kitchen2007stimulus`, `chakraborty2015unigen2`, `demoura2008z3`, `barrett2017smtlib26`, `verilator-pr8042`, `verilator-issue-8024`, `verilator-issue-5703`, `verilator-pr-4947`, `verilator-random-runtime`, `verilator-install` (pinned at v5.030 in the note; re-cite at v5.052 before use), `verilator-environment` (same), `verilator-exe-sim`, `verilator-changes`, `verilator-languages`, `verilator-warnings`, `accellera2014uvm12src`, `dvsim-repo`, `cocotb-init-seed`, `cocotb-docs`, `lowrisc-dv-style`, `opentitan-dv-lib`, `opentitan-dv-constraints`, `icarus-issue-369`, `z3-solver-pypi`, `ieee1800-2023`.
-- Standing rule for this chapter: IEEE 1800-2023 clause 18 text is unread; cite the standard by edition only, never a subclause number below 18.x, and read the paper for every claim attributed to a paper.
+- Stuart Sutherland, Don Mills and Chris Spear, *Gotcha Again: More Subtleties in the Verilog and SystemVerilog Standards That Every Engineer Should Know*, SNUG San Jose, 2007 [@sutherland2007gotchas].
+- Ahmed Yehia, *The Top Most Common SystemVerilog Constrained Random Gotchas*, DVCon Europe, 2014 [@yehia2014crgotchas].
+- Avidan Efody, *UVM Random Stability: Don't Leave It to Chance*, DVCon, 2012 [@efody2012randstability].
+- Janick Bergeron, *Writing Testbenches using SystemVerilog*, Springer, 2006 [@bergeron2006testbenches]; Bergeron, Cerny, Hunter and Nightingale, *Verification Methodology Manual for SystemVerilog*, Springer, 2006 [@bergeron2005vmm].
+- Nathan Kitchen and Andreas Kuehlmann, *Stimulus Generation for Constrained Random Simulation*, ICCAD, 2007 [@kitchen2007stimulus]; Chakraborty, Fremont, Meel, Seshia and Vardi, *On Parallel Scalable Uniform SAT Witness Generation*, TACAS, 2015 [@chakraborty2015unigen2].
+- IEEE Std 1800-2023, the clause on constrained random value generation, cited by edition [@ieee1800-2023].

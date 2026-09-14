@@ -1,0 +1,32 @@
+`rand` properties, unconstrained `randomize()` icarus: no build  verilator: runs
+`randc`: each value once per cycle             icarus: no build  verilator: runs
+`randomize() with { inside }`                  icarus: no build  verilator: runs
+`constraint` block with `inside` set           icarus: no build  verilator: runs
+relational constraint between two variables    icarus: no build  verilator: runs
+`dist` with `:=` weights                       icarus: no build  verilator: runs
+`dist` with `:/` weights                       icarus: no build  verilator: runs
+implication `->`                               icarus: no build  verilator: runs
+`if`/`else` constraint                         icarus: no build  verilator: runs
+`foreach` constraint on a fixed array          icarus: no build  verilator: runs
+`solve … before` (legality)                    icarus: no build  verilator: runs
+`soft` constraint, overridden inline           icarus: no build  verilator: runs
+`unique` constraint                            icarus: no build  verilator: runs
+`constraint_mode(0)` and query                 icarus: no build  verilator: runs
+`rand_mode(0)` and query                       icarus: no build  verilator: runs
+`pre_randomize` / `post_randomize`             icarus: no build  verilator: runs
+`std::randomize(v)`                            icarus: no build  verilator: runs
+`std::randomize(v) with`                       icarus: no build  verilator: runs
+`$urandom`, `$urandom_range`                   icarus: runs      verilator: runs
+`$urandom(seed)` replays a sequence            icarus: no run    verilator: wrong
+run-to-run reproducibility (values printed)    icarus: no build  verilator: runs
+object stability: `obj.srandom(seed)`          icarus: no build  verilator: runs
+thread stability: `process::self().srandom`    icarus: no build  verilator: runs
+contradictory constraints return 0             icarus: no build  verilator: runs
+`inside {array}`                               icarus: no build  verilator: runs
+`rand` enum with a constraint                  icarus: no build  verilator: runs
+`rand` class-handle member (nested)            icarus: no build  verilator: runs
+`randomize(a)` argument form                   icarus: no build  verilator: runs
+signed `int` in a negative range               icarus: no build  verilator: runs
+constraint on a non-rand state variable        icarus: no build  verilator: runs
+hand-rolled `$urandom_range` in a class method icarus: runs      verilator: runs
+31 constructs: 2 run on both, 28 on Verilator only, 0 on Icarus only, 1 on neither

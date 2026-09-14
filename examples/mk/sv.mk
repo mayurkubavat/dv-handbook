@@ -37,9 +37,10 @@ VERILATOR_BIN  := $(BUILD_DIR)/V$(TOP)
 # --timing lets Verilator run testbench code with # delays and event control.
 # The -Wno-* switches keep UVM's own source from failing lint; drop them for
 # plain SystemVerilog examples if you want the strictest checking.
-# PROCASSINIT (Verilator 5.052, under -Wall) is a style warning against a
-# declaration initializer on a variable an always block also writes, which
-# is how every testbench here makes its clock; it simulates correctly.
+# PROCASSINIT, which 5.052 raises under -Wall and 5.030 did not, is a style
+# warning against a declaration initializer on a variable an always block
+# also writes, which is how every testbench here makes its clock; the code
+# simulates correctly.
 VERILATOR_FLAGS ?= --timing --timescale $(TIMESCALE) -Wall \
                    -Wno-DECLFILENAME -Wno-UNUSEDSIGNAL -Wno-PROCASSINIT
 ifeq ($(UVM),1)

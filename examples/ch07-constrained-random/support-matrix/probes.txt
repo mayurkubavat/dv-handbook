@@ -1,0 +1,32 @@
+# label | probe file
+`rand` properties, unconstrained `randomize()` | r01_rand_unconstrained.sv
+`randc`: each value once per cycle | r02_randc.sv
+`randomize() with { inside }` | r03_randomize_with.sv
+`constraint` block with `inside` set | r04_constraint_inside.sv
+relational constraint between two variables | r05_constraint_relational.sv
+`dist` with `:=` weights | r06_dist_assign.sv
+`dist` with `:/` weights | r07_dist_divide.sv
+implication `->` | r08_implication.sv
+`if`/`else` constraint | r09_if_else.sv
+`foreach` constraint on a fixed array | r10_foreach.sv
+`solve … before` (legality) | r11_solve_before.sv
+`soft` constraint, overridden inline | r12_soft.sv
+`unique` constraint | r13_unique.sv
+`constraint_mode(0)` and query | r14_constraint_mode.sv
+`rand_mode(0)` and query | r15_rand_mode.sv
+`pre_randomize` / `post_randomize` | r16_pre_post_randomize.sv
+`std::randomize(v)` | r17_std_randomize.sv
+`std::randomize(v) with` | r18_std_randomize_with.sv
+`$urandom`, `$urandom_range` | r19_urandom_range.sv
+`$urandom(seed)` replays a sequence | r20_urandom_seed.sv
+run-to-run reproducibility (values printed) | r21_run_to_run.sv
+object stability: `obj.srandom(seed)` | r22_object_srandom.sv
+thread stability: `process::self().srandom` | r23_thread_srandom.sv
+contradictory constraints return 0 | r24_contradiction.sv
+`inside {array}` | r25_inside_array.sv
+`rand` enum with a constraint | r26_rand_enum.sv
+`rand` class-handle member (nested) | r27_nested_object.sv
+`randomize(a)` argument form | r28_randomize_arg.sv
+signed `int` in a negative range | r29_signed_range.sv
+constraint on a non-rand state variable | r30_state_dependent.sv
+hand-rolled `$urandom_range` in a class method | r31_urandom_in_class.sv

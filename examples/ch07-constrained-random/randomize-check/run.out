@@ -1,0 +1,11 @@
+legal:        returned 1, len=54
+%Warning-UNSATCONSTR: tb_randomize_check.sv:14: Unsatisfied constraint: 'constraint legal { len inside {[4:64]}; }'
+%Warning-UNSATCONSTR: tb_randomize_check.sv:37: Unsatisfied constraint: 'if (t.randomize() with { len > 100; } != 1)'
+contradiction: returned 0, len still 54 (stale)
+%Warning-UNSATCONSTR: tb_randomize_check.sv:14: Unsatisfied constraint: 'constraint legal { len inside {[4:64]}; }'
+%Warning-UNSATCONSTR: tb_randomize_check.sv:41: Unsatisfied constraint: 'void'(t.randomize() with { len > 100; });'
+void'():      the tool warned, the code cannot tell, len=54
+checked:      returned 1, len=198, errors so far 0
+%Warning-UNSATCONSTR: tb_randomize_check.sv:14: Unsatisfied constraint: 'constraint legal { len inside {[4:64]}; }'
+%Warning-UNSATCONSTR: tb_randomize_check.sv:51: Unsatisfied constraint: 'if (t.randomize() with { len > 100; } != 1) errors++;'
+the unchecked call left a stale value; checked calls: 1

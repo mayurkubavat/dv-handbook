@@ -1,6 +1,6 @@
 {
-  "checked": "2026-09-14T23:06:25Z",
-  "pass": 36,
+  "checked": "2026-09-14T23:42:26Z",
+  "pass": 46,
   "fail": 0,
   "skipped_run": 2,
   "examples": [
@@ -251,6 +251,76 @@
     },
     {
       "dir": "examples/ch06-oop-testbench-design/three-handles",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch07-constrained-random/arithmetic",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch07-constrained-random/cocotb-random",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch07-constrained-random/constraint-forms",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch07-constrained-random/distribution",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch07-constrained-random/no-solver",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch07-constrained-random/packet-stream",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch07-constrained-random/randc",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch07-constrained-random/randomize-check",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch07-constrained-random/seeds",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch07-constrained-random/support-matrix",
       "lint": "pass",
       "run": "pass",
       "requires": "",

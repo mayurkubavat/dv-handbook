@@ -1,0 +1,7 @@
+chained  10 < x < 20 :   34 of 1000 inside (10,20)
+split    10 < x; x<20: 1000 of 1000 inside (10,20)
+weight   [0:10] :/ 1/11:    0 of 1000 in [0:10]
+weight   [0:10] :/ 1   :  476 of 1000 in [0:10]
+unsigned a - b < 4     :    6 of 1000 with b > a
+signed   int'(a)-int'(b):  403 of 1000 with b > a
+every call returned 1: yes

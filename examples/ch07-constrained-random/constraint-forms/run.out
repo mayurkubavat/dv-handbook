@@ -1,0 +1,13 @@
+inside:        15 distinct values, all in the set: yes
+relation:      lo < hi held, largest hi-lo = 4
+dist :=        [0:3] 148 times, 9 52 times  (each value 1)
+dist :/        [0:3] 99 times, 9 101 times  (range 1, 9 1)
+implication:   s was 1 in 0 of 200, v==0 every time
+solve before:  s was 1 in 0 of 200, v==0 every time
+if/else:       mode 1 in 173 of 200
+foreach:       x = 1 2 4 6 (each in [1:8], rising)
+soft:          default a=5
+soft, inline:  a=7 (the inline constraint won)
+unique:        x = 0 2 1
+2000 draws:    s=1 8 times without solve before, 0 with
+every call checked: 0 failures

@@ -2,9 +2,9 @@
 //
 // A task in a module is static: one copy of its variables, shared by every
 // call, so two concurrent calls can corrupt each other. Declared
-// `automatic`, each call gets its own. Whether the static version *does*
-// corrupt depends on how the simulator interleaves the two callers, which
-// is why this runs under both: one shows the corruption and one does not.
+// `automatic`, each call gets its own. *How* the static version corrupts
+// depends on how the simulator interleaves the two callers, which is why
+// this runs under both: each prints a different wrong answer.
 module tb_lifetime;
   // static by default in a module: `n` is one variable for every caller
   task count_static(input int start, output int last);

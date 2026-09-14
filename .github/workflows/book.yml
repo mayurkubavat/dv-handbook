@@ -26,12 +26,18 @@ jobs:
       # 0.68. Ubuntu's packages are older (5.020, 12.0 and 0.33 on 24.04),
       # and Chapters 5 and 6 do not build on that Verilator, so the three
       # are built from their release tags and cached by version.
+      # The runner image's name goes into the cache key so that binaries
+      # built on one Ubuntu are not restored on the next when ubuntu-latest
+      # moves. ImageOS is a process variable on hosted runners, not part of
+      # the env context, so a step copies it into GITHUB_ENV first.
+      - name: Name the runner image for the cache key
+        run: echo "IMAGE_OS=${ImageOS:-unknown}" >> "$GITHUB_ENV"
       - name: Restore the pinned simulators
         id: tools
         uses: actions/cache@v5
         with:
           path: /opt/dvtools
-          key: dvtools-verilator-v5.052-iverilog-v13_0-yosys-v0.68-${{ runner.os }}
+          key: dvtools-verilator-v5.052-iverilog-v13_0-yosys-v0.68-${{ runner.os }}-${{ env.IMAGE_OS }}
       - name: Build the pinned simulators
         if: steps.tools.outputs.cache-hit != 'true'
         run: |
@@ -53,7 +59,7 @@ jobs:
         run: |
           echo /opt/dvtools/bin >> "$GITHUB_PATH"
           sudo apt-get update -q
-          sudo apt-get install -y -q make g++ libfl2 libreadline8 tcl libffi8
+          sudo apt-get install -y -q make g++ libfl2 libreadline8t64 tcl libffi8
           sudo apt-get install -y -q libsystemc-dev || echo "no libsystemc-dev; SystemC examples will be skipped"
           /opt/dvtools/bin/verilator --version
           /opt/dvtools/bin/iverilog -V | head -1
