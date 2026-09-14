@@ -3,6 +3,7 @@
 # refusal is a refusal of that construct and not of something beside it.
 `extends` with an explicit `super.new(args)` | o01_super_new_explicit.sv
 `extends` with the implicit `super.new()` | o02_super_new_implicit.sv
+`extends` with the arguments in the `extends` clause | o42_extends_args.sv
 non-virtual method hidden, called through a base handle | o03_hide_nonvirtual.sv
 virtual function through a base handle | o04_virtual_function.sv
 virtual task through a base handle | o05_virtual_task.sv

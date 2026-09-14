@@ -38,19 +38,19 @@ module tb_fifo_env;
   initial begin
     // test 1: factory -- a derived packet, substituted by the maker
     begin
-      even_maker m = new;
+      automatic even_maker m = new;
       drv = new; drv.maker = m;
       run_test("factory");
     end
     // test 2: override -- a derived driver, one virtual step overridden
     begin
-      rotating_driver d = new;
+      automatic rotating_driver d = new;
       drv = d;
       run_test("override");
     end
     // test 3: callback -- a hook object the driver only calls
     begin
-      counting_cb c = new;
+      automatic counting_cb c = new;
       drv = new; drv.cb = c;
       run_test("callback");
       $display("          callback counted kinds: %p", c.by_kind);

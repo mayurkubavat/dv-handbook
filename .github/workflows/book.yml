@@ -22,17 +22,46 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
-      - name: Install simulators
+      # The book measures Verilator 5.052, Icarus Verilog 13.0 and Yosys
+      # 0.68. Ubuntu's packages are older (5.020, 12.0 and 0.33 on 24.04),
+      # and Chapters 5 and 6 do not build on that Verilator, so the three
+      # are built from their release tags and cached by version.
+      - name: Restore the pinned simulators
+        id: tools
+        uses: actions/cache@v5
+        with:
+          path: /opt/dvtools
+          key: dvtools-verilator-v5.052-iverilog-v13_0-yosys-v0.68-${{ runner.os }}
+      - name: Build the pinned simulators
+        if: steps.tools.outputs.cache-hit != 'true'
         run: |
           sudo apt-get update -q
-          sudo apt-get install -y -q verilator iverilog make g++
-          sudo apt-get install -y -q yosys
+          sudo apt-get install -y -q git make g++ autoconf flex bison help2man \
+            perl python3 libfl-dev zlib1g-dev gperf libreadline-dev gawk \
+            tcl-dev libffi-dev pkg-config libboost-system-dev \
+            libboost-python-dev libboost-filesystem-dev
+          sudo mkdir -p /opt/dvtools && sudo chown "$USER" /opt/dvtools
+          git clone -q --depth 1 --branch v5.052 https://github.com/verilator/verilator /tmp/verilator
+          (cd /tmp/verilator && autoconf && ./configure --prefix=/opt/dvtools >/dev/null && make -s -j"$(nproc)" && make -s install)
+          git clone -q --depth 1 --branch v13_0 https://github.com/steveicarus/iverilog /tmp/iverilog
+          (cd /tmp/iverilog && sh autoconf.sh && ./configure --prefix=/opt/dvtools >/dev/null && make -s -j"$(nproc)" && make -s install)
+          git clone -q --depth 1 --branch v0.68 --recurse-submodules https://github.com/YosysHQ/yosys /tmp/yosys
+          (cd /tmp/yosys && make -s -j"$(nproc)" PREFIX=/opt/dvtools install)
+      - name: Put the pinned simulators on the PATH and report their versions
+        run: |
+          echo /opt/dvtools/bin >> "$GITHUB_PATH"
+          sudo apt-get update -q
+          sudo apt-get install -y -q make g++ libfl2 libreadline8 tcl libffi8
           sudo apt-get install -y -q libsystemc-dev || echo "no libsystemc-dev; SystemC examples will be skipped"
-          yosys -V
+          /opt/dvtools/bin/verilator --version
+          /opt/dvtools/bin/iverilog -V | head -1
+          /opt/dvtools/bin/yosys -V
       - uses: actions/setup-python@v6
         with: { python-version: '3.12' }
-      - name: Install cocotb, pyuvm, pytest and jsonschema
-        run: pip install cocotb pyuvm pyyaml pytest jsonschema
+      - name: Install cocotb, pyuvm, pytest, jsonschema and the z3 solver
+        # Verilator's runtime finds the solver on the PATH; the pip wheel puts
+        # a z3 binary next to python.
+        run: pip install cocotb pyuvm pyyaml pytest jsonschema z3-solver
       - name: Lint and run every example
         env:
           SYSTEMC_HOME: /usr

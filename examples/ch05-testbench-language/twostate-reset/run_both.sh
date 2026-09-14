@@ -3,7 +3,9 @@
 #
 # The four-state simulator sees X -> 0 as an edge and `tb_logic` resets;
 # the two-state one starts `logic` at zero too, so only `tb_fixed`, which
-# manufactures the edge, resets on both.
+# manufactures the edge, resets on both. The third run of each testbench
+# gives the two-state simulator its --x-initial-edge option, which treats
+# every variable as if it had started at X.
 # -e: a simulator that fails to build or run ends the script here, so a
 # verdict is never printed about a comparison that did not happen.
 set -euo pipefail
@@ -19,5 +21,10 @@ for tb in tb_bit tb_logic tb_fixed; do
       -Wno-INITIALDLY --top-module $tb -Mdir build/v_$tb \
       dut_reg.sv $tb.sv >/dev/null
   ./build/v_$tb/V$tb | grep -E "^tb_[a-z]+: "
+  echo "--- two-state simulator, --x-initial-edge"
+  verilator --binary --timing --timescale 1ns/1ps -Wno-DECLFILENAME \
+      -Wno-INITIALDLY --x-initial-edge --top-module $tb -Mdir build/x_$tb \
+      dut_reg.sv $tb.sv >/dev/null
+  ./build/x_$tb/V$tb | grep -E "^tb_[a-z]+: "
 done
 echo "verdict: only the manufactured edge resets on both simulators"

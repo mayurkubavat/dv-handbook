@@ -49,8 +49,8 @@ module tb_fifo_random;
   endfunction
 
   initial begin
-    int seed = 1;
-    int levels = 0;
+    automatic int seed = 1;
+    automatic int levels = 0;
     void'($value$plusargs("seed=%d", seed));
     void'($urandom(seed));
 

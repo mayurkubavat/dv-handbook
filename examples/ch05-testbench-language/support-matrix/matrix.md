@@ -1,4 +1,4 @@
-| Construct | Icarus 13.0 | Verilator 5.030 |
+| Construct | Icarus 13.0 | Verilator 5.052 |
 |---|---|---|
 | 2-state and 4-state integral types | runs | wrong |
 | fixed and packed arrays | runs | runs |
@@ -19,18 +19,18 @@
 | parameterized class | no build — syntax error | runs |
 | inheritance, method called on the derived handle | runs | runs |
 | virtual method, call through a base handle | wrong | runs |
-| nested class | no build — syntax error | no build — Unsupported: class within class |
+| nested class | no build — syntax error | runs |
 | clocking block | no build — syntax error | runs |
-| modport carrying a clocking block | no build — syntax error | no build — Unsupported: Modport clocking |
+| modport carrying a clocking block | no build — syntax error | runs |
 | program block | runs | runs |
 | randomize(), no constraints | no build — Error: randomize is not a method of class txn. | runs |
-| randomize() with a constraint | no build — syntax error | wrong |
-| solve-before and soft constraints, no solver installed | no build — syntax error | wrong |
-| covergroup inside a class | no build — syntax error | no build — Unsupported: covergroup |
+| randomize() with a constraint | no build — syntax error | runs |
+| solve-before and soft constraints | no build — syntax error | runs |
+| covergroup inside a class | no build — syntax error | runs |
 | event, fork and join | runs | runs |
 | mailbox | no build — syntax error | runs |
 | fixed array of handles | no run | runs |
 | queue of handles | no build — Sorry: Queue of type | runs |
 | interface class | no build — syntax error | runs |
 
-: What each open simulator does with the testbench-language constructs of this Part, measured by running one probe per row with the flags the book's build uses and checking the printed values. Of 32 constructs, 13 run on both, 13 on Verilator only, 1 on Icarus only and 5 on neither. Regenerated from the probes on every run. {#tbl-ch05-support}
+: What each open simulator does with the testbench-language constructs of this Part, measured by running one probe per row with the flags the book's build uses and checking the printed values. Of 32 constructs, 13 run on both, 18 on Verilator only, 1 on Icarus only and 0 on neither. Regenerated from the probes on every run. {#tbl-ch05-support}

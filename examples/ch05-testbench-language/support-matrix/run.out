@@ -17,17 +17,17 @@ static member, read through `cls::`            icarus: no build  verilator: runs
 parameterized class                            icarus: no build  verilator: runs
 inheritance, method called on the derived handle icarus: runs      verilator: runs
 virtual method, call through a base handle     icarus: wrong     verilator: runs
-nested class                                   icarus: no build  verilator: no build
+nested class                                   icarus: no build  verilator: runs
 clocking block                                 icarus: no build  verilator: runs
-modport carrying a clocking block              icarus: no build  verilator: no build
+modport carrying a clocking block              icarus: no build  verilator: runs
 program block                                  icarus: runs      verilator: runs
 randomize(), no constraints                    icarus: no build  verilator: runs
-randomize() with a constraint                  icarus: no build  verilator: wrong
-solve-before and soft constraints, no solver installed icarus: no build  verilator: wrong
-covergroup inside a class                      icarus: no build  verilator: no build
+randomize() with a constraint                  icarus: no build  verilator: runs
+solve-before and soft constraints              icarus: no build  verilator: runs
+covergroup inside a class                      icarus: no build  verilator: runs
 event, fork and join                           icarus: runs      verilator: runs
 mailbox                                        icarus: no build  verilator: runs
 fixed array of handles                         icarus: no run    verilator: runs
 queue of handles                               icarus: no build  verilator: runs
 interface class                                icarus: no build  verilator: runs
-32 constructs: 13 run on both, 13 on Verilator only, 1 on Icarus only, 5 on neither
+32 constructs: 13 run on both, 18 on Verilator only, 1 on Icarus only, 0 on neither

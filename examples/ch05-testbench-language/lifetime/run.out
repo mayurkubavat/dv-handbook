@@ -2,6 +2,6 @@
 static task, two callers: 12 11  (expected 11 21)
 automatic task, two callers: 11 21  (expected 11 21)
 --- statically scheduled simulator
-static task, two callers: 11 21  (expected 11 21)
+static task, two callers: 21 22  (expected 11 21)
 automatic task, two callers: 11 21  (expected 11 21)
 verdict: the static task's answer depends on the simulator

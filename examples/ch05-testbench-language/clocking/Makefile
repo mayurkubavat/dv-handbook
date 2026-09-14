@@ -3,7 +3,7 @@
 # Verilator 5.030 reports a clocking block's `input` as an undriven
 # signal, although it is the sampled copy of a driven one; waived here.
 VERILATOR_FLAGS := --timing --timescale 1ns/1ps -Wall -Wno-DECLFILENAME \
-                   -Wno-UNUSEDSIGNAL -Wno-UNDRIVEN
+                   -Wno-UNUSEDSIGNAL -Wno-UNDRIVEN -Wno-PROCASSINIT
 EXAMPLE_LANG := sv
 TOP          := tb_clocking
 SOURCES      := tb_clocking.sv

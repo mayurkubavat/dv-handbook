@@ -1,7 +1,8 @@
-| Construct | Icarus 13.0 | Verilator 5.030 |
+| Construct | Icarus 13.0 | Verilator 5.052 |
 |---|---|---|
 | `extends` with an explicit `super.new(args)` | runs | runs |
 | `extends` with the implicit `super.new()` | runs | runs |
+| `extends` with the arguments in the `extends` clause | runs | runs |
 | non-virtual method hidden, called through a base handle | runs | runs |
 | virtual function through a base handle | wrong | runs |
 | virtual task through a base handle | wrong | runs |
@@ -19,7 +20,7 @@
 | one class implementing two interface classes | no build — syntax error | runs |
 | `$cast` down the hierarchy, matching object | no run | runs |
 | `$cast` down the hierarchy, mismatched object | no run | runs |
-| `new src` through a base handle holding a derived object | no run | wrong |
+| `new src` through a base handle holding a derived object | no run | runs |
 | `clone()` as a virtual method constructing its own class | wrong | runs |
 | parameterized class, type parameter | no build — syntax error | runs |
 | parameterized class, value parameter | no build — syntax error | runs |
@@ -33,4 +34,4 @@
 | method called on a handle-typed property (composition) | no build — Method name nesting is not supported yet. | runs |
 | handle identity: `==`, `!=`, `!= null` | no build — SORRY: Compare class handles not implemented | runs |
 
-: What each open simulator does with the object-oriented constructs this chapter teaches, measured by running one probe per row with the flags the book's build uses and checking the printed values. Of 32 constructs, 3 run on both, 28 on Verilator only, 0 on Icarus only and 1 on neither. Regenerated from the probes on every run. {#tbl-ch06-support}
+: What each open simulator does with the object-oriented constructs this chapter teaches, measured by running one probe per row with the flags the book's build uses and checking the printed values. Of 33 constructs, 4 run on both, 29 on Verilator only, 0 on Icarus only and 0 on neither. Regenerated from the probes on every run. {#tbl-ch06-support}

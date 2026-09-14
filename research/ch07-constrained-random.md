@@ -2255,3 +2255,86 @@ limitation it should cite the v5.030-tagged files, as the Chapter 5 and
   exported by `examples/mk/sv.mk`. No change to Verilator, Icarus, cocotb
   or the flags is needed. Without it, every constrained example prints
   zeros and passes a status-only check.
+
+---
+
+# Part D — Re-measured on Verilator 5.052 with z3 (2026-09-14)
+
+The author took both decisions on 2026-09-14: `z3-solver` 5.1.0 is installed
+in `dvbook` (its `z3` binary is on the PATH under `conda run -n dvbook`, which
+is how `scripts/check-examples.sh` runs every example), and the Verilator
+baseline is 5.052 (brew, 2026-09-05). Part C's 31 probes were re-run unchanged
+under the same runner on clean build directories. Icarus 13.0 as before.
+
+## The matrix on the new baseline
+
+| Construct | Icarus 13.0 | Verilator 5.052 |
+|---|---|---|
+| `rand` properties, unconstrained `randomize()` | no build — Error: randomize is not a method of class pkt. | runs |
+| `randc`: each value once per cycle | no build — Error: randomize is not a method of class pkt. | runs |
+| `randomize() with { inside }` | no build — syntax error | runs |
+| `constraint` block with `inside` set | no build — "inside" expressions not supported yet. | runs |
+| relational constraint between two variables | no build — Constraint declarations not supported. | runs |
+| `dist` with `:=` weights | no build — syntax error | runs |
+| `dist` with `:/` weights | no build — syntax error | runs |
+| implication `->` | no build — Constraint declarations not supported. | runs |
+| `if`/`else` constraint | no build — Constraint declarations not supported. | runs |
+| `foreach` constraint on a fixed array | no build — Constraint declarations not supported. | runs |
+| `solve … before` (legality) | no build — syntax error | runs |
+| `soft` constraint, overridden inline | no build — syntax error | runs |
+| `unique` constraint | no build — syntax error | runs |
+| `constraint_mode(0)` and query | no build — Constraint declarations not supported. | runs |
+| `rand_mode(0)` and query | no build — Can't find task rand_mode in class pkt | runs |
+| `pre_randomize` / `post_randomize` | no build — Error: randomize is not a method of class pkt. | runs |
+| `std::randomize(v)` | no build — syntax error | runs |
+| `std::randomize(v) with` | no build — syntax error | runs |
+| `$urandom`, `$urandom_range` | runs | runs |
+| `$urandom(seed)` replays a sequence | no run | wrong |
+| run-to-run reproducibility (values printed) | no build — "inside" expressions not supported yet. | runs |
+| object stability: `obj.srandom(seed)` | no build — Can't find task srandom in class pkt | runs |
+| thread stability: `process::self().srandom` | no build — syntax error | runs |
+| contradictory constraints return 0 | no build — Constraint declarations not supported. | runs |
+| `inside {array}` | no build — "inside" expressions not supported yet. | runs |
+| `rand` enum with a constraint | no build — Constraint declarations not supported. | runs |
+| `rand` class-handle member (nested) | no build — "inside" expressions not supported yet. | runs |
+| `randomize(a)` argument form | no build — Error: randomize is not a method of class pkt. | runs |
+| signed `int` in a negative range | no build — "inside" expressions not supported yet. | runs |
+| constraint on a non-rand state variable | no build — Constraint declarations not supported. | runs |
+| hand-rolled `$urandom_range` in a class method | runs | runs |
+
+Of 31 constructs: **2 run on both, 28 on Verilator only, 0 on Icarus only, 1
+on neither.** Part C measured 5.030 with the same solver at 2 / 20 / 0 / 9.
+
+## What changed against Part C, and what did not
+
+- **Every constraint form now runs and is honored**, including the four Part C
+  recorded as silently wrong or discarded on 5.030: `dist` with `:=` and `:/`
+  weights (the probes check the weighting, not membership only), `solve …
+  before`, `soft` overridden inline, and `unique`. Verilator's change log dates
+  these to 5.046–5.052, as Part B §3 anticipated. `randomize(a)` now randomizes
+  only `a`. The chapter can teach distribution shaping from running examples
+  rather than from prose and a Pitfall.
+- **The one *wrong* cell left is `$urandom(seed)`.** The probe calls
+  `$urandom(42)` twice, using its result each time, and expects the five values
+  that follow each call to match; on 5.052 they do not (`s1[0]=1604469840
+  s2[0]=1984119072`). On 5.030 the call was optimized away because its result
+  was unused (#5703, Part C); on 5.052 the result is used and the sequence
+  still does not replay. Icarus is *no run* on the same probe. Not yet checked
+  against Verilator's documentation of `$urandom` with a seed argument; the
+  chapter must cite that page before it says what the tool intends.
+- **Icarus is unchanged**: no `randomize`, no constraint blocks, no
+  `srandom`/`rand_mode`; only `$urandom` and the hand-rolled range run.
+- Solver non-uniformity (Part C, #8024) was not re-measured here; Verilator's
+  5.052 change log lists a sampler change, so the chapter's uniformity
+  paragraph re-measures on 5.052 before it prints a number.
+- Still true from Part A: `randomize()` fails silently and atomically. The
+  chapter's first Pitfall stands.
+
+## Consequence for the outline
+
+The chapter's own support matrix measures the environment as the book now
+defines it — Verilator with the solver — and one example shows what
+`randomize()` does with the solver removed from the PATH, so that Part C's
+"returns 0 without solving" is a spliced output rather than a claim. Findings
+2 and 3 of the header are superseded by this part: both decisions are taken,
+and 5.052 honors the distribution constructs.

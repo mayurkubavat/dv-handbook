@@ -17,7 +17,7 @@ module tb_counter;
   initial begin
     rst_n = 0; en = 0;
     repeat (2) @(posedge clk);
-    rst_n = 1;
+    rst_n <= 1;   // nonblocking: the flop samples the old value at this edge
 
     // Count for 10 cycles, then pause for 3, then count again.
     drive_enable(10);
@@ -32,7 +32,7 @@ module tb_counter;
 
   // Enable for n cycles and check the count after every edge.
   task automatic drive_enable(int n);
-    en = (n > 0);
+    en <= (n > 0);
     repeat (n) begin
       @(posedge clk); #1;               // sample after the flop has updated
       expected++;
@@ -42,6 +42,6 @@ module tb_counter;
                  $time, count, expected);
       end
     end
-    en = 0;
+    en <= 0;
   endtask
 endmodule

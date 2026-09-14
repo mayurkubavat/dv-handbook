@@ -22,7 +22,7 @@ So this chapter's examples run on Verilator, and where a listing runs on both to
 
 ## Extending a class {#sec-ch06-extends}
 
-A class extends another with `extends`, and the derived class is the base plus what it adds. Its constructor must reach the base's constructor first. The rules are three. Both of this book's compilers state two of them in their diagnostics: a `super.new` call must be the first statement of the derived constructor, and when the derived constructor says nothing an implicit `super.new()` with no arguments is called, which is itself an error if the base constructor needs one. The third is the standard's alone here: the `extends` clause may carry the constructor arguments instead, and then an explicit `super.new` is an error [@ieee1800-2023] — a form the Verilator this book runs does not yet parse, so the listings use `super.new`.
+A class extends another with `extends`, and the derived class is the base plus what it adds. Its constructor must reach the base's constructor first. The rules are three. Both of this book's compilers state two of them in their diagnostics: a `super.new` call must be the first statement of the derived constructor, and when the derived constructor says nothing an implicit `super.new()` with no arguments is called, which is itself an error if the base constructor needs one. The third is the standard's alone here: the `extends` clause may carry the constructor arguments instead, and then an explicit `super.new` is an error [@ieee1800-2023] — a form both of this book's tools accept, as the table records; the listings use `super.new`, which keeps the call where a reader looks for it.
 
 The other thing a derived class does is redeclare a method the base already has, and the word `virtual` on the base's declaration decides what that means. Without it, the derived method *hides* the base's: a call through a base handle still runs the base body. With it, the derived method *overrides*: the call runs the derived body whatever the handle's declared type.
 
@@ -74,7 +74,7 @@ UVM's base object declares `create` and `get_type_name` as promises in its docum
 
 Assigning a derived handle to a base handle needs no cast, because the object is a base object and more. Going the other way asks a question the compiler cannot answer — is the object behind this base handle really one of those? — so `$cast` asks it at run time, and answers no by returning zero and leaving the target handle untouched [@ieee1800-2023].
 
-Copying is where the type is lost. `new src` copies the object *the handle's declared type says is there*; on the Verilator this book measures, a base handle holding a derived object yields a base object, and a virtual call on the copy runs the base body [@verilator-issue-7105]. The fix landed in Verilator's 5.046 release, sixteen months after the 5.030 this book runs [@verilator-changes]. A copy that keeps its type is a virtual method that constructs its own class — every override of `clone` calls its own `new` — which is what UVM's `clone` does, calling `create` to construct the right class and then `copy` to fill it, with a virtual `do_copy` hook whose overrides must call `super.do_copy` so each level copies its own fields [@uvm-core-object].
+Copying is where the type is lost. `new src` is a shallow copy of the object, and for six releases Verilator copied the object *the handle's declared type said was there*: a base handle holding a derived object yielded a base object, and a virtual call on the copy ran the base body [@verilator-issue-7105]. The fix, to preserve the object's run-time type, landed in 5.046 [@verilator-changes], and the release this book runs prints the derived tag below. A copy that keeps its type is a virtual method that constructs its own class — every override of `clone` calls its own `new` — which is what UVM's `clone` does, calling `create` to construct the right class and then `copy` to fill it, with a virtual `do_copy` hook whose overrides must call `super.do_copy` so each level copies its own fields [@uvm-core-object].
 
 ```{.systemverilog include="examples/ch06-oop-testbench-design/cast-clone/tb_cast_clone.sv"}
 ```
@@ -83,7 +83,7 @@ Copying is where the type is lost. `new src` copies the object *the handle's dec
 ```
 
 ::: {.callout-warning title="Pitfall"}
-`new base` printed `packet` for an object that is an `error_packet`. Nothing warned. The other tool cannot run that line at all — its runtime aborts on a shallow copy through a base handle, which the table below records as *no run* — and gets the next one wrong: its `clone`, being virtual, binds to the handle's declared type and returns a base object too. A scoreboard that stores copies made that way compares base fields only and never sees the error code; a test that passes on this tool and fails on a newer one has found the difference between a copy and a clone.
+`new base` prints `error_packet` here, and on any Verilator before 5.046 it printed `packet`, with no warning [@verilator-changes]. The other tool cannot run that line at all — its runtime aborts on a shallow copy through a base handle, which the table below records as *no run* — and gets the next one wrong: its `clone`, being virtual, binds to the handle's declared type and returns a base object too. A scoreboard that stores copies made that way compares base fields only and never sees the error code; a test that passes on one release and fails on another has found the difference between a copy and a clone.
 :::
 
 ## Parameterized classes as a design tool {#sec-ch06-param}
@@ -132,7 +132,7 @@ The table below is @sec-ch05-tools's table for this chapter's constructs: one pr
 
 {{< include /examples/ch06-oop-testbench-design/support-matrix/matrix.md >}}
 
-Two columns of it are the chapter's argument. Every virtual-dispatch row Icarus builds is *wrong* — through a base handle, through an argument, inside a fork, across a level that does not override, from a base method, with the override declared without the keyword, and a `clone` that returns the base type — which is what a tool that ignores `virtual` looks like measured; its own tracker records the mechanism and a comment that virtual methods would need changes in its runtime as well [@icarus-issue-421; @icarus-issue-292]. A class-handle `$cast` was proposed and closed without merging [@icarus-pr-1447]; the assignment of a derived handle to a base one is a still-open issue there, though the release this book runs elaborated it [@icarus-issue-422]. And Verilator, which runs every other row, has the one `new src` cell discussed above.
+Two columns of it are the chapter's argument. Every virtual-dispatch row Icarus builds is *wrong* — through a base handle, through an argument, inside a fork, across a level that does not override, from a base method, with the override declared without the keyword, and a `clone` that returns the base type — which is what a tool that ignores `virtual` looks like measured; its own tracker records the mechanism and a comment that virtual methods would need changes in its runtime as well [@icarus-issue-421; @icarus-issue-292]. A class-handle `$cast` was proposed and closed without merging [@icarus-pr-1447]; the assignment of a derived handle to a base one is a still-open issue there, though the release this book runs elaborated it [@icarus-issue-422]. And Verilator runs every other row, the `new src` one since its 5.046 release.
 
 ::: {.callout-tip title="In Practice"}
 Composition is the row a reader will not think to look up. A method called through a handle-typed property — `env.drv.run()`, the ordinary shape of every environment ever written — does not compile on the event-driven tool. The worked example below cannot run there: it fails first on its interface port and clocking block, as @sec-ch05-tools's table predicts, and would fail on its composition next. The chapter says so rather than showing three silent passes. A parser that accepts the whole language elaborates every probe in this table without complaint, which is the lint pass @sec-ch05-tools recommended and the reason it is not a simulator.
@@ -170,11 +170,11 @@ The substitution property is the thing a program can check about generated test 
 
 ## Summary
 
-- A derived constructor reaches the base's first: `super.new` as the first statement, or an implicit no-argument call when it says nothing. The standard also lets the `extends` clause carry the arguments; the measured Verilator does not parse that form.
+- A derived constructor reaches the base's first: `super.new` as the first statement, or an implicit no-argument call when it says nothing. The standard also lets the `extends` clause carry the arguments, and both tools accept that form.
 - Without `virtual` a redeclared method hides; with it, it overrides, and a call dispatches on the object rather than the handle. The template method — a base algorithm calling virtual steps — is what that rule is for.
 - Do not call a virtual method from a constructor.
 - Extend one base for shared state and code; implement any number of interface classes for a shared contract.
-- `$cast` answers the down-cast question at run time and says no with a zero. `new src` copies the handle's declared type on this book's Verilator; a clone is a virtual method that constructs its own class.
+- `$cast` answers the down-cast question at run time and says no with a zero. `new src` copied the handle's declared type on Verilator before 5.046 and copies the object's own type now; a clone is a virtual method that constructs its own class, on every release.
 - Every specialization of a parameterized class is a distinct type, with its own statics, its own factory registration and its own configuration pool.
 - One idea under five patterns: a base class fixes an algorithm and leaves named holes — which class, what a step does, knob values, behavior in a component the test does not own, one of something.
 - A subclass is a subtype when it can stand in for the base without the program telling; stricter constraints keep that, looser ones and forgotten `super` calls break it, and the factory cannot tell the difference.
@@ -185,7 +185,7 @@ The substitution property is the thing a program can check about generated test 
 ::: {.callout-note title="Exercise"}
 1. Remove `virtual` from the template method's `step` and run the example on both simulators. Explain why the outputs now agree, and why that is worse.
 2. Write a derived packet whose constructor forces the reserved kind that `packet::legal` rejects, and a maker that produces it. Show that the factory substitutes it without complaint, and read what the scoreboard says.
-3. Replace `clone` in the cast-and-clone example with `new src` throughout and find the line of output that changes. Say which Verilator release would change it back.
+3. Replace `clone` in the cast-and-clone example with `new src` throughout and say what changes in the output on the release this book runs, and what would have changed on a release before 5.046. Then say why a copy whose type depends on the release is the worse design even when it prints the right answer.
 4. Give `box #(T)` a static queue of every value ever boxed and show, with two specializations, that there are two queues.
 5. Turn the override test into a strategy in the chapter's sense — a `send_policy` object with a virtual method that the test hands in — and say what the environment had to expose, and how that differs from the callback only in who calls it.
 6. Add a row to the support table for a construct not in it — a virtual method with a default argument, say — with its probe, and classify it.

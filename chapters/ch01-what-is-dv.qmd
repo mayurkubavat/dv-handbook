@@ -214,7 +214,7 @@ Run it:
 ```{.text include="examples/ch01-what-is-dv/sv-random/run.out"}
 ```
 
-At cycle 21 (the twenty-second cycle, since the count starts at zero), with fifteen entries in the queue, the design asserted `full`. The contract says `full` is asserted when all sixteen entries are occupied, and only then. The design declares itself full one entry early. A writer that honors the `full` flag, which is every well-behaved writer, will never store a sixteenth entry, and the FIFO the specification describes has silently become a fifteen-entry FIFO.
+At cycle 27 (the twenty-eighth cycle, since the count starts at zero), with fifteen entries in the queue, the design asserted `full`. The contract says `full` is asserted when all sixteen entries are occupied, and only then. The design declares itself full one entry early. A writer that honors the `full` flag, which is every well-behaved writer, will never store a sixteenth entry, and the FIFO the specification describes has silently become a fifteen-entry FIFO.
 
 Now look for the bug. The occupancy counter `count` is declared with `PTR_W` bits, four for a depth of sixteen, so it can represent zero to fifteen. Sixteen entries need seventeen occupancy values, zero to sixteen, which is five bits. The designer, holding a four-bit counter, set the full threshold to the largest value it could hold, `LAST`, which is fifteen. Every line is well formed. Every width is consistent. No lint tool objects. The bug is not in the code; it is in the translation from "sixteen entries" to "four-bit counter", and only a comparison against the specification, made by something that did not share the designer's counter, can see it.
 
