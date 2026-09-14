@@ -2176,3 +2176,373 @@
                   Accessed 2026-09-11}
 }
 
+@inproceedings{yehia2014crgotchas,
+  author    = {Ahmed Yehia},
+  title     = {The Top Most Common {SystemVerilog} Constrained Random Gotchas},
+  booktitle = {Design and Verification Conference and Exhibition (DVCon) Europe},
+  year      = {2014},
+  url       = {https://dvcon-proceedings.org/wp-content/uploads/the-top-most-common-systemverilog-constrained-random-gotchas.pdf},
+  note      = {Author at Mentor Graphics; the solver-procedure list in
+               \S II.C is the author's reading of IEEE 1800-2012 and is
+               cited as such. Proceedings record:
+               https://dvcon-proceedings.org/document/the-top-most-common-systemverilog-constrained-random-gotchas/.
+               Accessed 2026-09-12}
+}
+
+@inproceedings{efody2012randstability,
+  author    = {Avidan Efody},
+  title     = {{UVM} Random Stability: Don't Leave It to Chance},
+  booktitle = {Design and Verification Conference and Exhibition (DVCon) United States},
+  year      = {2012},
+  url       = {https://dvcon-proceedings.org/wp-content/uploads/uvm-random-stability.pdf},
+  note      = {Author at Mentor Graphics. Proceedings record:
+               https://dvcon-proceedings.org/document/uvm-random-stability/.
+               Accessed 2026-09-12}
+}
+
+@misc{accellera2014uvm12src,
+  author       = {{Accellera Systems Initiative}},
+  title        = {Universal Verification Methodology ({UVM}) 1.2 reference implementation},
+  howpublished = {Accellera, uvm-1.2.tar.gz},
+  year         = {2014},
+  url          = {https://www.accellera.org/images/downloads/standards/uvm/uvm-1.2.tar.gz},
+  note         = {Files cited: src/base/uvm\_object.svh (\texttt{reseed},
+                  \texttt{use\_uvm\_seeding}), src/base/uvm\_misc.svh
+                  (\texttt{uvm\_global\_random\_seed},
+                  \texttt{uvm\_oneway\_hash},
+                  \texttt{uvm\_create\_random\_seed}),
+                  src/base/uvm\_component.svh,
+                  src/seq/uvm\_sequence\_item.svh,
+                  src/seq/uvm\_sequencer\_base.svh. Apache-2.0.
+                  Accessed 2026-09-12}
+}
+
+@misc{verilator-src-randomize,
+  author       = {{Verilator contributors}},
+  title        = {Verilator source: \texttt{src/V3Randomize.cpp},
+                  \texttt{src/V3Width.cpp}, \texttt{src/verilog.y},
+                  \texttt{include/verilated\_types.h},
+                  \texttt{include/verilated\_random.h},
+                  \texttt{include/verilated.cpp}},
+  howpublished = {GitHub, verilator/verilator, master},
+  year         = {2026},
+  url          = {https://github.com/verilator/verilator/blob/master/src/V3Randomize.cpp},
+  note         = {Cited for the IEEE 1800-2023 clause-18 subclauses its
+                  comments name and for its \texttt{dist}, \texttt{randc},
+                  \texttt{\$random}/\texttt{\$urandom} lowering.
+                  \texttt{V3Randomize.cpp} last changed 2026-09-10; this is
+                  later than the 5.030 release the book measures.
+                  LGPL-3.0/Artistic-2.0. Accessed 2026-09-12}
+}
+
+@misc{verilator-exe-sim,
+  author       = {Wilson Snyder and {Verilator contributors}},
+  title        = {Verilator User's Guide: Simulation Runtime Arguments},
+  year         = {2026},
+  url          = {https://verilator.org/guide/latest/exe_sim.html},
+  note         = {\texttt{+verilator+seed+}, \texttt{+verilator+solver+file+}.
+                  Source: docs/guide/exe\_sim.rst. Accessed 2026-09-12}
+}
+
+@misc{opentitan-tl-device-seq,
+  author       = {{lowRISC contributors (OpenTitan project)}},
+  title        = {{OpenTitan} \texttt{tl\_device\_seq}},
+  howpublished = {GitHub, lowRISC/opentitan, hw/dv/sv/tl\_agent/seq\_lib/tl\_device\_seq.sv},
+  year         = {2026},
+  url          = {https://github.com/lowRISC/opentitan/blob/master/hw/dv/sv/tl_agent/seq_lib/tl_device_seq.sv},
+  note         = {\texttt{randomize\_rsp}: \texttt{constraint\_mode(0)} on
+                  a soft default, then \texttt{randomize() with} carrying
+                  \texttt{inside}, \texttt{if}/\texttt{else} and
+                  \texttt{dist}. Commit fca045d. Apache-2.0. Accessed 2026-09-12}
+}
+
+@misc{opentitan-dv-constraints,
+  author       = {{lowRISC contributors (OpenTitan project)}},
+  title        = {{OpenTitan} {DV} agents: constraint blocks},
+  howpublished = {GitHub, lowRISC/opentitan, hw/dv/sv},
+  year         = {2026},
+  url          = {https://github.com/lowRISC/opentitan/tree/master/hw/dv/sv},
+  note         = {Files cited: cip\_lib/cip\_base\_env\_cfg.sv
+                  (\texttt{solve before}, signed cast),
+                  cip\_lib/seq\_lib/cip\_base\_vseq.sv
+                  (\texttt{\$urandom\_range}, \texttt{randcase}),
+                  jtag\_agent/jtag\_item.sv (\texttt{:=}),
+                  push\_pull\_agent/push\_pull\_agent\_cfg.sv
+                  (\texttt{:/} on ranges), csrng\_agent/csrng\_item.sv
+                  (array size), i2c\_agent/i2c\_driver.sv
+                  (\texttt{unique}), i2c\_agent/i2c\_item.sv,
+                  alert\_esc\_agent/alert\_esc\_seq\_item.sv
+                  (\texttt{soft dist}), dv\_utils/dv\_macros.svh.
+                  Commit fca045d, 2026-09-11. Apache-2.0. Accessed 2026-09-12}
+}
+
+@misc{smtlib-home,
+  author       = {{The SMT-LIB Initiative}},
+  title        = {{SMT-LIB}: The Satisfiability Modulo Theories Library},
+  year         = {2026},
+  url          = {https://smt-lib.org/},
+  note         = {Version 2.7 reference releases 2025-02-05, 2025-07-07, 2026-03-27. Accessed 2026-09-12}
+}
+
+@techreport{barrett2017smtlib26,
+  author      = {Clark Barrett and Pascal Fontaine and Cesare Tinelli},
+  title       = {The {SMT-LIB} Standard: Version 2.6},
+  institution = {The SMT-LIB Initiative},
+  year        = {2017},
+  url         = {https://smt-lib.org/papers/smt-lib-reference-v2.6-r2017-07-18.pdf},
+  note        = {Release 2017-07-18. Sections 1.2, 2.1, 4.2.5 read. Accessed 2026-09-12}
+}
+
+@inproceedings{demoura2008z3,
+  author    = {Leonardo de Moura and Nikolaj Bj{\o}rner},
+  title     = {{Z3}: An Efficient {SMT} Solver},
+  booktitle = {Tools and Algorithms for the Construction and Analysis of Systems (TACAS)},
+  series    = {Lecture Notes in Computer Science},
+  publisher = {Springer},
+  year      = {2008},
+  pages     = {337--340},
+  doi       = {10.1007/978-3-540-78800-3_24},
+  note      = {Metadata from Crossref; text not consulted}
+}
+
+@misc{z3-repo,
+  author       = {{Microsoft Research}},
+  title        = {{Z3} Theorem Prover},
+  howpublished = {GitHub, Z3Prover/z3},
+  year         = {2026},
+  url          = {https://github.com/Z3Prover/z3},
+  note         = {MIT license. Accessed 2026-09-12}
+}
+
+@inproceedings{barbosa2022cvc5,
+  author    = {Haniel Barbosa and Clark Barrett and Martin Brain and Gereon Kremer and Hanna Lachnitt and Makai Mann and Abdalrhman Mohamed and Mudathir Mohamed and Aina Niemetz and Andres N{\"o}tzli and Alex Ozdemir and Mathias Preiner and Andrew Reynolds and Ying Sheng and Cesare Tinelli and Yoni Zohar},
+  title     = {{cvc5}: A Versatile and Industrial-Strength {SMT} Solver},
+  booktitle = {Tools and Algorithms for the Construction and Analysis of Systems (TACAS)},
+  series    = {Lecture Notes in Computer Science},
+  publisher = {Springer},
+  year      = {2022},
+  pages     = {415--442},
+  doi       = {10.1007/978-3-030-99524-9_24},
+  note      = {Metadata from Crossref; text not consulted}
+}
+
+@misc{cvc5-repo,
+  author       = {{cvc5 developers}},
+  title        = {{cvc5}},
+  howpublished = {GitHub, cvc5/cvc5},
+  year         = {2026},
+  url          = {https://github.com/cvc5/cvc5},
+  note         = {BSD-3-Clause. Accessed 2026-09-12}
+}
+
+@inproceedings{kitchen2007stimulus,
+  author    = {Nathan Kitchen and Andreas Kuehlmann},
+  title     = {Stimulus Generation for Constrained Random Simulation},
+  booktitle = {IEEE/ACM International Conference on Computer-Aided Design (ICCAD)},
+  publisher = {IEEE},
+  year      = {2007},
+  pages     = {258--265},
+  doi       = {10.1109/ICCAD.2007.4397275},
+  note      = {Metadata from Crossref; text not consulted}
+}
+
+@inproceedings{chakraborty2015unigen2,
+  author    = {Supratik Chakraborty and Daniel J. Fremont and Kuldeep S. Meel and Sanjit A. Seshia and Moshe Y. Vardi},
+  title     = {On Parallel Scalable Uniform {SAT} Witness Generation},
+  booktitle = {Tools and Algorithms for the Construction and Analysis of Systems (TACAS)},
+  series    = {Lecture Notes in Computer Science},
+  publisher = {Springer},
+  year      = {2015},
+  pages     = {304--319},
+  doi       = {10.1007/978-3-662-46681-0_25},
+  note      = {Metadata from Crossref; text not consulted}
+}
+
+@incollection{adir2010stimuli,
+  author    = {Allon Adir and Yehuda Naveh},
+  title     = {Stimuli Generation for Functional Hardware Verification with Constraint Programming},
+  booktitle = {Hybrid Optimization},
+  series    = {Springer Optimization and Its Applications},
+  publisher = {Springer},
+  year      = {2010},
+  pages     = {509--558},
+  doi       = {10.1007/978-1-4419-1644-0_16},
+  note      = {Metadata from Crossref; text not consulted}
+}
+
+@book{bergeron2006testbenches,
+  author    = {Janick Bergeron},
+  title     = {Writing Testbenches using {SystemVerilog}},
+  publisher = {Springer},
+  year      = {2006},
+  isbn      = {978-0-387-29221-2},
+  doi       = {10.1007/0-387-31275-7},
+  note      = {Metadata from Crossref; text not consulted}
+}
+
+@book{bergeron2005vmm,
+  author    = {Janick Bergeron and Eduard Cerny and Alan Hunter and Andrew Nightingale},
+  title     = {Verification Methodology Manual for {SystemVerilog}},
+  publisher = {Springer},
+  year      = {2006},
+  isbn      = {0-387-25538-9},
+  doi       = {10.1007/b135575},
+  note      = {Crossref gives print year 2006; chapter "Coverage-Driven Verification" doi:10.1007/0-387-25556-7\_6 dated 2005. Author list from the chapter record was empty; authors as commonly listed, unverified. Text not consulted}
+}
+
+@misc{ieee1647-2019,
+  author       = {{IEEE}},
+  title        = {{IEEE} Std 1647-2019, {IEEE} Standard for the Functional Verification Language e},
+  howpublished = {IEEE},
+  year         = {2019},
+  doi          = {10.1109/IEEESTD.2019.8793253},
+  note         = {Earlier editions 2006 (doi:10.1109/IEEESTD.2006.246244), 2008, 2017. Metadata from Crossref}
+}
+
+@misc{ieee1800-2005,
+  author       = {{IEEE}},
+  title        = {{IEEE} Std 1800-2005, {IEEE} Standard for {SystemVerilog}: Unified Hardware Design, Specification and Verification Language},
+  howpublished = {IEEE},
+  year         = {2005},
+  doi          = {10.1109/IEEESTD.2005.97972},
+  note         = {Approved 2005-11-08 per Crossref}
+}
+
+@misc{verilator-random-runtime,
+  author       = {{Verilator contributors}},
+  title        = {Verilator runtime: constrained randomization (\texttt{include/verilated\_random.cpp})},
+  howpublished = {GitHub, verilator/verilator},
+  year         = {2026},
+  url          = {https://github.com/verilator/verilator/blob/master/include/verilated_random.cpp},
+  note         = {Also docs/guide/environment.rst (VERILATOR\_SOLVER), include/verilated.cpp (default "z3 --in"), src/V3Randomize.cpp. Accessed 2026-09-12}
+}
+
+@misc{verilator-pr8042,
+  author       = {{Verilator contributors}},
+  title        = {Add {UniGen2} constrained randomization algorithm (PR \#8042)},
+  howpublished = {GitHub, verilator/verilator},
+  year         = {2026},
+  url          = {https://github.com/verilator/verilator/pull/8042},
+  note         = {Related: PR \#7684 and issue \#7563 (biased distribution), PR \#7123 (solve..before), PR \#7166 and issue \#7124 (soft), PR \#7168 and issue \#6811 (dist), PR \#7963, issue \#6945, PR \#7991. Accessed 2026-09-12}
+}
+
+@misc{dvsim-repo,
+  author       = {{lowRISC contributors}},
+  title        = {dvsim: a build and run system for {EDA} tool flows},
+  howpublished = {GitHub, lowRISC/dvsim},
+  year         = {2026},
+  url          = {https://github.com/lowRISC/dvsim},
+  note         = {Files cited: src/dvsim/cli/run.py (--fixed-seed, --reseed, --reseed-multiplier), src/dvsim/job/deploy.py (seed generation). Accessed 2026-09-12}
+}
+
+@misc{opentitan-setup-dv,
+  author       = {{lowRISC contributors (OpenTitan project)}},
+  title        = {{OpenTitan}: Setup DV (reproducing a CI failure with --fixed-seed)},
+  howpublished = {OpenTitan documentation},
+  year         = {2026},
+  url          = {https://opentitan.org/book/doc/getting_started/setup_dv.html},
+  note         = {Accessed 2026-09-12}
+}
+
+@misc{opentitan-dvsim-tool-cfgs,
+  author       = {{lowRISC contributors (OpenTitan project)}},
+  title        = {{OpenTitan} dvsim tool configurations: vcs.hjson and xcelium.hjson},
+  howpublished = {GitHub, lowRISC/opentitan},
+  year         = {2026},
+  url          = {https://github.com/lowRISC/opentitan/blob/master/hw/dv/tools/dvsim/vcs.hjson},
+  note         = {+ntb\_random\_seed={svseed}; xcelium.hjson uses +SVSEED={svseed}. Accessed 2026-09-12}
+}
+
+@misc{cocotb-init-seed,
+  author       = {{cocotb contributors}},
+  title        = {cocotb source: seeding in \texttt{src/cocotb/\_init.py}},
+  howpublished = {GitHub, cocotb/cocotb},
+  year         = {2026},
+  url          = {https://github.com/cocotb/cocotb/blob/master/src/cocotb/_init.py},
+  note         = {COCOTB\_RANDOM\_SEED; default int(time.time()). Accessed 2026-09-12}
+}
+
+@misc{verilator-environment,
+  author       = {Wilson Snyder and {Verilator contributors}},
+  title        = {Verilator User's Guide: Environment},
+  howpublished = {GitHub, verilator/verilator, docs/guide/environment.rst
+                  at tag v5.030},
+  year         = {2024},
+  url          = {https://github.com/verilator/verilator/blob/v5.030/docs/guide/environment.rst},
+  note         = {Documents \texttt{VERILATOR\_SOLVER} and the
+                  \texttt{z3 --in} default. Accessed 2026-09-12}
+}
+
+@misc{verilator-install,
+  author       = {Wilson Snyder and {Verilator contributors}},
+  title        = {Verilator User's Guide: Installation},
+  howpublished = {GitHub, verilator/verilator, docs/guide/install.rst
+                  at tag v5.030},
+  year         = {2024},
+  url          = {https://github.com/verilator/verilator/blob/v5.030/docs/guide/install.rst},
+  note         = {``Install Z3'' section: Z3 required for constrained
+                  randomization, not at build time; CVC4/CVC5 ``not
+                  guaranteed to work''. Accessed 2026-09-12}
+}
+
+@misc{verilator-pr-4947,
+  author       = {Arkadiusz Kozdra},
+  title        = {Constrained randomization with popen and external solvers},
+  howpublished = {GitHub, verilator/verilator, pull request 4947},
+  year         = {2024},
+  url          = {https://github.com/verilator/verilator/pull/4947},
+  note         = {Merged 2024-05-17; released in 5.026. Lists soft
+                  constraints ``treated as hard''. Accessed 2026-09-12}
+}
+
+@misc{verilator-issue-5703,
+  author       = {{Verilator contributors}},
+  title        = {\$urandom seeding},
+  howpublished = {GitHub, verilator/verilator, issue 5703},
+  year         = {2024},
+  url          = {https://github.com/verilator/verilator/issues/5703},
+  note         = {Opened 2024-12-23, closed 2025-01-11: a
+                  \texttt{\$urandom(seed)} call whose result is unused is
+                  optimized away; fixed in 5.034. Accessed 2026-09-12}
+}
+
+@misc{verilator-issue-8024,
+  author       = {{Verilator contributors}},
+  title        = {constrained randomize() does not give a uniform
+                  distribution over legal value combinations},
+  howpublished = {GitHub, verilator/verilator, issue 8024},
+  year         = {2026},
+  url          = {https://github.com/verilator/verilator/issues/8024},
+  note         = {Opened 2026-08-01, closed 2026-08-27; quotes IEEE
+                  1800-2023 18.5.9. Accessed 2026-09-12}
+}
+
+@misc{icarus-issue-369,
+  author       = {{Icarus Verilog contributors}},
+  title        = {Does Icarus support rand?},
+  howpublished = {GitHub, steveicarus/iverilog, issue 369},
+  year         = {2020},
+  url          = {https://github.com/steveicarus/iverilog/issues/369},
+  note         = {Open. Maintainer's comment of 2020-09-10: ``there is no
+                  support for the randomize() method''. Accessed 2026-09-12}
+}
+
+@misc{icarus-readme,
+  author       = {{Icarus Verilog contributors}},
+  title        = {Icarus Verilog README},
+  howpublished = {GitHub, steveicarus/iverilog, v13-branch},
+  year         = {2026},
+  url          = {https://github.com/steveicarus/iverilog/blob/v13-branch/README.md},
+  note         = {``a (slowly growing) subset of the SystemVerilog
+                  language''. Accessed 2026-09-12}
+}
+
+@misc{z3-solver-pypi,
+  author       = {{Microsoft Research}},
+  title        = {z3-solver: an efficient SMT solver library},
+  howpublished = {PyPI},
+  year         = {2026},
+  url          = {https://pypi.org/project/z3-solver/},
+  note         = {Version 5.1.0.0 installed 2026-09-12; the wheel ships a
+                  \texttt{bin/z3} executable. Accessed 2026-09-12}
+}

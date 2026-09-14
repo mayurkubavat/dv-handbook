@@ -1,0 +1,82 @@
+<!-- OUTLINE: not yet approved -->
+# Constrained-Random Stimulus {#sec-ch07}
+
+*Epigraph, then the "Learning objectives" note: after this chapter you can write a class whose stimulus is drawn by `randomize()` under constraints, check every call, say what a solver promises and what it does not, measure a distribution instead of trusting it, and reproduce any run from its seed.*
+
+## The constraint was right and the stimulus was wrong
+
+*The reader can state why a `randomize()` that compiled and returned 1 proves nothing about what stimulus was generated. Opens with a documented case from an open simulator's own tracker: a value constrained to `0..2^16` whose low bits almost never came out set, found by coverage, fixed by changing the sampler and not the constraint [@verilator-issue-8024; @verilator-pr8042]. The chapter's thesis in one paragraph: constraints describe a legal set, a solver picks from it, and only measurement tells you what was picked.*
+
+## Why randomize at all {#sec-ch07-why}
+
+*The reader can say what constrained-random stimulus buys over directed tests, what it costs (a checker and coverage, because the test no longer knows the answer), and why the evidence for it is methodological rather than measured. The directed-versus-random argument as the methodology books state it, cited by edition [@bergeron2006testbenches; @bergeron2005vmm]; the honest note that no controlled study of effectiveness was found, so the chapter does not print a number. Links back to Chapter 1's seeded FIFO failure and forward to coverage in Part II.*
+
+## The randomization methods {#sec-ch07-methods}
+
+*The reader can declare `rand` and `randc` members, call `randomize()` and `randomize() with`, use `pre_randomize`/`post_randomize`, randomize one member or a scope variable with `std::randomize`, and check every call. The first Pitfall is silent failure: on 0 the call changes nothing, the only symptom is stale values, and an ignored return value forces a `void'` cast that hides it [@sutherland2007gotchas; @yehia2014crgotchas]; the In Practice box is the macro a production library wraps every call in [@opentitan-dv-lib; @lowrisc-dv-style]. `randc` is presented as a per-variable promise for small exhaustive enumerations and nothing more [@yehia2014crgotchas].*
+
+## Constraint blocks {#sec-ch07-constraints}
+
+*The reader can write each constraint form — `inside`, relations, `dist` with `:=` and `:/`, implication and `if`/`else`, `foreach`, `solve … before`, `soft`, `unique` — and turn a block or a variable off with `constraint_mode` and `rand_mode`. One listing per form, printed values beside each.*
+
+### Constraints are expressions, and the arithmetic is integer
+
+*The reader can name the three arithmetic mistakes that make a constraint silently weak: a chained relation `lo < x < hi` that constrains only `hi`, an integer weight `1/11` that is zero, and an unsigned subtraction that wraps a range into always or never [@sutherland2007gotchas; @yehia2014crgotchas]. Each is shown as a measured histogram, and the rule each teaches is stated once: one relation per statement, `:/` for ranges, cast before subtracting — with the production idiom that does exactly that [@opentitan-dv-constraints].*
+
+## What a solver does, and what it does not promise {#sec-ch07-solver}
+
+*The reader can explain how `randomize()` reaches an SMT solver (Verilator writes SMT-LIB to `z3` and reads a model back), why a satisfying assignment is not a uniform one, what `dist` asks for and what it can deliver, and how to measure a distribution before trusting it. The pipeline from the open tool's documentation and source [@verilator-random-runtime; @verilator-install; @demoura2008z3; @barrett2017smtlib26]; uniform sampling as a research problem the tool imports [@kitchen2007stimulus; @chakraborty2015unigen2; @verilator-pr8042]; a measured example of 10,000 draws under one constraint, printed as a histogram, on the release this book runs. Pitfall: a distribution is a request, not a guarantee, and the language does not promise uniformity [@ieee1800-2023].*
+
+## Seeds, random stability and reproducibility {#sec-ch07-seeds}
+
+*The reader can reproduce a failing run from its seed on the simulator that produced it, say which code changes leave a sequence unchanged and which perturb it, and say plainly what nobody promises. The standard's model — one generator per thread and per object, children seeded from parents, `srandom` and `get_randstate`/`set_randstate` as the escape hatches [@yehia2014crgotchas; @efody2012randstability]; UVM's re-seeding by type name and instance path [@accellera2014uvm12src]; a regression manager's seed as a 32-bit number in the run's name [@dvsim-repo]; cocotb's seed [@cocotb-init-seed]. The lowRISC rule on `$random` and `$dist_*` in one sentence [@lowrisc-dv-style]. Pitfall, measured: `$urandom(seed)` on the release this book runs does not replay the sequence that follows it, and on the previous release the call was optimized away when its result went unused [@verilator-issue-5703]; the reader is shown what does replay.*
+
+## What runs where {#sec-ch07-tools}
+
+*The reader can read the chapter's support table — one probe per row, Icarus 13.0 beside Verilator 5.052 with the solver the book's environment carries — and choose an example's tool from it. Icarus has no `randomize` [@icarus-issue-369]; Verilator without a solver on its path returns from `randomize()` without solving, shown by one example run with the solver removed rather than asserted. The z3 wheel is the one-line install the table depends on [@z3-solver-pypi]. Every earlier release that silently discarded a construct is named from the change log [@verilator-changes].*
+
+## Worked example: a constrained packet stream, measured {#sec-ch07-example}
+
+*The reader can build a packet class with layered constraints, drive a stream of them into the FIFO environment of the previous chapter, check every `randomize()`, print the histogram of what was generated, and replay one seed's failure exactly. The example reuses Chapter 6's environment shape (maker, driver, scoreboard) so the only new thing is the stimulus; it ends with `+verilator+seed+` reproducing a chosen run [@verilator-exe-sim].*
+
+## Future directions
+
+*The reader can place three things on the horizon without the chapter claiming results for them: the sampler research the open tool has just imported, portable stimulus as a standard for describing stimulus once (Part IV), and the generated-stimulus tooling Part VII measures. No numbers.*
+
+## Summary
+
+*Eight bullets: check every call; a constraint is a set; the arithmetic is integer; a solver picks, it does not spread; measure before trusting; a seed reproduces a run on one tool; stability is a property of code structure; the table says which tool runs what.*
+
+## Exercises
+
+*1. Remove one `void'` and one check from the worked example and find the stale value by reading the output alone.*
+*2. Rewrite `lo < x < hi` three ways and print a histogram for each.*
+*3. Weight a `dist` with `:=` and then `:/` over the same ranges and explain the two histograms from the definitions.*
+*4. Take the solver off the path and run the constraint-forms example; say from the output alone what was solved and what was not.*
+*5. Add one `rand` member to the packet class and show, with two seeds, which other members' sequences changed and why.*
+*6. Reproduce the worked example's failing seed on the other simulator, or explain from the table why you cannot.*
+
+## Further reading
+
+*The two gotcha papers by name and author [@sutherland2007gotchas; @yehia2014crgotchas]; the random-stability paper [@efody2012randstability]; the sampling paper the tool adopted [@chakraborty2015unigen2]; the standard's clause on constrained randomization, cited by edition [@ieee1800-2023].*
+
+## Planned examples
+
+Directory `examples/ch07-constrained-random/`. Every SystemVerilog example runs on Verilator 5.052 with `z3` on the path (the book's `dvbook` environment); the Makefile of each says so, and one example measures the same code with the solver removed.
+
+- `randomize-check/` (sv): contradictory constraints return 0; the unchecked call leaves stale values; the checked wrapper reports.
+- `constraint-forms/` (sv): one small class per form — `inside`, relations, `dist :=` and `:/`, implication, `if`/`else`, `foreach`, `solve before`, `soft` overridden inline, `unique`, `constraint_mode`, `rand_mode`, `randomize() with` — values printed beside each.
+- `arithmetic/` (sv): the chained relation, the integer weight and the unsigned wrap, each as a histogram over many draws.
+- `distribution/` (sv): 10,000 draws under one range constraint, histogram printed; the same with `dist` weights; what the sampler on this release does with each.
+- `no-solver/` (python runner over sv): the constraint-forms probe built once and run with `VERILATOR_SOLVER` pointed at nothing, so the warning and the unsolved values are spliced output.
+- `seeds/` (sv, two-tool where Icarus runs it): `$urandom(seed)`, `srandom` on an object and on a process, `+verilator+seed+` replay; the measured non-replay is its Pitfall's output.
+- `randc/` (sv): a `randc` cycle over a 3-bit variable; the same variable constrained against another, and what the solver does.
+- `packet-stream/` (sv): the worked example — constrained packet class, Chapter 6's environment shape, histogram, seed replay.
+- `cocotb-random/` (python, Icarus): `COCOTB_RANDOM_SEED`, Python's `random`, and the seed line cocotb prints.
+- `support-matrix/` (python): the 31 probes measured in the research note, run under both tools with the book's flags and the solver present; `matrix.md` spliced as `@tbl-ch07-support`.
+
+## Sources
+
+- `research/ch07-constrained-random.md` — Part A (language, gotcha catalog, random stability), Part B (method, solver, distributions, seeds), Part C (measured support on 5.030 with and without a solver), Part D (re-measured on 5.052 with z3: 28 of 31 run; `$urandom(seed)` wrong; Icarus unchanged).
+- `refs.bib` keys, all present: `sutherland2007gotchas`, `yehia2014crgotchas`, `efody2012randstability`, `bergeron2006testbenches`, `bergeron2005vmm`, `kitchen2007stimulus`, `chakraborty2015unigen2`, `demoura2008z3`, `barrett2017smtlib26`, `verilator-pr8042`, `verilator-issue-8024`, `verilator-issue-5703`, `verilator-pr-4947`, `verilator-random-runtime`, `verilator-install` (pinned at v5.030 in the note; re-cite at v5.052 before use), `verilator-environment` (same), `verilator-exe-sim`, `verilator-changes`, `verilator-languages`, `verilator-warnings`, `accellera2014uvm12src`, `dvsim-repo`, `cocotb-init-seed`, `cocotb-docs`, `lowrisc-dv-style`, `opentitan-dv-lib`, `opentitan-dv-constraints`, `icarus-issue-369`, `z3-solver-pypi`, `ieee1800-2023`.
+- Standing rule for this chapter: IEEE 1800-2023 clause 18 text is unread; cite the standard by edition only, never a subclause number below 18.x, and read the paper for every claim attributed to a paper.
