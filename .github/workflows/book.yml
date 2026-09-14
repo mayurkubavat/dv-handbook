@@ -38,15 +38,17 @@ jobs:
           sudo apt-get update -q
           sudo apt-get install -y -q git make g++ autoconf flex bison help2man \
             perl python3 libfl-dev zlib1g-dev gperf libreadline-dev gawk \
-            tcl-dev libffi-dev pkg-config libboost-system-dev \
-            libboost-python-dev libboost-filesystem-dev
+            tcl-dev libffi-dev pkg-config cmake clang lld
           sudo mkdir -p /opt/dvtools && sudo chown "$USER" /opt/dvtools
           git clone -q --depth 1 --branch v5.052 https://github.com/verilator/verilator /tmp/verilator
           (cd /tmp/verilator && autoconf && ./configure --prefix=/opt/dvtools >/dev/null && make -s -j"$(nproc)" && make -s install)
           git clone -q --depth 1 --branch v13_0 https://github.com/steveicarus/iverilog /tmp/iverilog
           (cd /tmp/iverilog && sh autoconf.sh && ./configure --prefix=/opt/dvtools >/dev/null && make -s -j"$(nproc)" && make -s install)
+          # Yosys builds with CMake from 0.6x; its README's three commands.
           git clone -q --depth 1 --branch v0.68 --recurse-submodules https://github.com/YosysHQ/yosys /tmp/yosys
-          (cd /tmp/yosys && make -s -j"$(nproc)" PREFIX=/opt/dvtools install)
+          (cd /tmp/yosys && cmake -B build . -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/opt/dvtools >/dev/null \
+             && cmake --build build --config Release --parallel "$(nproc)" >/dev/null \
+             && cmake --install build --strip >/dev/null)
       - name: Put the pinned simulators on the PATH and report their versions
         run: |
           echo /opt/dvtools/bin >> "$GITHUB_PATH"
