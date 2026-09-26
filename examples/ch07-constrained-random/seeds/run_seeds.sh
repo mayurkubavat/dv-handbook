@@ -7,9 +7,9 @@ mkdir -p build
 verilator --binary --timing --timescale 1ns/1ps -Wno-DECLFILENAME \
     --top-module tb_seeds -Mdir build tb_seeds.sv >/dev/null
 echo "--- default seed"
-./build/Vtb_seeds | grep -E "twice|first draw"
+./build/Vtb_seeds | grep -E "twice|after 4|first draw"
 for s in 1 2 1; do
   echo "--- +verilator+seed+$s"
   ./build/Vtb_seeds +verilator+seed+$s | grep -E "first draw"
 done
-echo "verdict: the run's seed reproduces the run; srandom replays a thread"
+echo "verdict: the run's seed reproduces the run; srandom replays a generator"

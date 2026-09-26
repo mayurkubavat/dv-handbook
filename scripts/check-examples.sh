@@ -21,10 +21,11 @@ ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 STATUS="$ROOT/examples/status.json"
 FILTER="${1:-}"
 
-# Pick the Python environment that has cocotb (used by cocotb/pyuvm examples).
+# Run every example in the dvbook environment when it exists, even if the
+# calling shell already has a cocotb on its PATH: a run.out written from a
+# different Python names that interpreter in its header lines.
 RUN=""
-if ! command -v cocotb-config >/dev/null 2>&1 \
-   && conda env list 2>/dev/null | grep -q '^dvbook '; then
+if conda env list 2>/dev/null | grep -q '^dvbook '; then
   RUN="conda run -n dvbook --no-capture-output"
 fi
 

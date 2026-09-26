@@ -19,7 +19,7 @@
 | `std::randomize(v)` | no build — syntax error | runs |
 | `std::randomize(v) with` | no build — syntax error | runs |
 | `$urandom`, `$urandom_range` | runs | runs |
-| `$urandom(seed)` replays a sequence | no run | wrong |
+| `$urandom(seed)` replays a sequence | no run | runs |
 | run-to-run reproducibility (values printed) | no build — "inside" expressions not supported yet. | runs |
 | object stability: `obj.srandom(seed)` | no build — Can't find task srandom in class pkt | runs |
 | thread stability: `process::self().srandom` | no build — syntax error | runs |
@@ -32,4 +32,4 @@
 | constraint on a non-rand state variable | no build — Constraint declarations not supported. | runs |
 | hand-rolled `$urandom_range` in a class method | runs | runs |
 
-: What each open simulator does with the randomization constructs this chapter teaches, measured by running one probe per row with the flags the book's build uses, the solver on the path, and checking the printed values. Of 31 constructs, 2 run on both, 28 on Verilator only, 0 on Icarus only and 1 on neither. Regenerated from the probes on every run. {#tbl-ch07-support}
+: What each open simulator does with the randomization constructs this chapter teaches, measured by running one probe per row with the flags the book's build uses plus `-Wno-fatal`, the solver on the path, and checking the printed values. Of 31 constructs, 2 run on both, 29 on Verilator only, 0 on Icarus only and 0 on neither. Regenerated from the probes on every run. {#tbl-ch07-support}

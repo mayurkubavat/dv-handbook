@@ -1,4 +1,6 @@
 # The runner builds once and runs twice; see run_nosolver.sh.
+# Runs on Verilator with the z3 solver on the path (the book's `dvbook`
+# environment); Icarus 13.0 has no randomize().
 EXAMPLE_LANG  := python
 TOP           := run_nosolver.sh
 SOURCES       := run_nosolver.sh

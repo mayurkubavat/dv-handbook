@@ -1,12 +1,14 @@
 --- default seed
-object srandom(7) twice: 2863271931 2863271931 ... same sequence
-thread srandom(11) twice: 3292909338 3292909338 ... same sequence
-$urandom(42) twice:      893602905 685465672 ...     different
-first draw of this run:  1604469840
+void'($urandom(42)) twice:   1984119072 1984119072 ... same sequence
+dummy = $urandom(42) twice:  889273727 1984119072 ... different
+object srandom(7) twice:     2863271931 2863271931 ... same sequence
+thread srandom(11) twice:    3292909338 3292909338 ... same sequence
+void'($urandom(42)) after 4: 893602905 685465672 ... different
+first draw of this run:      1604469840
 --- +verilator+seed+1
-first draw of this run:  1604469840
+first draw of this run:      1604469840
 --- +verilator+seed+2
-first draw of this run:  468036292
+first draw of this run:      468036292
 --- +verilator+seed+1
-first draw of this run:  1604469840
-verdict: the run's seed reproduces the run; srandom replays a thread
+first draw of this run:      1604469840
+verdict: the run's seed reproduces the run; srandom replays a generator

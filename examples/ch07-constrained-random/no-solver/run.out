@@ -5,4 +5,6 @@ randomize() returned 1, len=40
 --- with VERILATOR_SOLVER=/nonexistent/z3
 %Warning: Unable to communicate with SAT solver, please check its installation or specify a different one in VERILATOR_SOLVER environment variable.
 randomize() returned 0, len=99
+randomize() returned 0, len=99
+randomize() returned 0, len=99
 verdict: without a solver every call returned 0 and len kept 99

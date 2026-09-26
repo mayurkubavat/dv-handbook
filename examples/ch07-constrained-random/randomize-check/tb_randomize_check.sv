@@ -19,7 +19,7 @@ module tb_randomize_check;
   int  errors = 0;
 
   // The checked call: every randomize() in this book goes through
-  // something like this, or through the macro of Chapter 6's library.
+  // something like this, or through a macro that does the check.
   function automatic void randomize_or_fail(string where);
     if (t.randomize() != 1) begin
       errors++;

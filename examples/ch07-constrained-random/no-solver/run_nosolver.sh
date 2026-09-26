@@ -12,6 +12,7 @@ verilator --binary --timing --timescale 1ns/1ps -Wno-DECLFILENAME \
 echo "--- with z3 on the path"
 ./build/Vtb_nosolver | grep -E "^randomize"
 echo "--- with VERILATOR_SOLVER=/nonexistent/z3"
-VERILATOR_SOLVER=/nonexistent/z3 ./build/Vtb_nosolver 2>&1 \
-    | grep -E "^randomize|^%Warning: Unable" | sort -u
+VERILATOR_SOLVER=/nonexistent/z3 ./build/Vtb_nosolver > build/nosolver.log 2>&1
+grep -m1 -E "^%Warning: Unable" build/nosolver.log
+grep -E "^randomize" build/nosolver.log
 echo "verdict: without a solver every call returned 0 and len kept 99"

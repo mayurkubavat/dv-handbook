@@ -1,4 +1,6 @@
 # The runner runs the binary under several seeds; see run_seeds.sh.
+# Runs on Verilator with the z3 solver on the path (the book's `dvbook`
+# environment); Icarus 13.0 has no randomize().
 EXAMPLE_LANG  := python
 TOP           := run_seeds.sh
 SOURCES       := run_seeds.sh

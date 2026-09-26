@@ -17,7 +17,7 @@ implication `->`                               icarus: no build  verilator: runs
 `std::randomize(v)`                            icarus: no build  verilator: runs
 `std::randomize(v) with`                       icarus: no build  verilator: runs
 `$urandom`, `$urandom_range`                   icarus: runs      verilator: runs
-`$urandom(seed)` replays a sequence            icarus: no run    verilator: wrong
+`$urandom(seed)` replays a sequence            icarus: no run    verilator: runs
 run-to-run reproducibility (values printed)    icarus: no build  verilator: runs
 object stability: `obj.srandom(seed)`          icarus: no build  verilator: runs
 thread stability: `process::self().srandom`    icarus: no build  verilator: runs
@@ -29,4 +29,4 @@ contradictory constraints return 0             icarus: no build  verilator: runs
 signed `int` in a negative range               icarus: no build  verilator: runs
 constraint on a non-rand state variable        icarus: no build  verilator: runs
 hand-rolled `$urandom_range` in a class method icarus: runs      verilator: runs
-31 constructs: 2 run on both, 28 on Verilator only, 0 on Icarus only, 1 on neither
+31 constructs: 2 run on both, 29 on Verilator only, 0 on Icarus only, 0 on neither
