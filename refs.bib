@@ -262,7 +262,8 @@
   publisher = {Springer},
   year      = {2004},
   doi       = {10.1007/b117979},
-  url       = {https://link.springer.com/book/10.1007/b117979}
+  url       = {https://link.springer.com/book/10.1007/b117979},
+  address   = {Boston, MA}
 }
 
 @inproceedings{ehlers2013planning,
@@ -1020,7 +1021,9 @@
   title   = {Coverage metrics for functional validation of hardware designs},
   journal = {IEEE Design and Test of Computers},
   year    = {2001},
-  doi     = {10.1109/54.936247}
+  doi     = {10.1109/54.936247},
+  volume    = {18},
+  number    = {4}
 }
 
 % --- Standards (named, not quoted: see the research note's constraints) -----
@@ -2565,4 +2568,332 @@
   year         = {2026},
   url          = {https://github.com/verilator/verilator/issues/7563},
   note         = {Opened 2026-05-10, closed. Accessed 2026-09-14}
+}
+
+% ---- Chapter 8: functional coverage (added 2026-10-02) ----
+
+@misc{ieee1800-2017,
+  author       = {{IEEE}},
+  title        = {{IEEE} Std 1800-2017, {IEEE} Standard for {SystemVerilog}:
+                  Unified Hardware Design, Specification, and Verification
+                  Language},
+  howpublished = {IEEE Standards Association},
+  year         = {2018},
+  url          = {https://standards.ieee.org/ieee/1800/6700/},
+  note         = {Clause 19 read from the copy hosted for MIT 6.205 at
+                  https://fpga.mit.edu/6205/_static/F23/documentation/1800-2017.pdf.
+                  Accessed 2026-09-26}
+}
+
+@misc{ieee1800-2012,
+  author       = {{IEEE}},
+  title        = {{IEEE} Std 1800-2012, {IEEE} Standard for {SystemVerilog}:
+                  Unified Hardware Design, Specification, and Verification
+                  Language},
+  howpublished = {IEEE Standards Association},
+  year         = {2013},
+  url          = {https://standards.ieee.org/ieee/1800/4869/},
+  note         = {Published 2013-02-21. Clause 19 read from the copy hosted
+                  at https://ece.uah.edu/~gaede/cpe526/ and diffed against
+                  the 2017 text. Accessed 2026-09-26}
+}
+
+@inproceedings{smithaynsley2011coverage,
+  author    = {Doug Smith and John Aynsley},
+  title     = {A Practical Look @ {SystemVerilog} Coverage -- Tips, Tricks,
+               and Gotchas},
+  booktitle = {Design and Verification Conference (DVCon) US},
+  year      = {2011},
+  url       = {https://dvcon-proceedings.org/wp-content/uploads/a-practical-look-systemverilog-coverage-tips-tricks-and-gotchas.pdf},
+  note      = {Accessed 2026-09-26}
+}
+
+@inproceedings{sprott2015coverage,
+  author    = {Jason Sprott and Paul Marriott and Matt Graham},
+  title     = {Navigating The Functional Coverage Black Hole: Be More
+               Effective At Functional Coverage Modeling},
+  booktitle = {Design and Verification Conference (DVCon) US},
+  year      = {2015},
+  url       = {https://dvcon-proceedings.org/wp-content/uploads/navigating-the-functional-coverage-black-hole-be-more-effective-at-functional-coverage-modeling.pdf},
+  note      = {Session 13.4, 2015-03-04. Accessed 2026-09-26}
+}
+
+@inproceedings{bromleylitterick2016coverage,
+  author    = {Jonathan Bromley and Mark Litterick},
+  title     = {Effective {SystemVerilog} Functional Coverage: Design and
+               Coding Recommendations},
+  booktitle = {Synopsys Users Group (SNUG)},
+  year      = {2016},
+  url       = {https://assets.website-files.com/63f4bb21bd5303fe472ad00e/64957f836fbf7349210cf29c_bromley_coverage_paper.pdf},
+  note      = {Hosted by Verilab. Accessed 2026-09-26}
+}
+
+@inproceedings{ellisjain2018coverage,
+  author    = {Thomas Ellis and Rohit Jain},
+  title     = {Unraveling the Complexities of Functional Coverage: An
+               Advanced Guide to Simplify Your Use Model},
+  booktitle = {Design and Verification Conference (DVCon) US},
+  year      = {2018},
+  url       = {https://dvcon-proceedings.org/wp-content/uploads/unraveling-the-complexities-of-functional-coverage-an-advanced-guide-to-simplify-your-use-model.pdf},
+  note      = {Vendor authors (Mentor); tool screenshots are vendor
+               material. Accessed 2026-09-26}
+}
+
+@inproceedings{lee2024missingbins,
+  author    = {Jikjoo Lee and Tony Gladvin George and Kihyun Park and
+               Dongkun An and Wooseong Cheong and ByungChul Yoo},
+  title     = {Tackling Missing Bins: Refining Functional Coverage in
+               {SystemVerilog} for Deterministic Coverage Closure},
+  booktitle = {Design and Verification Conference (DVCon)},
+  year      = {2024},
+  url       = {https://dvcon-proceedings.org/wp-content/uploads/1062.pdf},
+  note      = {Accessed 2026-09-26}
+}
+
+@misc{opentitan-cov-classes,
+  author       = {{lowRISC contributors (OpenTitan project)}},
+  title        = {{OpenTitan} functional coverage classes and bound
+                  coverage interfaces},
+  howpublished = {GitHub, lowRISC/opentitan, commit 69d8208},
+  year         = {2026},
+  url          = {https://github.com/lowRISC/opentitan/tree/master/hw/dv/sv},
+  note         = {Apache-2.0. Files cited: hw/dv/sv/cip\_lib/cip\_base\_env\_cov.sv,
+                  hw/dv/sv/dv\_utils/dv\_fcov\_macros.svh,
+                  hw/ip/uart/dv/env/uart\_env\_cov.sv,
+                  hw/ip/hmac/dv/env/hmac\_env\_cov.sv,
+                  hw/ip/otbn/dv/uvm/env/otbn\_env\_cov.sv,
+                  hw/ip/spi\_device/dv/env/spi\_device\_env\_cov.sv,
+                  hw/ip/i2c/dv/sva/i2c\_protocol\_cov.sv,
+                  hw/top\_earlgrey/ip\_autogen/pwrmgr/dv/env/pwrmgr\_env\_cov.sv,
+                  hw/ip/uart/dv/env/uart\_scoreboard.sv. Accessed 2026-09-26}
+}
+
+@misc{slang-changelog,
+  author       = {Michael Popoloski},
+  title        = {slang {CHANGELOG}},
+  howpublished = {GitHub, MikePopoloski/slang},
+  year         = {2026},
+  url          = {https://github.com/MikePopoloski/slang/blob/master/CHANGELOG.md},
+  note         = {v7.0 (2024-09-26) entry lists the IEEE 1800-2023
+                  covergroup additions; the Unreleased entry documents
+                  \texttt{--allow-cross-auto-bin-max}. Accessed 2026-09-26}
+}
+
+@inproceedings{fine2003cdg,
+  author    = {Shai Fine and Avi Ziv},
+  title     = {Coverage Directed Test Generation for Functional Verification using {Bayesian} Networks},
+  booktitle = {Proceedings of the 40th Design Automation Conference (DAC 2003)},
+  publisher = {ACM},
+  year      = {2003},
+  pages     = {286--291},
+  doi       = {10.1145/775832.775907},
+  note      = {Metadata and abstract from OpenAlex; text not consulted. Accessed 2026-09-26}
+}
+
+@article{ioannides2012cdg,
+  author  = {Charalambos Ioannides and Kerstin I. Eder},
+  title   = {Coverage-Directed Test Generation Automated by Machine Learning -- A Review},
+  journal = {ACM Transactions on Design Automation of Electronic Systems},
+  volume  = {17},
+  number  = {1},
+  pages   = {7:1--7:21},
+  year    = {2012},
+  doi     = {10.1145/2071356.2071363},
+  note    = {Metadata and abstract from Crossref and OpenAlex; text not consulted. Accessed 2026-09-26}
+}
+
+@article{huang2015mutation,
+  author  = {Kai Huang and Peng Cheng Zhu and Rongjie Yan and Xiaolang Yan},
+  title   = {Functional Testbench Qualification by Mutation Analysis},
+  journal = {VLSI Design},
+  volume  = {2015},
+  pages   = {256474},
+  year    = {2015},
+  doi     = {10.1155/2015/256474},
+  note    = {Open access (CC BY). Abstract read via OpenAlex; full text returned 403. Accessed 2026-09-26}
+}
+
+@misc{hampton2009fq,
+  author       = {Mark Hampton},
+  title        = {Functional qualification: a technical brief},
+  howpublished = {EDN},
+  year         = {2009},
+  url          = {https://www.edn.com/functional-qualification-a-technical-brief/},
+  note         = {Author was CTO of Certess, the tool's vendor; vendor source. Dated 2009-03-02. Accessed 2026-09-26}
+}
+
+@misc{synopsys-certitude,
+  author       = {{Synopsys}},
+  title        = {Testbench Quality Assurance ({Certitude})},
+  howpublished = {Synopsys product page},
+  year         = {2026},
+  url          = {https://www.synopsys.com/verification/simulation/certitude.html},
+  note         = {Vendor claim; no figures on the page. Accessed 2026-09-26}
+}
+
+@misc{uvm-core-subscriber,
+  author       = {{Accellera Systems Initiative}},
+  title        = {{UVM} core library: \texttt{uvm\_subscriber} (\texttt{src/comps/uvm\_subscriber.svh})},
+  howpublished = {GitHub, accellera-official/uvm-core},
+  year         = {2026},
+  url          = {https://github.com/accellera-official/uvm-core/blob/main/src/comps/uvm_subscriber.svh},
+  note         = {Tags write() as IEEE 1800.2-2020 13.9.3.2. Accessed 2026-09-26}
+}
+
+@misc{cocotb-coverage,
+  author       = {Marek Cieplucha},
+  title        = {cocotb-coverage: Functional Coverage and Constrained Randomization Extensions for cocotb},
+  howpublished = {GitHub, mciepluc/cocotb-coverage; docs at https://cocotb-coverage.readthedocs.io/},
+  year         = {2025},
+  url          = {https://github.com/mciepluc/cocotb-coverage},
+  note         = {BSD-2-Clause. Release 2.0, 2025-10-03; requires cocotb >= 2.0 and Python >= 3.11. Exports XML and YAML in its own schema; UCIS listed as planned. Accessed 2026-09-26}
+}
+
+@misc{fc4sc,
+  author       = {{Accellera Systems Initiative, SystemC Verification Working Group}},
+  title        = {{FC4SC}: Functional Coverage for {SystemC}},
+  howpublished = {GitHub, accellera-official/fc4sc},
+  year         = {2023},
+  url          = {https://github.com/accellera-official/fc4sc},
+  note         = {Apache-2.0; header-only C++11; writes UCIS XML. Origin: AMIQ Consulting, announced 2018-02-22 (https://www.consulting.amiq.com/2018/02/22/cpp-implementation-of-functional-coverage-for-systemc/); original repository https://github.com/amiq-consulting/fc4sc. Last push 2023-07-12. Accessed 2026-09-26}
+}
+
+@misc{pyucis,
+  author       = {Matthew Ballance and contributors},
+  title        = {pyucis: {Python} {API} to the Unified Coverage Interoperability Standard ({UCIS}) data model},
+  howpublished = {GitHub, fvutils/pyucis},
+  year         = {2026},
+  url          = {https://github.com/fvutils/pyucis},
+  note         = {Apache-2.0. Reads/writes UCIS XML, YAML and binary; imports Verilator, cocotb-coverage and AVL coverage. Author name from the repository's build badge (dev.azure.com/mballance); verify before print. Last push 2026-08-31. Accessed 2026-09-26}
+}
+
+@misc{opentitan-cov-cfg,
+  author       = {{lowRISC contributors (OpenTitan project)}},
+  title        = {{OpenTitan} coverage configuration and exclusion files},
+  howpublished = {GitHub, lowRISC/opentitan},
+  year         = {2026},
+  url          = {https://github.com/lowRISC/opentitan/blob/master/hw/dv/tools/vcs/cover.cfg},
+  note         = {Also hw/dv/tools/vcs/common\_cov\_excl.cfg, hw/ip/uart/dv/cov/uart\_cov\_excl.el, hw/dv/tools/xcelium/cov\_merge.tcl. Apache-2.0. Accessed 2026-09-26}
+}
+
+@misc{verilator-exe-verilator-coverage,
+  author       = {Wilson Snyder and {Verilator contributors}},
+  title        = {Verilator User's Guide: verilator\_coverage},
+  howpublished = {GitHub, verilator/verilator,
+                  docs/guide/exe\_verilator\_coverage.rst at tag v5.052},
+  year         = {2026},
+  url          = {https://github.com/verilator/verilator/blob/v5.052/docs/guide/exe_verilator_coverage.rst},
+  note         = {\texttt{--annotate}, \texttt{--annotate-min} (default
+                  10), \texttt{--filter-type}, \texttt{--rank},
+                  \texttt{--report}, \texttt{--write},
+                  \texttt{--write-info}. Accessed 2026-09-26}
+}
+
+@misc{verilator-exe-verilator,
+  author       = {Wilson Snyder and {Verilator contributors}},
+  title        = {Verilator User's Guide: Verilator Arguments},
+  howpublished = {GitHub, verilator/verilator, docs/guide/exe\_verilator.rst
+                  at tag v5.052},
+  year         = {2026},
+  url          = {https://github.com/verilator/verilator/blob/v5.052/docs/guide/exe_verilator.rst},
+  note         = {\texttt{--coverage} and its five components,
+                  \texttt{--coverage-max-width},
+                  \texttt{--coverage-underscore},
+                  \texttt{--coverage-per-instance}. Accessed 2026-09-26}
+}
+
+@misc{verilator-issue-784,
+  author       = {{Verilator contributors}},
+  title        = {Support covergroup},
+  howpublished = {GitHub, verilator/verilator, issue 784},
+  year         = {2014},
+  url          = {https://github.com/verilator/verilator/issues/784},
+  note         = {Opened 2014-06-10, closed 2026-06-05 by pull request
+                  7117; released in 5.050. Accessed 2026-09-26}
+}
+
+@misc{verilator-pr-7117,
+  author       = {Matthew Ballance},
+  title        = {Baseline support for covergroups, coverpoints, and bins},
+  howpublished = {GitHub, verilator/verilator, pull request 7117},
+  year         = {2026},
+  url          = {https://github.com/verilator/verilator/pull/7117},
+  note         = {Opened 2026-02-20, merged 2026-06-05. Accessed 2026-09-26}
+}
+
+@misc{verilator-issue-7560,
+  author       = {{Verilator contributors}},
+  title        = {Tracking: Covergroup Roadmap and Progress},
+  howpublished = {GitHub, verilator/verilator, issue 7560},
+  year         = {2026},
+  url          = {https://github.com/verilator/verilator/issues/7560},
+  note         = {Open; per-feature status table last updated
+                  2026-08-17: \texttt{get\_coverage()} returns 0.0,
+                  \texttt{start()}/\texttt{stop()} parsed only,
+                  \texttt{option.weight} not applied, bins capped at
+                  1000. Accessed 2026-09-26}
+}
+
+@misc{verilator-issue-7848,
+  author       = {{Verilator contributors}},
+  title        = {Covergroup in a build without --coverage generates
+                  invalid C++},
+  howpublished = {GitHub, verilator/verilator, issue 7848},
+  year         = {2026},
+  url          = {https://github.com/verilator/verilator/issues/7848},
+  note         = {Opened 2026-06-28, closed 2026-06-29; fixed in 5.050.
+                  Accessed 2026-09-26}
+}
+
+@misc{verilator-issue-8458,
+  author       = {{Verilator contributors}},
+  title        = {Covergroup bin value '1 matches 1 instead of all ones},
+  howpublished = {GitHub, verilator/verilator, issue 8458},
+  year         = {2026},
+  url          = {https://github.com/verilator/verilator/issues/8458},
+  note         = {Opened and closed 2026-09-23, after the 5.052 release;
+                  reproduced on 5.052 in this note. Accessed 2026-09-26}
+}
+
+@misc{verilator-covergroup-runtime,
+  author       = {{Verilator contributors}},
+  title        = {verilated\_covergroup.h: covergroup runtime model},
+  howpublished = {GitHub, verilator/verilator,
+                  include/verilated\_covergroup.h at tag v5.052},
+  year         = {2026},
+  url          = {https://github.com/verilator/verilator/blob/v5.052/include/verilated_covergroup.h},
+  note         = {\texttt{VlCoverpoint}, \texttt{VlCoverCross},
+                  \texttt{coverageParts}; bin kinds Normal, Ignore,
+                  Illegal, Default. Accessed 2026-09-26}
+}
+
+@misc{icarus-issue-1232,
+  author       = {{Icarus Verilog contributors}},
+  title        = {Coverage analysis},
+  howpublished = {GitHub, steveicarus/iverilog, issue 1232},
+  year         = {2025},
+  url          = {https://github.com/steveicarus/iverilog/issues/1232},
+  note         = {Maintainer's comment of 2025-04-13: ``There is no
+                  support for coverage analysis in Icarus Verilog''.
+                  Accessed 2026-09-26}
+}
+
+@misc{icarus-issue-911,
+  author       = {{Icarus Verilog contributors}},
+  title        = {getting code coverage with iverilog (question)},
+  howpublished = {GitHub, steveicarus/iverilog, issue 911},
+  year         = {2023},
+  url          = {https://github.com/steveicarus/iverilog/issues/911},
+  note         = {Maintainer's comment of 2023-04-25: no built-in
+                  coverage; \texttt{covered} via VPI is the only free
+                  tool named. Accessed 2026-09-26}
+}
+
+@misc{opentitan-issue-31608,
+  author       = {Mayur Kubavat},
+  title        = {[hmac/dv] fifo\_depth coverpoint bins use \^{} ({XOR}) where ** was intended: 8 bins instead of 64},
+  howpublished = {GitHub issue 31608, lowRISC/opentitan},
+  year         = {2026},
+  url          = {https://github.com/lowRISC/opentitan/issues/31608},
+  note         = {Filed 2026-10-02 against hw/ip/hmac/dv/env/hmac\_env\_cov.sv at commit 53d65b9; reproduced on Verilator 5.052. Accessed 2026-10-02}
 }

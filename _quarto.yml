@@ -17,6 +17,7 @@ book:
     - chapters/ch05-testbench-language.qmd
     - chapters/ch06-oop-testbench-design.qmd
     - chapters/ch07-constrained-random.qmd
+    - chapters/ch08-functional-coverage.qmd
     - chapters/ch34-generative-ai-agentic-dv.qmd
     - references.qmd
   appendices:

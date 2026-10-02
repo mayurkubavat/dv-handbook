@@ -1,0 +1,90 @@
+<!-- OUTLINE: not yet approved -->
+# Functional Coverage {#sec-ch08}
+
+*Epigraph: one line, to be chosen at drafting.*
+
+::: {.callout-note title="Learning objectives"}
+*Write a coverage model that counts what a monitor observed, read the number it reports and say what the number means, find the bins that were asked for but never counted, and close coverage as a reviewed process rather than a figure.*
+:::
+
+## Eight bins where sixty-four were meant
+
+*The reader can explain how a coverage model closed at 100% while never requiring most of what it was written to require, and why no tool said anything: a bin range written with `^` for a power, in a production testbench, reported upstream and reproduced here.*
+
+## Why measure at all {#sec-ch08-why}
+
+*The reader can state what code coverage, functional coverage and assertion coverage each measure and each miss, using the two-gate example (an AND gate at 100% line coverage that could be an OR gate; a functional model at 100% after half the design was added), and can say that every kind measures activation only.*
+
+## The covergroup {#sec-ch08-covergroup}
+
+*The reader can declare a covergroup, embed it in a class, construct it in `new()`, pass it `ref` arguments, and choose among the four sampling forms with a reason: `sample()` with arguments from an observer is the default, a clocking event is the interface-embedded special case. First Pitfall: a group that is never constructed or never sampled reports nothing and warns about nothing.*
+
+## Coverpoints and bins {#sec-ch08-bins}
+
+*The reader can write explicit value, range, array, transition, wildcard, `ignore_bins`, `illegal_bins` and `default` bins; can say what auto bins do to a wide coverpoint (64 bins over any width) and why a 32-bit address reports 100% after 64 values; and can say why `illegal_bins` is a run-time error and not a checker.*
+
+### A bin range is an expression
+
+*The reader can evaluate a bin bound as integer arithmetic with SystemVerilog precedence and recognise the `^` trap from the opener.*
+
+## Crosses {#sec-ch08-cross}
+
+*The reader can size a cross as the Cartesian product of its coverpoints' bins, name the tuples that matter with `binsof`/`intersect`, exclude the rest, and read the cross's bins from the coverage database rather than trusting a group percentage.*
+
+## Options, instances and the percentage {#sec-ch08-percentage}
+
+*The reader can set `per_instance`, `goal`, `at_least`, `auto_bin_max`, `name` and `weight` at the right scope, can distinguish type coverage from instance coverage, and can compute a covergroup's percentage by the standard's rule (weighted average of item percentages) and by the rule the book's simulator applies (bins hit over bins defined), and tell which a report used. Pitfall with spliced output: two coverpoints of four and two bins, 50% on the tool, 62.5% by the standard.*
+
+## Where coverage lives, and what it is not {#sec-ch08-where}
+
+*The reader can place coverage in the monitor or scoreboard and never in the driver, can pair every coverpoint with the check that makes its sample meaningful, and can state the activate-propagate-detect argument: 100% next to an empty scoreboard is a claim about stimulus, not about the design.*
+
+## Code coverage on the free toolchain {#sec-ch08-code-coverage}
+
+*The reader can run Verilator with `--coverage`, read the `.dat` file, annotate the source, merge two runs, rank tests and export to lcov, and can avoid the two measured traps: the annotation threshold that defaults to ten hits, and the standard-library records that drag a class-based testbench's line summary down.*
+
+## Closure {#sec-ch08-closure}
+
+*The reader can run closure as OpenTitan does: merge only passing tests, review every exclusion with a category and a designer's sign-off, let a checksum expire an exclusion when the excluded code changes, run formal unreachability only after design freeze, and read a UCIS database for what it standardizes and what it leaves to the tool.*
+
+## What runs where {#sec-ch08-tools}
+
+*The reader can read the measured matrix: of 35 constructs on Verilator 5.052, which run with the right percentage, which run and report a wrong one (eight silently, five with a build-time warning), which do not build, and why Icarus 13.0 refuses every one; and can say that the coverage flag changes no verdict, only whether bins reach the database.*
+
+## Worked example: a coverage model for the FIFO, measured {#sec-ch08-example}
+
+*The reader can take the Chapter 2 plan's coverage items for the FIFO, write the covergroup a monitor samples (occupancy bins, push/pop/both crossed with full and empty, the empty-to-full transition), run two seeds, merge their databases, find the hole the first seed left, and show the same model in Python with `cocotb-coverage` on Icarus, where no SystemVerilog covergroup can run.*
+
+## Future directions
+
+*The reader can name what is coming: coverage-directed generation closing the loop from report to stimulus (left to the research chapter), UCIS readers in the open, and models that propose coverage items from a specification, with the chapter's own evidence of why a proposed bin still needs a reviewer.*
+
+## Summary
+
+## Exercises
+
+*Seven one-line intents: size a cross by hand; convert the opener's bound; find the bins a given `ignore_bins` removes from the denominator; write the check that an `illegal_bins` was standing in for; compute a group percentage both ways from a `.dat`; write an exclusion with a category and a justification; port one coverpoint to `cocotb-coverage`.*
+
+## Further reading
+
+## Planned examples
+
+Directory `examples/ch08-functional-coverage/`. Every SystemVerilog example runs on Verilator 5.052 only; Icarus 13.0 rejects the `covergroup` keyword, which is the measured fact the chapter states once. The cocotb example runs on Icarus.
+
+1. `silent-group/` (sv): two covergroups, one never constructed and one never sampled, both report 0.00 with no message; a third constructed in `new()` and sampled from a monitor task reports what it counted.
+2. `sampling-forms/` (sv): the same data sampled by a clocking event, by `sample()`, and by `with function sample(args)` with a `ref` argument across two instances; the counts the three forms produce.
+3. `bins-kinds/` (sv): value, range with `$`, array, transition, wildcard and `default` bins on one byte, each bin's hit count read back from the coverage database by a runner script.
+4. `auto-bins/` (sv): a 32-bit coverpoint at 100.00 after 64 values; `auto_bin_max` at the coverpoint; and the opener's bound reconstructed (`2^(w)-1` is 7; `2**(w)-1` is 63), eight bins where sixty-four were meant.
+5. `illegal-bins/` (sv, runner script): an `illegal_bins` value sampled stops the simulation with the tool's message; the same value with `ignore_bins` and an assertion beside it fails the way a checker fails.
+6. `cross/` (sv, runner script): a 4-bit variable crossed with a 10-bin coverpoint gives 160 bins; `binsof`/`intersect` names the tuples that matter; the cross's bins read from the `.dat` file, because the group percentage is not trusted.
+7. `percentage/` (sv): two coverpoints of four and two bins, one and two bins hit; the tool prints 50.00; the listing computes 62.50 by the standard's rule from the same bins. Pitfall output.
+8. `per-instance/` (sv): two instances of one group, `option.per_instance`, instance percentages against the type's; `get_coverage()` measured at 0.00 on this release, shown as such.
+9. `code-coverage/` (sv, runner script): the Appendix F counter under `--coverage`; `.dat`, `verilator_coverage` summary, `--annotate --annotate-min 1`, two runs merged, `--rank`, `--write-info`; `cover property` under `--coverage-user`.
+10. `support-matrix/` (sv): the 35-probe main matrix and the 16-probe second set from the research measurement, run by the Chapter 7 runner with the coverage flag added; `matrix.md` spliced into the chapter.
+11. `fifo-coverage/` (sv, runner script): the worked example — the Chapter 1 FIFO, a monitor-sampled covergroup, two seeds, a merge, the hole.
+12. `cocotb-coverage/` (cocotb, Icarus): the FIFO coverage model as `CoverPoint`/`CoverCross`, the report and the XML export. Requires `cocotb-coverage` in `dvbook` (installed 2026-10-02).
+
+## Sources
+
+- `research/ch08-functional-coverage.md` (Parts A, B, C): every section; the matrix; the silent-wrong catalog; the closure process.
+- `refs.bib`: `ieee1800-2023` (clause 19, cited by edition), `sutherland2007gotchas` §6, `sutherland2006gotchas`, `bromleylitterick2016coverage`, `smithaynsley2011coverage`, `sprott2015coverage`, `ellisjain2018coverage` (vendor), `lee2024missingbins`, `accellera2015uvmug` §3.12 and §4.10, `lowrisc-dv-style`, `opentitan-dv-methodology`, `opentitan-dev-stages`, `opentitan-cov-classes`, `opentitan-issue-31608`, `ucis2012`, `piziali2004coverage`, `tasiran2001coverage`, `hampton2009fq` (vendor), `huang2015mutation`, `fine2003cdg`, `dvsim-repo`, `verilator-changes`, `verilator-exe-verilator-coverage`, `verilator-covergroup-runtime`, `verilator-warnings`, `verilator-issue-7560`, `verilator-issue-8458`, `cocotb-coverage`, `fc4sc`, `pyucis`, `ieee1800-2017`, `icarus-issue-1232`.
