@@ -1,0 +1,6 @@
+cp_op : 1 of 4 bins hit
+cp_dir: 2 of 2 bins hit
+get_inst_coverage()   : 50.00
+bins hit over defined : 50.00  (3/6; the tool's rule)
+average of the items  : 62.50  (IEEE 1800 19.11, weight 1)
+verdict: tool 50.00 (3 of 6 bins); standard's average 62.50

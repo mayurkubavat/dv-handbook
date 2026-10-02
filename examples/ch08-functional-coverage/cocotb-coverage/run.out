@@ -1,0 +1,43 @@
+     -.--ns INFO     gpi                                ../gpi/GpiCommon.cpp:242  in gpi_load_users                  Loaded entry library: '/opt/miniconda3/envs/dvbook/lib/libpython3.12.dylib'
+     -.--ns INFO     gpi                                ../gpi/GpiCommon.cpp:234  in gpi_load_users                  Running entry func 'initialize' from loaded library '/opt/miniconda3/envs/dvbook/lib/python3.12/site-packages/cocotb/simulator.cpython-312-darwin.so'
+     -.--ns INFO     pygpi                              ..ib/pygpi/embed.cpp:115  in initialize                      Using Python 3.12.10 interpreter at /opt/miniconda3/envs/dvbook/bin/python3.12
+     -.--ns INFO     gpi                                ../gpi/GpiCommon.cpp:74   in gpi_print_registered_impl       GPI: VPI support registered
+     0.00ns INFO     cocotb.initialize                  Initialized cocotb v2.1.0 from /opt/miniconda3/envs/dvbook/lib/python3.12/site-packages/cocotb
+     0.00ns INFO     cocotb.initialize                  Running on Icarus Verilog version 13.0 (stable)
+     0.00ns INFO     cocotb.regression                  Running tests
+     0.00ns INFO     cocotb.regression                  running test_fifo_cov.fifo_coverage (1/1)
+  2005.00ns INFO     cocotb.fifo                        --- phase A: 50/50 push and pop, 200 cycles
+  2005.00ns INFO     cocotb.fifo                        top : coverage=22, size=30
+  2005.00ns INFO     cocotb.fifo                           top.empty : coverage=2, size=2
+  2005.00ns INFO     cocotb.fifo                           top.fill : coverage=0, size=1
+  2005.00ns INFO     cocotb.fifo                           top.full : coverage=1, size=2
+  2005.00ns INFO     cocotb.fifo                           top.occupancy : coverage=3, size=5
+  2005.00ns INFO     cocotb.fifo                           top.op : coverage=4, size=4
+  2005.00ns INFO     cocotb.fifo                           top.op_x_empty : coverage=8, size=8
+  2005.00ns INFO     cocotb.fifo                           top.op_x_full : coverage=4, size=8
+  2005.00ns INFO     cocotb.fifo                        occupancy bins: empty=10 low=182 high=7 almost=0 full_16=0
+  2005.00ns INFO     cocotb.fifo                        op_x_full with not_full: idle=47 push=53 pop=54 both=45
+  2005.00ns INFO     cocotb.fifo                        op_x_full with full: idle=0 push=0 pop=0 both=0
+  4005.00ns INFO     cocotb.fifo                        --- phase B: push-biased, 200 more cycles
+  4005.00ns INFO     cocotb.fifo                        top : coverage=29, size=30
+  4005.00ns INFO     cocotb.fifo                           top.empty : coverage=2, size=2
+  4005.00ns INFO     cocotb.fifo                           top.fill : coverage=1, size=1
+  4005.00ns INFO     cocotb.fifo                           top.full : coverage=2, size=2
+  4005.00ns INFO     cocotb.fifo                           top.occupancy : coverage=4, size=5
+  4005.00ns INFO     cocotb.fifo                           top.op : coverage=4, size=4
+  4005.00ns INFO     cocotb.fifo                           top.op_x_empty : coverage=8, size=8
+  4005.00ns INFO     cocotb.fifo                           top.op_x_full : coverage=8, size=8
+  4005.00ns INFO     cocotb.fifo                        occupancy bins: empty=10 low=192 high=75 almost=122 full_16=0
+  4005.00ns INFO     cocotb.fifo                        op_x_full with not_full: idle=53 push=96 pop=58 both=70
+  4005.00ns INFO     cocotb.fifo                        op_x_full with full: idle=11 push=83 pop=2 both=26
+  4015.00ns INFO     cocotb.fifo                        coverage.xml written: top size=30 coverage=29 (96.67%)
+  4015.00ns INFO     cocotb.fifo                        covered: push while full at occupancy 15 (a coverage hit, not a check)
+  4015.00ns INFO     cocotb.fifo                        verdict: the push-biased phase closed every bin but top.occupancy.full_16
+  4015.00ns INFO     cocotb.regression                  test_fifo_cov.fifo_coverage passed
+  4015.00ns INFO     cocotb.regression                  **************************************************************************************
+                                                        ** TEST                          STATUS  SIM TIME (ns)  REAL TIME (s)  RATIO (ns/s) **
+                                                        **************************************************************************************
+                                                        ** test_fifo_cov.fifo_coverage    PASS        4015.00  **
+                                                        **************************************************************************************
+                                                        ** TESTS=1 PASS=1 FAIL=0 SKIP=0               4015.00  **
+                                                        **************************************************************************************

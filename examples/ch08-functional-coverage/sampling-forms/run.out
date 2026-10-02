@@ -1,0 +1,6 @@
+traffic: 8 cycles, 4 valid bytes, bus idles at ff
+clocked @(posedge clk) : samples=8 coverage=100.00
+explicit sample()      : samples=4 coverage=75.00
+sample(b, ok) lane A   : calls=8 ok=4 coverage=75.00
+sample(b, ok) lane B   : calls=8 ok=2 coverage=50.00
+verdict: the clocked form counted four idle cycles as traffic

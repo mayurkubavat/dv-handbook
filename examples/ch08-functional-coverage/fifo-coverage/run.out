@@ -1,0 +1,40 @@
+--- run A: 50/50 push and pop, seed 1
++bias=even +n=200: fifo_cg get_inst_coverage = 75.86
+not covered: push while full
+occupancy: empty=9 low=156 high=35 almost=0 full_16=0
+op_cp: idle=50 push=51 pop=44 both=55
+full_cp: not_full=200 full=0
+empty_cp: not_empty=191 empty=9
+op_x_full: both_x_full=0 both_x_not_full=55 idle_x_full=0 idle_x_not_full=50 
+pop_x_full=0 pop_x_not_full=44 push_x_full=0 push_x_not_full=51
+op_x_empty: both_x_empty=1 both_x_not_empty=54 idle_x_empty=3 
+idle_x_not_empty=47 pop_x_empty=3 pop_x_not_empty=41 push_x_empty=2 
+push_x_not_empty=49
+level: climb=0
+--- run B: push-biased, seed 1
++bias=push +n=200: fifo_cg get_inst_coverage = 86.21
+covered: push while full at occupancy 15 (a coverage hit, not a check)
+occupancy: empty=1 low=15 high=46 almost=138 full_16=0
+op_cp: idle=16 push=144 pop=5 both=35
+full_cp: not_full=62 full=138
+empty_cp: not_empty=199 empty=1
+op_x_full: both_x_full=24 both_x_not_full=11 idle_x_full=11 idle_x_not_full=5 
+pop_x_full=3 pop_x_not_full=2 push_x_full=100 push_x_not_full=44
+op_x_empty: both_x_empty=0 both_x_not_empty=35 idle_x_empty=0 
+idle_x_not_empty=16 pop_x_empty=0 pop_x_not_empty=5 push_x_empty=1 
+push_x_not_empty=143
+level: climb=1
+--- merge: verilator_coverage --write merged.dat runA.dat runB.dat
+occupancy: empty=10 low=171 high=81 almost=138 full_16=0
+op_cp: idle=66 push=195 pop=49 both=90
+full_cp: not_full=262 full=138
+empty_cp: not_empty=390 empty=10
+op_x_full: both_x_full=24 both_x_not_full=66 idle_x_full=11 
+idle_x_not_full=55 pop_x_full=3 pop_x_not_full=46 push_x_full=100 
+push_x_not_full=95
+op_x_empty: both_x_empty=1 both_x_not_empty=89 idle_x_empty=3 
+idle_x_not_empty=63 pop_x_empty=3 pop_x_not_empty=46 push_x_empty=3 
+push_x_not_empty=192
+level: climb=1
+still zero after the merge: occupancy.full_16
+verdict: the merge closed the hole run A left, except full_16, which the DUT never reaches

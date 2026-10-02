@@ -1,0 +1,21 @@
+--- tb_illegal
+drove cmd 3
+    %Error: tb_illegal.sv:10: Assertion failed in tb_illegal.cg.sample:
+      Illegal bin 'bad' hit in coverpoint 'cp'
+exit code: 1
+--- tb_illegal +cov=0
+drove cmd 3
+drove cmd 7
+end of test, no check failed
+exit code: 0
+--- tb_ignore_assert
+drove cmd 3
+    %Error: tb_ignore_assert.sv:19: Assertion failed in
+      tb_ignore_assert.drive: check failed: cmd 7 is reserved
+exit code: 1
+--- tb_ignore_assert +cov=0
+drove cmd 3
+    %Error: tb_ignore_assert.sv:19: Assertion failed in
+      tb_ignore_assert.drive: check failed: cmd 7 is reserved
+exit code: 1
+verdict: the illegal bin needs sampling; the assertion does not

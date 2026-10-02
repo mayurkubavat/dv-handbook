@@ -2897,3 +2897,30 @@
   url          = {https://github.com/lowRISC/opentitan/issues/31608},
   note         = {Filed 2026-10-02 against hw/ip/hmac/dv/env/hmac\_env\_cov.sv at commit 53d65b9; reproduced on Verilator 5.052. Accessed 2026-10-02}
 }
+
+@misc{opentitan-common-cov-excl,
+  author       = {{lowRISC contributors (OpenTitan project)}},
+  title        = {{OpenTitan} shared coverage exclusions: \texttt{common\_cov\_excl.cfg}},
+  howpublished = {GitHub, lowRISC/opentitan, hw/dv/tools/vcs/common\_cov\_excl.cfg},
+  year         = {2026},
+  url          = {https://github.com/lowRISC/opentitan/blob/master/hw/dv/tools/vcs/common_cov_excl.cfg},
+  note         = {Apache-2.0. Each exclusion line is prefixed by its category: UNR, NON\_RTL, UNSUPPORTED, EXTERNAL, LOW\_RISK. Accessed 2026-09-26}
+}
+
+@misc{opentitan-uart-cov-excl,
+  author       = {{lowRISC contributors (OpenTitan project)}},
+  title        = {{OpenTitan} {UART} coverage exclusion file: \texttt{uart\_cov\_excl.el}},
+  howpublished = {GitHub, lowRISC/opentitan, hw/ip/uart/dv/cov/uart\_cov\_excl.el},
+  year         = {2026},
+  url          = {https://github.com/lowRISC/opentitan/blob/master/hw/ip/uart/dv/cov/uart_cov_excl.el},
+  note         = {Apache-2.0. A tool-generated exclusion with its ANNOTATION and CHECKSUM. Accessed 2026-09-26}
+}
+
+@misc{opentitan-vcs-hjson,
+  author       = {{lowRISC contributors (OpenTitan project)}},
+  title        = {{OpenTitan} {dvsim} simulator configuration for {VCS}: \texttt{vcs.hjson}},
+  howpublished = {GitHub, lowRISC/opentitan, hw/dv/tools/dvsim/vcs.hjson},
+  year         = {2026},
+  url          = {https://github.com/lowRISC/opentitan/blob/master/hw/dv/tools/dvsim/vcs.hjson},
+  note         = {Apache-2.0. Coverage metrics enabled at build, the grading and report options, and the comment that coverage from failing tests is excluded. Accessed 2026-09-26}
+}

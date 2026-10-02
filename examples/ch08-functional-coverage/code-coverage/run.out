@@ -1,0 +1,34 @@
+--- run A: +n=10
+count=10 after 10 enabled cycles
+records: line=7 toggle=44 branch=6 expr=4 user=2
+summary: line 100.0% (7/7) toggle 54.5% (24/44) branch 66.7% (4/6) expr 100.0% (4/4) user 50.0% (1/2)
+--- run B: +n=300
+count=44 after 300 enabled cycles
+records: line=7 toggle=44 branch=6 expr=4 user=2
+summary: line 100.0% (7/7) toggle 95.5% (42/44) branch 66.7% (4/6) expr 100.0% (4/4) user 100.0% (2/2)
+--- annotate run A at the default threshold (--annotate-min 10)
+lines with all attached points covered : 14.00% (4/27)
+%000001   input  logic             rst_n,   // active-low, asynchronous
+~000010     else if (en)  count <= count + 1'b1;
+%000000   cov_wrap:     cover property (@(posedge clk) count == 8'hff);
+--- annotate run A with --annotate-min 1
+lines with all attached points covered : 70.00% (19/27)
+~000001   input  logic             rst_n,   // active-low, asynchronous
+ 000010     else if (en)  count <= count + 1'b1;
+%000000   cov_wrap:     cover property (@(posedge clk) count == 8'hff);
+--- merge: verilator_coverage --write merged.dat runA.dat runB.dat
+cov_counting: A=10 B=300 merged=310
+summary: line 100.0% (7/7) toggle 95.5% (42/44) branch 66.7% (4/6) expr 100.0% (4/4) user 100.0% (2/2)
+--- rank: verilator_coverage --rank runA.dat runB.dat
+Tests:
+  Covered,     Rank,  RankPts,  Filename
+       40,        0,        0,  "runA.dat"
+       59,        1,       59,  "runB.dat"
+--- lcov: verilator_coverage --write-info merged.info (first lines)
+TN:verilator_coverage
+SF:../../appF-counter/rtl/counter.sv
+DA:7,316
+BRDA:7,0,clk:0->1,316
+BRDA:7,0,clk:1->0,314
+DA:8,2
+verdict: a merge adds counts; the annotation threshold decides which lines count as covered

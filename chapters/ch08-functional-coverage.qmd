@@ -1,90 +1,261 @@
-<!-- OUTLINE: not yet approved -->
 # Functional Coverage {#sec-ch08}
 
-*Epigraph: one line, to be chosen at drafting.*
+*A number that nobody can falsify is not a measurement.*
 
 ::: {.callout-note title="Learning objectives"}
-*Write a coverage model that counts what a monitor observed, read the number it reports and say what the number means, find the bins that were asked for but never counted, and close coverage as a reviewed process rather than a figure.*
+After this chapter you can write a coverage model that counts what a monitor observed and nothing else; read the percentage it reports and say which rule produced it; find the bins that were asked for and never counted, including the ones a tool dropped without a word; and close coverage the way a project closes it, as a reviewed set of exclusions on a merged database rather than as a figure.
 :::
 
 ## Eight bins where sixty-four were meant
 
-*The reader can explain how a coverage model closed at 100% while never requiring most of what it was written to require, and why no tool said anything: a bin range written with `^` for a power, in a production testbench, reported upstream and reproduced here.*
+A production coverage model for a hash engine declares the bins of its FIFO-depth coverpoint as a range from zero to `2^(Msb+1-Lsb)-1`, with the two constants six bits apart, so that every occupancy of a 64-entry FIFO gets a bin of its own [@opentitan-cov-classes]. In SystemVerilog `^` is exclusive-or, and binary `-` binds tighter than `^`, so the bound is not two to the sixth less one; it is two exclusive-or five, which is seven [@ieee1800-2017]. The coverpoint has eight bins. The cross built on it, five coverpoints wide, closes once the FIFO has been seen at depths zero through seven, and depths eight through sixty-three are never required of any test. Both operands are legal, the expression is a constant, and no compiler, linter or coverage tool has anything to say [@opentitan-issue-31608].
+
+That is the chapter in one bug. A coverage model is code that describes what a test campaign must have observed, and a reader of its report trusts that the denominator is the one the author meant. Here the denominator was wrong by a factor of eight, the report said 100%, and nothing in the flow could tell. The chapter's examples therefore print two things beside every percentage: the bins the tool actually created, read back from its database, and the number the standard's rule would give from the same hits. Where the two disagree, and on the release this book runs they disagree in eight silent ways, the chapter says which is which.
 
 ## Why measure at all {#sec-ch08-why}
 
-*The reader can state what code coverage, functional coverage and assertion coverage each measure and each miss, using the two-gate example (an AND gate at 100% line coverage that could be an OR gate; a functional model at 100% after half the design was added), and can say that every kind measures activation only.*
+@sec-ch07 ended with a stimulus that was measured by a histogram. The histogram answered one question, what the generator produced, and left the one that matters: what the design was made to do. Coverage is the general form of that histogram. It counts, at a point the testbench chooses, how often a value or a combination of values was observed, and it reports the fraction of the combinations the author listed that were observed at all.
+
+Two kinds exist, and the open sources name them by who writes them. The UVM user guide calls coverage *implicit* when the simulator derives it from the RTL and *explicit* when "the user specifies the coverage goals, the needed values, and collection time", and it states each kind's blind spot in a sentence: explicit coverage cannot see goals nobody wrote, and implicit coverage "does not take into account high-level abstract events and does not create associations between parallel threads" [@accellera2015uvmug]. OpenTitan's methodology makes the same point with two gates. An AND gate driven with inputs `00` and `11` reaches 100% line coverage, and "could just as easily be an OR gate"; a functional model written for one gate stays at 100% after a second gate is added, "but half of the design was not exercised" [@opentitan-dv-methodology]. Code coverage comes free and measures the RTL; functional coverage costs authoring and measures the plan. Each catches what the other cannot, which is why the UVM guide's order is explicit first and implicit "as a 'safety net'", with the diagnostic that full functional coverage next to low code coverage means the functional model "needs to be refined and enhanced" [@accellera2015uvmug].
+
+The code-coverage kinds, in the definitions the same methodology gives, are line, toggle, FSM state, FSM transition, conditional and branch [@opentitan-dv-methodology]; the Accellera coverage-database standard groups them as input-contribution, expression-value and transition metrics and gives covergroups and assertions "their own definitions" [@ucis2012]. The same standard states the limit every kind shares before any number is shown: a metric "explicitly does not define or record the sampling rules", and binning loses information that "is not re-constructable in the general case". Its own example scores the same two observed values as 2 of 256 under one binning and 2 of 8 under another [@ucis2012]. A coverage percentage is a property of the binning as much as of the stimulus. The opener's eight bins are that sentence with a project name on it.
+
+What the evidence does not say is that the method finds more bugs than directed testing. The surveys that chart adoption of functional coverage chart it together with constrained-random and assertions as one maturing trend, and they are vendor-commissioned [@foster2020wrg]; the peer-reviewed line that measures anything measures how fast a learned generator closes a model [@fine2003cdg], not whether the model found a bug. The argument for coverage is structural, and OpenTitan states it as a question and an answer: "When are we done testing?" and "Only coverage can answer this question for you" [@opentitan-dv-methodology]. A test campaign cannot enumerate what nobody thought of, so it measures what it reached. The chapter attaches no percentage to the method's benefit, because none is sourced.
 
 ## The covergroup {#sec-ch08-covergroup}
 
-*The reader can declare a covergroup, embed it in a class, construct it in `new()`, pass it `ref` arguments, and choose among the four sampling forms with a reason: `sample()` with arguments from an observer is the default, a clocking event is the interface-embedded special case. First Pitfall: a group that is never constructed or never sampled reports nothing and warns about nothing.*
+A `covergroup` is a type [@ieee1800-2017]. It is declared once, in a package, module, program, interface, checker or class, and instantiated with `new` as many times as there are things to count. Its parts are an optional sampling event, one or more coverpoints, optional crosses, optional arguments and options. Declared inside a class it is both an anonymous type and a variable of that type, and the variable "may only be assigned in the new method" [@ieee1800-2017]: a covergroup that a class forgets to construct collects nothing, and the only symptom is a report that shows 0% with no message beside it. Sutherland, Mills and Spear made that the first coverage gotcha, with a second cause of the same symptom, a sampling event that never fired or a `sample()` never called [@sutherland2007gotchas]. The chapter's first example is those two silences side by side.
+
+```{.systemverilog include="examples/ch08-functional-coverage/silent-group/tb_silent_group.sv"}
+```
+
+```{.text include="examples/ch08-functional-coverage/silent-group/run.out"}
+```
+
+Three groups see the same traffic. The first was declared and never built; the second was built and never sampled; the third was built in `new()` and sampled by a monitor task on every transaction it observed. The second prints zero and not a word about why. The first is a null handle, and on the release this book runs the question is what reveals the omission: asking it for its coverage stops the run with a null-pointer error, which the runner keeps in the output because the plain recipe would strip it. Nothing before that question said anything either. OpenTitan constructs every covergroup in its coverage classes' constructors, and its macro for the RTL-bound ones prints a line when it does [@opentitan-cov-classes], which is the production form of this example: a group's construction is an event worth logging, because its absence is not.
+
+::: {.callout-warning title="Pitfall"}
+A covergroup that was never sampled, or sampled by an event that never fired, reports 0% and says nothing else, and the report cannot distinguish it from a group whose bins were simply never hit. A covergroup that was never constructed is a null handle: on the release this book runs, asking it for coverage stops the run, and on another it may answer 0%. Construct every group in `new()`, log that you did, and check the sample count beside the percentage before believing either.
+:::
+
+### Four ways to sample
+
+The sampling form is the design decision, and real code does not use the one the language offers first. A covergroup may take a clocking event, so that it samples "the instant the clocking event takes place" and as many times as the event occurs in a time step; it may declare `with function sample(args)`, so that the data is passed in rather than read from the enclosing scope; it may use a block event; or it may take no event at all, in which case the testbench calls the built-in `sample()` [@ieee1800-2017]. Bromley and Litterick call the clocked form "too inflexible for serious usage" and recommend "explicit code elsewhere in the class that calls the covergroup's sample method", in particular when the data to be covered arrives from several sources over time [@bromleylitterick2016coverage]. Measured on OpenTitan at one commit: of 417 covergroups in its 76 coverage class files, 322 declare a sample function and none uses a clocking event; of the 104 in its RTL-bound coverage interfaces, 49 are clocked [@opentitan-cov-classes]. The rule the numbers teach is that a group embedded in an interface samples on the clock, because the clock is the only event it has, and a group in a class samples when the component that owns it has observed something.
+
+```{.systemverilog include="examples/ch08-functional-coverage/sampling-forms/tb_sampling_forms.sv"}
+```
+
+```{.text include="examples/ch08-functional-coverage/sampling-forms/run.out"}
+```
+
+The same four bytes on a bus that idles at `ff`, sampled three ways. The clocked group took eight samples, one per cycle, and reports full coverage: the four idle cycles put the idle value into the top quarter that no byte reached, and the figure is a fact about the clock, not the traffic. The explicit `sample()` took four samples and reports three quarters, which is the truth. The third form passes the byte and the monitor's valid flag as arguments, and its two instances share one type and differ by a `ref` argument bound to each lane's enable, so one lane counts the whole stream and the other only what it was enabled for. A `ref` argument lets one covergroup type watch a different variable in each instance [@ieee1800-2017], which is how one definition serves many ports; the direction is sticky across the argument list, so `(ref int a, int lo, int hi)` makes all three references and the call that passes constants fails to compile [@sutherland2007gotchas].
 
 ## Coverpoints and bins {#sec-ch08-bins}
 
-*The reader can write explicit value, range, array, transition, wildcard, `ignore_bins`, `illegal_bins` and `default` bins; can say what auto bins do to a wide coverpoint (64 bins over any width) and why a 32-bit address reports 100% after 64 values; and can say why `illegal_bins` is a run-time error and not a checker.*
+A coverpoint covers an integral expression: a variable, a part-select, a concatenation, a function's result, an enumeration [@ieee1800-2017]. The expression's bins are the units of the percentage, and the language offers them in these forms. With no bin declared, the tool creates automatic bins, one per value for an enumeration and otherwise as many as the smaller of two to the width and `auto_bin_max`, which defaults to 64, and distributes the values across them [@ieee1800-2017]. `bins b = {list}` is one bin for a whole list of values and ranges, with `$` standing for the type's minimum or maximum; `bins b[] = {list}` is one bin per value; `bins b[N] = {list}` splits the list into N bins in order. Transition bins count sequences of samples: `(0 => 1)` is consecutive, `[*]` repeats, `[->]` and `[=]` allow other values between. `wildcard bins` match with `?` in place of a bit. `ignore_bins` removes values from every other bin; `illegal_bins` removes them and raises a run-time error when one is hit; `bins b = default` catches every value in no other bin and is "excluded from the percentage and from every cross" [@ieee1800-2017].
+
+```{.systemverilog include="examples/ch08-functional-coverage/bins-kinds/tb_bins_kinds.sv"}
+```
+
+```{.text include="examples/ch08-functional-coverage/bins-kinds/run_bins.sh"}
+```
+
+```{.text include="examples/ch08-functional-coverage/bins-kinds/run.out"}
+```
+
+Every bin kind the chapter teaches is in one coverpoint, with the two transition bins in a second one because a transition bin and a `default` bin in the same coverpoint is an internal compiler error on the release this book runs; a fixed sequence of eight values is sampled, and the runner reads each bin's hit count back from the simulator's own database, tagged with its kind, beside the percentage the group reports. The numbers are the chapter's method: a bin that the report counts is a bin that can be read, and a bin that cannot be read is a figure to distrust. Three numbers describe this one group. The standard removes ignored values from the calculation and excludes the `default` bin, so nine bins remain, nine were hit, and the score is 100; the simulator's own `get_inst_coverage()` keeps the ignored value's bin in its denominator and reports 90; and the database tool's summary counts the ignored and the default bins as points and reports 83.3. The chapter's matrix (@sec-ch08-tools) lists the second with the other silent cells; the third is a report-tool convention, visible in the output as the bin kinds it counted.
+
+Two rules of the standard decide most bin mistakes. *Value resolution*: a bin value is cast to the coverpoint's type, and one that does not fit draws a warning and is dropped, so a negative literal against an unsigned point disappears [@ieee1800-2017]. *Emptiness*: a bin "associated with no values or sequences" leaves both numerator and denominator, so a `with` clause that excludes everything, or an `ignore_bins` that empties an auto bin, shrinks the denominator rather than reporting a hole [@ieee1800-2017]. A model that lost a bin this way has lost it silently, and the only defense is the one the example applies: count the bins, not the percent.
 
 ### A bin range is an expression
 
-*The reader can evaluate a bin bound as integer arithmetic with SystemVerilog precedence and recognise the `^` trap from the opener.*
+Automatic bins are the trap on anything wider than six bits. A 32-bit address coverpoint with no bins gets 64 of them, each spanning two to the twenty-sixth values, and reports 100% after sixty-four addresses that happen to fall one in each; an 8-bit field gets 64 four-value bins and looks precise while it is not. The UVM user guide's own address example sets `auto_bin_max` to 16 [@accellera2015uvmug], and OpenTitan's coverage classes set it three times in 76 files and otherwise name every bin [@opentitan-cov-classes].
+
+```{.systemverilog include="examples/ch08-functional-coverage/auto-bins/tb_auto_bins.sv"}
+```
+
+```{.text include="examples/ch08-functional-coverage/auto-bins/run.out"}
+```
+
+The first half of the listing is the trap measured: sixty-four addresses, one per automatic bin, report full coverage of a 32-bit space; sixteen addresses report a quarter under the default and full coverage once `auto_bin_max` is sixteen, because the option changed the denominator and nothing else. The second half of the listing is the opener. Two coverpoints on a six-bit occupancy, one bounded with `^` as the production file wrote it and one with `**` as its author meant, are sampled with the same eight depths. The first reports full coverage; the second reports an eighth of it. The standard gives `^` its meaning as exclusive-or and gives binary `-` the higher precedence [@ieee1800-2017]; what the production file got is 2 ^ 5, which is 7, and the fix, reported upstream with this listing's output, is one character [@opentitan-issue-31608]. A bin bound is an expression evaluated at construction. It is subject to every rule of integer arithmetic that @sec-ch07-constraints applied to a constraint, and a reviewer reads it the same way.
+
+::: {.callout-warning title="Pitfall"}
+`illegal_bins` is a run-time error, not a check. The standard raises it when a sample hits the bin, with precedence over every other bin [@ieee1800-2017]; the lowRISC DV style guide's rule is "Do not use `illegal_bins` as a checker", because a bin "will only be active when coverage is enabled" and "some simulators may still show a test to pass even when one of the `illegal_bins` condition is hit" [@lowrisc-dv-style]. Smith and Aynsley ask what happens when coverage is turned off, and answer: use `ignore_bins` and "write an assertion" [@smithaynsley2011coverage].
+:::
+
+```{.systemverilog include="examples/ch08-functional-coverage/illegal-bins/tb_illegal.sv"}
+```
+
+```{.systemverilog include="examples/ch08-functional-coverage/illegal-bins/tb_ignore_assert.sv"}
+```
+
+```{.text include="examples/ch08-functional-coverage/illegal-bins/run.out"}
+```
+
+Both testbenches drive the same reserved command, and the runner runs each twice, with sampling on and with sampling gated off by a plusarg, which is the UVM guide's `coverage_enable` idiom [@accellera2015uvmug]. With sampling on, the first stops with the tool's own message and the second fails with the testbench's. With sampling off, the first drives the reserved command and ends with no check failed; the second fails exactly as before. The difference is where the check lives. The first is a property of a coverage construct and goes away when coverage does; the second is a check and stays. A testbench that relies on the first has a checker that a plusarg can delete.
 
 ## Crosses {#sec-ch08-cross}
 
-*The reader can size a cross as the Cartesian product of its coverpoints' bins, name the tuples that matter with `binsof`/`intersect`, exclude the rest, and read the cross's bins from the coverage database rather than trusting a group percentage.*
+A cross is "the Cartesian product of the N sets of coverage point bins" and nothing else [@ieee1800-2017]. Two four-bit variables give 256 bins; the standard's own example crosses a four-bit variable with a ten-bin coverpoint and gets 160. There is no `default` for a cross, so every tuple not named by a user bin keeps its automatic bin [@ieee1800-2017]; Bromley calls it "essential" that a cross name bins for every combination it cares about, or the figure carries "unwanted auto-generated bins that will distort your coverage figures" [@bromleylitterick2016coverage], and a vendor paper warns of "thousands or even millions of cross-bins" from a careless cross and recommends an explicit list [@ellisjain2018coverage]. Cross bins are select expressions over `binsof`, optionally narrowed with `intersect`, combined with `&&` and `||`, and `ignore_bins` on a cross removes tuples even where another cross bin includes them [@ieee1800-2017]. OpenTitan uses `binsof` in 17 of its 76 coverage class files, most often to ignore a combination the design does not support, and in one place shrinks a status field to eight automatic bins "so that cross coverage can be hit easier" [@opentitan-cov-classes].
+
+```{.systemverilog include="examples/ch08-functional-coverage/cross/tb_cross.sv"}
+```
+
+```{.text include="examples/ch08-functional-coverage/cross/run_cross.sh"}
+```
+
+```{.text include="examples/ch08-functional-coverage/cross/run.out"}
+```
+
+The first group's cross is the standard's 160. The runner prints each group's percentage and then, from the database, how many bins each cross has and how many were hit, because on the release this book runs a cross cannot be queried on its own (`g.cross.get_inst_coverage()` does not build) and the group's percentage is computed by a rule the next section measures. The second group gets the same twelve hits into forty bins by binning the four-bit point to the four values the test uses before crossing it, which is the shrinking that production code does [@opentitan-cov-classes]. The form production code writes more often, a `binsof … intersect` bin on the cross, is in the second file: the release warns on it three times and counts the automatic cross instead, so the runner builds that file with warnings allowed and shows that its cross has the same 160 bins as the first. The numbers the runner reads from the database are the cross's real size, and a reviewer of a coverage model asks for them before asking for the percent.
 
 ## Options, instances and the percentage {#sec-ch08-percentage}
 
-*The reader can set `per_instance`, `goal`, `at_least`, `auto_bin_max`, `name` and `weight` at the right scope, can distinguish type coverage from instance coverage, and can compute a covergroup's percentage by the standard's rule (weighted average of item percentages) and by the rule the book's simulator applies (bins hit over bins defined), and tell which a report used. Pitfall with spliced output: two coverpoints of four and two bins, 50% on the tool, 62.5% by the standard.*
+Options are a struct implicitly declared in every covergroup, in two kinds [@ieee1800-2017]. Instance options, `option.*`, are set per instance: `per_instance`, which defaults to zero so that tools "are not required" to keep per-instance data at all; `name`, the instance's name in the report; `goal`; `at_least`, the hits a bin needs before it counts; `auto_bin_max`; `weight`. Type options, `type_option.*`, are constants of the type: `merge_instances`, which makes type coverage the union of instances instead of their average, and `strobe`, which moves clocked sampling to the end of the time step. Group-level `weight`, `goal` and `per_instance` do not act as defaults for the items below them; `at_least` and `auto_bin_max` do [@ieee1800-2017]. One option the chapter does not teach is `cross_auto_bin_max`, which appears in vendor documentation and in no edition of the standard [@slang-changelog]. OpenTitan sets `per_instance` in 39 of its 76 coverage class files and `name` in 37, and `weight`, `goal`, `at_least` and `comment` in none [@opentitan-cov-classes].
+
+Type coverage and instance coverage are different numbers. `get_coverage()` is a static method, cumulative over every instance of the type; `get_inst_coverage()` is one instance's [@ieee1800-2017]. Two instances that each hit a different half of a two-bin coverpoint report 50% apiece and 50% for the type by the default rule, 100% for the type if the instances are merged; Sutherland's 2007 gotcha is the same fact seen from the report, one instance that hit everything and a type that reads 100% while the others saw nothing [@sutherland2007gotchas]. The listing's two instances are named from a constructor argument and print 50 each; the type-level query prints zero on the release this book runs, which is one of the silent cells of @sec-ch08-tools, and the listing says beside it what the standard's two rules would give.
+
+```{.systemverilog include="examples/ch08-functional-coverage/per-instance/tb_per_instance.sv"}
+```
+
+```{.text include="examples/ch08-functional-coverage/per-instance/run.out"}
+```
+
+The percentage itself is computed by a rule the standard writes out. A covergroup's score is the weighted average of its items' scores. A coverpoint's score is covered bins over defined bins, where a bin is covered when its hits reach `at_least` and a bin with no values is dropped from both counts. A cross's score is covered over the automatic bins remaining plus the user bins that are neither ignored nor illegal [@ieee1800-2017]. The release this book runs computes a covergroup's score differently: it divides bins hit by bins defined across every item in the group. For a group of one coverpoint, or of items with equal bin counts, the two rules agree. For any other group they do not, and the tool prints its number without a word.
+
+```{.systemverilog include="examples/ch08-functional-coverage/percentage/tb_percentage.sv"}
+```
+
+```{.text include="examples/ch08-functional-coverage/percentage/run.out"}
+```
+
+Two coverpoints, four bins and two, with one of the four and both of the two hit. The group reports three of six. The standard's rule gives the average of one quarter and one, which is five eighths. Both numbers are in the output, each labelled with the rule that produced it; the testbench computed both from the hits it tracked itself, and it stops with an error if the tool's figure ever stops matching the bins ratio, so that a release which changes the rule fails this example loudly rather than letting the prose go stale.
+
+::: {.callout-warning title="Pitfall"}
+On the release this book runs, a covergroup's percentage is bins hit over bins defined, not the standard's weighted average of its items. Any group whose items have unequal bin counts reports a number the standard would not, with no warning. Read the percentage of a single item, or compute the group's by hand from the bins, until a release changes the rule; @sec-ch08-tools cites where the tool's own roadmap tracks it.
+:::
 
 ## Where coverage lives, and what it is not {#sec-ch08-where}
 
-*The reader can place coverage in the monitor or scoreboard and never in the driver, can pair every coverpoint with the check that makes its sample meaningful, and can state the activate-propagate-detect argument: 100% next to an empty scoreboard is a claim about stimulus, not about the design.*
+A coverpoint counts what was sampled. Nothing in the record says the design's response was compared with anything. The UVM user guide keeps the two activities in separate components on the same analysis port, coverage collectors beside scoreboards, and puts class-based coverage in the monitor [@accellera2015uvmug]; its reusable collector is `uvm_subscriber`, a component with one analysis export and a `write` method the subclass fills [@uvm-core-subscriber]. OpenTitan samples functional coverage "in 'reactive' components of the testbench, such as monitors and/or the scoreboards" [@opentitan-dv-methodology]. The rule has a reason beyond tidiness. A driver samples what it applied; a monitor samples what it observed after the design responded; and the two differ exactly when the design did something other than what the stimulus asked, which is the case the coverage was written to find. Sprott, Marriott and Graham put it as planning advice: "When planning functional coverage, the corresponding checks must also be planned", and covering register values alone "can often lead to a very false sense of security" [@sprott2015coverage].
+
+The argument has a formal shape in the mutation-analysis literature, where artificial bugs are inserted to ask whether the testbench would fail. A vendor's account of its tool lists three conditions, quoted here as the vendor's: "The bug must be activated", "The bug must be propagated to an observable point", and "The bug must be detected; i.e. behavior is checked and a failure indicated" [@hampton2009fq]. An independent paper states the gap in one sentence: "Current approaches emphasize activation using coverage models but neglect propagation and detection" [@huang2015mutation]. Coverage of every kind measures activation only. Software testing reached the same conclusion by another route, in a study finding that coverage "is not strongly correlated with test suite effectiveness" [@inozemtseva2014coverage], which the book cites as the analogue and not as evidence about hardware.
+
+::: {.callout-tip title="In Practice"}
+Every covergroup names the checker that would fail if the covered behavior were wrong. The pairing is a line in the plan next to the coverage item, as @sec-ch02 wrote it, and a reviewer of a coverage model asks for it before asking for the percentage. A covergroup that cannot name its checker is measuring stimulus for its own sake, and the worked example below shows what that looks like when the stimulus reaches a bug.
+:::
 
 ## Code coverage on the free toolchain {#sec-ch08-code-coverage}
 
-*The reader can run Verilator with `--coverage`, read the `.dat` file, annotate the source, merge two runs, rank tests and export to lcov, and can avoid the two measured traps: the annotation threshold that defaults to ten hits, and the standard-library records that drag a class-based testbench's line summary down.*
+The book's simulator collects every code-coverage kind the chapter named, with one flag. `--coverage` is the union of line, toggle, expression, FSM and user coverage [@verilator-exe-verilator]; a run then writes a database into the current directory with no message that it did, under a name a plusarg can change [@verilator-exe-sim]. The file is text, one record per point, with the file, line, kind, comment and hierarchy packed into a key and the count beside it; toggle records are one per bit and per direction [@verilator-changes]. The companion tool reads it: a summary by kind, a hierarchical roll-up, an annotated copy of the source with a count beside every line, a merge of several databases, a ranking of which runs added coverage, and an export in the lcov format that software coverage viewers read [@verilator-exe-verilator-coverage].
+
+```{.systemverilog include="examples/ch08-functional-coverage/code-coverage/tb_counter_cov.sv"}
+```
+
+```{.text include="examples/ch08-functional-coverage/code-coverage/run_codecov.sh"}
+```
+
+```{.text include="examples/ch08-functional-coverage/code-coverage/run.out"}
+```
+
+Two runs of the Appendix F counter, ten and three hundred enabled cycles, two databases, and the tool's reports on each and on their merge: the record counts by kind, the summary, the annotated source, the merged counts, the ranking and the first lines of the lcov export. Two facts in the output are the ones to carry. First, the annotation threshold defaults to ten hits [@verilator-exe-verilator-coverage], so the ten-cycle run that passed shows most of its lines as uncovered until `--annotate-min 1` is given, and the two "lines covered" figures for the same run differ for that reason alone; the markers in the margin are the tool's, a `%` for a point below the threshold and a `~` for a line with some points below it. Second, a `cover property` under `--coverage-user` counts the cycles its expression held, and a property that reads an asynchronous reset is refused under the book's flags as a signal used both synchronously and asynchronously [@verilator-warnings]; the listing's property reads the enable. Assertion coverage is the third kind the chapter named, and this is its free-tool form: an assertion whose antecedent never held is a coverage hole, and the database shows it as a count of zero.
 
 ## Closure {#sec-ch08-closure}
 
-*The reader can run closure as OpenTitan does: merge only passing tests, review every exclusion with a category and a designer's sign-off, let a checksum expire an exclusion when the excluded code changes, run formal unreachability only after design freeze, and read a UCIS database for what it standardizes and what it leaves to the tool.*
+Closure is a review process, and the open project that documents its process end to end is the one the book has followed since @sec-ch02. Each test run writes its own database; the regression merges them, because "Coverage collected from all tests run as a part of the regression is merged into a database for analysis" [@opentitan-dv-methodology]. A failed run's coverage is deleted before the merge, "so that coverage from failing tests is not included in the final report" [@opentitan-vcs-hjson; @dvsim-repo]: a bin counts only when the test that hit it also passed its checks, which is the pairing rule of @sec-ch08-where enforced by the regression manager. The merged database is then read against the plan, and every hole is one of four kinds. An *untested* hole gets a test. An *unreachable* hole gets a design change or an exclusion proved by a formal unreachability analysis, which the project runs only "between the D2 and V3 stage when the design is frozen", and never to reach an earlier gate [@opentitan-dv-methodology]. An *illegal* value gets a checker, not a bin. And a hole that is *unsupported* or out of scope gets a waiver with a category and a reason.
+
+The exclusions are the part a reader can audit. Every shared exclusion carries one of five prefixes, `UNR`, `NON_RTL`, `UNSUPPORTED`, `EXTERNAL` or `LOW_RISK`, and a sentence [@opentitan-common-cov-excl]. Block-level exclusions are tool-generated and carry a checksum of the code they exclude, kept "as it checks the exclusion isn't outdated by changes on the corresponding code" [@opentitan-dv-methodology; @opentitan-uart-cov-excl]; the designer signs off on them in review; and the exclusion files are themselves a sign-off deliverable, checked at the final gate [@opentitan-checklist]. The gates are numbers only at the end: 90% at V2, and "100% code and 100% functional coverage with waivers" at V3 [@opentitan-dev-stages]. So "100%" is reached by subtracting reviewed exclusions from the denominator, and the project is candid about the cost: "Coverage closure is perhaps the most time-consuming part of the whole DV effort, often with low return", and collecting coverage on everything "might result in poor ROI" and slows simulation, so collection is shaped at compile time, with toggle coverage on ports and pre-verified modules black-boxed [@opentitan-dv-methodology].
+
+The database format the industry shares is Accellera's UCIS, which defines an API and a database model "that enables the sharing of coverage data across software simulators, hardware accelerators, symbolic simulations, formal tools or custom verification tools", plus an XML interchange form [@ucis2012]. Its text is exact about what it does not do: "The merging algorithm is not fully specified by this standard", and incremental design changes "challenge merging because they create different topologies" [@ucis2012]. A merged database is as old as the last RTL change. In the open, one Python library reads and converts the format and imports the book's simulator's database and the Python coverage library's export [@pyucis].
+
+::: {.callout-tip title="In Practice"}
+Treat an exclusion as code under review: a category, a reason, a designer's sign-off, and a checksum that expires it when the excluded code changes. Add unreachability exclusions after freeze, not to reach a gate. Delete the coverage of failed runs before merging. And shape collection at compile time rather than waiving afterwards, because a denominator that was never collected needs no waiver.
+:::
 
 ## What runs where {#sec-ch08-tools}
 
-*The reader can read the measured matrix: of 35 constructs on Verilator 5.052, which run with the right percentage, which run and report a wrong one (eight silently, five with a build-time warning), which do not build, and why Icarus 13.0 refuses every one; and can say that the coverage flag changes no verdict, only whether bins reach the database.*
+The table is @sec-ch05-tools's table for this chapter's constructs, one probe per row, run under Icarus with `-g2012` and under Verilator with the flags the book's build uses plus `--coverage` and `-Wno-fatal`; a row says *runs* only if the probe printed the percentage the standard's rule gives for its samples, and *wrong* if it ran and printed another. A second table judges crosses through their group, because a cross cannot be queried on its own, and adds the discriminating probes behind the catalog of silent results.
+
+{{< include /examples/ch08-functional-coverage/support-matrix/matrix.md >}}
+
+Two lint artifacts of the release are not in the table because the table runs with warnings allowed, and every SystemVerilog example in this chapter meets them under the book's flags: a covergroup of any form draws an undriven-signal warning on an internal signal the tool names `__Vint`, and a covergroup with two or more arguments draws a hidden-variable warning on each. Both are fatal under `-Wall`. Each example directory therefore carries a one-rule waiver file that matches the internal name and nothing else, so that a real undriven signal still warns; it is the only waiver the book's own code carries, and it is spliced here so the reader can see what it excuses.
+
+```{.text include="examples/ch08-functional-coverage/auto-bins/lint.vlt"}
+```
+
+The Icarus column is one fact: the `covergroup` keyword is a syntax error, and the maintainer's answer on the tracker is that there is no coverage support of any kind [@icarus-issue-1232; @icarus-issue-911]. So every SystemVerilog listing in this chapter runs on Verilator, and their Makefiles say so; the Python one runs on Icarus.
+
+The Verilator column is new. Covergroup support landed in the 5.050 release, two months before the one this book runs, and the current release documents it as partial [@verilator-changes; @verilator-covergroup-runtime]. Of the thirty-five constructs in the first table, seventeen run and print the standard's number, nine run and print another, and nine do not build. Across both tables thirteen constructs print a wrong number: eight of them silently, and five with a build-time warning that the book's `-Wall` turns into an error, so that the warned five cannot reach a run in a book example at all. The coverage flag changes none of these verdicts; it decides only whether the bins reach the database. The silent eight are the group percentage of @sec-ch08-percentage, ignored values left in the denominator, `at_least` dropped at the group level, `get_coverage()` returning zero, `stop()` ignored, enumeration bins made per bit pattern rather than per literal, the two-argument query leaving its outputs at zero, and an unsized all-ones literal matching one, which the tracker records as fixed after this release [@verilator-issue-8458]. The tool's own roadmap issue lists what remains, with cells the measurement disagrees with in both directions [@verilator-issue-7560]; a reader on a later release re-runs the matrix before trusting either this table or that list.
 
 ## Worked example: a coverage model for the FIFO, measured {#sec-ch08-example}
 
-*The reader can take the Chapter 2 plan's coverage items for the FIFO, write the covergroup a monitor samples (occupancy bins, push/pop/both crossed with full and empty, the empty-to-full transition), run two seeds, merge their databases, find the hole the first seed left, and show the same model in Python with `cocotb-coverage` on Icarus, where no SystemVerilog covergroup can run.*
+@sec-ch01 shipped a FIFO with one deliberate bug, and @sec-ch02 wrote the plan whose coverage column this example fills. The model samples from a monitor that reads the ports at every clock edge, before the design's registers update, and keeps its own count of occupancy from the pushes and pops the contract says were accepted, because the design's internal count is not the testbench's to read and a monitor that tracked the design's state would cover the design's belief about itself. Occupancy bins name empty, low, high, almost full and full; an operation coverpoint names idle, push, pop and both; the design's own flags are covered as they are observed; two crosses of operation with the flags are where the interesting tuples live; and a second group, sampled only when the occupancy band changes, holds the one transition bin, the climb from empty to almost full, because a transition between ranges of the occupancy coverpoint itself does not build on the release this book runs (@sec-ch08-tools). The driver never touches the model, and nothing in the file checks the FIFO.
+
+```{.systemverilog include="examples/ch08-functional-coverage/fifo-coverage/tb_fifo_cov.sv"}
+```
+
+```{.text include="examples/ch08-functional-coverage/fifo-coverage/run_fifo_cov.sh"}
+```
+
+```{.text include="examples/ch08-functional-coverage/fifo-coverage/run.out"}
+```
+
+Run A is the stimulus of @sec-ch07, push and pop at even odds, under one seed. Run B is push-biased under the same seed. The first run never reaches the upper bins, and its report says so: the hole is the reason a push-heavy test exists, and reading the hole before writing the test is the coverage-driven loop at its smallest. The second run fills the occupancy bins and hits the cross bin for a push while the design reports full. That bin is a hit, and the report counts it as covered. It is also the bug: the design asserts full at fifteen entries, and the cross recorded, as a success, exactly the behavior that @sec-ch01's checker reports as a failure. The runner reads every bin's count from the two databases and from their merge, which closes everything but the bin for sixteen entries, which no run can reach because the design never gets there; the group's own percentage, printed beside the counts, moved from the first run to the second and would read the same for a model with the opener's bound. A coverage report cannot tell those two zeros apart from each other, or the covered bin from a correct one. The checker beside it can.
+
+::: {.callout-note title="Worked Example"}
+What the two runs establish, in order: that a hole in one run is an instruction to write a test, not a figure to waive; that a merge over passing runs is the unit of closure; that a bin the design can never reach is an exclusion with a reason, not a failure; and that a covered bin says the behavior was observed, never that it was right. The checker that makes the last point is the one @sec-ch01 wrote.
+:::
+
+The same model in Python, on the simulator that has no covergroups:
+
+```{.python include="examples/ch08-functional-coverage/cocotb-coverage/test_fifo_cov.py"}
+```
+
+```{.text include="examples/ch08-functional-coverage/cocotb-coverage/run.out"}
+```
+
+The Python library mirrors the language's constructs as decorators, a coverpoint and a cross on the arguments of the sampling function, with bins as values and relation functions, and exports its database in its own XML and YAML forms [@cocotb-coverage]. It installs beside the book's cocotb with one `pip install`, and Appendix F records it (@sec-appF-cocotb). The report is the same two phases, the same hole and the same covered bug, and the same lesson about what a covered bin is not.
 
 ## Future directions
 
-*The reader can name what is coming: coverage-directed generation closing the loop from report to stimulus (left to the research chapter), UCIS readers in the open, and models that propose coverage items from a specification, with the chapter's own evidence of why a proposed bin still needs a reviewer.*
+::: {.callout-important title="Future Directions"}
+Three things are moving, and the chapter claims no result for any of them. Coverage-directed generation closes the loop this chapter drew by hand, from a hole in the report to a change in the stimulus, and has a literature from Bayesian networks onward [@fine2003cdg; @ioannides2012cdg] that the research chapter in Part VII reads. The database format is opening: a free reader and converter for the Accellera standard now imports the book's simulator's output [@pyucis], and the free simulator's covergroup support is four months old and changing by the release. And models that propose coverage items from a specification are the subject of the chapter that closes the book; what they propose is a bin, and the opener of this chapter is the evidence that a bin still needs a reviewer who can read an expression.
+:::
 
 ## Summary
 
+- A covergroup that was never constructed, never sampled, or sampled by an event that never fired reports 0% and says nothing. Construct in `new()`, log it, and read the sample count beside the percentage.
+- Sample from the observer, with `sample()` and arguments, never from the driver; a clocked group counts cycles, not transactions.
+- Automatic bins are sixty-four over any width. Name the bins, and read them back from the database; a bin that cannot be read is a figure to distrust.
+- A bin bound is an expression evaluated at construction. `^` is exclusive-or.
+- `illegal_bins` is a run-time error that a build flag can delete. The check that stays is an assertion.
+- A cross is the Cartesian product and nothing else; name the tuples that matter and read the cross's bins from the database.
+- Type coverage and instance coverage are different numbers, and the default keeps no instances.
+- The standard's group percentage is a weighted average of items; the release this book runs reports bins hit over bins defined, silently. Compute by hand until a release changes the rule.
+- Coverage measures activation only. Every covergroup names its checker, and a failed run's coverage is deleted before the merge.
+- Closure is a reviewed set of exclusions on a merged database, each with a category, a reason, a sign-off and a checksum; 100% is reached by subtracting them, late, from the right denominator.
+- Icarus has no covergroups; Verilator has them since 5.050, with seventeen of thirty-five constructs right, nine wrong and nine refused on the release measured.
+
 ## Exercises
 
-*Seven one-line intents: size a cross by hand; convert the opener's bound; find the bins a given `ignore_bins` removes from the denominator; write the check that an `illegal_bins` was standing in for; compute a group percentage both ways from a `.dat`; write an exclusion with a category and a justification; port one coverpoint to `cocotb-coverage`.*
+::: {.callout-note title="Exercise"}
+1. Size, by hand, a cross of a 3-bit variable with the ten-bin coverpoint of @sec-ch08-cross's listing, then with `ignore_bins` removing every tuple where the variable is zero. Check both counts against the database.
+2. Rewrite the opener's bound three ways that give sixty-three and one more that gives seven, and say which of the four a reviewer would catch by reading.
+3. Take the bins-kinds listing, add an `ignore_bins` that empties one of its automatic bins, and say from the output alone what happened to the denominator under each rule.
+4. Replace the `illegal_bins` of @sec-ch08-bins's second listing with the assertion that it was standing in for, and then build the listing with coverage off. Say which run still fails.
+5. From the percentage listing's database, compute the group's score by both rules for a third coverpoint of eight bins with three hit, before running it. Then run it.
+6. Write an exclusion for the worked example's unreachable bin in the form of @sec-ch08-closure: a category, a sentence, and the condition under which it expires.
+7. Port one coverpoint of the worked example to the cocotb model and make its bins print the same hit counts under the same two phases.
+:::
 
 ## Further reading
 
-## Planned examples
-
-Directory `examples/ch08-functional-coverage/`. Every SystemVerilog example runs on Verilator 5.052 only; Icarus 13.0 rejects the `covergroup` keyword, which is the measured fact the chapter states once. The cocotb example runs on Icarus.
-
-1. `silent-group/` (sv): two covergroups, one never constructed and one never sampled, both report 0.00 with no message; a third constructed in `new()` and sampled from a monitor task reports what it counted.
-2. `sampling-forms/` (sv): the same data sampled by a clocking event, by `sample()`, and by `with function sample(args)` with a `ref` argument across two instances; the counts the three forms produce.
-3. `bins-kinds/` (sv): value, range with `$`, array, transition, wildcard and `default` bins on one byte, each bin's hit count read back from the coverage database by a runner script.
-4. `auto-bins/` (sv): a 32-bit coverpoint at 100.00 after 64 values; `auto_bin_max` at the coverpoint; and the opener's bound reconstructed (`2^(w)-1` is 7; `2**(w)-1` is 63), eight bins where sixty-four were meant.
-5. `illegal-bins/` (sv, runner script): an `illegal_bins` value sampled stops the simulation with the tool's message; the same value with `ignore_bins` and an assertion beside it fails the way a checker fails.
-6. `cross/` (sv, runner script): a 4-bit variable crossed with a 10-bin coverpoint gives 160 bins; `binsof`/`intersect` names the tuples that matter; the cross's bins read from the `.dat` file, because the group percentage is not trusted.
-7. `percentage/` (sv): two coverpoints of four and two bins, one and two bins hit; the tool prints 50.00; the listing computes 62.50 by the standard's rule from the same bins. Pitfall output.
-8. `per-instance/` (sv): two instances of one group, `option.per_instance`, instance percentages against the type's; `get_coverage()` measured at 0.00 on this release, shown as such.
-9. `code-coverage/` (sv, runner script): the Appendix F counter under `--coverage`; `.dat`, `verilator_coverage` summary, `--annotate --annotate-min 1`, two runs merged, `--rank`, `--write-info`; `cover property` under `--coverage-user`.
-10. `support-matrix/` (sv): the 35-probe main matrix and the 16-probe second set from the research measurement, run by the Chapter 7 runner with the coverage flag added; `matrix.md` spliced into the chapter.
-11. `fifo-coverage/` (sv, runner script): the worked example — the Chapter 1 FIFO, a monitor-sampled covergroup, two seeds, a merge, the hole.
-12. `cocotb-coverage/` (cocotb, Icarus): the FIFO coverage model as `CoverPoint`/`CoverCross`, the report and the XML export. Requires `cocotb-coverage` in `dvbook` (installed 2026-10-02).
-
-## Sources
-
-- `research/ch08-functional-coverage.md` (Parts A, B, C): every section; the matrix; the silent-wrong catalog; the closure process.
-- `refs.bib`: `ieee1800-2023` (clause 19, cited by edition), `sutherland2007gotchas` §6, `sutherland2006gotchas`, `bromleylitterick2016coverage`, `smithaynsley2011coverage`, `sprott2015coverage`, `ellisjain2018coverage` (vendor), `lee2024missingbins`, `accellera2015uvmug` §3.12 and §4.10, `lowrisc-dv-style`, `opentitan-dv-methodology`, `opentitan-dev-stages`, `opentitan-cov-classes`, `opentitan-issue-31608`, `ucis2012`, `piziali2004coverage`, `tasiran2001coverage`, `hampton2009fq` (vendor), `huang2015mutation`, `fine2003cdg`, `dvsim-repo`, `verilator-changes`, `verilator-exe-verilator-coverage`, `verilator-covergroup-runtime`, `verilator-warnings`, `verilator-issue-7560`, `verilator-issue-8458`, `cocotb-coverage`, `fc4sc`, `pyucis`, `ieee1800-2017`, `icarus-issue-1232`.
+- Andrew Piziali, *Functional Verification Coverage Measurement and Analysis*, Kluwer, 2004 [@piziali2004coverage].
+- Serdar Tasiran and Kurt Keutzer, *Coverage Metrics for Functional Validation of Hardware Designs*, IEEE Design & Test of Computers 18(4), 2001 [@tasiran2001coverage].
+- Jonathan Bromley and Mark Litterick, *Effective SystemVerilog Functional Coverage: Design and Coding Recommendations*, SNUG, 2016 [@bromleylitterick2016coverage].
+- Doug Smith and John Aynsley, *A Practical Look @ SystemVerilog Coverage – Tips, Tricks, and Gotchas*, DVCon US, 2011 [@smithaynsley2011coverage].
+- Jason Sprott, Paul Marriott and Matt Graham, *Navigating The Functional Coverage Black Hole: Be More Effective At Functional Coverage Modeling*, DVCon US, 2015 [@sprott2015coverage].
+- Stuart Sutherland, Don Mills and Chris Spear, *Gotcha Again*, SNUG San Jose, 2007, the coverage section [@sutherland2007gotchas].
+- Accellera, *Unified Coverage Interoperability Standard, Version 1.0*, 2012 [@ucis2012].
+- Bergeron, Cerny, Hunter and Nightingale, *Verification Methodology Manual for SystemVerilog*, the chapter on coverage-driven verification [@bergeron2005vmm].
+- IEEE Std 1800, the clause on functional coverage, cited here from the 2017 text, which this chapter read; the 2023 edition's clause-level numbering agrees at the level the chapter cites [@ieee1800-2017; @ieee1800-2023].

@@ -1,0 +1,10 @@
+32-bit addr, 64 values one per 2^26 range
+  auto bins, default   : 100.00
+  auto_bin_max = 16    : 100.00
+32-bit addr, 16 values one per 2^28 range
+  auto bins, default   : 25.00
+  auto_bin_max = 16    : 100.00
+6-bit depth, Msb = 9, Lsb = 4, depths 0..7 sampled
+  2^(Msb+1-Lsb)-1  = 7  bins d[] : 100.00
+  2**(Msb+1-Lsb)-1 = 63  bins d[] : 12.50
+verdict: eight bins where sixty-four were meant, at 100.00

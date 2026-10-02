@@ -1,0 +1,5 @@
+`verilator_config
+// lint.vlt -- waiver for one 5.052 lint artifact: every covergroup
+// trips UNDRIVEN on an internal signal named __Vint under -Wall. The
+// match is on that name only, so a real undriven signal still warns.
+lint_off -rule UNDRIVEN -file "*" -match "*__Vint*"

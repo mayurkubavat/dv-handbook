@@ -1,0 +1,6 @@
+port0 get_inst_coverage(): 50.00
+port1 get_inst_coverage(): 50.00
+cg    get_coverage()     : 0.00  (measured on 5.052)
+IEEE 1800 19.11.3: average of the instances, 50.00;
+  or their union, 100.00, with type_option.merge_instances
+verdict: instances 50.00, 50.00; type 0.00, IEEE says 50 or 100

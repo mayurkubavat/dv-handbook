@@ -1,0 +1,36 @@
+# label | probe file
+`covergroup` sampled by a clocking event `@(posedge clk)` | c01_clocking_event.sv
+`covergroup` with explicit `sample()` | c02_explicit_sample.sv
+`covergroup` embedded in a class, sampling members | c03_embedded_in_class.sv
+`covergroup` with a `ref` formal argument, two instances | c04_ref_argument.sv
+`covergroup … with function sample(args)` | c05_with_function_sample.sv
+explicit value bins `bins lo = {0, 1}` | c06_value_bins.sv
+range bins with `$`: `{[0:3]}`, `{[12:$]}` | c07_range_bins_dollar.sv
+array bins `bins b[] = {[0:3]}` | c08_array_bins.sv
+sized array bins `bins b[2] = {[0:7]}` | c09_sized_array_bins.sv
+transition bins `(0 => 1)`, `(0 => 1 => 3)` | c10_transition_bins.sv
+`wildcard bins hi = {2'b1?}` | c11_wildcard_bins.sv
+`ignore_bins` on an array of bins | c12_ignore_bins.sv
+`illegal_bins` declared, not hit | c13_illegal_bins_declared.sv
+`bins rest = default` | c14_default_bin.sv
+`bins ev[] = {[0:7]} with (item % 2 == 0)` | c15_bins_with.sv
+`cross` of two coverpoints, read as `g.ab.get_inst_coverage()` | c16_cross_member.sv
+`cross` with `binsof … intersect` user bins, read as member | c17_cross_binsof_member.sv
+`ignore_bins` on a `cross` via `binsof`, read as member | c18_cross_ignore_member.sv
+`iff` guard on a coverpoint | c19_iff_coverpoint.sv
+`iff` guard on a cross, read as member | c20_iff_cross_member.sv
+`option.per_instance` with two instances | c21_per_instance.sv
+`option.weight` on coverpoints | c22_option_weight.sv
+`option.goal` | c23_option_goal.sv
+`option.at_least` at the covergroup level | c24_at_least_group.sv
+`option.auto_bin_max` at the covergroup level | c25_auto_bin_max_group.sv
+`get_coverage()` (type-level, two instances) | c26_get_coverage.sv
+`get_inst_coverage()` on a coverpoint, `g.cp.get_inst_coverage()` | c27_coverpoint_member.sv
+`stop()` / `start()` | c28_stop_start.sv
+`$get_coverage` | c29_sys_get_coverage.sv
+enum coverpoint, auto bins per literal (3 literals, 2 bits) | c30_enum_auto_bins.sv
+`cross` of two auto-bin coverpoints, read as member | c31_cross_auto_member.sv
+`cross` of bare variables, read as member | c32_cross_bare_member.sv
+range-to-range transition bin `([0:1] => [2:3])` | c33_range_transition.sv
+two-argument `get_inst_coverage(ref, ref)` | c34_get_inst_coverage_refs.sv
+`option.name` | c35_option_name.sv

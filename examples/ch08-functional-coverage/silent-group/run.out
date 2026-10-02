@@ -1,0 +1,9 @@
+transactions observed : 6
+g_live                : 66.67
+g_never_sampled       : 0.00
+g_never_built is null : 1
+g_never_built         : asking anyway ...
+  %Error: tb_silent_group.sv:52: Null pointer dereferenced
+  Aborting...
+simulator exit status : 1
+verdict: one group said nothing; the unbuilt one stopped the run when asked

@@ -1,0 +1,17 @@
+# label | probe file
+cross, auto cross bins, judged through the group | x01_cross_group.sv
+cross with `binsof … intersect` user bins, judged through the group | x02_cross_binsof_group.sv
+`iff` on a cross, judged through the group | x03_iff_cross_group.sv
+cross of two auto-bin coverpoints, judged through the group | x04_cross_auto_group.sv
+cross of bare variables, judged through the group | x05_cross_bare_group.sv
+`illegal_bins` value sampled | x06_illegal_hit.sv
+two coverpoints of 4 and 2 bins, judged through the group | x07_two_coverpoints.sv
+`ignore_bins` covering a whole named bin | x08_ignore_whole_bin.sv
+`option.at_least` at the coverpoint | x09_at_least_coverpoint.sv
+bin value `'1` on an 8-bit coverpoint | x10_unsized_ones.sv
+`option.auto_bin_max` at the coverpoint | x11_auto_bin_max_coverpoint.sv
+transition repetition `(0 [*2])` | x12_transition_repeat.sv
+`option.weight`, expected 62.5 (c22 re-stated) | x13_option_weight_restated.sv
+`bins b[2] = {[0:7]}` after one sample | x14_sized_array_one_sample.sv
+enum with 4 literals on 2 bits (control for c30) | x15_enum_four_literals.sv
+`stop()` before every sample | x16_stop_before_sample.sv

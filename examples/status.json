@@ -1,6 +1,6 @@
 {
-  "checked": "2026-09-26T17:33:12Z",
-  "pass": 46,
+  "checked": "2026-10-02T15:45:30Z",
+  "pass": 58,
   "fail": 0,
   "skipped_run": 2,
   "examples": [
@@ -321,6 +321,90 @@
     },
     {
       "dir": "examples/ch07-constrained-random/support-matrix",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch08-functional-coverage/auto-bins",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch08-functional-coverage/bins-kinds",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch08-functional-coverage/cocotb-coverage",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch08-functional-coverage/code-coverage",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch08-functional-coverage/cross",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch08-functional-coverage/fifo-coverage",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch08-functional-coverage/illegal-bins",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch08-functional-coverage/per-instance",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch08-functional-coverage/percentage",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch08-functional-coverage/sampling-forms",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch08-functional-coverage/silent-group",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch08-functional-coverage/support-matrix",
       "lint": "pass",
       "run": "pass",
       "requires": "",

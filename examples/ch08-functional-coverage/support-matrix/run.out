@@ -1,0 +1,53 @@
+c01 `covergroup` sampled by a clocking event ` icarus: no build  verilator: runs
+c02 `covergroup` with explicit `sample()`      icarus: no build  verilator: runs
+c03 `covergroup` embedded in a class, sampling icarus: no build  verilator: runs
+c04 `covergroup` with a `ref` formal argument, icarus: no build  verilator: runs
+c05 `covergroup … with function sample(args)`  icarus: no build  verilator: runs
+c06 explicit value bins `bins lo = {0, 1}`     icarus: no build  verilator: runs
+c07 range bins with `$`: `{[0:3]}`, `{[12:$]}` icarus: no build  verilator: runs
+c08 array bins `bins b[] = {[0:3]}`            icarus: no build  verilator: runs
+c09 sized array bins `bins b[2] = {[0:7]}`     icarus: no build  verilator: wrong
+c10 transition bins `(0 => 1)`, `(0 => 1 => 3) icarus: no build  verilator: runs
+c11 `wildcard bins hi = {2'b1?}`               icarus: no build  verilator: runs
+c12 `ignore_bins` on an array of bins          icarus: no build  verilator: wrong
+c13 `illegal_bins` declared, not hit           icarus: no build  verilator: runs
+c14 `bins rest = default`                      icarus: no build  verilator: runs
+c15 `bins ev[] = {[0:7]} with (item % 2 == 0)` icarus: no build  verilator: wrong
+c16 `cross` of two coverpoints, read as `g.ab. icarus: no build  verilator: no build
+c17 `cross` with `binsof … intersect` user bin icarus: no build  verilator: no build
+c18 `ignore_bins` on a `cross` via `binsof`, r icarus: no build  verilator: no build
+c19 `iff` guard on a coverpoint                icarus: no build  verilator: runs
+c20 `iff` guard on a cross, read as member     icarus: no build  verilator: no build
+c21 `option.per_instance` with two instances   icarus: no build  verilator: runs
+c22 `option.weight` on coverpoints             icarus: no build  verilator: wrong
+c23 `option.goal`                              icarus: no build  verilator: runs
+c24 `option.at_least` at the covergroup level  icarus: no build  verilator: wrong
+c25 `option.auto_bin_max` at the covergroup le icarus: no build  verilator: runs
+c26 `get_coverage()` (type-level, two instance icarus: no build  verilator: wrong
+c27 `get_inst_coverage()` on a coverpoint, `g. icarus: no build  verilator: no build
+c28 `stop()` / `start()`                       icarus: no build  verilator: wrong
+c29 `$get_coverage`                            icarus: no build  verilator: no build
+c30 enum coverpoint, auto bins per literal (3  icarus: no build  verilator: wrong
+c31 `cross` of two auto-bin coverpoints, read  icarus: no build  verilator: no build
+c32 `cross` of bare variables, read as member  icarus: no build  verilator: no build
+c33 range-to-range transition bin `([0:1] => [ icarus: no build  verilator: no build
+c34 two-argument `get_inst_coverage(ref, ref)` icarus: no build  verilator: wrong
+c35 `option.name`                              icarus: no build  verilator: runs
+35 constructs: 0 run on both, 17 on Verilator only, 0 on Icarus only, 18 on neither; 9 wrong on Verilator
+x01 cross, auto cross bins, judged through the icarus: no build  verilator: wrong
+x02 cross with `binsof … intersect` user bins, icarus: no build  verilator: wrong
+x03 `iff` on a cross, judged through the group icarus: no build  verilator: wrong
+x04 cross of two auto-bin coverpoints, judged  icarus: no build  verilator: wrong
+x05 cross of bare variables, judged through th icarus: no build  verilator: wrong
+x06 `illegal_bins` value sampled               icarus: no build  verilator: no run
+x07 two coverpoints of 4 and 2 bins, judged th icarus: no build  verilator: wrong
+x08 `ignore_bins` covering a whole named bin   icarus: no build  verilator: wrong
+x09 `option.at_least` at the coverpoint        icarus: no build  verilator: runs
+x10 bin value `'1` on an 8-bit coverpoint      icarus: no build  verilator: wrong
+x11 `option.auto_bin_max` at the coverpoint    icarus: no build  verilator: runs
+x12 transition repetition `(0 [*2])`           icarus: no build  verilator: no build
+x13 `option.weight`, expected 62.5 (c22 re-sta icarus: no build  verilator: wrong
+x14 `bins b[2] = {[0:7]}` after one sample     icarus: no build  verilator: wrong
+x15 enum with 4 literals on 2 bits (control fo icarus: no build  verilator: runs
+x16 `stop()` before every sample               icarus: no build  verilator: wrong
+16 constructs: 0 run on both, 3 on Verilator only, 0 on Icarus only, 13 on neither; 11 wrong on Verilator

@@ -1,0 +1,8 @@
+`verilator_config
+// lint.vlt -- waivers for two 5.052 lint artifacts. Every covergroup
+// trips UNDRIVEN on an internal signal named __Vint under -Wall; the
+// match is on that name only, so a real undriven signal still warns.
+// A covergroup with two or more arguments trips VARHIDDEN on each of
+// them; the waiver is pinned to the line of the g_fn header.
+lint_off -rule UNDRIVEN -file "*" -match "*__Vint*"
+lint_off -rule VARHIDDEN -file "*tb_sampling_forms.sv" -lines 32

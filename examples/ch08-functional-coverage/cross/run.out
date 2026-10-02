@@ -1,0 +1,13 @@
+--- tb_cross: two groups, one database
+cg_full  get_inst_coverage(): 10.22
+cg_small get_inst_coverage(): 35.19
+summary line: covergroup : 15.8% ( 38/240)
+cg_full.ab: 160 bins in the .dat, 12 hit
+cg_small.ab: 40 bins in the .dat, 12 hit
+--- tb_cross_binsof: built with -Wno-fatal
+%Warning-COVERIGN: Unsupported: covergroup value range '[...]'
+%Warning-COVERIGN: Unsupported: 'intersect' in coverage select expression
+%Warning-COVERIGN: Unsupported: explicit coverage cross bins
+cg get_inst_coverage(): 10.22
+cg.ab: 160 bins in the .dat, 12 hit
+verdict: .dat holds 160 cross bins, 12 hit; binsof was dropped

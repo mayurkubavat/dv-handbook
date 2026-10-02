@@ -66,10 +66,10 @@ jobs:
           /opt/dvtools/bin/yosys -V
       - uses: actions/setup-python@v6
         with: { python-version: '3.12' }
-      - name: Install cocotb, pyuvm, pytest, jsonschema and the z3 solver
+      - name: Install cocotb, pyuvm, pytest, jsonschema, the z3 solver and cocotb-coverage
         # Verilator's runtime finds the solver on the PATH; the pip wheel puts
         # a z3 binary next to python.
-        run: pip install cocotb pyuvm pyyaml pytest jsonschema z3-solver
+        run: pip install cocotb pyuvm pyyaml pytest jsonschema z3-solver cocotb-coverage
       - name: Lint and run every example
         env:
           SYSTEMC_HOME: /usr
