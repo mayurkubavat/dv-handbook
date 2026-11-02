@@ -1,6 +1,6 @@
 # Functional Coverage {#sec-ch08}
 
-*A number that nobody can falsify is not a measurement.*
+> A number that nobody can falsify is not a measurement.
 
 ::: {.callout-note title="Learning objectives"}
 After this chapter you can write a coverage model that counts what a monitor observed and nothing else; read the percentage it reports and say which rule produced it; find the bins that were asked for and never counted, including the ones a tool dropped without a word; and close coverage the way a project closes it, as a reviewed set of exclusions on a merged database rather than as a figure.
@@ -158,7 +158,7 @@ The book's simulator collects every code-coverage kind the chapter named, with o
 ```{.text include="examples/ch08-functional-coverage/code-coverage/run.out"}
 ```
 
-Two runs of the Appendix F counter, ten and three hundred enabled cycles, two databases, and the tool's reports on each and on their merge: the record counts by kind, the summary, the annotated source, the merged counts, the ranking and the first lines of the lcov export. Two facts in the output are the ones to carry. First, the annotation threshold defaults to ten hits [@verilator-exe-verilator-coverage], so the ten-cycle run that passed shows most of its lines as uncovered until `--annotate-min 1` is given, and the two "lines covered" figures for the same run differ for that reason alone; the markers in the margin are the tool's, a `%` for a point below the threshold and a `~` for a line with some points below it. Second, a `cover property` under `--coverage-user` counts the cycles its expression held, and a property that reads an asynchronous reset is refused under the book's flags as a signal used both synchronously and asynchronously [@verilator-warnings]; the listing's property reads the enable. Assertion coverage is the third kind the chapter named, and this is its free-tool form: an assertion whose antecedent never held is a coverage hole, and the database shows it as a count of zero.
+Two runs of the counter from @sec-appF, ten and three hundred enabled cycles, two databases, and the tool's reports on each and on their merge: the record counts by kind, the summary, the annotated source, the merged counts, the ranking and the first lines of the lcov export. Two facts in the output are the ones to carry. First, the annotation threshold defaults to ten hits [@verilator-exe-verilator-coverage], so the ten-cycle run that passed shows most of its lines as uncovered until `--annotate-min 1` is given, and the two "lines covered" figures for the same run differ for that reason alone; the markers in the margin are the tool's, a `%` for a point below the threshold and a `~` for a line with some points below it. Second, a `cover property` under `--coverage-user` counts the cycles its expression held, and a property that reads an asynchronous reset is refused under the book's flags as a signal used both synchronously and asynchronously [@verilator-warnings]; the listing's property reads the enable. Assertion coverage is the third kind the chapter named, and this is its free-tool form: an assertion whose antecedent never held is a coverage hole, and the database shows it as a count of zero.
 
 ## Closure {#sec-ch08-closure}
 
@@ -214,7 +214,7 @@ The same model in Python, on the simulator that has no covergroups:
 ```{.text include="examples/ch08-functional-coverage/cocotb-coverage/run.out"}
 ```
 
-The Python library mirrors the language's constructs as decorators, a coverpoint and a cross on the arguments of the sampling function, with bins as values and relation functions, and exports its database in its own XML and YAML forms [@cocotb-coverage]. It installs beside the book's cocotb with one `pip install`, and Appendix F records it (@sec-appF-cocotb). The report is the same two phases, the same hole and the same covered bug, and the same lesson about what a covered bin is not.
+The Python library mirrors the language's constructs as decorators, a coverpoint and a cross on the arguments of the sampling function, with bins as values and relation functions, and exports its database in its own XML and YAML forms [@cocotb-coverage]. It installs beside the book's cocotb with one `pip install`, and @sec-appF-cocotb records it. The report is the same two phases, the same hole and the same covered bug, and the same lesson about what a covered bin is not.
 
 ## Future directions
 

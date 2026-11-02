@@ -5,6 +5,8 @@ set -euo pipefail
 
 # A citation that resolves is not a citation that prints; see the script.
 "$(dirname "$0")/check-citations.sh" || exit 1
+# The chapter template, checked where a script can see it; see the script.
+"$(dirname "$0")/check-structure.sh" || exit 1
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"; cd "$ROOT"
 export PATH="$HOME/.local/bin:$PATH"
 ./theme/cover/build_cover.sh >/dev/null

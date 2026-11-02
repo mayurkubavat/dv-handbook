@@ -10,20 +10,33 @@ book:
   date-format: "MMMM YYYY"
   chapters:
     - index.qmd
-    - chapters/ch01-what-is-dv.qmd
-    - chapters/ch02-verification-planning.qmd
-    - chapters/ch03-digital-design-for-verifiers.qmd
-    - chapters/ch04-simulation-fundamentals.qmd
-    - chapters/ch05-testbench-language.qmd
-    - chapters/ch06-oop-testbench-design.qmd
-    - chapters/ch07-constrained-random.qmd
-    - chapters/ch08-functional-coverage.qmd
-    - chapters/ch34-generative-ai-agentic-dv.qmd
+    # Parts carry their numeral in the title because a part with no
+    # written chapters is left out of the build, so LaTeX's own part
+    # counter would number Part VII as Part III. theme/preamble.tex
+    # suppresses that counter. A new part goes between the ones around it.
+    - part: "Part I · Foundations"
+      chapters:
+        - chapters/ch01-what-is-dv.qmd
+        - chapters/ch02-verification-planning.qmd
+        - chapters/ch03-digital-design-for-verifiers.qmd
+        - chapters/ch04-simulation-fundamentals.qmd
+    - part: "Part II · SystemVerilog for Verification"
+      chapters:
+        - chapters/ch05-testbench-language.qmd
+        - chapters/ch06-oop-testbench-design.qmd
+        - chapters/ch07-constrained-random.qmd
+        - chapters/ch08-functional-coverage.qmd
+    - part: "Part VII · The Future of Verification"
+      chapters:
+        - chapters/ch34-generative-ai-agentic-dv.qmd
     - references.qmd
   appendices:
     - appendices/appF-building-examples.qmd
+    - appendices/appG-glossary.qmd
     - appendices/appI-agent-tool-layer.qmd
   repo-url: https://github.com/mayurkubavat/dv-handbook
+  repo-branch: main
+  repo-actions: [issue, source]
   site-url: https://mayurkubavat.github.io/dv-handbook
   license: "CC BY-NC-SA 4.0"
 

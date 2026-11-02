@@ -17,6 +17,12 @@
 \renewcommand*{\chapterformat}{%
   {\fontsize{60}{60}\selectfont\color{siliconblue!70}\thechapter}\hspace{0.6em}}
 \RedeclareSectionCommand[beforeskip=-1.2\baselineskip, afterskip=0.6\baselineskip]{section}
+% Part titles carry their own numeral ("Part VII · ..."), because parts
+% with no written chapters are left out of the build and LaTeX's counter
+% would renumber the ones that follow. Suppress the counter's label on the
+% part page and in the table of contents.
+\renewcommand*{\partformat}{}
+\renewcommand*{\addparttocentry}[2]{\addtocentrydefault{part}{}{#2}}
 
 % Captions: sans, small, label in bold blue.
 \usepackage{needspace}
