@@ -1,6 +1,6 @@
 # Constrained-Random Stimulus {#sec-ch07}
 
-*A constraint names a set; a solver picks from it; only a measurement says what was picked.*
+> A constraint names a set; a solver picks from it; only a measurement says what was picked.
 
 ::: {.callout-note title="Learning objectives"}
 After this chapter you can write a class whose stimulus is drawn by `randomize()` under constraints and check every call; write each constraint form and name the three arithmetic mistakes that make one silently weak; say what a constraint solver promises and what it does not, and measure a distribution instead of trusting it; reproduce a run from its seed on the simulator that produced it and say which code changes leave a sequence alone; and read the chapter's support table to choose which tool runs which example.
@@ -14,7 +14,7 @@ That is the whole chapter in one bug. A constraint describes a legal set of valu
 
 ## Why randomize at all {#sec-ch07-why}
 
-A directed test knows the answer before it runs. It writes a fixed sequence, and its check is the sequence's known consequence. Chapter 1's directed FIFO test was one such: it wrote eight entries and read them back, and it passed, on a design with a bug in it (@sec-ch01-example). The random test in the same section found the bug at the twenty-eighth cycle, because it did something the directed test's author had not thought to do — write and read at once, with the queue near full — and because it carried a *reference model* against which every observation was checked.
+A directed test knows the answer before it runs. It writes a fixed sequence, and its check is the sequence's known consequence. The directed FIFO test of @sec-ch01 was one such: it wrote eight entries and read them back, and it passed, on a design with a bug in it (@sec-ch01-example). The random test in the same section found the bug at the twenty-eighth cycle, because it did something the directed test's author had not thought to do — write and read at once, with the queue near full — and because it carried a *reference model* against which every observation was checked.
 
 Those are the two halves of the trade. Random stimulus reaches states nobody enumerated, which is the point; and because the test no longer knows the answer, something else has to. That something is a checker — a scoreboard, a model, an assertion — plus a way of knowing what the random stimulus actually covered, which is the subject of Part II's coverage chapters. Constrained-random verification is the name for the method that pairs the two, and the constraints are what keep the random stimulus inside the design's legal envelope so that every draw is a valid transaction rather than a rejected one.
 

@@ -1,7 +1,40 @@
 # Preface {.unnumbered}
 
-This is a working draft of *Design Verification: From First Principles to Agentic AI*, an open textbook for engineers who verify silicon. The book is being written in public: every listing is a file in the companion repository, every example is compiled and run before a chapter is released, and the full text is free to read under the CC BY-NC-SA 4.0 license.
+This is a working draft of *Design Verification: From First Principles to Agentic AI*, an open textbook for engineers who verify silicon. The book is written in public, and the full text is free to read under the CC BY-NC-SA 4.0 license; the code is MIT-licensed.
 
-This build contains the front matter and the appendix *Building and Running the Examples* (@sec-appF). The appendix comes first because every chapter that follows leans on it: rather than repeating build instructions, each chapter says "run with `make run`, as described in @sec-appF," and gets on with verification.
+## Who this book is for
 
-The chapters, in the order they will appear, are listed in the project's design document. Corrections and suggestions are welcome as issues on the repository.
+The book is for three readers. A student or a designer moving into verification can read it from the front and finish able to plan, build and close a verification effort. A working verification engineer can open it at the chapter that matches the day's problem and find the rule, the reason for it and a program that shows it. A lead can use the planning, closure and practice chapters to set and defend sign-off criteria. No prior verification experience is assumed. Digital logic and some programming are.
+
+## How the book is organized
+
+The book is planned in seven parts. Part I lays the foundations: what verification is (@sec-ch01), how it is planned (@sec-ch02), what a verifier needs to know about digital design (@sec-ch03), and how a simulator actually executes a design (@sec-ch04). Part II teaches SystemVerilog as a verification language, from its types and classes (@sec-ch05, @sec-ch06) through constrained-random stimulus (@sec-ch07) and functional coverage (@sec-ch08) to assertions. Part III covers UVM. Part IV goes beyond simulation, to formal, emulation, structural checks and portable stimulus. Part V covers the open-source and Python flows: cocotb, pyuvm, SystemC and UVM-SystemC. Part VI is verification engineering in practice: infrastructure, debug, closure, protocols and the craft. Part VII looks ahead, and the book closes with generative AI and agentic verification (@sec-ch34).
+
+Chapters not yet written are left out of this build rather than shown as empty pages, so the parts present are the parts that exist.
+
+## How to read a chapter
+
+Every chapter has the same shape, so a reader looking something up knows where to find it. It opens with a one-line epigraph and a box of learning objectives, then a real bug or failure that motivates the chapter. The concepts follow, then a worked example that runs, then a summary, exercises and further reading.
+
+Six kinds of callout box carry material a reader may want to find again quickly:
+
+- **Definition**: a term as the book uses it.
+- **In Practice**: how a production project does it.
+- **Pitfall**: a mistake that compiles, runs and gives the wrong answer.
+- **Worked Example**: a problem solved step by step.
+- **Exercise**: something to try before reading on.
+- **Future Directions**: where the practice is moving.
+
+## Every listing runs
+
+Every code listing in this book is a file in the companion repository, spliced into the page at build time, and every block of simulator output is the output that file printed when the build last ran it. Nothing is typed into the prose by hand, so the code you read is the code that was compiled and the output you read is the output it produced. @sec-appF explains how to build and run every example yourself.
+
+The examples run on open-source tools: Verilator and Icarus Verilog for SystemVerilog, cocotb and pyuvm for Python, and SystemC. Where a construct behaves differently on different simulators, or is not supported by one, the chapter says so and shows the output of each. Each chapter of Part II has a section titled *What runs where* with a measured support table. Those tables record the tool releases the build used, which the repository's README and build workflow name, and they will change as the tools do; the language rules beside them are the ones the IEEE 1800 standard states.
+
+## Sources
+
+Every number and every claim about a tool or a standard carries a citation to a primary source: the standard, the paper, the tool's own documentation or the bug report. Vendor figures are labeled as vendor claims. The bibliography at the end of the book gives each source in full.
+
+## Corrections
+
+Corrections and suggestions are welcome as issues on the [repository](https://github.com/mayurkubavat/dv-handbook/issues). Each page of the web edition has a link that opens one. Please name the chapter and, where you can, quote the sentence.

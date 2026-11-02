@@ -1,6 +1,6 @@
 # Object-Oriented Testbench Design {#sec-ch06}
 
-*A base class fixes an algorithm and leaves named holes; a test fills one.*
+> A base class fixes an algorithm and leaves named holes; a test fills one.
 
 ::: {.callout-note title="Learning objectives"}
 After this chapter you can derive a class from another and say what `super.new` must do and when; predict which method body a call runs, through which handle, and say why `virtual` changes the answer; declare an abstract class and an interface class and choose between them; cast down a hierarchy safely and copy an object without losing its type; read a parameterized class as a family of distinct types and name the consequences that has in a testbench; recognize the one idea under the factory, strategy, template-method, singleton and callback patterns and find each in a testbench that exists; state the substitution property that decides whether a subclass is a subtype; and say, for every construct here, which of the book's two simulators runs it and which runs it and prints the wrong answer.

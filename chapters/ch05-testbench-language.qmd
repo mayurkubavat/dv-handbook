@@ -1,6 +1,6 @@
 # The SystemVerilog Testbench Language {#sec-ch05}
 
-*Two-state for what the testbench computes; four-state for what it observes.*
+> Two-state for what the testbench computes; four-state for what it observes.
 
 ::: {.callout-note title="Learning objectives"}
 After this chapter you can choose two-state or four-state for a testbench variable and say what each hides; pick the right aggregate for a job and name its cost; declare a protocol as a packed struct and an enum; connect a testbench to a design through an interface and hold it through a virtual interface; explain what a class handle is, what `new` does, and when an object dies; read the lifetime of a variable off where it is declared; sample and drive at a clock edge through a clocking block; and state, for every one of those constructs, which of this book's two open simulators runs it.

@@ -1,6 +1,6 @@
 # Functional Coverage {#sec-ch08}
 
-*A number that nobody can falsify is not a measurement.*
+> A number that nobody can falsify is not a measurement.
 
 ::: {.callout-note title="Learning objectives"}
 After this chapter you can write a coverage model that counts what a monitor observed and nothing else; read the percentage it reports and say which rule produced it; find the bins that were asked for and never counted, including the ones a tool dropped without a word; and close coverage the way a project closes it, as a reviewed set of exclusions on a merged database rather than as a figure.
