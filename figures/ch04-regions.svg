@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1080" width="1200" height="1080" role="img" aria-label="The regions of one SystemVerilog timestep, in order, with the loops between them">
+<rect width="1200" height="1080" fill="white"/>
+<text x="30" y="40" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="22" font-weight="700" text-anchor="start" fill="#1B4F72">One timestep</text>
+<text x="30" y="64" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="400" text-anchor="start" fill="#1C1C1C">Order between regions is fixed. Order within a region is not.</text>
+<rect x="300" y="100" width="230" height="54" rx="8" fill="white" stroke="#1B4F72" stroke-width="2"/>
+<text x="415.0" y="133.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="700" text-anchor="middle" fill="#1C1C1C">Preponed</text>
+<text x="570" y="122.5" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="400" text-anchor="start" fill="#1C1C1C">sample the values concurrent assertions will use;</text>
+<text x="570" y="143.5" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="400" text-anchor="start" fill="#1C1C1C">once per timestep</text>
+<rect x="270" y="194" width="810" height="262" rx="14" fill="#F4F6F8" stroke="#7FA3C0" stroke-width="1.5" stroke-dasharray="7 5"/>
+<text x="260" y="224" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="18" font-weight="700" text-anchor="end" fill="#1B4F72">Active set</text>
+<text x="260" y="246" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="400" text-anchor="end" fill="#7FA3C0">the design</text>
+<rect x="300" y="214" width="230" height="54" rx="8" fill="#1B4F72" stroke="#1B4F72" stroke-width="2"/>
+<text x="415.0" y="247.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="700" text-anchor="middle" fill="white">Active</text>
+<text x="570" y="236.5" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="400" text-anchor="start" fill="#1C1C1C">blocking assignments; right side of &lt;=;</text>
+<text x="570" y="257.5" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="400" text-anchor="start" fill="#1C1C1C">continuous assignments; $display</text>
+<rect x="300" y="298" width="230" height="54" rx="8" fill="white" stroke="#1B4F72" stroke-width="2"/>
+<text x="415.0" y="331.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="700" text-anchor="middle" fill="#1C1C1C">Inactive</text>
+<text x="570" y="331.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="400" text-anchor="start" fill="#1C1C1C">anything scheduled by #0</text>
+<rect x="300" y="382" width="230" height="54" rx="8" fill="white" stroke="#1B4F72" stroke-width="2"/>
+<text x="415.0" y="415.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="700" text-anchor="middle" fill="#1C1C1C">NBA</text>
+<text x="570" y="415.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="400" text-anchor="start" fill="#1C1C1C">the update half of &lt;=</text>
+<path d="M415.0,154 V204" stroke="#7FA3C0" stroke-width="2.5"/>
+<path d="M408.0,203 L415.0,214 L422.0,203 Z" fill="#7FA3C0"/>
+<path d="M415.0,268 V288" stroke="#7FA3C0" stroke-width="2.5"/>
+<path d="M408.0,287 L415.0,298 L422.0,287 Z" fill="#7FA3C0"/>
+<path d="M415.0,352 V372" stroke="#7FA3C0" stroke-width="2.5"/>
+<path d="M408.0,371 L415.0,382 L422.0,371 Z" fill="#7FA3C0"/>
+<path d="M530,409.0 H544 V241.0 H542" stroke="#2E7D32" stroke-width="2.5" fill="none"/>
+<path d="M542,234.0 L531,241.0 L542,248.0 Z" fill="#2E7D32"/>
+<rect x="300" y="496" width="230" height="54" rx="8" fill="white" stroke="#1B4F72" stroke-width="2"/>
+<text x="415.0" y="529.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="700" text-anchor="middle" fill="#1C1C1C">Observed</text>
+<text x="570" y="529.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="400" text-anchor="start" fill="#1C1C1C">evaluate concurrent assertions</text>
+<path d="M415.0,436 V486" stroke="#7FA3C0" stroke-width="2.5"/>
+<path d="M408.0,485 L415.0,496 L422.0,485 Z" fill="#7FA3C0"/>
+<rect x="270" y="590" width="810" height="262" rx="14" fill="#F4F6F8" stroke="#7FA3C0" stroke-width="1.5" stroke-dasharray="7 5"/>
+<text x="260" y="620" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="18" font-weight="700" text-anchor="end" fill="#1B4F72">Reactive set</text>
+<text x="260" y="642" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="400" text-anchor="end" fill="#7FA3C0">the testbench&#x27;s dual</text>
+<rect x="300" y="610" width="230" height="54" rx="8" fill="#5B3E8E" stroke="#1B4F72" stroke-width="2"/>
+<text x="415.0" y="643.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="700" text-anchor="middle" fill="white">Reactive</text>
+<text x="570" y="632.5" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="400" text-anchor="start" fill="#1C1C1C">code in a program block;</text>
+<text x="570" y="653.5" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="400" text-anchor="start" fill="#1C1C1C">assertion action blocks</text>
+<rect x="300" y="694" width="230" height="54" rx="8" fill="white" stroke="#1B4F72" stroke-width="2"/>
+<text x="415.0" y="727.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="700" text-anchor="middle" fill="#1C1C1C">Re-Inactive</text>
+<text x="570" y="727.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="400" text-anchor="start" fill="#1C1C1C">the testbench&#x27;s counterpart of Inactive</text>
+<rect x="300" y="778" width="230" height="54" rx="8" fill="white" stroke="#1B4F72" stroke-width="2"/>
+<text x="415.0" y="811.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="700" text-anchor="middle" fill="#1C1C1C">Re-NBA</text>
+<text x="570" y="811.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="400" text-anchor="start" fill="#1C1C1C">the testbench&#x27;s counterpart of NBA</text>
+<path d="M415.0,550 V600" stroke="#7FA3C0" stroke-width="2.5"/>
+<path d="M408.0,599 L415.0,610 L422.0,599 Z" fill="#7FA3C0"/>
+<path d="M415.0,664 V684" stroke="#7FA3C0" stroke-width="2.5"/>
+<path d="M408.0,683 L415.0,694 L422.0,683 Z" fill="#7FA3C0"/>
+<path d="M415.0,748 V768" stroke="#7FA3C0" stroke-width="2.5"/>
+<path d="M408.0,767 L415.0,778 L422.0,767 Z" fill="#7FA3C0"/>
+<path d="M530,805.0 H544 V637.0 H542" stroke="#2E7D32" stroke-width="2.5" fill="none"/>
+<path d="M542,630.0 L531,637.0 L542,644.0 Z" fill="#2E7D32"/>
+<path d="M1090,805.0 H1155 V241.0 H1102" stroke="#B7791F" stroke-width="2.5" fill="none" stroke-dasharray="9 6"/>
+<path d="M1102,234.0 L1091,241.0 L1102,248.0 Z" fill="#B7791F"/>
+<text x="1141" y="519.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="700" text-anchor="end" fill="#B7791F">the testbench may</text>
+<text x="1141" y="539.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="700" text-anchor="end" fill="#B7791F">wake the design again</text>
+<rect x="300" y="892" width="230" height="54" rx="8" fill="white" stroke="#1B4F72" stroke-width="2"/>
+<text x="415.0" y="925.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="700" text-anchor="middle" fill="#1C1C1C">Postponed</text>
+<text x="570" y="914.5" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="400" text-anchor="start" fill="#1C1C1C">$strobe and $monitor; read-only:</text>
+<text x="570" y="935.5" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="400" text-anchor="start" fill="#1C1C1C">nothing may schedule new work here</text>
+<path d="M415.0,832 V882" stroke="#7FA3C0" stroke-width="2.5"/>
+<path d="M408.0,881 L415.0,892 L422.0,881 Z" fill="#7FA3C0"/>
+<path d="M415.0,946 V986" stroke="#1B4F72" stroke-width="2.5"/>
+<path d="M408.0,985 L415.0,996 L422.0,985 Z" fill="#1B4F72"/>
+<text x="415.0" y="1020" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" text-anchor="middle" fill="#1B4F72">time advances only when every region is empty</text>
+<path d="M30,1053 H70" stroke="#2E7D32" stroke-width="2.5"/>
+<text x="78" y="1058" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="400" text-anchor="start" fill="#1C1C1C">new work in the same set: iterate within the timestep</text>
+<path d="M520,1053 H560" stroke="#B7791F" stroke-width="2.5" stroke-dasharray="9 6"/>
+<text x="568" y="1058" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="400" text-anchor="start" fill="#1C1C1C">testbench activity that wakes design processes</text>
+</svg>

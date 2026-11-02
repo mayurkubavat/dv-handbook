@@ -132,6 +132,8 @@ Everything that goes wrong with classes in a testbench goes wrong at the line be
 ```{.text include="examples/ch05-testbench-language/class-handles/run.out"}
 ```
 
+![The four steps of the listing above. Assignment copies a name, so after `b = a` one object has two; a copy is a second object, made by a method that calls `new`; and setting `a` to null leaves the object alive while `b` still names it. The static counter belongs to the class and counts objects, not handles.](../figures/ch05-handles.svg){#fig-ch05-handles fig-alt="Four panels: handles a, b and c start null; a and b name one object; c names a copy while a write through b changes the shared object; a is set to null and b still names the object."}
+
 The static member is the other line worth drawing. `made` belongs to the class, not to any object: every object sees the same one, and it is reached through the class scope operator, `packet::made`, without an object at all. That is where a transaction's sequence number lives, and it is also where a bug lives when a designer meant one counter per object and got one per class.
 
 When does an object die? The standard promises that an object no one can reach is reclaimed, and promises nothing about when, and provides no destructor to run at that moment [@ieee1800-2023]. What a tool does with that latitude is its own business, and one of this book's tools documents its choice: Verilator counts references, and the issue that proposed a tracing collector for it records that a UVM component tree, whose parents hold their children and whose children hold their parents, forms cycles that reference counting never frees [@verilator-issue-4651]. A testbench that creates and drops objects in a loop should know which of those it is running on.

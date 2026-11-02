@@ -107,6 +107,8 @@ A cross is "the Cartesian product of the N sets of coverage point bins" and noth
 ```{.text include="examples/ch08-functional-coverage/cross/run.out"}
 ```
 
+![The listing's two crosses as grids, with the twelve tuples its stimulus produces. The full cross counts those twelve against 160 bins, 120 of them for values of `a` the test never drives; binning `a` to the values in use first leaves 40.](../figures/ch08-cross.svg){#fig-ch08-cross fig-alt="Left: a 16 by 10 grid of cross bins with a 4 by 3 block hit, labeled 12 of 160 bins hit. Right: a 4 by 10 grid with the same block hit, labeled 12 of 40 bins hit."}
+
 The first group's cross is the standard's 160. The runner prints each group's percentage and then, from the database, how many bins each cross has and how many were hit, because on the release this book runs a cross cannot be queried on its own (`g.cross.get_inst_coverage()` does not build) and the group's percentage is computed by a rule the next section measures. The second group gets the same twelve hits into forty bins by binning the four-bit point to the four values the test uses before crossing it, which is the shrinking that production code does [@opentitan-cov-classes]. The form production code writes more often, a `binsof … intersect` bin on the cross, is in the second file: the release warns on it three times and counts the automatic cross instead, so the runner builds that file with warnings allowed and shows that its cross has the same 160 bins as the first. The numbers the runner reads from the database are the cross's real size, and a reviewer of a coverage model asks for them before asking for the percent.
 
 ## Options, instances and the percentage {#sec-ch08-percentage}

@@ -83,7 +83,10 @@ Constraint style is also solver time. The lowRISC DV style guide's advice is to 
 
 ## What a solver does, and what it does not promise {#sec-ch07-solver}
 
-Verilator does not solve constraints itself. At run time it writes the class's constraints, in the SMT-LIB language that the satisfiability-modulo-theories community standardized [@barrett2017smtlib26], to an external solver over a pipe, reads a model back, and assigns it; the solver it looks for by default is z3 [@demoura2008z3], run as `z3 --in`, and the `VERILATOR_SOLVER` environment variable names another [@verilator-random-runtime; @verilator-environment]. The installation guide says the solver is required for constrained randomization and not at build time [@verilator-install]. The pipeline can be seen by taking the solver away:
+Verilator does not solve constraints itself. At run time it writes the class's constraints, in the SMT-LIB language that the satisfiability-modulo-theories community standardized [@barrett2017smtlib26], to an external solver over a pipe, reads a model back, and assigns it; the solver it looks for by default is z3 [@demoura2008z3], run as `z3 --in`, and the `VERILATOR_SOLVER` environment variable names another [@verilator-random-runtime; @verilator-environment]. The installation guide says the solver is required for constrained randomization and not at build time [@verilator-install]. @fig-ch07-randomize draws that path and the three ways a call can end. The pipeline can be seen by taking the solver away:
+
+![One call to `randomize()` on the book's simulator. The runtime states the class's constraints in SMT-LIB to an external solver and assigns the model it returns. Both ways of failing return 0 and leave every member as it was [@verilator-random-runtime; @sutherland2007gotchas].](../figures/ch07-randomize.svg){#fig-ch07-randomize fig-alt="Flow from a class with rand members and constraint blocks, through the simulator runtime writing SMT-LIB to an external solver such as z3, to a model; outcomes: return 1 with members assigned, return 0 on unsatisfiable constraints, return 0 when the solver cannot start."}
+
 
 ```{.systemverilog include="examples/ch07-constrained-random/no-solver/tb_nosolver.sv"}
 ```

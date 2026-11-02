@@ -57,6 +57,10 @@ Within that frame, the regions and what lands in each:
 | Re-Inactive, Re-NBA | the testbench's counterparts of Inactive and NBA |
 | Postponed | `$strobe` and `$monitor`; read-only, and nothing may schedule new work from here |
 
+@fig-ch04-regions draws the same table as a flow. Each set loops on itself while it has work, the testbench's set can send work back to the design's, and time moves only after Postponed.
+
+![The regions of one timestep, in order. Work that schedules more work in the same set loops back within the timestep; the Reactive set can wake design processes in the Active set again. Region contents follow the table above [@cummingssalz2007events].](../figures/ch04-regions.svg){#fig-ch04-regions fig-alt="Flow of the SystemVerilog timestep regions: Preponed, the Active set (Active, Inactive, NBA), Observed, the Reactive set (Reactive, Re-Inactive, Re-NBA) and Postponed, with loops back to Active and Reactive and a path from the Reactive set back to Active."}
+
 Two entries deserve a note. A non-blocking assignment appears twice on purpose: its right side is evaluated in Active, where the statement is written, and the variable is updated later in NBA. That split is the whole of what "non-blocking" means, and most of @sec-ch04-races follows from it. And Inactive exists for a historical reason worth knowing: it was needed in early Verilog before the non-blocking region was added, and once that region existed, well-written code stopped populating Inactive at all [@cummingssalz2007events].
 
 ::: {.callout-warning title="Pitfall"}

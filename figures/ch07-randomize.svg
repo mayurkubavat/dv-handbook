@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 520" width="1200" height="520" role="img" aria-label="The path of one randomize() call through the simulator and an external solver">
+<rect width="1200" height="520" fill="white"/>
+<text x="30" y="40" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="21" font-weight="700" text-anchor="start" fill="#1B4F72">One call to randomize()</text>
+<text x="30" y="64" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="400" text-anchor="start" fill="#1C1C1C">The simulator states the problem; an external solver answers it; the call reports which happened.</text>
+<rect x="30" y="110" width="250" height="130" rx="8" fill="#F4F6F8" stroke="#1B4F72" stroke-width="2"/>
+<text x="155.0" y="138" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="18" font-weight="700" text-anchor="middle" fill="#1B4F72">The class</text>
+<text x="155.0" y="164" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="400" text-anchor="middle" fill="#1C1C1C">rand / randc members</text>
+<text x="155.0" y="185" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="400" text-anchor="middle" fill="#1C1C1C">constraint blocks</text>
+<text x="155.0" y="206" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="400" text-anchor="middle" fill="#1C1C1C">randomize() with { ... }</text>
+<rect x="340" y="110" width="230" height="130" rx="8" fill="white" stroke="#1B4F72" stroke-width="2"/>
+<text x="455.0" y="138" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="18" font-weight="700" text-anchor="middle" fill="#1B4F72">Simulator runtime</text>
+<text x="455.0" y="164" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="400" text-anchor="middle" fill="#1C1C1C">writes the constraints</text>
+<text x="455.0" y="185" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="400" text-anchor="middle" fill="#1C1C1C">as SMT-LIB</text>
+<text x="455.0" y="206" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="400" text-anchor="middle" fill="#1C1C1C">over a pipe</text>
+<rect x="630" y="110" width="220" height="130" rx="8" fill="#DCE9F3" stroke="#1B4F72" stroke-width="2"/>
+<text x="740.0" y="138" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="18" font-weight="700" text-anchor="middle" fill="#1B4F72">External solver</text>
+<text x="740.0" y="164" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="400" text-anchor="middle" fill="#1C1C1C">z3 --in</text>
+<text x="740.0" y="185" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="400" text-anchor="middle" fill="#1C1C1C">by default;</text>
+<text x="740.0" y="206" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="400" text-anchor="middle" fill="#1C1C1C">VERILATOR_SOLVER</text>
+<text x="740.0" y="227" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="400" text-anchor="middle" fill="#1C1C1C">names another</text>
+<rect x="910" y="110" width="260" height="130" rx="8" fill="#F4F6F8" stroke="#1B4F72" stroke-width="2"/>
+<text x="1040.0" y="138" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="18" font-weight="700" text-anchor="middle" fill="#1B4F72">A model</text>
+<text x="1040.0" y="164" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="400" text-anchor="middle" fill="#1C1C1C">one satisfying</text>
+<text x="1040.0" y="185" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="400" text-anchor="middle" fill="#1C1C1C">assignment</text>
+<path d="M280,175.0 H330" stroke="#7FA3C0" stroke-width="2.5"/>
+<path d="M329,169.0 L340,175.0 L329,181.0 Z" fill="#7FA3C0"/>
+<path d="M570,175.0 H620" stroke="#7FA3C0" stroke-width="2.5"/>
+<path d="M619,169.0 L630,175.0 L619,181.0 Z" fill="#7FA3C0"/>
+<path d="M850,175.0 H900" stroke="#7FA3C0" stroke-width="2.5"/>
+<path d="M899,169.0 L910,175.0 L899,181.0 Z" fill="#7FA3C0"/>
+<rect x="910" y="340" width="260" height="120" rx="8" fill="white" stroke="#2E7D32" stroke-width="2"/>
+<text x="1040.0" y="368" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="18" font-weight="700" text-anchor="middle" fill="#2E7D32">Returns 1</text>
+<text x="1040.0" y="394" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="400" text-anchor="middle" fill="#1C1C1C">every rand and randc member</text>
+<text x="1040.0" y="415" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="400" text-anchor="middle" fill="#1C1C1C">assigned from the model</text>
+<rect x="560" y="340" width="300" height="120" rx="8" fill="white" stroke="#B7791F" stroke-width="2"/>
+<text x="710.0" y="368" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="18" font-weight="700" text-anchor="middle" fill="#B7791F">Returns 0: no solution</text>
+<text x="710.0" y="394" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="400" text-anchor="middle" fill="#1C1C1C">constraints contradict;</text>
+<text x="710.0" y="415" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="400" text-anchor="middle" fill="#1C1C1C">no member is updated</text>
+<rect x="210" y="340" width="300" height="120" rx="8" fill="white" stroke="#B7791F" stroke-width="2"/>
+<text x="360.0" y="368" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="18" font-weight="700" text-anchor="middle" fill="#B7791F">Returns 0: no solver</text>
+<text x="360.0" y="394" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="400" text-anchor="middle" fill="#1C1C1C">a warning, and</text>
+<text x="360.0" y="415" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="400" text-anchor="middle" fill="#1C1C1C">no member is updated</text>
+<path d="M1040,240 V330" stroke="#2E7D32" stroke-width="2.5"/>
+<path d="M1034,329 L1040,340 L1046,329 Z" fill="#2E7D32"/>
+<text x="1080" y="295.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="700" text-anchor="middle" fill="#2E7D32">satisfiable</text>
+<path d="M740,240 V330" stroke="#B7791F" stroke-width="2.5"/>
+<path d="M734,329 L740,340 L746,329 Z" fill="#B7791F"/>
+<text x="790" y="295.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="700" text-anchor="middle" fill="#B7791F">unsatisfiable</text>
+<path d="M455,240 V330" stroke="#B7791F" stroke-width="2.5" stroke-dasharray="8 6"/>
+<path d="M449,329 L455,340 L461,329 Z" fill="#B7791F"/>
+<text x="455" y="295.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="700" text-anchor="middle" fill="#B7791F">cannot start the solver</text>
+<rect x="360" y="278.0" width="190" height="22" fill="white"/>
+<text x="455" y="294.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="700" text-anchor="middle" fill="#B7791F">cannot start the solver</text>
+<text x="30" y="496" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" text-anchor="start" fill="#1B4F72">A caller that ignores the return value runs on whatever the members held before the call.</text>
+</svg>
