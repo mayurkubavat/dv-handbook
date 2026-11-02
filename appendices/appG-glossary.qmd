@@ -1,0 +1,219 @@
+# Glossary {#sec-appG}
+
+Each entry gives the term as this book uses it, in a sentence or two, and the section that defines it and shows it working. The definition in the chapter is the authority, and the chapter cites the source behind it; an entry here is a reminder, not a replacement. Where the industry has a second name for the same idea, both are listed and one points to the other.
+
+The glossary grows with the book. It holds only terms that a written chapter defines.
+
+## A–C {#sec-appG-a}
+
+Agent
+: A loop that decides which tools to call and in what order, as distinct from the tools themselves, which are deterministic programs that can be tested on their own. See @sec-appI.
+
+Associative array
+: A SystemVerilog container indexed by a key of any type, such as an address, a string or a struct, that holds only the entries written to it. See @sec-ch05-aggregates.
+
+Back-pressure
+: The receiver's use of `ready` in a valid/ready handshake to slow the sender. See @sec-ch03-pipelines.
+
+Beat
+: One cycle's worth of payload in a handshake: the unit the two wires arbitrate over. One message may take several beats. See @sec-ch03-pipelines.
+
+Bin
+: The unit a coverpoint counts. Each bin names a value, a set of values, or a sequence of values, and the coverage percentage is computed over bins. See @sec-ch08-bins.
+
+Class
+: A SystemVerilog type with data members and methods. Its instances are objects, created by `new` and reached through handles. See @sec-ch05-classes.
+
+Clock
+: A periodic binary signal that marks the sampling point of the sequential elements it drives, characterized by a period, a duty cycle and a phase. See *primary clock*, *derived clock* and @sec-ch03-clocks.
+
+Clock domain
+: The set of registers sampled by one clock. See @sec-ch03-clocks.
+
+Clock domain crossing (CDC)
+: A path from a register in one clock domain to a register in another. A crossing is safe only through a structure designed for it, such as a synchronizer for a control signal. See @sec-ch03-cdc.
+
+Clocking block
+: A SystemVerilog construct that names a clock and states, for each signal it lists, when the testbench reads it and when the testbench's writes land, moving those reads and writes out of the region where the design updates. See @sec-ch05-clocking.
+
+Code coverage
+: Coverage the simulator derives from the RTL itself: line, toggle, FSM state, FSM transition, conditional and branch. It measures what code was exercised, not what the plan asked for. Compare *functional coverage*; see @sec-ch08-why and @sec-ch08-code-coverage.
+
+Combinational cloud
+: The logic between registers. It has no memory, and its output is a function of its inputs alone. See @sec-ch03-rtl.
+
+Constraint block
+: A named set of expressions over a class's random variables, all of which `randomize()` must satisfy at once. See @sec-ch07-constraints.
+
+Context
+: The sequence of tokens a generative model sees on one call; the model's entire input. See @sec-ch34-model.
+
+Covergroup
+: A SystemVerilog type that holds coverpoints, crosses, options and a sampling rule. It is declared once and instantiated with `new`; a covergroup declared in a class must be constructed in that class's `new`, or it collects nothing. See @sec-ch08-covergroup.
+
+Coverpoint
+: An integral expression a covergroup samples, together with the bins its values are counted into. See @sec-ch08-bins.
+
+Cross
+: The Cartesian product of the bins of two or more coverpoints, so that combinations are counted rather than single values. See @sec-ch08-cross.
+
+## D–H {#sec-appG-d}
+
+Delta cycle
+: VHDL's name for one pass of the simulator's loop within a timestep. This book says *iteration within a timestep*. See @sec-ch04-iteration.
+
+Derived clock
+: Any signal produced from another clock by the clock network: selected, blended, gated or shaped. See @sec-ch03-clocks.
+
+Dynamic array
+: A SystemVerilog array with an integer index and a size decided at run time. See @sec-ch05-aggregates.
+
+Equivalence checking
+: Formal comparison of two descriptions of the same design, typically RTL and the netlist synthesized from it, to show that they compute the same function. See @sec-ch01-definitions.
+
+Event
+: Something that wakes a process or updates a value in a simulation. See @sec-ch04-model.
+
+Evidence pointer
+: The reference a derived document carries from each claim to the artifact that supports it, such as a file and line, a netlist cell, a coverage record or a run identifier. See @sec-appI-documents.
+
+Formal verification
+: Comparison of a design against properties by proof rather than by simulation. It can show that something never happens, which simulation cannot. See @sec-ch01-definitions.
+
+Four-state
+: Having four values per bit: zero, one, unknown (X) and high impedance (Z). A four-state variable can hold an unknown and propagates it. Compare *two-state*; see @sec-ch04-fourstate and @sec-ch05-types.
+
+Functional coverage
+: Coverage a person writes from the verification plan, as covergroups and assertion cover directives, to record which behaviors the tests reached. Compare *code coverage*; see @sec-ch02-coverage and @sec-ch08.
+
+Functional verification
+: Comparison of the RTL's behavior against the specification by simulating it with a testbench. It is what "verification" means unqualified in this book. See @sec-ch01-definitions.
+
+Handle
+: A variable that names a class object. It starts `null`, and assigning one handle to another makes two names for one object, not a copy. See @sec-ch05-classes.
+
+Handshake
+: See *valid/ready handshake*.
+
+## I–N {#sec-appG-i}
+
+Interface
+: A named bundle of signals with its own ports and its own code, used to connect a testbench to a design. See *modport*, *virtual interface* and @sec-ch05-interfaces.
+
+Interface class
+: A class that declares only method signatures, with no data and no bodies. A class may implement several interface classes while extending at most one base class. See @sec-ch06-abstract.
+
+Iteration within a timestep
+: One pass of the simulator's loop at a single value of simulation time. Many passes may run before time advances. Also called a *delta cycle*. See @sec-ch04-iteration.
+
+Metastability
+: Indecision in a flip-flop about whether its output should be zero or one, caused by a data change too close to the sampling edge. The chance that it persists falls exponentially with time but never reaches zero. See @sec-ch03-metastability.
+
+Modport
+: A view of an interface: a list of which of its signals a module connected through that view may drive and which it may only read. See @sec-ch05-interfaces.
+
+Netlist
+: What synthesis produces: the design's behavior expressed as instances of library cells and the wires between them. See @sec-ch03-rtl.
+
+Non-blocking assignment
+: An assignment (`<=`) whose right side is evaluated in the Active region and whose target is updated later, in the NBA region of the same timestep. See @sec-ch04-regions.
+
+## O–R {#sec-appG-o}
+
+Object
+: An instance of a class, created by `new` and reached through a handle. See @sec-ch05-classes.
+
+Parameterized class
+: A family of classes, one per set of parameter values. Each specialization is its own type, with its own static members. See @sec-ch06-param.
+
+Physical verification
+: Comparison of a chip's layout against manufacturing rules and against its netlist. It concerns whether the chip can be built, not what it computes. See @sec-ch01-definitions.
+
+Post-silicon validation
+: Running the manufactured chip in a real system, with real software, at real speed, to find what pre-silicon verification missed. See @sec-ch01-definitions.
+
+Primary clock
+: A primary input of the design, or the output of an analog block such as a phase-locked loop treated as a black box. See @sec-ch03-clocks.
+
+Process
+: A thread of execution in a design or testbench: an `always` block, an `initial` block, or a continuous assignment. See @sec-ch04-model.
+
+Pure virtual method
+: A method declared without a body in an abstract (`virtual`) class. Every concrete subclass must implement it, and the abstract class cannot itself be constructed. See @sec-ch06-abstract.
+
+Queue
+: A SystemVerilog dynamic array that grows and shrinks at either end and can be inserted into in the middle. See @sec-ch05-aggregates.
+
+Race condition
+: Two or more statements scheduled in the same timestep whose result depends on the order they run in, where the language does not fix that order. See @sec-ch04-races.
+
+`rand`, `randc`
+: Qualifiers on class members that `randomize()` assigns. A `randc` member cycles through every value of its range before repeating one. See @sec-ch07-methods.
+
+Random stability
+: The resistance of random results to code changes. In SystemVerilog it comes from every thread and object having its own random number generator, so that an object's sequence depends only on the thread that constructed it and on its own earlier calls. See @sec-ch07-seeds.
+
+`randomize()`
+: The built-in class method that solves the class's constraints, assigns its random members, and returns 1, or returns 0 and assigns nothing when the constraints cannot be satisfied. See @sec-ch07-methods.
+
+Region
+: One of the ordered stages a SystemVerilog timestep is divided into, such as Preponed, Active, NBA, Observed, Reactive and Postponed. Only the order between regions may be relied on, never the order within one. See @sec-ch04-regions.
+
+Register
+: A state element that holds a value between clock edges. See @sec-ch03-rtl.
+
+Register-transfer level (RTL)
+: A description of hardware as state elements and the combinational logic that computes each one's next value from the current ones. See @sec-ch03-rtl.
+
+Reset domain crossing (RDC)
+: A path whose source and destination registers are reset by different resets. It can cause metastability even when both registers run on one clock, so an analysis that compares only clocks cannot see it. See @sec-ch03-resets.
+
+## S–Z {#sec-appG-s}
+
+Sample (coverage)
+: One evaluation of a covergroup, in which each coverpoint's expression is read and counted into its bins. Sampling is triggered by a clocking event, a block event, or an explicit call to `sample()`. See @sec-ch08-covergroup.
+
+Sample (generative model)
+: One draw from the distribution a generative model produces. Output differs between runs unless the sampler is seeded. See @sec-ch34-model.
+
+Seed
+: The value that initializes a simulation's random number generation, so that a random test can be run again. See @sec-ch07-seeds.
+
+Synchronizer
+: A structure that carries a signal safely into another clock domain. The common two-flop synchronizer samples the signal and waits a clock period before sampling it again, trading metastability for an uncertainty of one cycle in latency. It synchronizes control, not data. See @sec-ch03-cdc.
+
+Test (manufacturing)
+: The check that a particular manufactured die came out of the fab correctly. It looks for manufacturing defects, not design errors. See @sec-ch01-definitions.
+
+Timestep
+: All the work a simulator does at one value of simulation time. Time advances only when no events remain at the current time. See @sec-ch04-model.
+
+Token
+: The unit of text a generative model reads and writes, typically a word fragment. See @sec-ch34-model.
+
+Tool (agent tool layer)
+: A deterministic program that takes a design, a testbench or a log and returns structured data, runs in continuous integration, and needs no model. See @sec-appI.
+
+Two-state
+: Having only the values zero and one. A two-state variable cannot hold an unknown; assigning X to it stores 0. Compare *four-state*; see @sec-ch04-fourstate and @sec-ch05-types.
+
+Unknown (X)
+: A simulator's statement that it does not know which value a bit has. It is not a value hardware can hold. See @sec-ch04-fourstate.
+
+Valid/ready handshake
+: A two-wire contract in which the sender raises `valid` to offer a beat and the receiver raises `ready` to accept one. The beat transfers only in a cycle where both are high. See @sec-ch03-pipelines.
+
+Validation
+: The question of whether the specification is the right one for the product and the world it must work in. Compare *verification* and *test*; see @sec-ch01-definitions.
+
+Verification
+: The question of whether the design does what the specification says, and nothing else, answered with evidence: executed tests, coverage data and proofs. See @sec-ch01-definitions.
+
+Verification plan
+: The list of every behavior a design must have, each paired with how it will be exercised, checked and measured, and what will count as done. It is written from the specification, before the testbench. See @sec-ch02-what.
+
+Virtual interface
+: A class variable that holds a handle to an interface instance, so that class-based testbench code can drive and sample the design's wires. Like any variable it starts null. See @sec-ch05-interfaces.
+
+Virtual method
+: A method dispatched on the run-time class of the object rather than the declared class of the handle, so a call through a base handle runs the most-derived override. See @sec-ch06-virtual.

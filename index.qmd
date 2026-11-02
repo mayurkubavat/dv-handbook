@@ -25,6 +25,8 @@ Six kinds of callout box carry material a reader may want to find again quickly:
 - **Exercise**: something to try before reading on.
 - **Future Directions**: where the practice is moving.
 
+The glossary (@sec-appG) collects the terms the chapters define, each with a pointer to the section that defines it.
+
 ## Every listing runs
 
 Every code listing in this book is a file in the companion repository, spliced into the page at build time, and every block of simulator output is the output that file printed when the build last ran it. Nothing is typed into the prose by hand, so the code you read is the code that was compiled and the output you read is the output it produced. @sec-appF explains how to build and run every example yourself.

@@ -10,8 +10,9 @@
 #    2. the first line after the title is a one-line epigraph ("> ...")
 #    3. a "Learning objectives" callout follows
 #    4. the closer is Summary, Exercises, Further reading, in that order
-#    5. no chapter, section, table, figure or listing is referred to by
-#       a hard-coded number anywhere in the book; use @sec-/@tbl-/@fig-
+#    5. no chapter, section, table, figure, listing or appendix is referred
+#       to by a hard-coded number or letter anywhere in the book; appendix
+#       letters follow build order, so they move too. Use @sec-/@tbl-/@fig-
 #
 #  Usage: scripts/check-structure.sh
 # ======================================================================
@@ -36,7 +37,7 @@ for f in chapters/*.qmd; do
 done
 
 # A number in prose goes stale the day a chapter is added or moved.
-if hits=$(grep -nE '\b(Chapter|Section|Table|Figure|Listing)s? [0-9]+(\.[0-9]+)*\b' \
+if hits=$(grep -nE '\b((Chapter|Section|Table|Figure|Listing)s? [0-9]+(\.[0-9]+)*|Appendix [A-Z])\b' \
           chapters/*.qmd appendices/*.qmd index.qmd 2>/dev/null); then
   echo "hard-coded cross-references (use a label instead):"
   echo "$hits" | cut -c1-160 | sed 's/^/  /'
