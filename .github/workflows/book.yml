@@ -113,7 +113,10 @@ jobs:
       - name: Render PDF (with cover) and web edition
         run: |
           scripts/build-book.sh
-          cp _book/Design-Verification-draft.pdf _book/Design-Verification-${{ github.ref_name }}.pdf
+          # On a pull request the ref name is "<number>/merge"; a slash in it
+          # would name a directory that does not exist.
+          ref="${GITHUB_REF_NAME//\//-}"
+          cp _book/Design-Verification-draft.pdf "_book/Design-Verification-${ref}.pdf"
           # The web edition goes to its own directory: a second render into
           # _book would delete the other format's output.
           quarto render --to html --output-dir _site
