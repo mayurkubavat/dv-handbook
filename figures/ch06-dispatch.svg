@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 560" width="1200" height="560" role="img" aria-label="One triangle object named by three handles of different declared classes">
+<rect width="1200" height="560" fill="white"/>
+<text x="40" y="40" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="21" font-weight="700" text-anchor="start" fill="#1B4F72">A virtual call is bound to the object, not to the handle</text>
+<text x="40" y="100" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" text-anchor="start" fill="#7FA3C0">classes</text>
+<text x="520" y="100" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" text-anchor="start" fill="#7FA3C0">handles (declared class)</text>
+<text x="880" y="100" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" text-anchor="start" fill="#7FA3C0">the one object</text>
+<rect x="40" y="150" width="300" height="64" rx="8" fill="white" stroke="#1B4F72" stroke-width="2"/>
+<text x="56" y="178" font-family="'JetBrains Mono', Menlo, monospace" font-size="18" font-weight="700" text-anchor="start" fill="#1B4F72">shape</text>
+<text x="56" y="202" font-family="'JetBrains Mono', Menlo, monospace" font-size="15" font-weight="400" text-anchor="start" fill="#1C1C1C">sides() returns 0</text>
+<rect x="520" y="158" width="170" height="48" rx="6" fill="white" stroke="#1B4F72" stroke-width="2"/>
+<text x="605.0" y="189" font-family="'JetBrains Mono', Menlo, monospace" font-size="17" font-weight="700" text-anchor="middle" fill="#1B4F72">shape a</text>
+<path d="M520,182 H352" stroke="#B7791F" stroke-width="2" stroke-dasharray="7 5"/>
+<path d="M353.0,176.0 L341.0,182.0 L353.0,188.0 Z" fill="#B7791F"/>
+<rect x="40" y="250" width="300" height="64" rx="8" fill="white" stroke="#1B4F72" stroke-width="2"/>
+<text x="56" y="278" font-family="'JetBrains Mono', Menlo, monospace" font-size="18" font-weight="700" text-anchor="start" fill="#1B4F72">polygon</text>
+<text x="56" y="302" font-family="'JetBrains Mono', Menlo, monospace" font-size="15" font-weight="400" text-anchor="start" fill="#1C1C1C">sides() returns 99</text>
+<path d="M80,250 V226" stroke="#7FA3C0" stroke-width="2"/>
+<path d="M73,227 L80,215 L87,227 Z" fill="white" stroke="#7FA3C0" stroke-width="2"/>
+<text x="94" y="238" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="400" text-anchor="start" fill="#7FA3C0">extends</text>
+<rect x="520" y="258" width="170" height="48" rx="6" fill="white" stroke="#1B4F72" stroke-width="2"/>
+<text x="605.0" y="289" font-family="'JetBrains Mono', Menlo, monospace" font-size="17" font-weight="700" text-anchor="middle" fill="#1B4F72">polygon b</text>
+<path d="M520,282 H352" stroke="#B7791F" stroke-width="2" stroke-dasharray="7 5"/>
+<path d="M353.0,276.0 L341.0,282.0 L353.0,288.0 Z" fill="#B7791F"/>
+<rect x="40" y="350" width="300" height="64" rx="8" fill="#DCE9F3" stroke="#1B4F72" stroke-width="2"/>
+<text x="56" y="378" font-family="'JetBrains Mono', Menlo, monospace" font-size="18" font-weight="700" text-anchor="start" fill="#1B4F72">triangle</text>
+<text x="56" y="402" font-family="'JetBrains Mono', Menlo, monospace" font-size="15" font-weight="400" text-anchor="start" fill="#1C1C1C">sides() returns 3</text>
+<path d="M80,350 V326" stroke="#7FA3C0" stroke-width="2"/>
+<path d="M73,327 L80,315 L87,327 Z" fill="white" stroke="#7FA3C0" stroke-width="2"/>
+<text x="94" y="338" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="400" text-anchor="start" fill="#7FA3C0">extends</text>
+<rect x="520" y="358" width="170" height="48" rx="6" fill="white" stroke="#1B4F72" stroke-width="2"/>
+<text x="605.0" y="389" font-family="'JetBrains Mono', Menlo, monospace" font-size="17" font-weight="700" text-anchor="middle" fill="#1B4F72">triangle c</text>
+<path d="M520,382 H352" stroke="#B7791F" stroke-width="2" stroke-dasharray="7 5"/>
+<path d="M353.0,376.0 L341.0,382.0 L353.0,388.0 Z" fill="#B7791F"/>
+<rect x="880" y="190" width="280" height="210" rx="14" fill="#F4F6F8" stroke="#123A56" stroke-width="2"/>
+<text x="1020.0" y="234" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="400" text-anchor="middle" fill="#1C1C1C">an object of class</text>
+<text x="1020.0" y="266" font-family="'JetBrains Mono', Menlo, monospace" font-size="22" font-weight="700" text-anchor="middle" fill="#1B4F72">triangle</text>
+<text x="1020.0" y="306" font-family="'JetBrains Mono', Menlo, monospace" font-size="15" font-weight="400" text-anchor="middle" fill="#7FA3C0">made once, by c = new;</text>
+<text x="1020.0" y="330" font-family="'JetBrains Mono', Menlo, monospace" font-size="15" font-weight="400" text-anchor="middle" fill="#7FA3C0">b = c; a = c;</text>
+<path d="M690,182 C780,182 790,295.0 870,295.0" stroke="#7FA3C0" stroke-width="2.5" fill="none"/>
+<path d="M690,282 C780,282 790,295.0 870,295.0" stroke="#7FA3C0" stroke-width="2.5" fill="none"/>
+<path d="M690,382 C780,382 790,295.0 870,295.0" stroke="#7FA3C0" stroke-width="2.5" fill="none"/>
+<path d="M868.0,301.0 L880.0,295.0 L868.0,289.0 Z" fill="#7FA3C0"/>
+<path d="M40,464 H80" stroke="#B7791F" stroke-width="2" stroke-dasharray="7 5"/>
+<text x="92" y="470" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="400" text-anchor="start" fill="#1C1C1C">bound to the handle&#x27;s declared class:</text>
+<text x="420" y="470" font-family="'JetBrains Mono', Menlo, monospace" font-size="16" font-weight="700" text-anchor="start" fill="#B7791F">a.sides() = 0</text>
+<text x="620" y="470" font-family="'JetBrains Mono', Menlo, monospace" font-size="16" font-weight="700" text-anchor="start" fill="#B7791F">b.sides() = 99</text>
+<text x="820" y="470" font-family="'JetBrains Mono', Menlo, monospace" font-size="16" font-weight="700" text-anchor="start" fill="#B7791F">c.sides() = 3</text>
+<text x="92" y="494" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="400" text-anchor="start" fill="#7FA3C0">what a non-virtual call does, and what a tool that ignores virtual prints</text>
+<rect x="40" y="508" width="40" height="14" rx="3" fill="#DCE9F3" stroke="#1B4F72" stroke-width="1.5"/>
+<text x="92" y="522" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="400" text-anchor="start" fill="#1C1C1C">bound to the object&#x27;s run-time class:</text>
+<text x="420" y="522" font-family="'JetBrains Mono', Menlo, monospace" font-size="16" font-weight="700" text-anchor="start" fill="#2E7D32">a.sides() = 3</text>
+<text x="620" y="522" font-family="'JetBrains Mono', Menlo, monospace" font-size="16" font-weight="700" text-anchor="start" fill="#2E7D32">b.sides() = 3</text>
+<text x="820" y="522" font-family="'JetBrains Mono', Menlo, monospace" font-size="16" font-weight="700" text-anchor="start" fill="#2E7D32">c.sides() = 3</text>
+</svg>
