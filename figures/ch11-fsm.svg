@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 730" width="1000" height="730" role="img" aria-label="Five-state FSM of version 1: IDLE, READ_REQ, READ_RESP, WRITE_REQ, WRITE_RESP, with labelled transitions and two amber arcs marking handshake violations">
+<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#7FA3C0"/></marker><marker id="ahj" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#5B3E8E"/></marker><marker id="ahd" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#1B4F72"/></marker><marker id="ahc" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#B7791F"/></marker><marker id="ahg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#1C1C1C"/></marker><pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="6" stroke="#CBD2D9" stroke-width="2"/></pattern></defs>
+<rect width="1000" height="730" fill="white"/>
+<text x="30" y="40.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="21" font-weight="700" text-anchor="start" fill="#1B4F72">Version 1&#x27;s state machine, as found</text>
+<text x="30" y="64.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="400" text-anchor="start" fill="#1C1C1C">Arcs carry the condition and, in brackets, the coverage bin that counts them. Two arcs break AXI&#x27;s handshake rules.</text>
+<circle cx="220" cy="380" r="46" fill="white" stroke="#1B4F72" stroke-width="2.5"/>
+<text x="220" y="377.2" font-family="'JetBrains Mono', Menlo, monospace" font-size="15" font-weight="700" text-anchor="middle" fill="#1C1C1C">IDLE</text>
+<text x="220" y="396.2" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="400" text-anchor="middle" fill="#7FA3C0">0</text>
+<path d="M134.0,314.0 L186.9,346.9" fill="none" stroke="#1C1C1C" stroke-width="1.4" marker-end="url(#ahg)"/>
+<text x="130.0" y="308.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="400" text-anchor="end" fill="#7FA3C0">reset</text>
+<circle cx="460" cy="230" r="56" fill="white" stroke="#1B4F72" stroke-width="2.5"/>
+<text x="460" y="227.2" font-family="'JetBrains Mono', Menlo, monospace" font-size="15" font-weight="700" text-anchor="middle" fill="#1C1C1C">READ_REQ</text>
+<text x="460" y="246.2" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="400" text-anchor="middle" fill="#7FA3C0">1</text>
+<circle cx="780" cy="230" r="56" fill="white" stroke="#1B4F72" stroke-width="2.5"/>
+<text x="780" y="227.2" font-family="'JetBrains Mono', Menlo, monospace" font-size="15" font-weight="700" text-anchor="middle" fill="#1C1C1C">READ_RESP</text>
+<text x="780" y="246.2" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="400" text-anchor="middle" fill="#7FA3C0">2</text>
+<circle cx="780" cy="510" r="56" fill="#FBF1DC" stroke="#B7791F" stroke-width="2.5"/>
+<text x="780" y="507.2" font-family="'JetBrains Mono', Menlo, monospace" font-size="15" font-weight="700" text-anchor="middle" fill="#1C1C1C">WRITE_REQ</text>
+<text x="780" y="526.2" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="400" text-anchor="middle" fill="#7FA3C0">3</text>
+<circle cx="460" cy="510" r="56" fill="white" stroke="#1B4F72" stroke-width="2.5"/>
+<text x="460" y="507.2" font-family="'JetBrains Mono', Menlo, monospace" font-size="15" font-weight="700" text-anchor="middle" fill="#1C1C1C">WRITE_RESP</text>
+<text x="460" y="526.2" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="400" text-anchor="middle" fill="#7FA3C0">4</text>
+<path d="M263.2,364.2 Q355.9,330.4 417.5,271.0" fill="none" stroke="#1C1C1C" stroke-width="2" marker-end="url(#ahg)"/>
+<text x="312.4" y="319.1" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="500" text-anchor="end" fill="#1C1C1C">start, len != 0</text>
+<text x="312.4" y="334.1" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="500" text-anchor="end" fill="#1C1C1C">[start]</text>
+<path d="M179.4,401.6 C137.0,424.8 137.0,335.2 179.4,358.4" fill="none" stroke="#1C1C1C" stroke-width="2" marker-end="url(#ahg)"/>
+<text x="128.1" y="384.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="500" text-anchor="end" fill="#1C1C1C">start, len == 0</text>
+<text x="128.1" y="399.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="500" text-anchor="end" fill="#1C1C1C">or no start</text>
+<text x="128.1" y="414.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="500" text-anchor="end" fill="#1C1C1C">[idle]</text>
+<path d="M433.7,180.6 C405.5,129.0 514.5,129.0 486.3,180.6" fill="none" stroke="#1C1C1C" stroke-width="2" marker-end="url(#ahg)"/>
+<text x="460.0" y="112.1" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="500" text-anchor="middle" fill="#1C1C1C">!ARREADY  [ar_wait]</text>
+<path d="M516.0,230.0 Q620.0,230.0 721.0,230.0" fill="none" stroke="#B7791F" stroke-width="3" marker-end="url(#ahc)"/>
+<text x="619.2" y="220.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="500" text-anchor="middle" fill="#B7791F">ARREADY  [ar_done]</text>
+<path d="M753.7,180.6 C725.5,129.0 834.5,129.0 806.3,180.6" fill="none" stroke="#1C1C1C" stroke-width="2" marker-end="url(#ahg)"/>
+<text x="780.0" y="112.1" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="500" text-anchor="middle" fill="#1C1C1C">!RVALID  [r_wait]</text>
+<path d="M780.0,286.0 Q780.0,370.0 780.0,451.0" fill="none" stroke="#1C1C1C" stroke-width="2" marker-end="url(#ahg)"/>
+<text x="792.0" y="369.2" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="500" text-anchor="start" fill="#1C1C1C">RVALID, OKAY</text>
+<text x="792.0" y="384.2" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="500" text-anchor="start" fill="#1C1C1C">[r_ok]</text>
+<path d="M730.0,255.2 Q515.5,363.0 268.9,377.2" fill="none" stroke="#1C1C1C" stroke-width="2" marker-end="url(#ahg)"/>
+<text x="563.3" y="330.4" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="500" text-anchor="start" fill="#1C1C1C">RVALID, not OKAY  [r_err]</text>
+<path d="M829.4,483.7 C881.0,455.5 881.0,564.5 829.4,536.3" fill="none" stroke="#B7791F" stroke-width="3" marker-end="url(#ahc)"/>
+<text x="891.9" y="514.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="500" text-anchor="start" fill="#B7791F">!(AWREADY</text>
+<text x="891.9" y="529.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="500" text-anchor="start" fill="#B7791F">  &amp;&amp; WREADY)</text>
+<text x="891.9" y="544.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="500" text-anchor="start" fill="#B7791F">[aw_wait]</text>
+<path d="M724.0,510.0 Q620.0,510.0 519.0,510.0" fill="none" stroke="#1C1C1C" stroke-width="2" marker-end="url(#ahg)"/>
+<text x="620.8" y="500.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="500" text-anchor="middle" fill="#1C1C1C">AWREADY &amp;&amp; WREADY  [aw_done]</text>
+<path d="M486.3,559.4 C514.5,611.0 405.5,611.0 433.7,559.4" fill="none" stroke="#1C1C1C" stroke-width="2" marker-end="url(#ahg)"/>
+<text x="460.0" y="635.9" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="500" text-anchor="middle" fill="#1C1C1C">!BVALID  [b_wait]</text>
+<path d="M460.0,454.0 Q460.0,370.0 460.0,289.0" fill="none" stroke="#1C1C1C" stroke-width="2" marker-end="url(#ahg)"/>
+<text x="472.0" y="403.9" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="500" text-anchor="start" fill="#1C1C1C">OKAY, words left</text>
+<text x="472.0" y="418.9" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="500" text-anchor="start" fill="#1C1C1C">[next_word]</text>
+<path d="M405.2,498.3 Q320.9,480.2 254.8,414.5" fill="none" stroke="#1C1C1C" stroke-width="2" marker-end="url(#ahg)"/>
+<text x="323.0" y="500.3" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="500" text-anchor="end" fill="#1C1C1C">last word or not OKAY</text>
+<text x="323.0" y="515.3" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="500" text-anchor="end" fill="#1C1C1C">[last_or_err]</text>
+<circle cx="620" cy="200" r="12" fill="#B7791F"/>
+<text x="620" y="205.2" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="700" text-anchor="middle" fill="white">1</text>
+<circle cx="860" cy="440" r="12" fill="#B7791F"/>
+<text x="860" y="445.2" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="700" text-anchor="middle" fill="white">2</text>
+<rect x="40" y="655" width="420" height="49" rx="6" fill="#F4F6F8" stroke="#CBD2D9"/>
+<text x="50" y="676.1" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="400" text-anchor="start" fill="#1C1C1C">1  taken on ARREADY alone: with READY already high,</text>
+<text x="50" y="693.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="400" text-anchor="start" fill="#1C1C1C">   ARVALID never rises and no read happens</text>
+<rect x="560" y="655" width="420" height="49" rx="6" fill="#F4F6F8" stroke="#CBD2D9"/>
+<text x="570" y="676.1" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="400" text-anchor="start" fill="#1C1C1C">2  waits for AWREADY and WREADY on the same</text>
+<text x="570" y="693.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="400" text-anchor="start" fill="#1C1C1C">   edge: a slave that takes them apart deadlocks it</text>
+</svg>

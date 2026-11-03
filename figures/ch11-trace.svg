@@ -1,0 +1,116 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 770" width="1000" height="770" role="img" aria-label="Traceability diagram: coverage bins on the left, plan items in the middle, tests on the right; two must-have items have no test">
+<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#7FA3C0"/></marker><marker id="ahj" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#5B3E8E"/></marker><marker id="ahd" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#1B4F72"/></marker><marker id="ahc" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#B7791F"/></marker><marker id="ahg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#1C1C1C"/></marker><pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="6" stroke="#CBD2D9" stroke-width="2"/></pattern></defs>
+<rect width="1000" height="770" fill="white"/>
+<text x="30" y="40.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="21" font-weight="700" text-anchor="start" fill="#1B4F72">From spec item to test and coverage bin</text>
+<text x="30" y="64.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="400" text-anchor="start" fill="#1C1C1C">Each row is a plan item. Black-box items come from the architecture, white-box from the microarchitecture.</text>
+<text x="330.0" y="120.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="700" text-anchor="start" fill="#7FA3C0">plan item</text>
+<text x="20.0" y="120.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="700" text-anchor="start" fill="#7FA3C0">coverage bins</text>
+<text x="760.0" y="120.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="700" text-anchor="start" fill="#7FA3C0">tests (status)</text>
+<rect x="20.0" y="154.4" width="200.0" height="26.0" rx="4" fill="#EEE8F6" stroke="#5B3E8E" stroke-width="1.5"/>
+<text x="30.0" y="172.4" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="500" text-anchor="start" fill="#1C1C1C">xfer_cg.len_cp</text>
+<rect x="20.0" y="209.3" width="200.0" height="26.0" rx="4" fill="#EEE8F6" stroke="#5B3E8E" stroke-width="1.5"/>
+<text x="30.0" y="227.3" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="500" text-anchor="start" fill="#1C1C1C">uarch_cg.both_cp</text>
+<rect x="20.0" y="264.2" width="200.0" height="26.0" rx="4" fill="#EEE8F6" stroke="#5B3E8E" stroke-width="1.5"/>
+<text x="30.0" y="282.2" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="500" text-anchor="start" fill="#1C1C1C">xfer_cg.out_cp</text>
+<rect x="20.0" y="319.1" width="200.0" height="26.0" rx="4" fill="#EEE8F6" stroke="#5B3E8E" stroke-width="1.5"/>
+<text x="30.0" y="337.1" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="500" text-anchor="start" fill="#1C1C1C">xfer_cg.pos_cp</text>
+<rect x="20.0" y="374.0" width="200.0" height="26.0" rx="4" fill="#EEE8F6" stroke="#5B3E8E" stroke-width="1.5"/>
+<text x="30.0" y="392.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="500" text-anchor="start" fill="#1C1C1C">xfer_cg.len_x_out</text>
+<rect x="20.0" y="428.9" width="200.0" height="26.0" rx="4" fill="#EEE8F6" stroke="#5B3E8E" stroke-width="1.5"/>
+<text x="30.0" y="446.9" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="500" text-anchor="start" fill="#1C1C1C">xfer_cg.style_cp</text>
+<rect x="20.0" y="483.8" width="200.0" height="26.0" rx="4" fill="#EEE8F6" stroke="#5B3E8E" stroke-width="1.5"/>
+<text x="30.0" y="501.8" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="500" text-anchor="start" fill="#1C1C1C">uarch_cg.fifo_x_both</text>
+<rect x="20.0" y="538.7" width="200.0" height="26.0" rx="4" fill="#EEE8F6" stroke="#5B3E8E" stroke-width="1.5"/>
+<text x="30.0" y="556.7" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="500" text-anchor="start" fill="#1C1C1C">uarch_cg.fifo_cp</text>
+<rect x="20.0" y="593.6" width="200.0" height="26.0" rx="4" fill="#EEE8F6" stroke="#5B3E8E" stroke-width="1.5"/>
+<text x="30.0" y="611.6" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="500" text-anchor="start" fill="#1C1C1C">uarch_cg.abort_cp</text>
+<rect x="760.0" y="185.8" width="220.0" height="32.0" rx="4" fill="#E6F2E7" stroke="#2E7D32" stroke-width="1.5"/>
+<text x="770.0" y="206.8" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" font-weight="600" text-anchor="start" fill="#1C1C1C">v2-tests</text>
+<text x="970.0" y="206.8" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="700" text-anchor="end" fill="#2E7D32">pass</text>
+<rect x="760.0" y="309.2" width="220.0" height="32.0" rx="4" fill="#E6F2E7" stroke="#2E7D32" stroke-width="1.5"/>
+<text x="770.0" y="330.2" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" font-weight="600" text-anchor="start" fill="#1C1C1C">v2-cocotb</text>
+<text x="970.0" y="330.2" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="700" text-anchor="end" fill="#2E7D32">pass</text>
+<rect x="760.0" y="432.8" width="220.0" height="32.0" rx="4" fill="#E6F2E7" stroke="#2E7D32" stroke-width="1.5"/>
+<text x="770.0" y="453.8" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" font-weight="600" text-anchor="start" fill="#1C1C1C">throughput</text>
+<text x="970.0" y="453.8" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="700" text-anchor="end" fill="#2E7D32">pass</text>
+<rect x="330.0" y="144.0" width="330.0" height="30.0" rx="4" fill="white" stroke="#1B4F72" stroke-width="1.2"/>
+<text x="340.0" y="164.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" font-weight="700" text-anchor="start" fill="#1B4F72">DMA-001</text>
+<text x="422.0" y="164.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="400" text-anchor="start" fill="#1C1C1C">memory copy</text>
+<text x="652.0" y="164.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="11.5" font-weight="400" text-anchor="end" fill="#7FA3C0">must</text>
+<path d="M330.0,159.0 L222.0,167.4" fill="none" stroke="#5B3E8E" stroke-width="1.8" stroke-dasharray="6 4"/>
+<path d="M660.0,159.0 L758.0,201.8" fill="none" stroke="#1C1C1C" stroke-width="1.4" marker-end="url(#ahg)"/>
+<path d="M660.0,159.0 L758.0,325.2" fill="none" stroke="#1C1C1C" stroke-width="1.4" marker-end="url(#ahg)"/>
+<rect x="330.0" y="182.0" width="330.0" height="30.0" rx="4" fill="white" stroke="#1B4F72" stroke-width="1.2"/>
+<text x="340.0" y="202.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" font-weight="700" text-anchor="start" fill="#1B4F72">DMA-002</text>
+<text x="422.0" y="202.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="400" text-anchor="start" fill="#1C1C1C">two channels at once</text>
+<text x="652.0" y="202.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="11.5" font-weight="400" text-anchor="end" fill="#7FA3C0">must</text>
+<path d="M330.0,197.0 L222.0,222.3" fill="none" stroke="#5B3E8E" stroke-width="1.8" stroke-dasharray="6 4"/>
+<path d="M660.0,197.0 L758.0,201.8" fill="none" stroke="#1C1C1C" stroke-width="1.4" marker-end="url(#ahg)"/>
+<rect x="330.0" y="220.0" width="330.0" height="30.0" rx="4" fill="white" stroke="#1B4F72" stroke-width="1.2"/>
+<text x="340.0" y="240.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" font-weight="700" text-anchor="start" fill="#1B4F72">DMA-003</text>
+<text x="422.0" y="240.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="400" text-anchor="start" fill="#1C1C1C">precise errors</text>
+<text x="652.0" y="240.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="11.5" font-weight="400" text-anchor="end" fill="#7FA3C0">must</text>
+<path d="M330.0,235.0 L222.0,277.2" fill="none" stroke="#5B3E8E" stroke-width="1.8" stroke-dasharray="6 4"/>
+<path d="M330.0,235.0 L222.0,332.1" fill="none" stroke="#5B3E8E" stroke-width="1.8" stroke-dasharray="6 4"/>
+<path d="M330.0,235.0 L222.0,387.0" fill="none" stroke="#5B3E8E" stroke-width="1.8" stroke-dasharray="6 4"/>
+<path d="M660.0,235.0 L758.0,201.8" fill="none" stroke="#1C1C1C" stroke-width="1.4" marker-end="url(#ahg)"/>
+<path d="M660.0,235.0 L758.0,325.2" fill="none" stroke="#1C1C1C" stroke-width="1.4" marker-end="url(#ahg)"/>
+<rect x="330.0" y="258.0" width="330.0" height="30.0" rx="4" fill="white" stroke="#1B4F72" stroke-width="1.2"/>
+<text x="340.0" y="278.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" font-weight="700" text-anchor="start" fill="#1B4F72">DMA-004</text>
+<text x="422.0" y="278.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="400" text-anchor="start" fill="#1C1C1C">register access</text>
+<text x="652.0" y="278.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="11.5" font-weight="400" text-anchor="end" fill="#7FA3C0">must</text>
+<path d="M660.0,273.0 L758.0,201.8" fill="none" stroke="#1C1C1C" stroke-width="1.4" marker-end="url(#ahg)"/>
+<path d="M660.0,273.0 L758.0,325.2" fill="none" stroke="#1C1C1C" stroke-width="1.4" marker-end="url(#ahg)"/>
+<rect x="330.0" y="296.0" width="330.0" height="30.0" rx="4" fill="white" stroke="#1B4F72" stroke-width="1.2"/>
+<text x="340.0" y="316.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" font-weight="700" text-anchor="start" fill="#1B4F72">DMA-005</text>
+<text x="422.0" y="316.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="400" text-anchor="start" fill="#1C1C1C">busy protection</text>
+<text x="652.0" y="316.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="11.5" font-weight="400" text-anchor="end" fill="#7FA3C0">must</text>
+<path d="M660.0,311.0 L758.0,201.8" fill="none" stroke="#1C1C1C" stroke-width="1.4" marker-end="url(#ahg)"/>
+<rect x="330.0" y="334.0" width="330.0" height="30.0" rx="4" fill="white" stroke="#1B4F72" stroke-width="1.2"/>
+<text x="340.0" y="354.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" font-weight="700" text-anchor="start" fill="#1B4F72">DMA-006</text>
+<text x="422.0" y="354.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="400" text-anchor="start" fill="#1C1C1C">interrupt and write-one-to-clear</text>
+<text x="652.0" y="354.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="11.5" font-weight="400" text-anchor="end" fill="#7FA3C0">must</text>
+<path d="M660.0,349.0 L758.0,201.8" fill="none" stroke="#1C1C1C" stroke-width="1.4" marker-end="url(#ahg)"/>
+<rect x="330.0" y="372.0" width="330.0" height="30.0" rx="4" fill="white" stroke="#1B4F72" stroke-width="1.2"/>
+<text x="340.0" y="392.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" font-weight="700" text-anchor="start" fill="#1B4F72">DMA-007</text>
+<text x="422.0" y="392.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="400" text-anchor="start" fill="#1C1C1C">AXI handshake rules</text>
+<text x="652.0" y="392.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="11.5" font-weight="400" text-anchor="end" fill="#7FA3C0">must</text>
+<path d="M330.0,387.0 L222.0,441.9" fill="none" stroke="#5B3E8E" stroke-width="1.8" stroke-dasharray="6 4"/>
+<path d="M660.0,387.0 L758.0,201.8" fill="none" stroke="#1C1C1C" stroke-width="1.4" marker-end="url(#ahg)"/>
+<rect x="330.0" y="410.0" width="330.0" height="30.0" rx="4" fill="white" stroke="#1B4F72" stroke-width="1.2"/>
+<text x="340.0" y="430.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" font-weight="700" text-anchor="start" fill="#1B4F72">DMA-008</text>
+<text x="422.0" y="430.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="400" text-anchor="start" fill="#1C1C1C">throughput target</text>
+<text x="652.0" y="430.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="11.5" font-weight="400" text-anchor="end" fill="#7FA3C0">should</text>
+<path d="M660.0,425.0 L758.0,448.8" fill="none" stroke="#1C1C1C" stroke-width="1.4" marker-end="url(#ahg)"/>
+<rect x="330.0" y="448.0" width="330.0" height="30.0" rx="4" fill="#FBF1DC" stroke="#B7791F" stroke-width="1.8"/>
+<text x="340.0" y="468.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" font-weight="700" text-anchor="start" fill="#1B4F72">DMA-009</text>
+<text x="422.0" y="468.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="400" text-anchor="start" fill="#1C1C1C">maximum length</text>
+<text x="652.0" y="468.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="11.5" font-weight="700" text-anchor="end" fill="#B7791F">no test</text>
+<line x1="330.0" y1="488.0" x2="660.0" y2="488.0" stroke="#1B4F72" stroke-width="1.5" stroke-dasharray="4 3"/>
+<text x="660.0" y="503.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="700" text-anchor="end" fill="#1B4F72">microarchitecture items</text>
+<rect x="330.0" y="512.0" width="330.0" height="30.0" rx="4" fill="white" stroke="#1B4F72" stroke-width="1.2"/>
+<text x="340.0" y="532.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" font-weight="700" text-anchor="start" fill="#1B4F72">DMA-101</text>
+<text x="422.0" y="532.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="400" text-anchor="start" fill="#1C1C1C">round-robin arbitration</text>
+<text x="652.0" y="532.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="11.5" font-weight="400" text-anchor="end" fill="#7FA3C0">must</text>
+<path d="M330.0,527.0 L222.0,496.8" fill="none" stroke="#5B3E8E" stroke-width="1.8" stroke-dasharray="6 4"/>
+<path d="M660.0,527.0 L758.0,201.8" fill="none" stroke="#1C1C1C" stroke-width="1.4" marker-end="url(#ahg)"/>
+<rect x="330.0" y="550.0" width="330.0" height="30.0" rx="4" fill="white" stroke="#1B4F72" stroke-width="1.2"/>
+<text x="340.0" y="570.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" font-weight="700" text-anchor="start" fill="#1B4F72">DMA-102</text>
+<text x="422.0" y="570.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="400" text-anchor="start" fill="#1C1C1C">data FIFO full</text>
+<text x="652.0" y="570.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="11.5" font-weight="400" text-anchor="end" fill="#7FA3C0">must</text>
+<path d="M330.0,565.0 L222.0,551.7" fill="none" stroke="#5B3E8E" stroke-width="1.8" stroke-dasharray="6 4"/>
+<path d="M660.0,565.0 L758.0,201.8" fill="none" stroke="#1C1C1C" stroke-width="1.4" marker-end="url(#ahg)"/>
+<rect x="330.0" y="588.0" width="330.0" height="30.0" rx="4" fill="white" stroke="#1B4F72" stroke-width="1.2"/>
+<text x="340.0" y="608.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" font-weight="700" text-anchor="start" fill="#1B4F72">DMA-103</text>
+<text x="422.0" y="608.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="400" text-anchor="start" fill="#1C1C1C">error with words queued</text>
+<text x="652.0" y="608.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="11.5" font-weight="400" text-anchor="end" fill="#7FA3C0">must</text>
+<path d="M330.0,603.0 L222.0,606.6" fill="none" stroke="#5B3E8E" stroke-width="1.8" stroke-dasharray="6 4"/>
+<path d="M660.0,603.0 L758.0,201.8" fill="none" stroke="#1C1C1C" stroke-width="1.4" marker-end="url(#ahg)"/>
+<rect x="330.0" y="626.0" width="330.0" height="30.0" rx="4" fill="#FBF1DC" stroke="#B7791F" stroke-width="1.8"/>
+<text x="340.0" y="646.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" font-weight="700" text-anchor="start" fill="#1B4F72">DMA-104</text>
+<text x="422.0" y="646.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="400" text-anchor="start" fill="#1C1C1C">reset during a transfer</text>
+<text x="652.0" y="646.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="11.5" font-weight="700" text-anchor="end" fill="#B7791F">no test</text>
+<text x="660.0" y="120.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="700" text-anchor="end" fill="#1B4F72">architecture items</text>
+<rect x="20" y="684" width="960" height="33" rx="6" fill="#F4F6F8" stroke="#CBD2D9"/>
+<text x="30" y="705.8" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="400" text-anchor="start" fill="#1C1C1C">11 of 13 items have a passing test. DMA-009 and DMA-104 have none: the plan report fails until they do.</text>
+</svg>

@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 760" width="1000" height="760" role="img" aria-label="Sequence diagram of one transfer: the test starts the channel, the model predicts, the APB master programs the DUT, the DUT reads and writes the slave, the monitor publishes each write to the scoreboard, and the test checks STATUS">
+<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#7FA3C0"/></marker><marker id="ahj" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#5B3E8E"/></marker><marker id="ahd" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#1B4F72"/></marker><marker id="ahc" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#B7791F"/></marker><marker id="ahg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#1C1C1C"/></marker><pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="6" stroke="#CBD2D9" stroke-width="2"/></pattern></defs>
+<rect width="1000" height="760" fill="white"/>
+<text x="30" y="40.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="21" font-weight="700" text-anchor="start" fill="#1B4F72">One transfer, message by message</text>
+<text x="30" y="64.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="400" text-anchor="start" fill="#1C1C1C">A one-word copy through the environment of the previous figure. Time runs down.</text>
+<rect x="7.0" y="90.0" width="126.0" height="44.0" rx="6" fill="white" stroke="#1B4F72" stroke-width="2"/>
+<text x="70" y="117.2" font-family="'JetBrains Mono', Menlo, monospace" font-size="15" font-weight="700" text-anchor="middle" fill="#1C1C1C">test</text>
+<line x1="70.0" y1="134.0" x2="70.0" y2="730.0" stroke="#7FA3C0" stroke-width="1.5" stroke-dasharray="5 4"/>
+<rect x="147.0" y="90.0" width="126.0" height="44.0" rx="6" fill="white" stroke="#1B4F72" stroke-width="2"/>
+<text x="210" y="117.2" font-family="'JetBrains Mono', Menlo, monospace" font-size="15" font-weight="700" text-anchor="middle" fill="#1C1C1C">apb_master</text>
+<line x1="210.0" y1="134.0" x2="210.0" y2="730.0" stroke="#7FA3C0" stroke-width="1.5" stroke-dasharray="5 4"/>
+<rect x="287.0" y="90.0" width="126.0" height="44.0" rx="6" fill="white" stroke="#1B4F72" stroke-width="2"/>
+<text x="350" y="117.2" font-family="'JetBrains Mono', Menlo, monospace" font-size="15" font-weight="700" text-anchor="middle" fill="#1C1C1C">dma_model</text>
+<line x1="350.0" y1="134.0" x2="350.0" y2="730.0" stroke="#7FA3C0" stroke-width="1.5" stroke-dasharray="5 4"/>
+<rect x="427.0" y="90.0" width="126.0" height="44.0" rx="6" fill="white" stroke="#1B4F72" stroke-width="2"/>
+<text x="490" y="117.2" font-family="'JetBrains Mono', Menlo, monospace" font-size="15" font-weight="700" text-anchor="middle" fill="#1C1C1C">DUT</text>
+<line x1="490.0" y1="134.0" x2="490.0" y2="730.0" stroke="#7FA3C0" stroke-width="1.5" stroke-dasharray="5 4"/>
+<rect x="567.0" y="90.0" width="126.0" height="44.0" rx="6" fill="white" stroke="#1B4F72" stroke-width="2"/>
+<text x="630" y="117.2" font-family="'JetBrains Mono', Menlo, monospace" font-size="15" font-weight="700" text-anchor="middle" fill="#1C1C1C">axil_slave</text>
+<line x1="630.0" y1="134.0" x2="630.0" y2="730.0" stroke="#7FA3C0" stroke-width="1.5" stroke-dasharray="5 4"/>
+<rect x="708.0" y="90.0" width="134.0" height="44.0" rx="6" fill="white" stroke="#1B4F72" stroke-width="2"/>
+<text x="775" y="117.2" font-family="'JetBrains Mono', Menlo, monospace" font-size="15" font-weight="700" text-anchor="middle" fill="#1C1C1C">axil_monitor</text>
+<line x1="775.0" y1="134.0" x2="775.0" y2="730.0" stroke="#7FA3C0" stroke-width="1.5" stroke-dasharray="5 4"/>
+<rect x="857.0" y="90.0" width="126.0" height="44.0" rx="6" fill="white" stroke="#1B4F72" stroke-width="2"/>
+<text x="920" y="117.2" font-family="'JetBrains Mono', Menlo, monospace" font-size="15" font-weight="700" text-anchor="middle" fill="#1C1C1C">scoreboard</text>
+<line x1="920.0" y1="134.0" x2="920.0" y2="730.0" stroke="#7FA3C0" stroke-width="1.5" stroke-dasharray="5 4"/>
+<path d="M70.0,170.0 L206.0,170.0" fill="none" stroke="#1C1C1C" stroke-width="1.4" marker-end="url(#ahg)"/>
+<text x="140.0" y="164.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="500" text-anchor="middle" fill="#1C1C1C">start(0, src, dst, 1)</text>
+<path d="M70.0,206.0 L346.0,206.0" fill="none" stroke="#1C1C1C" stroke-width="1.4" marker-end="url(#ahg)"/>
+<text x="210.0" y="200.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="500" text-anchor="middle" fill="#1C1C1C">predict(src, dst, 1)</text>
+<path d="M350.0,242.0 L916.0,242.0" fill="none" stroke="#1C1C1C" stroke-width="1.4" marker-end="url(#ahg)"/>
+<text x="635.0" y="236.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="500" text-anchor="middle" fill="#1C1C1C">expect: (dst, word)</text>
+<path d="M210.0,278.0 L486.0,278.0" fill="none" stroke="#1B4F72" stroke-width="2.2" marker-end="url(#ahd)"/>
+<text x="350.0" y="272.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="500" text-anchor="middle" fill="#1C1C1C">write SRC, DST, LEN</text>
+<path d="M210.0,314.0 L486.0,314.0" fill="none" stroke="#1B4F72" stroke-width="2.2" marker-end="url(#ahd)"/>
+<text x="350.0" y="308.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="500" text-anchor="middle" fill="#1C1C1C">write CTRL = START</text>
+<path d="M490.0,350.0 L626.0,350.0" fill="none" stroke="#1B4F72" stroke-width="2.2" marker-end="url(#ahd)"/>
+<text x="560.0" y="344.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="500" text-anchor="middle" fill="#1C1C1C">AR: src</text>
+<path d="M630.0,386.0 L494.0,386.0" fill="none" stroke="#1B4F72" stroke-width="2.2" marker-end="url(#ahd)"/>
+<text x="560.0" y="380.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="500" text-anchor="middle" fill="#1C1C1C">R: word, OKAY</text>
+<path d="M490.0,422.0 L626.0,422.0" fill="none" stroke="#1B4F72" stroke-width="2.2" marker-end="url(#ahd)"/>
+<text x="560.0" y="416.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="500" text-anchor="middle" fill="#1C1C1C">AW: dst  W: word</text>
+<path d="M630.0,458.0 L494.0,458.0" fill="none" stroke="#1B4F72" stroke-width="2.2" marker-end="url(#ahd)"/>
+<text x="560.0" y="452.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="500" text-anchor="middle" fill="#1C1C1C">B: OKAY</text>
+<path d="M775.0,494.0 L916.0,494.0" fill="none" stroke="#5B3E8E" stroke-width="1.8" stroke-dasharray="6 4" marker-end="url(#ahj)"/>
+<text x="847.5" y="488.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="500" text-anchor="middle" fill="#5B3E8E">observe(write)</text>
+<path d="M70.0,530.0 L206.0,530.0" fill="none" stroke="#1C1C1C" stroke-width="1.4" marker-end="url(#ahg)"/>
+<text x="140.0" y="524.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="500" text-anchor="middle" fill="#1C1C1C">wait_idle()</text>
+<path d="M210.0,566.0 L486.0,566.0" fill="none" stroke="#1B4F72" stroke-width="2.2" marker-end="url(#ahd)"/>
+<text x="350.0" y="560.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="500" text-anchor="middle" fill="#1C1C1C">read STATUS</text>
+<path d="M490.0,602.0 L214.0,602.0" fill="none" stroke="#1B4F72" stroke-width="2.2" marker-end="url(#ahd)"/>
+<text x="350.0" y="596.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="500" text-anchor="middle" fill="#1C1C1C">DONE</text>
+<path d="M70.0,638.0 L916.0,638.0" fill="none" stroke="#1C1C1C" stroke-width="1.4" marker-end="url(#ahg)"/>
+<text x="495.0" y="632.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="500" text-anchor="middle" fill="#1C1C1C">check_end(0, STATUS)</text>
+<path d="M210.0,674.0 L486.0,674.0" fill="none" stroke="#1B4F72" stroke-width="2.2" marker-end="url(#ahd)"/>
+<text x="350.0" y="668.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="500" text-anchor="middle" fill="#1C1C1C">write STATUS = DONE (W1C)</text>
+<rect x="400.0" y="324.0" width="580.0" height="184.0" rx="4" fill="none" stroke="#1B4F72" stroke-width="1.5"/>
+<rect x="769.0" y="338.0" width="12.0" height="126.0" rx="0" fill="#EEE8F6" stroke="#1B4F72" stroke-width="1.2"/>
+<rect x="400.0" y="324.0" width="120.0" height="20.0" rx="0" fill="#1B4F72" stroke="#1B4F72" stroke-width="0"/>
+<text x="406.0" y="339.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="700" text-anchor="start" fill="white">loop: per word</text>
+<text x="787.0" y="374.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="11" font-weight="500" text-anchor="start" fill="#5B3E8E">samples every</text>
+<text x="787.0" y="388.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="11" font-weight="500" text-anchor="start" fill="#5B3E8E">handshake</text>
+</svg>

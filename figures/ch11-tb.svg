@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 700" width="1000" height="700" role="img" aria-label="Testbench architecture: tests above the environment; APB master and AXI-Lite slave around the DUT; a monitor feeding the scoreboard, coverage and arbitration checker; a reference model predicting the scoreboard&#x27;s expected writes">
+<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#7FA3C0"/></marker><marker id="ahj" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#5B3E8E"/></marker><marker id="ahd" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#1B4F72"/></marker><marker id="ahc" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#B7791F"/></marker><marker id="ahg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#1C1C1C"/></marker><pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="6" stroke="#CBD2D9" stroke-width="2"/></pattern></defs>
+<rect width="1000" height="700" fill="white"/>
+<text x="30" y="40.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="21" font-weight="700" text-anchor="start" fill="#1B4F72">The testbench: one environment, both versions</text>
+<text x="30" y="64.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="400" text-anchor="start" fill="#1C1C1C">Tests choose the stimulus; the environment is the same for version 1 and version 2.</text>
+<rect x="40" y="88" width="140" height="40" rx="6" fill="white" stroke="#1B4F72" stroke-width="2"/>
+<text x="110.0" y="114.7" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="600" text-anchor="middle" fill="#1C1C1C">directed</text>
+<rect x="198" y="88" width="140" height="40" rx="6" fill="white" stroke="#1B4F72" stroke-width="2"/>
+<text x="268.0" y="114.7" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="600" text-anchor="middle" fill="#1C1C1C">regs</text>
+<rect x="356" y="88" width="140" height="40" rx="6" fill="white" stroke="#1B4F72" stroke-width="2"/>
+<text x="426.0" y="114.7" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="600" text-anchor="middle" fill="#1C1C1C">random</text>
+<rect x="514" y="88" width="140" height="40" rx="6" fill="white" stroke="#1B4F72" stroke-width="2"/>
+<text x="584.0" y="114.7" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="600" text-anchor="middle" fill="#1C1C1C">rate</text>
+<rect x="672" y="88" width="140" height="40" rx="6" fill="white" stroke="#1B4F72" stroke-width="2"/>
+<text x="742.0" y="114.7" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="600" text-anchor="middle" fill="#1C1C1C">abort</text>
+<rect x="830" y="88" width="140" height="40" rx="6" fill="white" stroke="#1B4F72" stroke-width="2"/>
+<text x="900.0" y="114.7" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="600" text-anchor="middle" fill="#1C1C1C">findings</text>
+<rect x="20" y="150" width="960" height="520" rx="12" fill="none" stroke="#7FA3C0" stroke-width="1.5" stroke-dasharray="6 5"/>
+<text x="32" y="172.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" text-anchor="start" fill="#7FA3C0">dma_env</text>
+<rect x="50" y="250" width="170" height="60" rx="6" fill="white" stroke="#1B4F72" stroke-width="2"/>
+<text x="135.0" y="277.6" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="600" text-anchor="middle" fill="#1C1C1C">apb_master</text>
+<text x="135.0" y="301.9" font-family="'JetBrains Mono', Menlo, monospace" font-size="14" font-weight="400" text-anchor="middle" fill="#7FA3C0">xfer, wr, rd</text>
+<rect x="395" y="230" width="210" height="100" rx="50.0" fill="#1B4F72" stroke="#123A56" stroke-width="2"/>
+<text x="500.0" y="278.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="20" font-weight="700" text-anchor="middle" fill="white">DUT</text>
+<text x="500.0" y="301.9" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="400" text-anchor="middle" fill="#DCE9F3">dma_engine | dma_v2</text>
+<rect x="775" y="240" width="180" height="80" rx="6" fill="white" stroke="#1B4F72" stroke-width="2"/>
+<text x="865.0" y="277.6" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="600" text-anchor="middle" fill="#1C1C1C">axil_slave</text>
+<text x="865.0" y="293.1" font-family="'JetBrains Mono', Menlo, monospace" font-size="14" font-weight="400" text-anchor="middle" fill="#7FA3C0">mem, errors,</text>
+<text x="865.0" y="310.6" font-family="'JetBrains Mono', Menlo, monospace" font-size="14" font-weight="400" text-anchor="middle" fill="#7FA3C0">4 ready styles</text>
+<path d="M220.0,280.0 L393.0,280.0" fill="none" stroke="#1B4F72" stroke-width="2.2" marker-end="url(#ahd)"/>
+<text x="300.0" y="270.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" font-weight="500" text-anchor="middle" fill="#1C1C1C">apb_if</text>
+<path d="M605.0,268.0 L773.0,268.0" fill="none" stroke="#1B4F72" stroke-width="2.2" marker-end="url(#ahd)"/>
+<path d="M775.0,296.0 L607.0,296.0" fill="none" stroke="#1B4F72" stroke-width="2.2" marker-end="url(#ahd)"/>
+<text x="690.0" y="258.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" font-weight="500" text-anchor="middle" fill="#1C1C1C">axil_if</text>
+<circle cx="690" cy="282" r="4" fill="#5B3E8E"/>
+<rect x="560" y="400" width="260" height="60" rx="6" fill="white" stroke="#1B4F72" stroke-width="2"/>
+<text x="690.0" y="427.6" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="600" text-anchor="middle" fill="#1C1C1C">axil_monitor</text>
+<text x="690.0" y="451.9" font-family="'JetBrains Mono', Menlo, monospace" font-size="14" font-weight="400" text-anchor="middle" fill="#7FA3C0">handshake stability, counts</text>
+<path d="M690.0,286.0 L690.0,398.0" fill="none" stroke="#5B3E8E" stroke-width="1.8" stroke-dasharray="6 4" marker-end="url(#ahj)"/>
+<text x="698.0" y="360.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="500" text-anchor="start" fill="#5B3E8E">every edge</text>
+<rect x="300" y="540" width="190" height="60" rx="6" fill="white" stroke="#1B4F72" stroke-width="2"/>
+<text x="395.0" y="567.6" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="600" text-anchor="middle" fill="#1C1C1C">scoreboard</text>
+<text x="395.0" y="591.9" font-family="'JetBrains Mono', Menlo, monospace" font-size="14" font-weight="400" text-anchor="middle" fill="#7FA3C0">observe, check_end</text>
+<rect x="530" y="540" width="170" height="60" rx="6" fill="white" stroke="#1B4F72" stroke-width="2"/>
+<text x="615.0" y="567.6" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="600" text-anchor="middle" fill="#1C1C1C">coverage</text>
+<text x="615.0" y="591.9" font-family="'JetBrains Mono', Menlo, monospace" font-size="14" font-weight="400" text-anchor="middle" fill="#7FA3C0">xfer_cg</text>
+<rect x="740" y="540" width="190" height="60" rx="6" fill="white" stroke="#1B4F72" stroke-width="2"/>
+<text x="835.0" y="567.6" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="600" text-anchor="middle" fill="#1C1C1C">arb_checker</text>
+<text x="835.0" y="591.9" font-family="'JetBrains Mono', Menlo, monospace" font-size="14" font-weight="400" text-anchor="middle" fill="#7FA3C0">version 2 only</text>
+<path d="M690.0,460.0 L690.0,505.0 L395.0,505.0 L395.0,538.0" fill="none" stroke="#5B3E8E" stroke-width="1.8" stroke-dasharray="6 4" marker-end="url(#ahj)"/>
+<path d="M690.0,460.0 L690.0,505.0 L615.0,505.0 L615.0,538.0" fill="none" stroke="#5B3E8E" stroke-width="1.8" stroke-dasharray="6 4" marker-end="url(#ahj)"/>
+<path d="M690.0,460.0 L690.0,505.0 L835.0,505.0 L835.0,538.0" fill="none" stroke="#5B3E8E" stroke-width="1.8" stroke-dasharray="6 4" marker-end="url(#ahj)"/>
+<text x="698.0" y="494.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="500" text-anchor="start" fill="#5B3E8E">publish(txn)</text>
+<rect x="50" y="540" width="190" height="60" rx="6" fill="white" stroke="#1B4F72" stroke-width="2"/>
+<text x="145.0" y="567.6" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="600" text-anchor="middle" fill="#1C1C1C">dma_model</text>
+<text x="145.0" y="591.9" font-family="'JetBrains Mono', Menlo, monospace" font-size="14" font-weight="400" text-anchor="middle" fill="#7FA3C0">predict at start</text>
+<path d="M240.0,570.0 L298.0,570.0" fill="none" stroke="#1B4F72" stroke-width="2.2" marker-end="url(#ahd)"/>
+<text x="270.0" y="560.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" font-weight="500" text-anchor="middle" fill="#1C1C1C">owed writes</text>
+<line x1="110.0" y1="140.0" x2="900.0" y2="140.0" stroke="#1C1C1C" stroke-width="1.4"/>
+<line x1="110.0" y1="128.0" x2="110.0" y2="140.0" stroke="#1C1C1C" stroke-width="1.4"/>
+<line x1="268.0" y1="128.0" x2="268.0" y2="140.0" stroke="#1C1C1C" stroke-width="1.4"/>
+<line x1="426.0" y1="128.0" x2="426.0" y2="140.0" stroke="#1C1C1C" stroke-width="1.4"/>
+<line x1="584.0" y1="128.0" x2="584.0" y2="140.0" stroke="#1C1C1C" stroke-width="1.4"/>
+<line x1="742.0" y1="128.0" x2="742.0" y2="140.0" stroke="#1C1C1C" stroke-width="1.4"/>
+<line x1="900.0" y1="128.0" x2="900.0" y2="140.0" stroke="#1C1C1C" stroke-width="1.4"/>
+<path d="M135.0,140.0 L135.0,248.0" fill="none" stroke="#1C1C1C" stroke-width="1.4" marker-end="url(#ahg)"/>
+<path d="M95.0,140.0 L95.0,400.0 L110.0,400.0 L110.0,538.0" fill="none" stroke="#1C1C1C" stroke-width="1.4" marker-end="url(#ahg)"/>
+<text x="118.0" y="220.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="500" text-anchor="start" fill="#1C1C1C">start(ch, src, dst, len)</text>
+<path d="M135.0,310.0 L135.0,470.0 L395.0,470.0 L395.0,538.0" fill="none" stroke="#1B4F72" stroke-width="2.2" marker-end="url(#ahd)"/>
+<text x="389.0" y="462.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="500" text-anchor="end" fill="#1C1C1C">STATUS at the end</text>
+<text x="500.0" y="214.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="400" text-anchor="middle" fill="#7FA3C0">white-box probes: dut.state, dut.f_cnt</text>
+<text x="40.0" y="690.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="400" text-anchor="start" fill="#7FA3C0">solid: stimulus and responses; dashed violet: what the monitor observes</text>
+</svg>
