@@ -31,7 +31,7 @@ module tb_v2 #(parameter bit PRECISE = 1);
     .BVALID(axi.bvalid), .BREADY(axi.bready), .IRQ(apb.irq));
   assign axi.wstrb[31:4] = '0;
 
-  // White-box coverage from the microarchitecture (Figure F5): FIFO
+  // White-box coverage from the microarchitecture (the block diagram): FIFO
   // occupancy while both channels run, and an abort that finds words
   // of its channel already in the FIFO.
   covergroup uarch_cg @(posedge clk);

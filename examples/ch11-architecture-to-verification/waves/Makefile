@@ -1,4 +1,4 @@
-# The two measured waveforms, written as WaveJSON for Figures F8 and F9.
+# The two measured waveforms, written as WaveJSON for the two waveform figures.
 EXAMPLE_LANG  := python
 TOP           := run_waves.sh
 SOURCES       := run_waves.sh

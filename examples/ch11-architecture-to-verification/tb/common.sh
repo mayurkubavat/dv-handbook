@@ -10,7 +10,7 @@ V2_SRC="$TB/lint.vlt $RTL/dma_regs_pkg.sv $TB/dma_ifs.sv \
   $TB/dma_tb_pkg.sv $RTL/dma_v2.sv $TB/tb_v2.sv"
 
 # Covergroup bins from a coverage .dat, one line per coverpoint or
-# cross ("<point>: bin=count ..."), as Chapter 8 reads them: a record
+# cross ("<point>: bin=count ..."), as the coverage chapter reads them: a record
 # is C '<key>' <count>, the key \001<tag>\002<value> fields, the h tag
 # the path <group>.<point>.<bin>.
 bins() {

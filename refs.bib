@@ -2924,3 +2924,92 @@
   url          = {https://github.com/lowRISC/opentitan/blob/master/hw/dv/tools/dvsim/vcs.hjson},
   note         = {Apache-2.0. Coverage metrics enabled at build, the grading and report options, and the comment that coverage from failing tests is excluded. Accessed 2026-09-26}
 }
+@book{hennessy2017caqa,
+  author    = {John L. Hennessy and David A. Patterson},
+  title     = {Computer Architecture: A Quantitative Approach},
+  edition   = {6},
+  publisher = {Morgan Kaufmann},
+  year      = {2017},
+  isbn      = {978-0-12-811905-1},
+  url       = {https://shop.elsevier.com/books/computer-architecture/hennessy/978-0-12-811905-1},
+  note      = {Chapter 1, Fundamentals of Quantitative Design and Analysis.
+               Metadata from the publisher page; cited for the method, not
+               for a page. Accessed 2026-11-03}
+}
+@book{dally2012digital,
+  author    = {William J. Dally and R. Curtis Harting},
+  title     = {Digital Design: A Systems Approach},
+  publisher = {Cambridge University Press},
+  year      = {2012},
+  isbn      = {978-0-521-19950-6},
+  url       = {https://assets.cambridge.org/97805211/99506/toc/9780521199506_toc.pdf},
+  note      = {Chapter 16, Datapath Sequential Logic, section 16.3, Control
+               and Data Partitioning; Chapter 17, Factoring Finite-State
+               Machines. Chapter and section titles from the publisher's
+               table of contents. Accessed 2026-11-03}
+}
+@book{mehta2018asic,
+  author    = {Ashok B. Mehta},
+  title     = {{ASIC/SoC} Functional Design Verification: A Comprehensive
+               Guide to Technologies and Methodologies},
+  publisher = {Springer},
+  address   = {Cham},
+  year      = {2018},
+  doi       = {10.1007/978-3-319-59418-7},
+  note      = {Eighteen chapters, from UVM, assertions and coverage to SoC
+               interconnect verification and the product design life cycle.
+               Metadata from the publisher page. Accessed 2026-11-03}
+}
+@misc{opentitan-dma-theory,
+  author       = {{lowRISC contributors}},
+  title        = {{DMA} Controller: Theory of Operation},
+  howpublished = {OpenTitan documentation},
+  year         = {2026},
+  url          = {https://opentitan.org/book/hw/ip/dma/doc/theory_of_operation.html},
+  note         = {Sections: block diagram, memory regions, modes of
+                  operation, security checks, configuration notes, inline
+                  hashing, clocking and reset, SoC integration. Accessed
+                  2026-11-03}
+}
+@misc{opentitan-dma-dv,
+  author       = {{lowRISC contributors}},
+  title        = {{DMA} {DV} Document},
+  howpublished = {OpenTitan documentation},
+  year         = {2026},
+  url          = {https://opentitan.org/book/hw/ip/dma/dv/index.html},
+  note         = {Testbench diagram, interfaces, a scoreboard that checks
+                  every transaction of a transfer, six DMA covergroups.
+                  Accessed 2026-11-03}
+}
+@manual{arm-ihi0024b,
+  author       = {{ARM Limited}},
+  title        = {{AMBA} 3 {APB} Protocol Specification, v1.0},
+  number       = {ARM IHI 0024B},
+  year         = {2004},
+  url          = {https://web.eecs.umich.edu/~prabal/teaching/eecs373-f12/readings/ARM_AMBA3_APB.pdf},
+  note         = {Issue B, 17 August 2004. Section 2.2.1 (read transfer)
+                  and section 2.3 (error response). Read from a university
+                  course copy; Arm's own portal did not serve it. Accessed
+                  2026-11-03}
+}
+@manual{arm-ihi0022c,
+  author       = {{ARM Limited}},
+  title        = {{AMBA} {AXI} Protocol Specification, Version 2.0},
+  number       = {ARM IHI 0022C},
+  year         = {2010},
+  url          = {https://documentation-service.arm.com/static/64256e84314e245d086bc88f},
+  note         = {Issue C. Section 3.1, Handshake process; section 3.3,
+                  Dependencies between channel handshake signals; Chapter 14,
+                  AXI4-Lite. Accessed 2026-11-03}
+}
+@misc{kubavat2026systemcdma,
+  author       = {Mayur Kubavat},
+  title        = {{SystemC} repository: {DMA} project},
+  howpublished = {GitHub},
+  year         = {2026},
+  url          = {https://github.com/mayurkubavat/SystemC/tree/main/projects/dma},
+  note         = {APB3-programmed single-channel DMA with an AXI4-Lite
+                  master, a Verilog RTL twin and a UVM-SystemC testbench.
+                  Version 1 of Chapter 11 is rtl/verilog/dma_engine.v at
+                  commit 9b3bd55. Accessed 2026-11-03}
+}

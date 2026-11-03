@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# run_waves.sh -- the two waveforms of section 11.5, measured: version
+# run_waves.sh -- the two waveforms of the timing section, measured: version
 # 1's directed test (APB programming, then the first word's read and
 # write), and version 2 meeting a read error on word 2 of 4. Each VCD
 # is cut to a window and written as WaveJSON for the figure generator.

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# run_rate.sh -- the performance number section 11.3 sets a target
+# run_rate.sh -- the performance number the chapter sets a target
 # against: one 64-word copy, cycles per word, on each version and each
 # slave ready style it survives. Version 1 hangs on READY_FIRST, so it
 # is measured with the slave its own testbench used.

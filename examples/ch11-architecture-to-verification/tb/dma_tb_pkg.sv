@@ -1,4 +1,4 @@
-// dma_tb_pkg.sv -- the testbench Figure F11 draws, one class per box.
+// dma_tb_pkg.sv -- the testbench the chapter draws, one class per box.
 //
 //   apb_master   programs the DMA as software would, APB3 timing
 //   axil_slave   memory on the AXI4-Lite side, with three ready styles

@@ -1,10 +1,10 @@
 # dma_plan.yaml -- the verification plan for version 2 of the DMA, in
-# Chapter 2's format. Items DMA-0xx come from the architecture spec and
-# are black-box: a user of the DMA could observe them. Items DMA-1xx
-# come from the microarchitecture spec and are white-box: they name
-# internal state the architecture never mentions. `covers` names the
-# covergroup bins that measure each item, as the coverage database
-# spells them. The tests column names example directories under
+# the planning chapter's format. Items DMA-0xx come from the
+# architecture spec and are black-box: a user of the DMA could observe
+# them. Items DMA-1xx come from the microarchitecture spec and are
+# white-box: they name internal state the architecture never mentions.
+# `covers` names the covergroup bins that measure each item, as the
+# coverage database spells them. The tests column names example directories under
 # examples/, which the report looks up in examples/status.json.
 
 block: dma

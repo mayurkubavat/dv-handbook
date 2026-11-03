@@ -1,4 +1,4 @@
-// tb_v1.sv -- version 1 of the DMA in the testbench of Figure F11.
+// tb_v1.sv -- version 1 of the DMA in the testbench the chapter draws.
 //
 //   +test=directed   the 8-word copy the original testbench runs
 //   +test=random     +n transfers: random lengths, addresses, response
@@ -32,7 +32,7 @@ module tb_v1;
     .RVALID(axi.rvalid), .RREADY(axi.rready), .IRQ(apb.irq));
 
   // White-box coverage: the FSM's arcs, read from the microarchitecture
-  // (Figure F6). Transition bins count consecutive states.
+  // (the state-machine figure). Transition bins count consecutive states.
   covergroup fsm_cg @(posedge clk);
     st_cp: coverpoint dut.state iff (rst_n) {
       bins start      = (0 => 1);
