@@ -1,5 +1,5 @@
-# Version 2: directed, register rules, random with coverage, and the
-# draft the random test caught.
+# Version 2: directed, register rules, the longest copy, random with
+# coverage, and the draft the random test caught.
 EXAMPLE_LANG  := python
 TOP           := run_v2.sh
 SOURCES       := run_v2.sh

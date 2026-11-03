@@ -156,7 +156,7 @@ class HW(Diagram):
     def wire(self, pts, kind="data", label=None, at=None, arrow=True,
              anchor="middle", lsize=13, both=False):
         """A routed wire through the points. kind: data (solid blue),
-        control (dashed amber), plain (thin grey), check (violet)."""
+        control (dashed amber), plain (thin gray), check (violet)."""
         col, dash, mk, sw = {
             "data": (BLUE, "", "ahd", 2.2),
             "control": (AMBER, ' stroke-dasharray="6 4"', "ahc", 1.8),

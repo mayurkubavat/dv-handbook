@@ -54,7 +54,8 @@ items:
     checking: "Model stops its owed writes at the error; STATUS checked."
     coverage: "out_cp x pos_cp; len_x_out."
     covers: [xfer_cg.out_cp, xfer_cg.pos_cp, xfer_cg.len_x_out]
-    closure: "Tests pass; zero_x_rd_err and zero_x_wr_err excluded."
+    closure: "Tests pass; zero_x_rd_err and zero_x_wr_err excluded: a
+      zero-length copy has no word to fail."
     priority: must
     tests: [ch11-architecture-to-verification/v2-tests,
             ch11-architecture-to-verification/v2-cocotb]

@@ -107,7 +107,7 @@ by the chapter's examples on Verilator 5.052 and Icarus 13.0.
 ## 2. Measured [measured]
 
 All from the chapter's ten examples, green under
-`scripts/check-examples.sh ch11` on 2026-11-03, after review round 1.
+`scripts/check-examples.sh ch11` on 2026-11-03, after review round 3.
 
 | Claim | Example | Output |
 |---|---|---|
@@ -121,7 +121,7 @@ All from the chapter's ten examples, green under
 | Cycles per word, 64-word copy | `throughput` | v1 7.98; v2 4.05 (WAIT_VALID), 3.03 (READY_FIRST) |
 | v1's phases per word | `waves` | READ_REQ 3, READ_RESP 1, WRITE_REQ 3, WRITE_RESP 1 |
 | v1's random test varied no slave style | `v1-random` | `style_cp` hit only `wait_valid`; every FSM arc hit, `r_err` 10 times |
-| v2 meets the plan | `v2-tests` | directed, 15 register rules, a 65,535-word copy (`len_cp.max`=1; 262,156 cycles, 3.3 s of wall time on the review machine) and 300 random rounds pass; zero bins are `over`, the two zero-length error cells and the two maximum-length error cells |
+| v2 meets the plan | `v2-tests` | directed, 15 register rules, a 65,535-word copy (`len_cp.max`=1; 262,156 cycles from the first programming write to the status clear, about 262,143 for the copy itself, 3.3 s of wall time on the review machine) and 300 random rounds pass; zero bins are `over`, the two zero-length error cells and the two maximum-length error cells |
 | A read error with words queued is reached | `v2-tests` | `rd_err_cp.queued` = 9 (per-channel event: an error on a channel that has words in the FIFO) |
 | Round robin while both owe reads | `v2-tests` | 999 grants, 485 and 514, 0 repeats; 0 reads started at a full FIFO |
 | A fixed-priority arbiter breaks `DMA-101` | scratch mutant of `dma_v2.sv` (`c = k - 1`), not kept | random test fails on seeds 1 to 5, with 1152, 1270, 998, 916 and 933 repeated grants; 0 reads at a full FIFO |

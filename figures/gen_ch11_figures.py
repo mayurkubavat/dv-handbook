@@ -708,14 +708,15 @@ def fig_tb():
     for i in range(7):
         d.line(100 + i * 135, 128, 100 + i * 135, 140, INK, 1.4)
     d.wire([(135, 140), (135, am.t - 2)], "plain")
-    d.wire([(95, 140), (95, 400), (110, 400), (110, mdl.t - 2)], "plain")
-    d.text(118, 220, "start(ch, src, dst, len)", 12, INK, "500", "start",
+    d.wire([(114, 140), (114, 190), (36, 190), (36, 470), (70, 470),
+            (70, mdl.t - 2)], "plain")
+    d.text(143, 220, "start(ch, src, dst, len)", 12, INK, "500", "start",
            MONO)
     d.wire([(am.cx, am.b), (am.cx, 470), (sb.cx, 470), (sb.cx, sb.t - 2)],
            "data")
     d.text(sb.cx - 6, 462, "STATUS at the end", 12, INK, "500", "end",
            MONO)
-    d.text(500, 214, "white-box probes: dut.state, dut.f_cnt", 12, DIM,
+    d.text(500, 214, "white-box probes, e.g. dut.state, dut.f_cnt", 12, DIM,
            "400", "middle", MONO)
     d.text(40, 690, "solid: stimulus and responses; dashed violet: what "
            "the monitor observes", 13, DIM)
@@ -841,8 +842,8 @@ def fig_coverage():
                    "middle", MONO)
             if row == 0:
                 d.text(xx + 45, sy - 22, k, 11, DIM, "500", "middle", MONO)
-    d.note(30, 560, "zero x err: no word can fail (n/a)\nmax: one directed "
-           "copy, version 2 only\nover: only the len64k finding asks,\n"
+    d.note(30, 560, "zero x err: no word can fail (n/a)\nmax: the maxlen test, "
+           "version 2 only\nover: only the len64k finding asks,\n"
            "and it samples no coverage", w=330, size=13)
     d.save("ch11-coverage.svg")
 

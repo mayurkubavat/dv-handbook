@@ -28,7 +28,7 @@ rd_err_cp: queued=9
 zero bins: len_cp.over len_x_out.max_x_rd_err len_x_out.max_x_wr_err 
 len_x_out.over_x_ok len_x_out.over_x_rd_err len_x_out.over_x_wr_err 
 len_x_out.zero_x_rd_err len_x_out.zero_x_wr_err
---- the first draft, PRECISE=0, same test and seed
+--- the first draft, PRECISE=0, same test, same seed
   FAIL: ch1: 1 writes never seen, next 00193488
   FAIL: ch0: 1 writes never seen, next 00096068
   FAIL: ch0: 1 writes never seen, next 00096c30

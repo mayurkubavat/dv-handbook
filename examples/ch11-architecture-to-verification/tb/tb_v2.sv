@@ -105,9 +105,11 @@ module tb_v2 #(parameter bit PRECISE = 1);
   end
   arb_checker arb;
   string      test;
+  int         rules = 0;                 // register rules checked
 
   task automatic expect_reg(int ch, int off, bit [31:0] want, string what);
     bit [31:0] v;
+    rules++;
     env.rd(ch, off, v);
     if (v != want)
       fail($sformatf("%s: read %08h, spec says %08h", what, v, want));
@@ -116,6 +118,7 @@ module tb_v2 #(parameter bit PRECISE = 1);
   task automatic expect_err(int ch, int off, bit [31:0] v, bit want,
                             string what);
     bit e;
+    rules++;
     env.wr(ch, off, v, e);
     if (e != want)
       fail($sformatf("%s: PSLVERR=%0d, spec says %0d", what, e, want));
@@ -167,8 +170,9 @@ module tb_v2 #(parameter bit PRECISE = 1);
     expect_reg(0, CTRL, CTRL_IRQ_EN, "CTRL start reads as zero");
     finish(0, s);
     expect_reg(0, STATUS, 0, "STATUS after write-one-to-clear");
+    rules++;
     if (apb.irq) fail("IRQ still high after STATUS was cleared");
-    $display("  %0d register rules checked", 15);
+    $display("  %0d register rules checked", rules);
   endtask
 
   task automatic t_random();

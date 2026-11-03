@@ -158,7 +158,7 @@
 <text x="935.0" y="682.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="700" text-anchor="middle" fill="#1C1C1C">150</text>
 <rect x="30" y="560" width="330" height="84" rx="6" fill="#F4F6F8" stroke="#CBD2D9"/>
 <text x="40" y="581.1" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="400" text-anchor="start" fill="#1C1C1C">zero x err: no word can fail (n/a)</text>
-<text x="40" y="598.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="400" text-anchor="start" fill="#1C1C1C">max: one directed copy, version 2 only</text>
+<text x="40" y="598.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="400" text-anchor="start" fill="#1C1C1C">max: the maxlen test, version 2 only</text>
 <text x="40" y="614.9" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="400" text-anchor="start" fill="#1C1C1C">over: only the len64k finding asks,</text>
 <text x="40" y="631.8" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="400" text-anchor="start" fill="#1C1C1C">and it samples no coverage</text>
 </svg>
