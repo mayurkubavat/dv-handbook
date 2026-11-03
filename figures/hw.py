@@ -15,7 +15,7 @@ the way logic designers have drawn it for decades:
 
 and three helpers that are whole drawings in themselves:
 
-    fsm_state / fsm_arc    state bubbles and labelled transitions
+    fsm_state / fsm_arc    state bubbles and labeled transitions
     lifeline / message     a sequence diagram
     wave(...)              a WaveJSON waveform (the subset vcd2wave.py
                            writes: p . 0 1 = and data)

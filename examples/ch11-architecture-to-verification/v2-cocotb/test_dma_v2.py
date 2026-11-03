@@ -5,6 +5,9 @@ The pieces are the SystemVerilog testbench's, smaller: an APB master,
 an AXI4-Lite memory with two ready styles and error injection, a
 reference model that predicts each channel's writes from the spec, and
 cocotb-coverage points for the plan's length, outcome and style bins.
+The memory holds each write response back for up to `b_delay` cycles,
+so words wait in the DMA's FIFO when an error arrives; without that
+delay this test passed the precise-error bug of the first draft.
 Every component works on the falling edge: it drives, waits for the
 values to settle (ReadOnly), and reads what the next rising edge will
 capture, so a handshake is seen exactly when the DUT sees it.
@@ -68,6 +71,8 @@ class Memory:
     def __init__(self, dut):
         self.d, self.mem, self.rd_err, self.wr_err = dut, {}, set(), set()
         self.style, self.writes = "wait_valid", []
+        self.b_delay, self.wait = 0, None
+        self.rng = random.Random(7)
 
     def ready(self, valid):
         return 1 if self.style == "ready_first" else int(valid)
@@ -123,7 +128,15 @@ class Memory:
             a = awaddr
         if w is None and wv and wr:
             w = wdata
+        if a is not None and w is not None and self.wait is None:
+            self.wait = self.rng.randint(0, self.b_delay)
+        if self.wait:                       # hold the response back
+            self.wait -= 1
+            d.AWREADY.value, d.WREADY.value = 0, 0
+            self.a, self.w = a, w
+            return
         if a is not None and w is not None:
+            self.wait = None
             self.writes.append((a, w))
             if a not in self.wr_err:
                 self.mem[a] = w
@@ -231,6 +244,7 @@ async def random_rounds(dut):
     apb, mem = await setup(dut)
     random.seed(1)
     fails = 0
+    mem.b_delay = 4
     for k in range(30):
         mem.style = random.choice(["wait_valid", "ready_first"])
         mem.rd_err.clear()

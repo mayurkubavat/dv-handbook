@@ -91,6 +91,12 @@ by the chapter's examples on Verilator 5.052 and Icarus 13.0.
   `dma_interrupt_cg`, `dma_intr_src_cg`); the RAL model "is created with
   the `ralgen` FuseSoC generator script automatically when the simulation
   is at the build stage."
+- **Carried from the Chapter 2 note** (`research/ch02-verification-planning.md`,
+  sections 4.2 and 5.1): the dvsim testplanner schema, cited as
+  `opentitan-testplanner` for the plan's `name`, `stage`, `desc` and
+  `tests` fields, and the OpenTitan development stages, cited as
+  `opentitan-dev-stages` for the V0 to V3 stage wording. Not re-fetched
+  for this chapter.
 - **The source design**: `mayurkubavat/SystemC`, `projects/dma`, file
   `rtl/verilog/dma_engine.v` at commit 9b3bd55, copied byte for byte as
   `examples/ch11-architecture-to-verification/rtl/dma_v1.v`. Its own
@@ -101,24 +107,34 @@ by the chapter's examples on Verilator 5.052 and Icarus 13.0.
 ## 2. Measured [measured]
 
 All from the chapter's ten examples, green under
-`scripts/check-examples.sh ch11` on 2026-11-03.
+`scripts/check-examples.sh ch11` on 2026-11-03, after review round 1.
 
 | Claim | Example | Output |
 |---|---|---|
 | Two registers have two procedural writers in v1, none in v2 | `v1-lint` | `MULTIDRIVENPROC` on `ctrl` (line 184) and `status` (line 189) |
-| `XFER_LEN = 65536` moves no word and reports done | `v1-findings` | `moved 0 words`, `STATUS 2`, 14 cycles from the start of programming |
+| `XFER_LEN = 65536` moves no word and reports done | `v1-findings` | `moved 0 words`, `STATUS 2`, IRQ 10 cycles after programming began |
 | A write to a busy channel is ignored without an error | `v1-findings` | `PSLVERR=0`, `DST_ADDR` unchanged |
 | An APB read returns the previous read's data | `v1-findings` | three reads, each one behind |
 | A READY-first slave hangs v1 before any read | `v1-findings` | `ARVALID high for 0 cycles`, 0 handshakes |
 | AW and W on different edges deadlock v1 | `v1-findings` | 1 AR, 1 AW, 1 W, 0 B |
+| A random-ready slave hangs v1 too | `v1-findings` | `random_ready`: 0 handshakes; verdict 5 of 6 questions fail |
 | Cycles per word, 64-word copy | `throughput` | v1 7.98; v2 4.05 (WAIT_VALID), 3.03 (READY_FIRST) |
 | v1's phases per word | `waves` | READ_REQ 3, READ_RESP 1, WRITE_REQ 3, WRITE_RESP 1 |
-| v1's random test varied no slave style | `v1-random` | `style_cp` hit only `wait_valid`; every FSM arc hit |
-| v2 meets the plan | `v2-tests` | directed, 15 register rules, 300 random rounds pass; all bins hit but `over` and the two zero-length error cells |
-| Round robin while both owe reads | `v2-tests` | 999 grants, 485 and 514, none twice in a row |
+| v1's random test varied no slave style | `v1-random` | `style_cp` hit only `wait_valid`; every FSM arc hit, `r_err` 10 times |
+| v2 meets the plan | `v2-tests` | directed, 15 register rules, a 65,535-word copy (`len_cp.max`=1) and 300 random rounds pass; zero bins are `over`, the two zero-length error cells and the two maximum-length error cells |
+| A read error with words queued is reached | `v2-tests` | `rd_err_cp.queued` = 9 (per-channel event: an error on a channel that has words in the FIFO) |
+| Round robin while both owe reads | `v2-tests` | 999 grants, 485 and 514, 0 repeats; 0 reads started at a full FIFO |
+| A fixed-priority arbiter breaks `DMA-101` | scratch mutant of `dma_v2.sv` (`c = k - 1`), not kept | random test fails on seeds 1 to 5, with 1152, 1270, 998, 916 and 933 repeated grants; 0 reads at a full FIFO |
 | The first draft (PRECISE=0) loses queued words on a read error | `v2-tests` | 14 transfers of 300 fail; passes directed, regs and abort |
-| A second language agrees | `v2-cocotb` | 30 rounds on Icarus, 0 failures |
-| The plan is not closed | `vplan` | 11 of 13 rows pass; DMA-009 (must) and DMA-104 (should) have no test |
+| A second language agrees, and its slave must vary to matter | `v2-cocotb` | 30 rounds on Icarus, 0 failures; with the write response delayed 0 to 4 cycles a PRECISE=0 copy fails 3 checks, and without the delay an earlier version of the test passed the draft |
+| The plan report fails while a must-have row has no test | `vplan` | revision 1: 11 of 13, failed on `DMA-009`; revision 2 adds the maxlen test: 12 of 13, "every must-have item has a passing test"; `DMA-104` (should) still open |
+
+Register semantics. The register map (`regs/dma_regs.yaml`) was written
+from what the source RTL does, since the source project has no register
+specification: field widths, reset values and the start and IRQ bits are
+read from `dma_v1.v`. The chapter therefore says what the RTL does and
+asks which behavior is the specification, rather than quoting a
+specification sentence.
 
 ## 3. Constraints folded into the outline
 
@@ -140,5 +156,8 @@ All from the chapter's ten examples, green under
   says what they contained when read.
 - The textbooks were cited from publisher metadata and tables of contents,
   not reread; no page number is printed.
-- `DMA-009` (a 65,535-word copy) is left without a test on purpose; the
-  chapter says so and the plan report fails on it.
+- `DMA-104` (reset during a transfer) is left without a test on purpose; it
+  is a should-have, so the plan report passes and lists it. Writing it is an
+  exercise.
+- The fixed-priority result was measured on a scratch copy that is not part
+  of the examples; the chapter states it as measured on five seeds.

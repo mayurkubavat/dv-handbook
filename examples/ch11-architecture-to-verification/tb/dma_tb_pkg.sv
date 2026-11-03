@@ -1,7 +1,7 @@
 // dma_tb_pkg.sv -- the testbench the chapter draws, one class per box.
 //
 //   apb_master   programs the DMA as software would, APB3 timing
-//   axil_slave   memory on the AXI4-Lite side, with three ready styles
+//   axil_slave   memory on the AXI4-Lite side, with four ready styles
 //                and per-address error injection
 //   axil_monitor watches the AXI pins, checks the handshake rules, and
 //                hands every completed read and write to its subscribers
@@ -9,7 +9,8 @@
 //                transfer must do, predicted before it runs
 //   dma_scoreboard  compares what the monitor saw with what the model
 //                predicted, word by word and channel by channel
-//   dma_coverage the plan's cover points for one finished transfer
+//   dma_coverage the plan's cover points for one finished transfer,
+//                sampled by the test when the transfer ends
 //   dma_env      builds and connects the rest; tests talk to it
 package dma_tb_pkg;
   import dma_regs_pkg::*;
@@ -350,7 +351,8 @@ package dma_tb_pkg;
         bins zero = {0};
         bins one  = {1};
         bins few  = {[2:15]};
-        bins many = {[16:65535]};
+        bins many = {[16:65534]};
+        bins max  = {65535};
         bins over = {[65536:$]};
       }
       out_cp: coverpoint out {

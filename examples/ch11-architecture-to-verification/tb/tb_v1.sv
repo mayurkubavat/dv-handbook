@@ -7,7 +7,8 @@
 //   +test=<finding>  one spec question, asked of the RTL (see the
 //                    findings example): len64k, busy_write, apb_read,
 //                    ready_first (the slave holds READY before VALID),
-//                    split_aw_w (AW and W accepted on different edges)
+//                    split_aw_w (AW and W accepted on different edges),
+//                    random_ready (READY high or low at random)
 //   +report_only     print failed checks but exit 0
 module tb_v1;
   import dma_regs_pkg::*;
@@ -83,10 +84,11 @@ module tb_v1;
                           longint unsigned len, outcome_e out, int pos);
     bit to;
     bit [31:0] s;
-    longint t0;
+    longint t0, t_irq;
     t0 = env.mon.cycle;
     env.start(0, src, dst, len);
     wait_irq(to);
+    t_irq = env.mon.cycle - t0;
     if (to) begin
       fail($sformatf("watchdog: no IRQ %0d cycles after start, %0d AR %s",
                      env.timeout, env.mon.n_ar, "handshakes so far"));
@@ -96,8 +98,9 @@ module tb_v1;
     status_v1(s);
     void'(env.sb.check_end(0, s));
     env.cov.xfer_cg.sample(32'(len), out, pos, env.mem.style);
-    $display("  %0d words %08h -> %08h: STATUS %0h, %0d writes, %0d cycles",
-             len, src, dst, s, env.sb.n_wr[0], env.mon.cycle - t0);
+    $display("  %0d words %08h -> %08h: STATUS %0h, %0d writes, IRQ %s",
+             len, src, dst, s, env.sb.n_wr[0],
+             $sformatf("%0d cycles after programming began", t_irq));
   endtask
 
   task automatic t_directed();
@@ -216,6 +219,7 @@ module tb_v1;
     env.mon.verbose = $test$plusargs("verbose");
     if (test == "ready_first") env.mem.style = READY_FIRST;
     if (test == "split_aw_w")  env.mem.style = W_FIRST;
+    if (test == "random_ready") env.mem.style = RANDOM;
     if (test == "len64k")      env.timeout = 600000;
     env.run();
     repeat (3) @(posedge clk);
@@ -229,7 +233,7 @@ module tb_v1;
       "len64k":   f_len64k();
       "busy_write": f_busy_write();
       "apb_read": f_apb_read();
-      "ready_first", "split_aw_w": f_handshake();
+      "ready_first", "split_aw_w", "random_ready": f_handshake();
       default:    $fatal(1, "unknown +test=%s", test);
     endcase
     $display("AXI handshakes: AR %0d, R %0d, AW %0d, W %0d, B %0d",

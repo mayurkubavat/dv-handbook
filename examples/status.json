@@ -1,5 +1,5 @@
 {
-  "checked": "2026-11-03T06:14:22Z",
+  "checked": "2026-11-03T06:47:02Z",
   "pass": 68,
   "fail": 0,
   "skipped_run": 2,
@@ -469,9 +469,9 @@
     {
       "dir": "examples/ch11-architecture-to-verification/vplan",
       "lint": "pass",
-      "run": "pass (failed as expected)",
+      "run": "pass",
       "requires": "",
-      "expect": "fail"
+      "expect": "pass"
     },
     {
       "dir": "examples/ch11-architecture-to-verification/waves",

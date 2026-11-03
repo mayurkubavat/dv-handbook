@@ -43,13 +43,14 @@
 <text x="395.0" y="591.9" font-family="'JetBrains Mono', Menlo, monospace" font-size="14" font-weight="400" text-anchor="middle" fill="#7FA3C0">observe, check_end</text>
 <rect x="530" y="540" width="170" height="60" rx="6" fill="white" stroke="#1B4F72" stroke-width="2"/>
 <text x="615.0" y="567.6" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="600" text-anchor="middle" fill="#1C1C1C">coverage</text>
-<text x="615.0" y="591.9" font-family="'JetBrains Mono', Menlo, monospace" font-size="14" font-weight="400" text-anchor="middle" fill="#7FA3C0">xfer_cg</text>
+<text x="615.0" y="591.9" font-family="'JetBrains Mono', Menlo, monospace" font-size="14" font-weight="400" text-anchor="middle" fill="#7FA3C0">xfer_cg, probes</text>
 <rect x="740" y="540" width="190" height="60" rx="6" fill="white" stroke="#1B4F72" stroke-width="2"/>
 <text x="835.0" y="567.6" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="600" text-anchor="middle" fill="#1C1C1C">arb_checker</text>
 <text x="835.0" y="591.9" font-family="'JetBrains Mono', Menlo, monospace" font-size="14" font-weight="400" text-anchor="middle" fill="#7FA3C0">version 2 only</text>
 <path d="M690.0,460.0 L690.0,505.0 L395.0,505.0 L395.0,538.0" fill="none" stroke="#5B3E8E" stroke-width="1.8" stroke-dasharray="6 4" marker-end="url(#ahj)"/>
-<path d="M690.0,460.0 L690.0,505.0 L615.0,505.0 L615.0,538.0" fill="none" stroke="#5B3E8E" stroke-width="1.8" stroke-dasharray="6 4" marker-end="url(#ahj)"/>
 <path d="M690.0,460.0 L690.0,505.0 L835.0,505.0 L835.0,538.0" fill="none" stroke="#5B3E8E" stroke-width="1.8" stroke-dasharray="6 4" marker-end="url(#ahj)"/>
+<path d="M900.0,140.0 L965.0,140.0 L965.0,630.0 L615.0,630.0 L615.0,602.0" fill="none" stroke="#1C1C1C" stroke-width="1.4" marker-end="url(#ahg)"/>
+<text x="625.0" y="648.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="500" text-anchor="start" fill="#1C1C1C">sample() when a transfer ends</text>
 <text x="698.0" y="494.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="500" text-anchor="start" fill="#5B3E8E">publish(txn)</text>
 <rect x="50" y="540" width="190" height="60" rx="6" fill="white" stroke="#1B4F72" stroke-width="2"/>
 <text x="145.0" y="567.6" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="600" text-anchor="middle" fill="#1C1C1C">dma_model</text>

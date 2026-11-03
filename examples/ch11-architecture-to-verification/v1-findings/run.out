@@ -1,7 +1,7 @@
 --- test len64k, slave WAIT_VALID
   FAIL: ch0: 65536 writes never seen, next 00002000
   FAIL: ch0: 0 reads seen, 65536 owed
-  65536 words 00001000 -> 00002000: STATUS 2, 0 writes, 14 cycles
+  65536 words 00001000 -> 00002000: STATUS 2, 0 writes, IRQ 10 cycles after programming began
 finding len64k: XFER_LEN=65536 moved 0 words
 result: FAIL, 2 checks failed
 --- test busy_write, slave WAIT_VALID
@@ -23,4 +23,8 @@ result: FAIL, 1 checks failed
   FAIL: watchdog: no IRQ 2000 cycles after start, 1 AR handshakes so far
 finding split_aw_w: ARVALID high for 2 cycles, 1 AR, 1 AW, 1 W, 0 B handshakes
 result: FAIL, 1 checks failed
-verdict: 4 of 5 questions fail a check written from the spec
+--- test random_ready, slave RANDOM
+  FAIL: watchdog: no IRQ 2000 cycles after start, 0 AR handshakes so far
+finding random_ready: ARVALID high for 0 cycles, 0 AR, 0 AW, 0 W, 0 B handshakes
+result: FAIL, 1 checks failed
+verdict: 5 of 6 questions fail a check written from the spec

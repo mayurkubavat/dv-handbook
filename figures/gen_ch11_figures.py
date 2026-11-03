@@ -313,7 +313,7 @@ def fig_cycles():
 # ---- F5: version 2 microarchitecture ----------------------------------
 def fig_uarch():
     d = HW(1000, 720, "Version 2 microarchitecture",
-           "Three blocks with one owner each: the channel block owns every "
+           "One owner per register: the channel block owns every "
            "per-channel register; the engines only report.",
            "Microarchitecture block diagram of version 2: APB decode, the "
            "channel block holding per-channel registers, a read engine "
@@ -414,7 +414,7 @@ def fig_fsm():
            "Arcs carry the condition and, in brackets, the coverage bin "
            "that counts them. Two arcs break AXI's handshake rules.",
            "Five-state FSM of version 1: IDLE, READ_REQ, READ_RESP, "
-           "WRITE_REQ, WRITE_RESP, with labelled transitions and two "
+           "WRITE_REQ, WRITE_RESP, with labeled transitions and two "
            "amber arcs marking handshake violations")
     idle = d.fsm_state(220, 380, "IDLE", "0", initial=True)
     rq = d.fsm_state(460, 230, "READ_REQ", "1", r=56)
@@ -686,11 +686,15 @@ def fig_tb():
     d.wire([(690, 286), (690, mon.t - 2)], "check")
     d.text(698, 360, "every edge", 12, VIOLET, "500", "start", MONO)
     sb = d.tool(300, 540, "scoreboard", w=190, h=60, sub="observe, check_end")
-    cov = d.tool(530, 540, "coverage", w=170, h=60, sub="xfer_cg")
+    cov = d.tool(530, 540, "coverage", w=170, h=60, sub="xfer_cg, probes")
     arb = d.tool(740, 540, "arb_checker", w=190, h=60, sub="version 2 only")
-    for t in (sb, cov, arb):
+    for t in (sb, arb):
         d.wire([(mon.cx, mon.b), (mon.cx, 505), (t.cx, 505),
                 (t.cx, t.t - 2)], "check")
+    d.wire([(900, 140), (965, 140), (965, 630), (cov.cx, 630),
+            (cov.cx, cov.b + 2)], "plain")
+    d.text(cov.cx + 10, 648, "sample() when a transfer ends", 12, INK,
+           "500", "start", MONO)
     d.text(mon.cx + 8, 494, "publish(txn)", 12, VIOLET, "500", "start",
            MONO)
     mdl = d.tool(50, 540, "dma_model", w=190, h=60, sub="predict at start")
@@ -774,7 +778,7 @@ def fig_coverage():
     v1 = run_out("v1-random")
     v2 = run_out("v2-tests")
     st = v1["st_cp"]
-    d = HW(1000, 680, "What the random tests reached",
+    d = HW(1000, 720, "What the random tests reached",
            "Left: the state machine's arcs. Right: the plan's bins for v1 "
            "and v2. Amber is a bin no test hit.",
            "Coverage map: bar chart of the twelve FSM arc bins of version "
@@ -813,13 +817,13 @@ def fig_coverage():
                        v if v or not imp else "n/a", 12.5,
                        INK if v else (DIM if imp else AMBER), "700",
                        "middle", MONO)
-    lens = ["zero", "one", "few", "many", "over"]
+    lens = ["zero", "one", "few", "many", "max", "over"]
     outs = ["ok", "rd_err", "wr_err"]
     grid(520, 150, "len_x_out, version 1", lens, outs,
          v1["len_x_out"], lambda r, c: f"{r}_x_{c}")
-    grid(520, 375, "len_x_out, version 2", lens, outs,
+    grid(520, 390, "len_x_out, version 2", lens, outs,
          v2["len_x_out"], lambda r, c: f"{r}_x_{c}")
-    sy = 610
+    sy = 650
     d.text(520, sy - 50, "style_cp", 15, BLUE, "700", "start", MONO)
     for row, (lab, data) in enumerate([("v1", v1["style_cp"]),
                                        ("v2", v2["style_cp"])]):
@@ -833,8 +837,9 @@ def fig_coverage():
                    "middle", MONO)
             if row == 0:
                 d.text(xx + 45, sy - 22, k, 11, DIM, "500", "middle", MONO)
-    d.note(30, 560, "zero x err: no word can fail (n/a)\nover: no test "
-           "asks for 65536", w=330, size=13)
+    d.note(30, 560, "zero x err: no word can fail (n/a)\nmax: one directed "
+           "copy, version 2 only\nover: only the len64k finding asks,\n"
+           "and it samples no coverage", w=330, size=13)
     d.save("ch11-coverage.svg")
 
 

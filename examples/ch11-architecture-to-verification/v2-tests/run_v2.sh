@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # run_v2.sh -- version 2 against the plan: the directed copy on each
-# channel, the register rules, and 300 random rounds with both channels
-# at once under all four slave ready styles, then the coverage. Last,
+# channel, the register rules, the longest copy the register allows,
+# and 300 random rounds with both channels at once under all four slave
+# ready styles, then the coverage. Last,
 # the first draft of the microarchitecture (PRECISE=0) under the same
 # random test, to show what the test caught.
 set -euo pipefail
@@ -10,14 +11,14 @@ cd "$(dirname "$0")"
 mkdir -p build/draft
 verilator $VFLAGS --coverage --top-module tb_v2 -Mdir build $V2_SRC \
   >/dev/null
-for t in directed regs; do
+for t in directed regs maxlen; do
   ./build/Vtb_v2 +test=$t +verilator+coverage+file+build/$t.dat \
     | grep -E '^(---|  |result)'
 done
 ./build/Vtb_v2 +test=random +n=300 +verilator+seed+1 \
   +verilator+coverage+file+build/random.dat | grep -E '^(---|  |result)'
 verilator_coverage --write build/v2.dat build/directed.dat build/regs.dat \
-  build/random.dat
+  build/maxlen.dat build/random.dat
 bins build/v2.dat
 zero_bins build/v2.dat
 echo "--- the first draft, PRECISE=0, same test and seed"

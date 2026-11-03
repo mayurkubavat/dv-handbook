@@ -4,13 +4,14 @@
 # them. Items DMA-1xx come from the microarchitecture spec and are
 # white-box: they name internal state the architecture never mentions.
 # `covers` names the covergroup bins that measure each item, as the
-# coverage database spells them. The tests column names example directories under
-# examples/, which the report looks up in examples/status.json.
+# coverage database spells them. The tests column names example
+# directories under examples/, which the report looks up in
+# examples/status.json.
 
 block: dma
 spec: "Two-channel DMA, APB3 registers, AXI4-Lite master (version 2)"
 owner: verification
-revision: 1
+revision: 2
 
 items:
   - id: DMA-001
@@ -134,10 +135,11 @@ items:
     requirement: "A transfer of 65535 words shall complete."
     stimulus: "One 65535-word copy."
     checking: "Scoreboard; STATUS."
-    coverage: "a len_cp bin for 65535, which the model does not yet have."
-    closure: "Test passes; bin hit."
+    coverage: "len_cp.max, added in revision 2."
+    covers: [xfer_cg.len_cp]
+    closure: "Test passes; len_cp.max hit."
     priority: must
-    tests: []
+    tests: [ch11-architecture-to-verification/v2-tests]
 
   - id: DMA-101
     source: microarchitecture
@@ -147,7 +149,9 @@ items:
       shall not grant the same channel twice in a row.
     stimulus: "Both channels running in every random round."
     checking: "Arbitration checker on the order of read grants."
-    coverage: "fifo_x_both: every bin."
+    coverage: >-
+      fifo_x_both: every bin, so arbitration is exercised at every FIFO
+      occupancy; the checker, not the bin, judges the order.
     covers: [uarch_cg.fifo_x_both]
     closure: "Tests pass; every fifo_x_both bin hit."
     priority: must
@@ -160,7 +164,9 @@ items:
       No read shall be issued while the FIFO holds DEPTH words, and no
       word shall be lost or duplicated at full.
     stimulus: "Write-side stalls from the RANDOM and W_FIRST slaves."
-    checking: "Scoreboard: every owed write seen once."
+    checking: >-
+      A check on the falling edge that no read starts at a full FIFO;
+      the scoreboard: every owed write seen once.
     coverage: "fifo_cp.full."
     covers: [uarch_cg.fifo_cp]
     closure: "Tests pass; fifo_cp.full hit."
@@ -176,9 +182,9 @@ items:
       drop them.
     stimulus: "Random errors with write-side backpressure."
     checking: "Scoreboard against the precise-error model."
-    coverage: "abort_cp.drained."
-    covers: [uarch_cg.abort_cp]
-    closure: "Tests pass; abort_cp.drained hit."
+    coverage: "rd_err_cp.queued: one hit per such read error."
+    covers: [uarch_cg.rd_err_cp]
+    closure: "Tests pass; rd_err_cp.queued hit."
     priority: must
     tests: [ch11-architecture-to-verification/v2-tests]
 

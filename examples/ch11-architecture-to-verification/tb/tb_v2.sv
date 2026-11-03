@@ -6,6 +6,7 @@
 //                    errors, response delays and slave ready styles
 //   +test=rate       one 64-word transfer, cycles per word printed
 //   +test=abort      a read error on word 2 of 4, for the waveform
+//   +test=maxlen     one 65535-word copy, the longest XFER_LEN allows
 //   +report_only     print failed checks but exit 0
 //   -GPRECISE=0      build the draft that dropped words on a read error
 module tb_v2 #(parameter bit PRECISE = 1);
@@ -31,9 +32,10 @@ module tb_v2 #(parameter bit PRECISE = 1);
     .BVALID(axi.bvalid), .BREADY(axi.bready), .IRQ(apb.irq));
   assign axi.wstrb[31:4] = '0;
 
-  // White-box coverage from the microarchitecture (the block diagram): FIFO
-  // occupancy while both channels run, and an abort that finds words
-  // of its channel already in the FIFO.
+  // White-box coverage from the microarchitecture (the block diagram):
+  // FIFO occupancy while both channels run, and the case precise errors
+  // exist for: a read error that finds words of its own channel still
+  // in the FIFO. rd_bad is a one-cycle pulse, so each bin counts events.
   covergroup uarch_cg @(posedge clk);
     fifo_cp: coverpoint dut.f_cnt iff (rst_n) {
       bins empty = {0}; bins one = {1}; bins full = {2};
@@ -42,8 +44,10 @@ module tb_v2 #(parameter bit PRECISE = 1);
       bins one_ch = {0}; bins both = {1};
     }
     fifo_x_both: cross fifo_cp, both_cp;
-    abort_cp: coverpoint (dut.abort != 0 && dut.f_cnt != 0) iff (rst_n) {
-      bins drained = {1};
+    rd_err_cp: coverpoint {dut.rd_bad[1] && dut.in_fifo[1] != 0,
+                           dut.rd_bad[0] && dut.in_fifo[0] != 0}
+               iff (rst_n) {
+      bins queued = {2'b01, 2'b10};
     }
   endgroup
   uarch_cg uarch_cov = new;
@@ -56,7 +60,7 @@ module tb_v2 #(parameter bit PRECISE = 1);
   class arb_checker extends axil_subscriber;
     int     left [2];
     longint since [2] = '{0, 0};
-    int     last = -1, runs = 0, grants [2];
+    int     last = -1, runs = 0, repeats = 0, grants [2];
     virtual function void observe(axil_txn t);
       int c;
       bit both;
@@ -64,9 +68,11 @@ module tb_v2 #(parameter bit PRECISE = 1);
       c = t.addr[20] ? 1 : 0;              // ch1's source is 0x10_0000 up
       both = left[0] > 0 && left[1] > 0 && t.acycle > since[0] + 1 &&
              t.acycle > since[1] + 1;
-      if (both && c == last)
+      if (both && c == last) begin
+        repeats++;
         fail($sformatf("arbiter: ch%0d read twice in a row at %08h", c,
                        t.addr));
+      end
       if (both) begin
         runs++; grants[c]++;
       end
@@ -76,6 +82,20 @@ module tb_v2 #(parameter bit PRECISE = 1);
   endclass
 
   dma_env     env;
+
+  // No read may be issued while the FIFO is full (plan item DMA-102).
+  // Sampled on the falling edge: ARVALID as the last rising edge left
+  // it, and the FIFO count the read engine saw at that edge.
+  bit arv_q = 0;
+  int fcnt_q = 0, full_reads = 0;
+  initial forever begin
+    @(negedge clk);
+    if (rst_n && dut.ARVALID && !arv_q && fcnt_q >= 2) begin
+      full_reads++;
+      fail("read issued while the FIFO was full");
+    end
+    arv_q = dut.ARVALID; fcnt_q = int'(dut.f_cnt);
+  end
 
   // +vcd=<file> dumps a waveform (the binary must be built with --trace).
   string vcd;
@@ -206,6 +226,8 @@ module tb_v2 #(parameter bit PRECISE = 1);
     $display("  %0d rounds, both channels each round; %0d reads while %s",
              n, arb.runs, $sformatf("both owed: ch0 %0d, ch1 %0d",
              arb.grants[0], arb.grants[1]));
+    $display("  same channel twice in a row: %0d; reads at a full FIFO: %0d",
+             arb.repeats, full_reads);
   endtask
 
   // A read error on the third of four words: the two before it must
@@ -219,6 +241,18 @@ module tb_v2 #(parameter bit PRECISE = 1);
     finish(0, s);
     $display("  read error at word 2 of 4: STATUS %0h, %0d writes", s,
              env.sb.n_wr[0]);
+  endtask
+
+  // The longest transfer the register allows (plan item DMA-009).
+  task automatic t_maxlen();
+    bit [31:0] s;
+    fill(32'h0010_0000, 65535);
+    env.mem.resp_delay = 0;
+    env.timeout = 600000;
+    env.start(0, 32'h0010_0000, 32'h0080_0000, 65535);
+    finish(0, s);
+    env.cov.xfer_cg.sample(65535, OUT_OK, 0, env.mem.style);
+    $display("  65535 words: STATUS %0h, %0d writes", s, env.sb.n_wr[0]);
   endtask
 
   task automatic t_rate();
@@ -249,6 +283,7 @@ module tb_v2 #(parameter bit PRECISE = 1);
       "random":   t_random();
       "rate":     t_rate();
       "abort":    t_abort();
+      "maxlen":   t_maxlen();
       default:    $fatal(1, "unknown +test=%s", test);
     endcase
     $display("AXI handshakes: AR %0d, R %0d, AW %0d, W %0d, B %0d",

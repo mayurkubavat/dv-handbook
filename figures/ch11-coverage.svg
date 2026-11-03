@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 680" width="1000" height="680" role="img" aria-label="Coverage map: bar chart of the twelve FSM arc bins of version 1 with hit counts, and grids of the length, outcome and slave style bins for version 1 and version 2 with holes in amber">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 720" width="1000" height="720" role="img" aria-label="Coverage map: bar chart of the twelve FSM arc bins of version 1 with hit counts, and grids of the length, outcome and slave style bins for version 1 and version 2 with holes in amber">
 <defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#7FA3C0"/></marker><marker id="ahj" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#5B3E8E"/></marker><marker id="ahd" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#1B4F72"/></marker><marker id="ahc" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#B7791F"/></marker><marker id="ahg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#1C1C1C"/></marker><pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="6" stroke="#CBD2D9" stroke-width="2"/></pattern></defs>
-<rect width="1000" height="680" fill="white"/>
+<rect width="1000" height="720" fill="white"/>
 <text x="30" y="40.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="21" font-weight="700" text-anchor="start" fill="#1B4F72">What the random tests reached</text>
 <text x="30" y="64.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="400" text-anchor="start" fill="#1C1C1C">Left: the state machine&#x27;s arcs. Right: the plan&#x27;s bins for v1 and v2. Amber is a bin no test hit.</text>
 <text x="30.0" y="104.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="15" font-weight="700" text-anchor="start" fill="#1B4F72">fsm_cg.st_cp, version 1</text>
@@ -73,76 +73,92 @@
 <text x="715.0" y="258.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1C1C1C">5</text>
 <rect x="756.0" y="240.0" width="74.0" height="26.0" rx="3" fill="#E6F2E7" stroke="#2E7D32" stroke-width="1.5"/>
 <text x="793.0" y="258.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1C1C1C">1</text>
-<text x="592.0" y="290.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="500" text-anchor="end" fill="#1C1C1C">over</text>
+<text x="592.0" y="290.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="500" text-anchor="end" fill="#1C1C1C">max</text>
 <rect x="600.0" y="270.0" width="74.0" height="26.0" rx="3" fill="#FBF1DC" stroke="#B7791F" stroke-width="1.5"/>
 <text x="637.0" y="288.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="700" text-anchor="middle" fill="#B7791F">0</text>
 <rect x="678.0" y="270.0" width="74.0" height="26.0" rx="3" fill="#FBF1DC" stroke="#B7791F" stroke-width="1.5"/>
 <text x="715.0" y="288.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="700" text-anchor="middle" fill="#B7791F">0</text>
 <rect x="756.0" y="270.0" width="74.0" height="26.0" rx="3" fill="#FBF1DC" stroke="#B7791F" stroke-width="1.5"/>
 <text x="793.0" y="288.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="700" text-anchor="middle" fill="#B7791F">0</text>
-<text x="520.0" y="341.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="15" font-weight="700" text-anchor="start" fill="#1B4F72">len_x_out, version 2</text>
-<text x="639.0" y="365.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="600" text-anchor="middle" fill="#7FA3C0">ok</text>
-<text x="717.0" y="365.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="600" text-anchor="middle" fill="#7FA3C0">rd_err</text>
-<text x="795.0" y="365.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="600" text-anchor="middle" fill="#7FA3C0">wr_err</text>
-<text x="592.0" y="395.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="500" text-anchor="end" fill="#1C1C1C">zero</text>
-<rect x="600.0" y="375.0" width="74.0" height="26.0" rx="3" fill="#E6F2E7" stroke="#2E7D32" stroke-width="1.5"/>
-<text x="637.0" y="393.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1C1C1C">65</text>
-<rect x="678.0" y="375.0" width="74.0" height="26.0" rx="3" fill="#F4F6F8" stroke="#CBD2D9" stroke-width="1.5"/>
-<text x="715.0" y="393.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="700" text-anchor="middle" fill="#7FA3C0">n/a</text>
-<rect x="756.0" y="375.0" width="74.0" height="26.0" rx="3" fill="#F4F6F8" stroke="#CBD2D9" stroke-width="1.5"/>
-<text x="793.0" y="393.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="700" text-anchor="middle" fill="#7FA3C0">n/a</text>
-<text x="592.0" y="425.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="500" text-anchor="end" fill="#1C1C1C">one</text>
-<rect x="600.0" y="405.0" width="74.0" height="26.0" rx="3" fill="#E6F2E7" stroke="#2E7D32" stroke-width="1.5"/>
-<text x="637.0" y="423.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1C1C1C">73</text>
-<rect x="678.0" y="405.0" width="74.0" height="26.0" rx="3" fill="#E6F2E7" stroke="#2E7D32" stroke-width="1.5"/>
-<text x="715.0" y="423.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1C1C1C">28</text>
-<rect x="756.0" y="405.0" width="74.0" height="26.0" rx="3" fill="#E6F2E7" stroke="#2E7D32" stroke-width="1.5"/>
-<text x="793.0" y="423.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1C1C1C">28</text>
-<text x="592.0" y="455.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="500" text-anchor="end" fill="#1C1C1C">few</text>
-<rect x="600.0" y="435.0" width="74.0" height="26.0" rx="3" fill="#E6F2E7" stroke="#2E7D32" stroke-width="1.5"/>
-<text x="637.0" y="453.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1C1C1C">130</text>
-<rect x="678.0" y="435.0" width="74.0" height="26.0" rx="3" fill="#E6F2E7" stroke="#2E7D32" stroke-width="1.5"/>
-<text x="715.0" y="453.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1C1C1C">53</text>
-<rect x="756.0" y="435.0" width="74.0" height="26.0" rx="3" fill="#E6F2E7" stroke="#2E7D32" stroke-width="1.5"/>
-<text x="793.0" y="453.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1C1C1C">45</text>
-<text x="592.0" y="485.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="500" text-anchor="end" fill="#1C1C1C">many</text>
-<rect x="600.0" y="465.0" width="74.0" height="26.0" rx="3" fill="#E6F2E7" stroke="#2E7D32" stroke-width="1.5"/>
-<text x="637.0" y="483.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1C1C1C">106</text>
-<rect x="678.0" y="465.0" width="74.0" height="26.0" rx="3" fill="#E6F2E7" stroke="#2E7D32" stroke-width="1.5"/>
-<text x="715.0" y="483.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1C1C1C">29</text>
-<rect x="756.0" y="465.0" width="74.0" height="26.0" rx="3" fill="#E6F2E7" stroke="#2E7D32" stroke-width="1.5"/>
-<text x="793.0" y="483.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1C1C1C">43</text>
-<text x="592.0" y="515.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="500" text-anchor="end" fill="#1C1C1C">over</text>
-<rect x="600.0" y="495.0" width="74.0" height="26.0" rx="3" fill="#FBF1DC" stroke="#B7791F" stroke-width="1.5"/>
-<text x="637.0" y="513.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="700" text-anchor="middle" fill="#B7791F">0</text>
-<rect x="678.0" y="495.0" width="74.0" height="26.0" rx="3" fill="#FBF1DC" stroke="#B7791F" stroke-width="1.5"/>
-<text x="715.0" y="513.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="700" text-anchor="middle" fill="#B7791F">0</text>
-<rect x="756.0" y="495.0" width="74.0" height="26.0" rx="3" fill="#FBF1DC" stroke="#B7791F" stroke-width="1.5"/>
-<text x="793.0" y="513.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="700" text-anchor="middle" fill="#B7791F">0</text>
-<text x="520.0" y="560.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="15" font-weight="700" text-anchor="start" fill="#1B4F72">style_cp</text>
-<text x="600.0" y="612.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="500" text-anchor="end" fill="#1C1C1C">v1</text>
-<rect x="608.0" y="594.0" width="90.0" height="26.0" rx="3" fill="#E6F2E7" stroke="#2E7D32" stroke-width="1.5"/>
-<text x="653.0" y="612.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="700" text-anchor="middle" fill="#1C1C1C">40</text>
-<text x="653.0" y="588.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="11" font-weight="500" text-anchor="middle" fill="#7FA3C0">wait_valid</text>
-<rect x="702.0" y="594.0" width="90.0" height="26.0" rx="3" fill="#FBF1DC" stroke="#B7791F" stroke-width="1.5"/>
-<text x="747.0" y="612.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="700" text-anchor="middle" fill="#B7791F">0</text>
-<text x="747.0" y="588.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="11" font-weight="500" text-anchor="middle" fill="#7FA3C0">ready_first</text>
-<rect x="796.0" y="594.0" width="90.0" height="26.0" rx="3" fill="#FBF1DC" stroke="#B7791F" stroke-width="1.5"/>
-<text x="841.0" y="612.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="700" text-anchor="middle" fill="#B7791F">0</text>
-<text x="841.0" y="588.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="11" font-weight="500" text-anchor="middle" fill="#7FA3C0">random</text>
-<rect x="890.0" y="594.0" width="90.0" height="26.0" rx="3" fill="#FBF1DC" stroke="#B7791F" stroke-width="1.5"/>
-<text x="935.0" y="612.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="700" text-anchor="middle" fill="#B7791F">0</text>
-<text x="935.0" y="588.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="11" font-weight="500" text-anchor="middle" fill="#7FA3C0">w_first</text>
-<text x="600.0" y="642.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="500" text-anchor="end" fill="#1C1C1C">v2</text>
-<rect x="608.0" y="624.0" width="90.0" height="26.0" rx="3" fill="#E6F2E7" stroke="#2E7D32" stroke-width="1.5"/>
-<text x="653.0" y="642.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="700" text-anchor="middle" fill="#1C1C1C">138</text>
-<rect x="702.0" y="624.0" width="90.0" height="26.0" rx="3" fill="#E6F2E7" stroke="#2E7D32" stroke-width="1.5"/>
-<text x="747.0" y="642.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="700" text-anchor="middle" fill="#1C1C1C">174</text>
-<rect x="796.0" y="624.0" width="90.0" height="26.0" rx="3" fill="#E6F2E7" stroke="#2E7D32" stroke-width="1.5"/>
-<text x="841.0" y="642.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="700" text-anchor="middle" fill="#1C1C1C">138</text>
-<rect x="890.0" y="624.0" width="90.0" height="26.0" rx="3" fill="#E6F2E7" stroke="#2E7D32" stroke-width="1.5"/>
-<text x="935.0" y="642.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="700" text-anchor="middle" fill="#1C1C1C">150</text>
-<rect x="30" y="560" width="330" height="49" rx="6" fill="#F4F6F8" stroke="#CBD2D9"/>
+<text x="592.0" y="320.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="500" text-anchor="end" fill="#1C1C1C">over</text>
+<rect x="600.0" y="300.0" width="74.0" height="26.0" rx="3" fill="#FBF1DC" stroke="#B7791F" stroke-width="1.5"/>
+<text x="637.0" y="318.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="700" text-anchor="middle" fill="#B7791F">0</text>
+<rect x="678.0" y="300.0" width="74.0" height="26.0" rx="3" fill="#FBF1DC" stroke="#B7791F" stroke-width="1.5"/>
+<text x="715.0" y="318.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="700" text-anchor="middle" fill="#B7791F">0</text>
+<rect x="756.0" y="300.0" width="74.0" height="26.0" rx="3" fill="#FBF1DC" stroke="#B7791F" stroke-width="1.5"/>
+<text x="793.0" y="318.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="700" text-anchor="middle" fill="#B7791F">0</text>
+<text x="520.0" y="356.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="15" font-weight="700" text-anchor="start" fill="#1B4F72">len_x_out, version 2</text>
+<text x="639.0" y="380.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="600" text-anchor="middle" fill="#7FA3C0">ok</text>
+<text x="717.0" y="380.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="600" text-anchor="middle" fill="#7FA3C0">rd_err</text>
+<text x="795.0" y="380.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="600" text-anchor="middle" fill="#7FA3C0">wr_err</text>
+<text x="592.0" y="410.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="500" text-anchor="end" fill="#1C1C1C">zero</text>
+<rect x="600.0" y="390.0" width="74.0" height="26.0" rx="3" fill="#E6F2E7" stroke="#2E7D32" stroke-width="1.5"/>
+<text x="637.0" y="408.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1C1C1C">65</text>
+<rect x="678.0" y="390.0" width="74.0" height="26.0" rx="3" fill="#F4F6F8" stroke="#CBD2D9" stroke-width="1.5"/>
+<text x="715.0" y="408.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="700" text-anchor="middle" fill="#7FA3C0">n/a</text>
+<rect x="756.0" y="390.0" width="74.0" height="26.0" rx="3" fill="#F4F6F8" stroke="#CBD2D9" stroke-width="1.5"/>
+<text x="793.0" y="408.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="700" text-anchor="middle" fill="#7FA3C0">n/a</text>
+<text x="592.0" y="440.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="500" text-anchor="end" fill="#1C1C1C">one</text>
+<rect x="600.0" y="420.0" width="74.0" height="26.0" rx="3" fill="#E6F2E7" stroke="#2E7D32" stroke-width="1.5"/>
+<text x="637.0" y="438.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1C1C1C">73</text>
+<rect x="678.0" y="420.0" width="74.0" height="26.0" rx="3" fill="#E6F2E7" stroke="#2E7D32" stroke-width="1.5"/>
+<text x="715.0" y="438.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1C1C1C">28</text>
+<rect x="756.0" y="420.0" width="74.0" height="26.0" rx="3" fill="#E6F2E7" stroke="#2E7D32" stroke-width="1.5"/>
+<text x="793.0" y="438.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1C1C1C">28</text>
+<text x="592.0" y="470.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="500" text-anchor="end" fill="#1C1C1C">few</text>
+<rect x="600.0" y="450.0" width="74.0" height="26.0" rx="3" fill="#E6F2E7" stroke="#2E7D32" stroke-width="1.5"/>
+<text x="637.0" y="468.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1C1C1C">130</text>
+<rect x="678.0" y="450.0" width="74.0" height="26.0" rx="3" fill="#E6F2E7" stroke="#2E7D32" stroke-width="1.5"/>
+<text x="715.0" y="468.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1C1C1C">53</text>
+<rect x="756.0" y="450.0" width="74.0" height="26.0" rx="3" fill="#E6F2E7" stroke="#2E7D32" stroke-width="1.5"/>
+<text x="793.0" y="468.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1C1C1C">45</text>
+<text x="592.0" y="500.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="500" text-anchor="end" fill="#1C1C1C">many</text>
+<rect x="600.0" y="480.0" width="74.0" height="26.0" rx="3" fill="#E6F2E7" stroke="#2E7D32" stroke-width="1.5"/>
+<text x="637.0" y="498.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1C1C1C">106</text>
+<rect x="678.0" y="480.0" width="74.0" height="26.0" rx="3" fill="#E6F2E7" stroke="#2E7D32" stroke-width="1.5"/>
+<text x="715.0" y="498.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1C1C1C">29</text>
+<rect x="756.0" y="480.0" width="74.0" height="26.0" rx="3" fill="#E6F2E7" stroke="#2E7D32" stroke-width="1.5"/>
+<text x="793.0" y="498.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1C1C1C">43</text>
+<text x="592.0" y="530.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="500" text-anchor="end" fill="#1C1C1C">max</text>
+<rect x="600.0" y="510.0" width="74.0" height="26.0" rx="3" fill="#E6F2E7" stroke="#2E7D32" stroke-width="1.5"/>
+<text x="637.0" y="528.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="700" text-anchor="middle" fill="#1C1C1C">1</text>
+<rect x="678.0" y="510.0" width="74.0" height="26.0" rx="3" fill="#FBF1DC" stroke="#B7791F" stroke-width="1.5"/>
+<text x="715.0" y="528.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="700" text-anchor="middle" fill="#B7791F">0</text>
+<rect x="756.0" y="510.0" width="74.0" height="26.0" rx="3" fill="#FBF1DC" stroke="#B7791F" stroke-width="1.5"/>
+<text x="793.0" y="528.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="700" text-anchor="middle" fill="#B7791F">0</text>
+<text x="592.0" y="560.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="500" text-anchor="end" fill="#1C1C1C">over</text>
+<rect x="600.0" y="540.0" width="74.0" height="26.0" rx="3" fill="#FBF1DC" stroke="#B7791F" stroke-width="1.5"/>
+<text x="637.0" y="558.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="700" text-anchor="middle" fill="#B7791F">0</text>
+<rect x="678.0" y="540.0" width="74.0" height="26.0" rx="3" fill="#FBF1DC" stroke="#B7791F" stroke-width="1.5"/>
+<text x="715.0" y="558.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="700" text-anchor="middle" fill="#B7791F">0</text>
+<rect x="756.0" y="540.0" width="74.0" height="26.0" rx="3" fill="#FBF1DC" stroke="#B7791F" stroke-width="1.5"/>
+<text x="793.0" y="558.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="700" text-anchor="middle" fill="#B7791F">0</text>
+<text x="520.0" y="600.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="15" font-weight="700" text-anchor="start" fill="#1B4F72">style_cp</text>
+<text x="600.0" y="652.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="500" text-anchor="end" fill="#1C1C1C">v1</text>
+<rect x="608.0" y="634.0" width="90.0" height="26.0" rx="3" fill="#E6F2E7" stroke="#2E7D32" stroke-width="1.5"/>
+<text x="653.0" y="652.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="700" text-anchor="middle" fill="#1C1C1C">40</text>
+<text x="653.0" y="628.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="11" font-weight="500" text-anchor="middle" fill="#7FA3C0">wait_valid</text>
+<rect x="702.0" y="634.0" width="90.0" height="26.0" rx="3" fill="#FBF1DC" stroke="#B7791F" stroke-width="1.5"/>
+<text x="747.0" y="652.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="700" text-anchor="middle" fill="#B7791F">0</text>
+<text x="747.0" y="628.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="11" font-weight="500" text-anchor="middle" fill="#7FA3C0">ready_first</text>
+<rect x="796.0" y="634.0" width="90.0" height="26.0" rx="3" fill="#FBF1DC" stroke="#B7791F" stroke-width="1.5"/>
+<text x="841.0" y="652.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="700" text-anchor="middle" fill="#B7791F">0</text>
+<text x="841.0" y="628.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="11" font-weight="500" text-anchor="middle" fill="#7FA3C0">random</text>
+<rect x="890.0" y="634.0" width="90.0" height="26.0" rx="3" fill="#FBF1DC" stroke="#B7791F" stroke-width="1.5"/>
+<text x="935.0" y="652.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="700" text-anchor="middle" fill="#B7791F">0</text>
+<text x="935.0" y="628.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="11" font-weight="500" text-anchor="middle" fill="#7FA3C0">w_first</text>
+<text x="600.0" y="682.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="500" text-anchor="end" fill="#1C1C1C">v2</text>
+<rect x="608.0" y="664.0" width="90.0" height="26.0" rx="3" fill="#E6F2E7" stroke="#2E7D32" stroke-width="1.5"/>
+<text x="653.0" y="682.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="700" text-anchor="middle" fill="#1C1C1C">139</text>
+<rect x="702.0" y="664.0" width="90.0" height="26.0" rx="3" fill="#E6F2E7" stroke="#2E7D32" stroke-width="1.5"/>
+<text x="747.0" y="682.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="700" text-anchor="middle" fill="#1C1C1C">174</text>
+<rect x="796.0" y="664.0" width="90.0" height="26.0" rx="3" fill="#E6F2E7" stroke="#2E7D32" stroke-width="1.5"/>
+<text x="841.0" y="682.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="700" text-anchor="middle" fill="#1C1C1C">138</text>
+<rect x="890.0" y="664.0" width="90.0" height="26.0" rx="3" fill="#E6F2E7" stroke="#2E7D32" stroke-width="1.5"/>
+<text x="935.0" y="682.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="700" text-anchor="middle" fill="#1C1C1C">150</text>
+<rect x="30" y="560" width="330" height="84" rx="6" fill="#F4F6F8" stroke="#CBD2D9"/>
 <text x="40" y="581.1" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="400" text-anchor="start" fill="#1C1C1C">zero x err: no word can fail (n/a)</text>
-<text x="40" y="598.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="400" text-anchor="start" fill="#1C1C1C">over: no test asks for 65536</text>
+<text x="40" y="598.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="400" text-anchor="start" fill="#1C1C1C">max: one directed copy, version 2 only</text>
+<text x="40" y="614.9" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="400" text-anchor="start" fill="#1C1C1C">over: only the len64k finding asks,</text>
+<text x="40" y="631.8" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="400" text-anchor="start" fill="#1C1C1C">and it samples no coverage</text>
 </svg>

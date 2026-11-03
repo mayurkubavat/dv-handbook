@@ -15,20 +15,20 @@
   1130.00ns INFO     test                               refused write changes nothing    ok
   1130.00ns INFO     cocotb.regression                  test_dma_v2.registers passed
   1130.00ns INFO     cocotb.regression                  running test_dma_v2.random_rounds (3/3)
- 23745.00ns INFO     test                               dma : coverage=19, size=21
- 23745.00ns INFO     test                                  dma.len : coverage=4, size=4
- 23745.00ns INFO     test                                  dma.len_x_outcome : coverage=10, size=12
- 23745.00ns INFO     test                                  dma.outcome : coverage=3, size=3
- 23745.00ns INFO     test                                  dma.style : coverage=2, size=2
- 23745.00ns INFO     test                               len x outcome holes: zeroxrd_err, zeroxwr_err
- 23745.00ns INFO     test                               verdict: 30 rounds, 0 channel failures
- 23745.00ns INFO     cocotb.regression                  test_dma_v2.random_rounds passed
- 23745.00ns INFO     cocotb.regression                  **************************************************************************************
+ 31395.00ns INFO     test                               dma : coverage=19, size=21
+ 31395.00ns INFO     test                                  dma.len : coverage=4, size=4
+ 31395.00ns INFO     test                                  dma.len_x_outcome : coverage=10, size=12
+ 31395.00ns INFO     test                                  dma.outcome : coverage=3, size=3
+ 31395.00ns INFO     test                                  dma.style : coverage=2, size=2
+ 31395.00ns INFO     test                               len x outcome holes: zeroxrd_err, zeroxwr_err
+ 31395.00ns INFO     test                               verdict: 30 rounds, 0 channel failures
+ 31395.00ns INFO     cocotb.regression                  test_dma_v2.random_rounds passed
+ 31395.00ns INFO     cocotb.regression                  **************************************************************************************
                                                         ** TEST                          STATUS  SIM TIME (ns)  REAL TIME (s)  RATIO (ns/s) **
                                                         **************************************************************************************
                                                         ** test_dma_v2.directed           PASS         865.00  **
                                                         ** test_dma_v2.registers          PASS         265.00  **
-                                                        ** test_dma_v2.random_rounds      PASS       22615.00  **
+                                                        ** test_dma_v2.random_rounds      PASS       30265.00  **
                                                         **************************************************************************************
-                                                        ** TESTS=3 PASS=3 FAIL=0 SKIP=0              23745.00  **
+                                                        ** TESTS=3 PASS=3 FAIL=0 SKIP=0              31395.00  **
                                                         **************************************************************************************
