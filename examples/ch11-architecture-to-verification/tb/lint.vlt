@@ -1,0 +1,19 @@
+`verilator_config
+// lint.vlt -- the waivers this testbench needs on Verilator 5.052,
+// each matched as narrowly as the tool allows.
+//
+// Interface signals are driven through virtual handles from classes,
+// which lint cannot follow, so each reads as undriven.
+lint_off -rule UNDRIVEN -file "*tb/dma_ifs.sv"
+// Every covergroup trips UNDRIVEN on an internal __Vint signal, and
+// each argument of `with function sample` is reported as hiding itself.
+lint_off -rule UNDRIVEN -file "*" -match "*__Vint*"
+lint_off -rule VARHIDDEN -file "*tb/dma_tb_pkg.sv" -match "*'words'*"
+lint_off -rule VARHIDDEN -file "*tb/dma_tb_pkg.sv" -match "*'out'*"
+lint_off -rule VARHIDDEN -file "*tb/dma_tb_pkg.sv" -match "*'at'*"
+lint_off -rule VARHIDDEN -file "*tb/dma_tb_pkg.sv" -match "*'how'*"
+// The shared package is only partly used by each design.
+lint_off -rule UNUSEDPARAM -file "*rtl/dma_regs_pkg.sv"
+// Version 1 is kept as found; its own lint is the v1-lint example.
+lint_off -rule MULTIDRIVENPROC -file "*rtl/dma_v1.v"
+lint_off -rule UNUSEDPARAM -file "*rtl/dma_v1.v"

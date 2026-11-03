@@ -1,0 +1,26 @@
+--- test len64k, slave WAIT_VALID
+  FAIL: ch0: 65536 writes never seen, next 00002000
+  FAIL: ch0: 0 reads seen, 65536 owed
+  65536 words 00001000 -> 00002000: STATUS 2, 0 writes, 14 cycles
+finding len64k: XFER_LEN=65536 moved 0 words
+result: FAIL, 2 checks failed
+--- test busy_write, slave WAIT_VALID
+finding busy_write: write while busy gave PSLVERR=0, DST_ADDR reads 00002000 afterwards
+result: PASS
+--- test apb_read, slave WAIT_VALID
+  read SRC_ADDR (holds 11111111): PRDATA 00000000
+  FAIL: SRC_ADDR read back wrong
+  read DST_ADDR (holds 22222222): PRDATA 11111111
+  FAIL: DST_ADDR read back wrong
+  read XFER_LEN (holds 00000000): PRDATA 22222222
+finding apb_read: each read returns the previous one's data
+result: FAIL, 2 checks failed
+--- test ready_first, slave READY_FIRST
+  FAIL: watchdog: no IRQ 2000 cycles after start, 0 AR handshakes so far
+finding ready_first: ARVALID high for 0 cycles, 0 AR, 0 AW, 0 W, 0 B handshakes
+result: FAIL, 1 checks failed
+--- test split_aw_w, slave W_FIRST
+  FAIL: watchdog: no IRQ 2000 cycles after start, 1 AR handshakes so far
+finding split_aw_w: ARVALID high for 2 cycles, 1 AR, 1 AW, 1 W, 0 B handshakes
+result: FAIL, 1 checks failed
+verdict: 4 of 5 questions fail a check written from the spec

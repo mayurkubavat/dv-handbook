@@ -1,6 +1,6 @@
 {
-  "checked": "2026-10-02T15:45:30Z",
-  "pass": 58,
+  "checked": "2026-11-03T05:49:45Z",
+  "pass": 68,
   "fail": 0,
   "skipped_run": 2,
   "examples": [
@@ -405,6 +405,76 @@
     },
     {
       "dir": "examples/ch08-functional-coverage/support-matrix",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch11-architecture-to-verification/regs",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch11-architecture-to-verification/throughput",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch11-architecture-to-verification/v1-directed",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch11-architecture-to-verification/v1-findings",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch11-architecture-to-verification/v1-lint",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch11-architecture-to-verification/v1-random",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch11-architecture-to-verification/v2-cocotb",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch11-architecture-to-verification/v2-tests",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch11-architecture-to-verification/vplan",
+      "lint": "pass",
+      "run": "pass (failed as expected)",
+      "requires": "",
+      "expect": "fail"
+    },
+    {
+      "dir": "examples/ch11-architecture-to-verification/waves",
       "lint": "pass",
       "run": "pass",
       "requires": "",

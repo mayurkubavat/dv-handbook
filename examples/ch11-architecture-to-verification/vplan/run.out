@@ -1,0 +1,21 @@
+Verification plan report: dma (revision 1)
+Evidence: test results only; coverage and closure not measured.
+item      priority state         feature
+------------------------------------------------------------
+DMA-001   must     tests pass    memory copy
+DMA-002   must     tests pass    two channels at once
+DMA-003   must     tests pass    precise errors
+DMA-004   must     tests pass    register access
+DMA-005   must     tests pass    busy protection
+DMA-006   must     tests pass    interrupt and write-one-to-clear
+DMA-007   must     tests pass    AXI handshake rules
+DMA-008   should   tests pass    throughput target
+DMA-009   must     no test       maximum length
+DMA-101   must     tests pass    round-robin arbitration
+DMA-102   must     tests pass    data FIFO full
+DMA-103   must     tests pass    error with words queued
+DMA-104   should   no test       reset during a transfer
+------------------------------------------------------------
+tests pass      11 of 13
+no test          2 of 13
+must-have items without a passing test: DMA-009

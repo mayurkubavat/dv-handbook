@@ -1,0 +1,16 @@
+--- test random, slave WAIT_VALID
+AXI handshakes: AR 563, R 563, AW 553, W 553, B 553
+result: PASS
+len_cp: zero=5 one=8 few=12 many=15 over=0
+out_cp: ok=22 rd_err=10 wr_err=8
+pos_cp: first=11 middle=4 last=3
+style_cp: wait_valid=40 ready_first=0 random=0 w_first=0
+len_x_out: few_x_ok=5 few_x_rd_err=4 few_x_wr_err=3 many_x_ok=9 
+many_x_rd_err=5 many_x_wr_err=1 one_x_ok=3 one_x_rd_err=1 one_x_wr_err=4 
+over_x_ok=0 over_x_rd_err=0 over_x_wr_err=0 zero_x_ok=5 zero_x_rd_err=0 
+zero_x_wr_err=0
+st_cp: start=35 idle=631 ar_wait=1126 ar_done=563 r_wait=866 r_ok=553 
+r_err=10 aw_wait=1106 aw_done=553 b_wait=831 next_word=528 last_or_err=25
+zero bins: len_cp.over style_cp.ready_first style_cp.random style_cp.w_first 
+len_x_out.over_x_ok len_x_out.over_x_rd_err len_x_out.over_x_wr_err 
+len_x_out.zero_x_rd_err len_x_out.zero_x_wr_err
