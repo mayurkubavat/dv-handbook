@@ -1,0 +1,203 @@
+# dma_plan.yaml -- the verification plan for version 2 of the DMA, in
+# the planning chapter's format. Items DMA-0xx come from the
+# architecture spec and are black-box: a user of the DMA could observe
+# them. Items DMA-1xx come from the microarchitecture spec and are
+# white-box: they name internal state the architecture never mentions.
+# `covers` names the covergroup bins that measure each item, as the
+# coverage database spells them. The tests column names example
+# directories under examples/, which the report looks up in
+# examples/status.json.
+
+block: dma
+spec: "Two-channel DMA, APB3 registers, AXI4-Lite master (version 2)"
+owner: verification
+revision: 2
+
+items:
+  - id: DMA-001
+    source: architecture
+    feature: memory copy
+    requirement: >-
+      A started channel shall copy XFER_LEN words from SRC_ADDR to
+      DST_ADDR, in order, and then set DONE.
+    stimulus: "Lengths 0, 1, 2 to 15 and 16 to 48 words on each channel."
+    checking: "Scoreboard compares every write with the model's."
+    coverage: "len_cp: zero, one, few, many."
+    covers: [xfer_cg.len_cp]
+    closure: "Tests pass; every len_cp bin but over hit (over is v1 only)."
+    priority: must
+    tests: [ch11-architecture-to-verification/v2-tests,
+            ch11-architecture-to-verification/v2-cocotb]
+
+  - id: DMA-002
+    source: architecture
+    feature: two channels at once
+    requirement: >-
+      Both channels shall run concurrently and each shall complete as if
+      it ran alone.
+    stimulus: "Both channels started back to back every random round."
+    checking: "Per-channel scoreboard queues; per-channel STATUS."
+    coverage: "both_cp.both."
+    covers: [uarch_cg.both_cp]
+    closure: "Tests pass; both_cp.both hit."
+    priority: must
+    tests: [ch11-architecture-to-verification/v2-tests]
+
+  - id: DMA-003
+    source: architecture
+    feature: precise errors
+    requirement: >-
+      On a non-OKAY read or write response, every word before the failing
+      one shall be written, no word after it shall be, and the channel
+      shall end with DONE and ERROR set.
+    stimulus: "SLVERR injected on the first, a middle and the last word."
+    checking: "Model stops its owed writes at the error; STATUS checked."
+    coverage: "out_cp x pos_cp; len_x_out."
+    covers: [xfer_cg.out_cp, xfer_cg.pos_cp, xfer_cg.len_x_out]
+    closure: "Tests pass; zero_x_rd_err and zero_x_wr_err excluded: a
+      zero-length copy has no word to fail."
+    priority: must
+    tests: [ch11-architecture-to-verification/v2-tests,
+            ch11-architecture-to-verification/v2-cocotb]
+
+  - id: DMA-004
+    source: architecture
+    feature: register access
+    requirement: >-
+      PRDATA and PSLVERR shall be valid in the APB access phase; reads
+      shall return what was written, with SRC and DST bits 1:0 and
+      XFER_LEN bits 31:16 reading zero.
+    stimulus: "Write then read each field; read during a transfer."
+    checking: "Direct comparison in the register test."
+    coverage: "none: a directed test, every rule is a check."
+    closure: "Test passes."
+    priority: must
+    tests: [ch11-architecture-to-verification/v2-tests,
+            ch11-architecture-to-verification/v2-cocotb]
+
+  - id: DMA-005
+    source: architecture
+    feature: busy protection
+    requirement: >-
+      A write to SRC, DST, XFER_LEN or CTRL of a busy channel shall be
+      refused with PSLVERR and change nothing; the other channel stays
+      writable.
+    stimulus: "Writes to the busy channel and to the idle one."
+    checking: "PSLVERR and read-back compared against the rule."
+    coverage: "none: a directed test."
+    closure: "Test passes."
+    priority: must
+    tests: [ch11-architecture-to-verification/v2-tests]
+
+  - id: DMA-006
+    source: architecture
+    feature: interrupt and write-one-to-clear
+    requirement: >-
+      IRQ shall be high while a channel with IRQ_EN has DONE or ERROR
+      set, and writing 1 to those bits shall clear them and IRQ.
+    stimulus: "Every transfer ends with a W1C of STATUS."
+    checking: "STATUS and IRQ read after the clear."
+    coverage: "none: checked on every transfer."
+    closure: "Test passes."
+    priority: must
+    tests: [ch11-architecture-to-verification/v2-tests]
+
+  - id: DMA-007
+    source: architecture
+    feature: AXI handshake rules
+    requirement: >-
+      The DMA shall hold each VALID and its payload until READY, and
+      shall complete the address and data handshakes of a write on
+      whichever edges the slave chooses, including READY before VALID.
+    stimulus: "Slave ready styles WAIT_VALID, READY_FIRST, RANDOM, W_FIRST."
+    checking: "Monitor's stability check; watchdog on every transfer."
+    coverage: "style_cp: all four bins."
+    covers: [xfer_cg.style_cp]
+    closure: "Tests pass; every style_cp bin hit."
+    priority: must
+    tests: [ch11-architecture-to-verification/v2-tests]
+
+  - id: DMA-008
+    source: architecture
+    feature: throughput target
+    requirement: >-
+      A 64-word copy shall take at most 4.5 cycles per word with the
+      WAIT_VALID slave and no response delay.
+    stimulus: "One 64-word copy."
+    checking: "Cycles from the first ARVALID to the last B, divided by 64."
+    coverage: "none: a measurement."
+    closure: "Measured figure under the target."
+    priority: should
+    tests: [ch11-architecture-to-verification/throughput]
+
+  - id: DMA-009
+    source: architecture
+    feature: maximum length
+    requirement: "A transfer of 65535 words shall complete."
+    stimulus: "One 65535-word copy."
+    checking: "Scoreboard; STATUS."
+    coverage: "len_cp.max, added in revision 2."
+    covers: [xfer_cg.len_cp]
+    closure: "Test passes; len_cp.max hit."
+    priority: must
+    tests: [ch11-architecture-to-verification/v2-tests]
+
+  - id: DMA-101
+    source: microarchitecture
+    feature: round-robin arbitration
+    requirement: >-
+      While both channels are running and owe reads, the read engine
+      shall not grant the same channel twice in a row.
+    stimulus: "Both channels running in every random round."
+    checking: "Arbitration checker on the order of read grants."
+    coverage: >-
+      fifo_x_both: every bin, so arbitration is exercised at every FIFO
+      occupancy; the checker, not the bin, judges the order.
+    covers: [uarch_cg.fifo_x_both]
+    closure: "Tests pass; every fifo_x_both bin hit."
+    priority: must
+    tests: [ch11-architecture-to-verification/v2-tests]
+
+  - id: DMA-102
+    source: microarchitecture
+    feature: data FIFO full
+    requirement: >-
+      No read shall be issued while the FIFO holds DEPTH words, and no
+      word shall be lost or duplicated at full.
+    stimulus: "Write-side stalls from the RANDOM and W_FIRST slaves."
+    checking: >-
+      A check on the falling edge that no read starts at a full FIFO;
+      the scoreboard: every owed write seen once.
+    coverage: "fifo_cp.full."
+    covers: [uarch_cg.fifo_cp]
+    closure: "Tests pass; fifo_cp.full hit."
+    priority: must
+    tests: [ch11-architecture-to-verification/v2-tests]
+
+  - id: DMA-103
+    source: microarchitecture
+    feature: error with words queued
+    requirement: >-
+      A read error that finds earlier words of its channel in the FIFO
+      shall still let them be written (DMA-003), and a write error shall
+      drop them.
+    stimulus: "Random errors with write-side backpressure."
+    checking: "Scoreboard against the precise-error model."
+    coverage: "rd_err_cp.queued: one hit per such read error."
+    covers: [uarch_cg.rd_err_cp]
+    closure: "Tests pass; rd_err_cp.queued hit."
+    priority: must
+    tests: [ch11-architecture-to-verification/v2-tests]
+
+  - id: DMA-104
+    source: microarchitecture
+    feature: reset during a transfer
+    requirement: >-
+      PRESETn asserted mid-transfer shall return both engines, the FIFO
+      and every channel register to reset values.
+    stimulus: "Reset at a random cycle of a running transfer."
+    checking: "Register reads after reset; no AXI VALID high."
+    coverage: "a reset-while-busy bin, not yet written."
+    closure: "Test passes; bin hit."
+    priority: should
+    tests: []

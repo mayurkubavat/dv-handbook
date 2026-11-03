@@ -1,0 +1,100 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 610" width="1000" height="610" role="img" aria-label="Waveform of version 2&#x27;s abort test: three reads, the third answered with SLVERR, two writes, abort rising, busy falling and err rising">
+<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#7FA3C0"/></marker><marker id="ahj" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#5B3E8E"/></marker><marker id="ahd" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#1B4F72"/></marker><marker id="ahc" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#B7791F"/></marker><marker id="ahg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#1C1C1C"/></marker><pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="6" stroke="#CBD2D9" stroke-width="2"/></pattern></defs>
+<rect width="1000" height="610" fill="white"/>
+<text x="30" y="40.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="21" font-weight="700" text-anchor="start" fill="#1B4F72">Version 2 meets a read error on word 2 of 4</text>
+<text x="30" y="64.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="400" text-anchor="start" fill="#1C1C1C">Words 0 and 1 reach the destination; nothing after the failing read is written; the channel ends with ERROR.</text>
+<line x1="130.0" y1="116.0" x2="130.0" y2="510.0" stroke="#E3E7EB" stroke-width="1"/>
+<line x1="182.0" y1="116.0" x2="182.0" y2="510.0" stroke="#E3E7EB" stroke-width="1"/>
+<line x1="234.0" y1="116.0" x2="234.0" y2="510.0" stroke="#E3E7EB" stroke-width="1"/>
+<line x1="286.0" y1="116.0" x2="286.0" y2="510.0" stroke="#E3E7EB" stroke-width="1"/>
+<line x1="338.0" y1="116.0" x2="338.0" y2="510.0" stroke="#E3E7EB" stroke-width="1"/>
+<line x1="390.0" y1="116.0" x2="390.0" y2="510.0" stroke="#E3E7EB" stroke-width="1"/>
+<line x1="442.0" y1="116.0" x2="442.0" y2="510.0" stroke="#E3E7EB" stroke-width="1"/>
+<line x1="494.0" y1="116.0" x2="494.0" y2="510.0" stroke="#E3E7EB" stroke-width="1"/>
+<line x1="546.0" y1="116.0" x2="546.0" y2="510.0" stroke="#E3E7EB" stroke-width="1"/>
+<line x1="598.0" y1="116.0" x2="598.0" y2="510.0" stroke="#E3E7EB" stroke-width="1"/>
+<line x1="650.0" y1="116.0" x2="650.0" y2="510.0" stroke="#E3E7EB" stroke-width="1"/>
+<line x1="702.0" y1="116.0" x2="702.0" y2="510.0" stroke="#E3E7EB" stroke-width="1"/>
+<line x1="754.0" y1="116.0" x2="754.0" y2="510.0" stroke="#E3E7EB" stroke-width="1"/>
+<line x1="806.0" y1="116.0" x2="806.0" y2="510.0" stroke="#E3E7EB" stroke-width="1"/>
+<line x1="858.0" y1="116.0" x2="858.0" y2="510.0" stroke="#E3E7EB" stroke-width="1"/>
+<line x1="910.0" y1="116.0" x2="910.0" y2="510.0" stroke="#E3E7EB" stroke-width="1"/>
+<line x1="962.0" y1="116.0" x2="962.0" y2="510.0" stroke="#E3E7EB" stroke-width="1"/>
+<text x="208.0" y="110.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="10" font-weight="400" text-anchor="middle" fill="#7FA3C0">12</text>
+<text x="312.0" y="110.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="10" font-weight="400" text-anchor="middle" fill="#7FA3C0">14</text>
+<text x="416.0" y="110.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="10" font-weight="400" text-anchor="middle" fill="#7FA3C0">16</text>
+<text x="520.0" y="110.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="10" font-weight="400" text-anchor="middle" fill="#7FA3C0">18</text>
+<text x="624.0" y="110.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="10" font-weight="400" text-anchor="middle" fill="#7FA3C0">20</text>
+<text x="728.0" y="110.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="10" font-weight="400" text-anchor="middle" fill="#7FA3C0">22</text>
+<text x="832.0" y="110.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="10" font-weight="400" text-anchor="middle" fill="#7FA3C0">24</text>
+<text x="936.0" y="110.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="10" font-weight="400" text-anchor="middle" fill="#7FA3C0">26</text>
+<text x="120.0" y="140.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" font-weight="600" text-anchor="end" fill="#1C1C1C">clk</text>
+<path d="M130.0,145 L130.0,125 L156.0,125 L156.0,145 L182.0,145 M182.0,145 L182.0,125 L208.0,125 L208.0,145 L234.0,145 M234.0,145 L234.0,125 L260.0,125 L260.0,145 L286.0,145 M286.0,145 L286.0,125 L312.0,125 L312.0,145 L338.0,145 M338.0,145 L338.0,125 L364.0,125 L364.0,145 L390.0,145 M390.0,145 L390.0,125 L416.0,125 L416.0,145 L442.0,145 M442.0,145 L442.0,125 L468.0,125 L468.0,145 L494.0,145 M494.0,145 L494.0,125 L520.0,125 L520.0,145 L546.0,145 M546.0,145 L546.0,125 L572.0,125 L572.0,145 L598.0,145 M598.0,145 L598.0,125 L624.0,125 L624.0,145 L650.0,145 M650.0,145 L650.0,125 L676.0,125 L676.0,145 L702.0,145 M702.0,145 L702.0,125 L728.0,125 L728.0,145 L754.0,145 M754.0,145 L754.0,125 L780.0,125 L780.0,145 L806.0,145 M806.0,145 L806.0,125 L832.0,125 L832.0,145 L858.0,145 M858.0,145 L858.0,125 L884.0,125 L884.0,145 L910.0,145 M910.0,145 L910.0,125 L936.0,125 L936.0,145 L962.0,145 " fill="none" stroke="#7FA3C0" stroke-width="1.3"/>
+<text x="120.0" y="170.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" font-weight="600" text-anchor="end" fill="#1C1C1C">ARVALID</text>
+<path d="M130.0,175.0 L182.0,175.0 L182.0,175.0 L182.0,155.0 L286.0,155.0 L286.0,155.0 L286.0,175.0 L390.0,175.0 L390.0,175.0 L390.0,155.0 L494.0,155.0 L494.0,155.0 L494.0,175.0 L598.0,175.0 L598.0,175.0 L598.0,155.0 L702.0,155.0 L702.0,155.0 L702.0,175.0 L962.0,175.0" fill="none" stroke="#1B4F72" stroke-width="2"/>
+<text x="120.0" y="200.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" font-weight="600" text-anchor="end" fill="#1C1C1C">ARREADY</text>
+<path d="M130.0,205.0 L234.0,205.0 L234.0,205.0 L234.0,185.0 L286.0,185.0 L286.0,185.0 L286.0,205.0 L442.0,205.0 L442.0,205.0 L442.0,185.0 L494.0,185.0 L494.0,185.0 L494.0,205.0 L650.0,205.0 L650.0,205.0 L650.0,185.0 L702.0,185.0 L702.0,185.0 L702.0,205.0 L962.0,205.0" fill="none" stroke="#1B4F72" stroke-width="2"/>
+<text x="120.0" y="230.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" font-weight="600" text-anchor="end" fill="#1C1C1C">ARADDR</text>
+<path d="M130.0,225.0 L134.0,215 L178.0,215 L182.0,225.0 L178.0,235 L134.0,235 Z" fill="white" stroke="#1B4F72" stroke-width="1.6"/>
+<text x="156.0" y="229.5" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="500" text-anchor="middle" fill="#1C1C1C">0</text>
+<path d="M182.0,225.0 L186.0,215 L386.0,215 L390.0,225.0 L386.0,235 L186.0,235 Z" fill="white" stroke="#1B4F72" stroke-width="1.6"/>
+<text x="286.0" y="229.5" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="500" text-anchor="middle" fill="#1C1C1C">1000</text>
+<path d="M390.0,225.0 L394.0,215 L594.0,215 L598.0,225.0 L594.0,235 L394.0,235 Z" fill="white" stroke="#1B4F72" stroke-width="1.6"/>
+<text x="494.0" y="229.5" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="500" text-anchor="middle" fill="#1C1C1C">1004</text>
+<path d="M598.0,225.0 L602.0,215 L958.0,215 L962.0,225.0 L958.0,235 L602.0,235 Z" fill="white" stroke="#1B4F72" stroke-width="1.6"/>
+<text x="780.0" y="229.5" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="500" text-anchor="middle" fill="#1C1C1C">1008</text>
+<text x="120.0" y="260.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" font-weight="600" text-anchor="end" fill="#1C1C1C">RVALID</text>
+<path d="M130.0,265.0 L286.0,265.0 L286.0,265.0 L286.0,245.0 L338.0,245.0 L338.0,245.0 L338.0,265.0 L494.0,265.0 L494.0,265.0 L494.0,245.0 L546.0,245.0 L546.0,245.0 L546.0,265.0 L702.0,265.0 L702.0,265.0 L702.0,245.0 L754.0,245.0 L754.0,245.0 L754.0,265.0 L962.0,265.0" fill="none" stroke="#1B4F72" stroke-width="2"/>
+<rect x="24.0" y="272.0" width="944.0" height="26.0" rx="4" fill="#FBF1DC" stroke="#FBF1DC" stroke-width="0"/>
+<text x="120.0" y="290.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" font-weight="600" text-anchor="end" fill="#1C1C1C">RRESP</text>
+<path d="M130.0,285.0 L134.0,275 L698.0,275 L702.0,285.0 L698.0,295 L134.0,295 Z" fill="white" stroke="#1B4F72" stroke-width="1.6"/>
+<text x="416.0" y="289.5" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="500" text-anchor="middle" fill="#1C1C1C">0</text>
+<path d="M702.0,285.0 L706.0,275 L958.0,275 L962.0,285.0 L958.0,295 L706.0,295 Z" fill="white" stroke="#1B4F72" stroke-width="1.6"/>
+<text x="832.0" y="289.5" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="500" text-anchor="middle" fill="#1C1C1C">2</text>
+<text x="120.0" y="320.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" font-weight="600" text-anchor="end" fill="#1C1C1C">f_cnt</text>
+<path d="M130.0,315.0 L134.0,305 L334.0,305 L338.0,315.0 L334.0,325 L134.0,325 Z" fill="white" stroke="#1B4F72" stroke-width="1.6"/>
+<text x="234.0" y="319.5" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="500" text-anchor="middle" fill="#1C1C1C">0</text>
+<path d="M338.0,315.0 L342.0,305 L386.0,305 L390.0,315.0 L386.0,325 L342.0,325 Z" fill="white" stroke="#1B4F72" stroke-width="1.6"/>
+<text x="364.0" y="319.5" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="500" text-anchor="middle" fill="#1C1C1C">1</text>
+<path d="M390.0,315.0 L394.0,305 L542.0,305 L546.0,315.0 L542.0,325 L394.0,325 Z" fill="white" stroke="#1B4F72" stroke-width="1.6"/>
+<text x="468.0" y="319.5" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="500" text-anchor="middle" fill="#1C1C1C">0</text>
+<path d="M546.0,315.0 L550.0,305 L594.0,305 L598.0,315.0 L594.0,325 L550.0,325 Z" fill="white" stroke="#1B4F72" stroke-width="1.6"/>
+<text x="572.0" y="319.5" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="500" text-anchor="middle" fill="#1C1C1C">1</text>
+<path d="M598.0,315.0 L602.0,305 L958.0,305 L962.0,315.0 L958.0,325 L602.0,325 Z" fill="white" stroke="#1B4F72" stroke-width="1.6"/>
+<text x="780.0" y="319.5" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="500" text-anchor="middle" fill="#1C1C1C">0</text>
+<text x="120.0" y="350.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" font-weight="600" text-anchor="end" fill="#1C1C1C">AWVALID</text>
+<path d="M130.0,355.0 L390.0,355.0 L390.0,355.0 L390.0,335.0 L494.0,335.0 L494.0,335.0 L494.0,355.0 L598.0,355.0 L598.0,355.0 L598.0,335.0 L702.0,335.0 L702.0,335.0 L702.0,355.0 L962.0,355.0" fill="none" stroke="#1B4F72" stroke-width="2"/>
+<text x="120.0" y="380.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" font-weight="600" text-anchor="end" fill="#1C1C1C">AWADDR</text>
+<path d="M130.0,375.0 L134.0,365 L386.0,365 L390.0,375.0 L386.0,385 L134.0,385 Z" fill="white" stroke="#1B4F72" stroke-width="1.6"/>
+<text x="260.0" y="379.5" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="500" text-anchor="middle" fill="#1C1C1C">0</text>
+<path d="M390.0,375.0 L394.0,365 L594.0,365 L598.0,375.0 L594.0,385 L394.0,385 Z" fill="white" stroke="#1B4F72" stroke-width="1.6"/>
+<text x="494.0" y="379.5" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="500" text-anchor="middle" fill="#1C1C1C">8000</text>
+<path d="M598.0,375.0 L602.0,365 L958.0,365 L962.0,375.0 L958.0,385 L602.0,385 Z" fill="white" stroke="#1B4F72" stroke-width="1.6"/>
+<text x="780.0" y="379.5" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="500" text-anchor="middle" fill="#1C1C1C">8004</text>
+<text x="120.0" y="410.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" font-weight="600" text-anchor="end" fill="#1C1C1C">BVALID</text>
+<path d="M130.0,415.0 L494.0,415.0 L494.0,415.0 L494.0,395.0 L546.0,395.0 L546.0,395.0 L546.0,415.0 L702.0,415.0 L702.0,415.0 L702.0,395.0 L754.0,395.0 L754.0,395.0 L754.0,415.0 L962.0,415.0" fill="none" stroke="#1B4F72" stroke-width="2"/>
+<rect x="24.0" y="422.0" width="944.0" height="26.0" rx="4" fill="#FBF1DC" stroke="#FBF1DC" stroke-width="0"/>
+<text x="120.0" y="440.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" font-weight="600" text-anchor="end" fill="#1C1C1C">abort</text>
+<path d="M130.0,435.0 L134.0,425 L750.0,425 L754.0,435.0 L750.0,445 L134.0,445 Z" fill="white" stroke="#1B4F72" stroke-width="1.6"/>
+<text x="442.0" y="439.5" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="500" text-anchor="middle" fill="#1C1C1C">0</text>
+<path d="M754.0,435.0 L758.0,425 L802.0,425 L806.0,435.0 L802.0,445 L758.0,445 Z" fill="white" stroke="#1B4F72" stroke-width="1.6"/>
+<text x="780.0" y="439.5" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="500" text-anchor="middle" fill="#1C1C1C">1</text>
+<path d="M806.0,435.0 L810.0,425 L958.0,425 L962.0,435.0 L958.0,445 L810.0,445 Z" fill="white" stroke="#1B4F72" stroke-width="1.6"/>
+<text x="884.0" y="439.5" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="500" text-anchor="middle" fill="#1C1C1C">0</text>
+<text x="120.0" y="470.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" font-weight="600" text-anchor="end" fill="#1C1C1C">busy</text>
+<path d="M130.0,465.0 L134.0,455 L802.0,455 L806.0,465.0 L802.0,475 L134.0,475 Z" fill="white" stroke="#1B4F72" stroke-width="1.6"/>
+<text x="468.0" y="469.5" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="500" text-anchor="middle" fill="#1C1C1C">1</text>
+<path d="M806.0,465.0 L810.0,455 L958.0,455 L962.0,465.0 L958.0,475 L810.0,475 Z" fill="white" stroke="#1B4F72" stroke-width="1.6"/>
+<text x="884.0" y="469.5" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="500" text-anchor="middle" fill="#1C1C1C">0</text>
+<rect x="24.0" y="482.0" width="944.0" height="26.0" rx="4" fill="#FBF1DC" stroke="#FBF1DC" stroke-width="0"/>
+<text x="120.0" y="500.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" font-weight="600" text-anchor="end" fill="#1C1C1C">err</text>
+<path d="M130.0,495.0 L134.0,485 L802.0,485 L806.0,495.0 L802.0,505 L134.0,505 Z" fill="white" stroke="#1B4F72" stroke-width="1.6"/>
+<text x="468.0" y="499.5" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="500" text-anchor="middle" fill="#1C1C1C">0</text>
+<path d="M806.0,495.0 L810.0,485 L958.0,485 L962.0,495.0 L958.0,505 L810.0,505 Z" fill="white" stroke="#1B4F72" stroke-width="1.6"/>
+<text x="884.0" y="499.5" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="500" text-anchor="middle" fill="#1C1C1C">1</text>
+<line x1="702.0" y1="112.0" x2="702.0" y2="510.0" stroke="#B7791F" stroke-width="2" stroke-dasharray="6 4"/>
+<text x="708.0" y="532.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="700" text-anchor="start" fill="#B7791F">SLVERR on the read of 0x1008</text>
+<text x="130.0" y="532.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="400" text-anchor="start" fill="#1C1C1C">writes to 0x8000 and 0x8004 complete</text>
+<text x="130.0" y="552.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="400" text-anchor="start" fill="#1C1C1C">no AWVALID after the error: precise</text>
+<text x="962.0" y="572.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="400" text-anchor="end" fill="#7FA3C0">values in hex</text>
+</svg>

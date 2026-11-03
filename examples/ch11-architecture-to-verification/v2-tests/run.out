@@ -1,0 +1,36 @@
+--- test directed
+  ch0: 8 words, STATUS 2, 8 writes
+  ch1: 8 words, STATUS 2, 8 writes
+result: PASS
+--- test regs
+  15 register rules checked
+result: PASS
+--- test maxlen
+  65535 words: STATUS 2, 65535 writes, 262156 cycles
+result: PASS
+--- test random
+  300 rounds, both channels each round; 999 reads while both owed: ch0 485, ch1 514
+  same channel twice in a row: 0; reads at a full FIFO: 0
+result: PASS
+len_cp: zero=65 one=129 few=228 many=178 max=1 over=0
+out_cp: ok=375 rd_err=110 wr_err=116
+pos_cp: first=118 middle=42 last=66
+style_cp: wait_valid=139 ready_first=174 random=138 w_first=150
+len_x_out: few_x_ok=130 few_x_rd_err=53 few_x_wr_err=45 many_x_ok=106 
+many_x_rd_err=29 many_x_wr_err=43 max_x_ok=1 max_x_rd_err=0 max_x_wr_err=0 
+one_x_ok=73 one_x_rd_err=28 one_x_wr_err=28 over_x_ok=0 over_x_rd_err=0 
+over_x_wr_err=0 zero_x_ok=65 zero_x_rd_err=0 zero_x_wr_err=0
+fifo_cp: empty=213145 one=81734 full=2103
+both_cp: one_ch=286846 both=10136
+fifo_x_both: empty_x_both=3602 empty_x_one_ch=209543 full_x_both=759 
+full_x_one_ch=1344 one_x_both=5775 one_x_one_ch=75959
+rd_err_cp: queued=9
+zero bins: len_cp.over len_x_out.max_x_rd_err len_x_out.max_x_wr_err 
+len_x_out.over_x_ok len_x_out.over_x_rd_err len_x_out.over_x_wr_err 
+len_x_out.zero_x_rd_err len_x_out.zero_x_wr_err
+--- the first draft, PRECISE=0, same test, same seed
+  FAIL: ch1: 1 writes never seen, next 00193488
+  FAIL: ch0: 1 writes never seen, next 00096068
+  FAIL: ch0: 1 writes never seen, next 00096c30
+result: FAIL, 14 checks failed
+verdict: version 2 passes; the draft lost a word in 14 transfers

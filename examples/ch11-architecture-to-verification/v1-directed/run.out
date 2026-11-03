@@ -1,0 +1,20 @@
+--- test directed, slave WAIT_VALID
+  cycle 17: R 00001000 -> dead0000
+  cycle 21: W 00002000 <- dead0000
+  cycle 25: R 00001004 -> dead0001
+  cycle 29: W 00002004 <- dead0001
+  cycle 33: R 00001008 -> dead0002
+  cycle 37: W 00002008 <- dead0002
+  cycle 41: R 0000100c -> dead0003
+  cycle 45: W 0000200c <- dead0003
+  cycle 49: R 00001010 -> dead0004
+  cycle 53: W 00002010 <- dead0004
+  cycle 57: R 00001014 -> dead0005
+  cycle 61: W 00002014 <- dead0005
+  cycle 65: R 00001018 -> dead0006
+  cycle 69: W 00002018 <- dead0006
+  cycle 73: R 0000101c -> dead0007
+  cycle 77: W 0000201c <- dead0007
+  8 words 00001000 -> 00002000: STATUS 2, 8 writes, IRQ after 74 cycles
+AXI handshakes: AR 8, R 8, AW 8, W 8, B 8
+result: PASS

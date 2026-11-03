@@ -1,0 +1,4 @@
+version 1, WAIT_VALID slave: 511 cycles, 7.98 per word
+version 2, WAIT_VALID slave: 259 cycles, 4.05 per word
+version 2, READY_FIRST slave: 194 cycles, 3.03 per word
+verdict: version 2 at 4.05 cycles per word meets the 4.5 target

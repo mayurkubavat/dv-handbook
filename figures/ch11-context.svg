@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 520" width="1000" height="520" role="img" aria-label="System context: CPU, APB bridge, DMA engine and memory, with the architecture boundary drawn around the DMA&#x27;s three interfaces">
+<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#7FA3C0"/></marker><marker id="ahj" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#5B3E8E"/></marker><marker id="ahd" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#1B4F72"/></marker><marker id="ahc" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#B7791F"/></marker><marker id="ahg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#1C1C1C"/></marker><pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="6" stroke="#CBD2D9" stroke-width="2"/></pattern></defs>
+<rect width="1000" height="520" fill="white"/>
+<text x="30" y="40.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="21" font-weight="700" text-anchor="start" fill="#1B4F72">The DMA in its system</text>
+<text x="30" y="64.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="400" text-anchor="start" fill="#1C1C1C">Software programs it over APB, it moves words over AXI4-Lite, and it says it has finished on IRQ.</text>
+<rect x="40" y="170" width="170" height="80" rx="6" fill="white" stroke="#1B4F72" stroke-width="2"/>
+<text x="125.0" y="207.7" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="600" text-anchor="middle" fill="#1C1C1C">CPU</text>
+<text x="125.0" y="231.9" font-family="'JetBrains Mono', Menlo, monospace" font-size="14" font-weight="400" text-anchor="middle" fill="#7FA3C0">driver software</text>
+<rect x="270" y="175" width="150" height="70" rx="6" fill="white" stroke="#1B4F72" stroke-width="2"/>
+<text x="345.0" y="216.7" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="600" text-anchor="middle" fill="#1C1C1C">APB bridge</text>
+<rect x="470" y="115" width="260" height="225" rx="12" fill="none" stroke="#B7791F" stroke-width="1.5" stroke-dasharray="6 5"/>
+<text x="482" y="137.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" text-anchor="start" fill="#B7791F">architecture boundary</text>
+<rect x="500" y="165" width="200" height="90" rx="45.0" fill="#1B4F72" stroke="#123A56" stroke-width="2"/>
+<text x="600.0" y="208.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="20" font-weight="700" text-anchor="middle" fill="white">DMA engine</text>
+<text x="600.0" y="231.9" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="400" text-anchor="middle" fill="#DCE9F3">two channels</text>
+<path d="M810,170 A80.0,10 0 0 1 970,170 V250 A80.0,10 0 0 1 810,250 Z" fill="#F4F6F8" stroke="#1B4F72" stroke-width="2"/>
+<path d="M810,170 A80.0,10 0 0 0 970,170" fill="none" stroke="#1B4F72" stroke-width="2"/>
+<text x="890.0" y="212.7" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="600" text-anchor="middle" fill="#1C1C1C">Memory</text>
+<text x="890.0" y="234.9" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="400" text-anchor="middle" fill="#7FA3C0">AXI4-Lite slave</text>
+<path d="M210.0,210.0 L268.0,210.0" fill="none" stroke="#1B4F72" stroke-width="2.2" marker-end="url(#ahd)"/>
+<text x="240.0" y="162.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" font-weight="500" text-anchor="middle" fill="#1C1C1C">loads, stores</text>
+<path d="M420.0,210.0 L498.0,210.0" fill="none" stroke="#1B4F72" stroke-width="2.2" marker-end="url(#ahd)"/>
+<line x1="438.4" y1="217.0" x2="448.4" y2="203.0" stroke="#1B4F72" stroke-width="1.5"/>
+<text x="447.4" y="228.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="11" font-weight="400" text-anchor="start" fill="#7FA3C0">32</text>
+<text x="460.0" y="198.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="14" font-weight="700" text-anchor="middle" fill="#1C1C1C">APB3</text>
+<path d="M700.0,195.0 L808.0,195.0" fill="none" stroke="#1B4F72" stroke-width="2.2" marker-end="url(#ahd)"/>
+<path d="M810.0,228.0 L702.0,228.0" fill="none" stroke="#1B4F72" stroke-width="2.2" marker-end="url(#ahd)"/>
+<text x="755.0" y="186.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" font-weight="500" text-anchor="middle" fill="#1C1C1C">AR AW W</text>
+<text x="755.0" y="248.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" font-weight="500" text-anchor="middle" fill="#1C1C1C">R B</text>
+<path d="M600.0,255.0 L600.0,395.0 L125.0,395.0 L125.0,252.0" fill="none" stroke="#B7791F" stroke-width="1.8" stroke-dasharray="6 4" marker-end="url(#ahc)"/>
+<text x="362.5" y="387.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" font-weight="600" text-anchor="middle" fill="#B7791F">IRQ: level, one per DMA</text>
+<rect x="250" y="430" width="270" height="52" rx="6" fill="#F4F6F8" stroke="#CBD2D9"/>
+<text x="260" y="451.8" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="400" text-anchor="start" fill="#1C1C1C">APB3 slave: five registers per</text>
+<text x="260" y="470.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="400" text-anchor="start" fill="#1C1C1C">channel, PSLVERR on a refused access</text>
+<rect x="540" y="430" width="240" height="52" rx="6" fill="#F4F6F8" stroke="#CBD2D9"/>
+<text x="550" y="451.8" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="400" text-anchor="start" fill="#1C1C1C">AXI4-Lite master: one read and</text>
+<text x="550" y="470.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="400" text-anchor="start" fill="#1C1C1C">one write in flight at a time</text>
+<rect x="800" y="290" width="170" height="71" rx="6" fill="#F4F6F8" stroke="#CBD2D9"/>
+<text x="810" y="311.8" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="400" text-anchor="start" fill="#1C1C1C">Memory answers OKAY,</text>
+<text x="810" y="330.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="400" text-anchor="start" fill="#1C1C1C">or SLVERR to inject</text>
+<text x="810" y="348.2" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="400" text-anchor="start" fill="#1C1C1C">an error</text>
+<rect x="40" y="290" width="200" height="71" rx="6" fill="#F4F6F8" stroke="#CBD2D9"/>
+<text x="50" y="311.8" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="400" text-anchor="start" fill="#1C1C1C">Architecture: what crosses</text>
+<text x="50" y="330.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="400" text-anchor="start" fill="#1C1C1C">the amber line, and when.</text>
+<text x="50" y="348.2" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="400" text-anchor="start" fill="#1C1C1C">Nothing inside it.</text>
+</svg>
