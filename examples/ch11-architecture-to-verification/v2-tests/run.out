@@ -6,7 +6,7 @@ result: PASS
   15 register rules checked
 result: PASS
 --- test maxlen
-  65535 words: STATUS 2, 65535 writes
+  65535 words: STATUS 2, 65535 writes, 262156 cycles
 result: PASS
 --- test random
   300 rounds, both channels each round; 999 reads while both owed: ch0 485, ch1 514

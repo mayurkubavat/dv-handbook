@@ -90,7 +90,7 @@ module tb_v2 #(parameter bit PRECISE = 1);
   int fcnt_q = 0, full_reads = 0;
   initial forever begin
     @(negedge clk);
-    if (rst_n && dut.ARVALID && !arv_q && fcnt_q >= 2) begin
+    if (rst_n && dut.ARVALID && !arv_q && fcnt_q >= dut.DEPTH) begin
       full_reads++;
       fail("read issued while the FIFO was full");
     end
@@ -246,13 +246,16 @@ module tb_v2 #(parameter bit PRECISE = 1);
   // The longest transfer the register allows (plan item DMA-009).
   task automatic t_maxlen();
     bit [31:0] s;
+    longint t0;
     fill(32'h0010_0000, 65535);
     env.mem.resp_delay = 0;
     env.timeout = 600000;
+    t0 = env.mon.cycle;
     env.start(0, 32'h0010_0000, 32'h0080_0000, 65535);
     finish(0, s);
     env.cov.xfer_cg.sample(65535, OUT_OK, 0, env.mem.style);
-    $display("  65535 words: STATUS %0h, %0d writes", s, env.sb.n_wr[0]);
+    $display("  65535 words: STATUS %0h, %0d writes, %0d cycles", s,
+             env.sb.n_wr[0], env.mon.cycle - t0);
   endtask
 
   task automatic t_rate();

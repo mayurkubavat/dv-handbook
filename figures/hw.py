@@ -86,7 +86,7 @@ class HW(Diagram):
     # ---- hardware shapes ----------------------------------------------
     def reg(self, x, y, name, w=96, h=40, sub=None, fill="white",
             stroke=DEEP):
-        """A register: name centred, optional width below, clock wedge."""
+        """A register: name centered, optional width below, clock wedge."""
         self.rect(x, y, w, h, fill, stroke, 2, 3)
         self._lines(x + w / 2, y + h / 2 - (7 if sub else 0), name, 15, INK,
                     "600", font=MONO)

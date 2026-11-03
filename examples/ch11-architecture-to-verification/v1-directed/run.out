@@ -15,6 +15,6 @@
   cycle 69: W 00002018 <- dead0006
   cycle 73: R 0000101c -> dead0007
   cycle 77: W 0000201c <- dead0007
-  8 words 00001000 -> 00002000: STATUS 2, 8 writes, IRQ 74 cycles after programming began
+  8 words 00001000 -> 00002000: STATUS 2, 8 writes, IRQ after 74 cycles
 AXI handshakes: AR 8, R 8, AW 8, W 8, B 8
 result: PASS

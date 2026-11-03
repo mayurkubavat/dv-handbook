@@ -114,5 +114,5 @@
 <text x="652.0" y="646.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="11.5" font-weight="700" text-anchor="end" fill="#B7791F">no test</text>
 <text x="660.0" y="120.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="700" text-anchor="end" fill="#1B4F72">architecture items</text>
 <rect x="20" y="684" width="960" height="33" rx="6" fill="#F4F6F8" stroke="#CBD2D9"/>
-<text x="30" y="705.8" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="400" text-anchor="start" fill="#1C1C1C">12 of 13 items have a passing test. DMA-104 have none: the plan report fails until they do.</text>
+<text x="30" y="705.8" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="400" text-anchor="start" fill="#1C1C1C">12 of 13 items have a passing test. DMA-104 has none: it is a should-have, so the report passes and lists it.</text>
 </svg>

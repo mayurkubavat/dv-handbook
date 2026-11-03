@@ -100,7 +100,7 @@ module tb_v1;
     env.cov.xfer_cg.sample(32'(len), out, pos, env.mem.style);
     $display("  %0d words %08h -> %08h: STATUS %0h, %0d writes, IRQ %s",
              len, src, dst, s, env.sb.n_wr[0],
-             $sformatf("%0d cycles after programming began", t_irq));
+             $sformatf("after %0d cycles", t_irq));
   endtask
 
   task automatic t_directed();

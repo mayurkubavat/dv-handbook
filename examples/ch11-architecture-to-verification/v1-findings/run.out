@@ -1,7 +1,7 @@
 --- test len64k, slave WAIT_VALID
   FAIL: ch0: 65536 writes never seen, next 00002000
   FAIL: ch0: 0 reads seen, 65536 owed
-  65536 words 00001000 -> 00002000: STATUS 2, 0 writes, IRQ 10 cycles after programming began
+  65536 words 00001000 -> 00002000: STATUS 2, 0 writes, IRQ after 10 cycles
 finding len64k: XFER_LEN=65536 moved 0 words
 result: FAIL, 2 checks failed
 --- test busy_write, slave WAIT_VALID

@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""Generate the thirteen figures of Chapter 11 (ch11-*.svg).
+"""Generate the thirteen figures of the architecture-to-verification
+chapter (ch11-*.svg).
 
 Every number a figure shows is read from the chapter's examples, not
 typed here: the register map from regs/dma_regs.yaml, the waveforms from
@@ -9,8 +10,8 @@ script, and the figures follow.
 
 Hardware shapes come from hw.py (registers, multiplexers, FIFOs, state
 machines, waveforms); the flow shapes from blocks.py. Page-width figures
-are at most 1000 px wide, as in Chapter 34, so their type prints at 7 pt
-or larger.
+are at most 1000 px wide, as in the other chapters' figures, so their
+type prints at 7 pt or larger.
 
     python3 figures/gen_ch11_figures.py
 """
@@ -651,10 +652,13 @@ def fig_trace():
     d.text(CX + CW_, Y0 - 20, "architecture items", 12, BLUE, "700",
            "end")
     missing = [it["id"] for it in items if not it.get("tests")]
+    must = [it["id"] for it in items
+            if not it.get("tests") and it.get("priority") == "must"]
+    tail = ("the plan report fails until they do." if must else
+            "it is a should-have, so the report passes and lists it.")
     d.note(20, yb + 16, f"{len(items) - len(missing)} of {len(items)} items "
            "have a passing test. "
-           f"{' and '.join(missing)} have none: the plan report fails "
-           "until they do.", w=960, size=14)
+           f"{' and '.join(missing)} has none: {tail}", w=960, size=14)
     d.save("ch11-trace.svg")
 
 
@@ -667,9 +671,9 @@ def fig_tb():
            "master and AXI-Lite slave around the DUT; a monitor feeding "
            "the scoreboard, coverage and arbitration checker; a reference "
            "model predicting the scoreboard's expected writes")
-    for i, t in enumerate(["directed", "regs", "random", "rate", "abort",
-                           "findings"]):
-        d.tool(40 + i * 158, 88, t, w=140, h=40)
+    for i, t in enumerate(["directed", "regs", "maxlen", "random", "rate",
+                           "abort", "findings"]):
+        d.tool(40 + i * 135, 88, t, w=120, h=40)
     d.region(20, 150, 960, 520, "dma_env")
     am = d.tool(50, 250, "apb_master", w=170, h=60, sub="xfer, wr, rd")
     dut = d.model(395, 230, "DUT", w=210, h=100, sub="dma_engine | dma_v2")
@@ -691,18 +695,18 @@ def fig_tb():
     for t in (sb, arb):
         d.wire([(mon.cx, mon.b), (mon.cx, 505), (t.cx, 505),
                 (t.cx, t.t - 2)], "check")
-    d.wire([(900, 140), (965, 140), (965, 630), (cov.cx, 630),
+    d.wire([(910, 140), (965, 140), (965, 630), (cov.cx, 630),
             (cov.cx, cov.b + 2)], "plain")
     d.text(cov.cx + 10, 648, "sample() when a transfer ends", 12, INK,
            "500", "start", MONO)
     d.text(mon.cx + 8, 494, "publish(txn)", 12, VIOLET, "500", "start",
            MONO)
-    mdl = d.tool(50, 540, "dma_model", w=190, h=60, sub="predict at start")
+    mdl = d.tool(30, 540, "dma_model", w=170, h=60, sub="predict at start")
     d.wire([(mdl.r, 570), (sb.l - 2, 570)], "data", "owed writes",
-           at=(270, 560))
-    d.line(110, 140, 900, 140, INK, 1.4)
-    for i in range(6):
-        d.line(110 + i * 158, 128, 110 + i * 158, 140, INK, 1.4)
+           at=(250, 560))
+    d.line(100, 140, 910, 140, INK, 1.4)
+    for i in range(7):
+        d.line(100 + i * 135, 128, 100 + i * 135, 140, INK, 1.4)
     d.wire([(135, 140), (135, am.t - 2)], "plain")
     d.wire([(95, 140), (95, 400), (110, 400), (110, mdl.t - 2)], "plain")
     d.text(118, 220, "start(ch, src, dst, len)", 12, INK, "500", "start",
@@ -778,7 +782,7 @@ def fig_coverage():
     v1 = run_out("v1-random")
     v2 = run_out("v2-tests")
     st = v1["st_cp"]
-    d = HW(1000, 720, "What the random tests reached",
+    d = HW(1000, 720, "What the tests reached",
            "Left: the state machine's arcs. Right: the plan's bins for v1 "
            "and v2. Amber is a bin no test hit.",
            "Coverage map: bar chart of the twelve FSM arc bins of version "

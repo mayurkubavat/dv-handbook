@@ -112,7 +112,7 @@ All from the chapter's ten examples, green under
 | Claim | Example | Output |
 |---|---|---|
 | Two registers have two procedural writers in v1, none in v2 | `v1-lint` | `MULTIDRIVENPROC` on `ctrl` (line 184) and `status` (line 189) |
-| `XFER_LEN = 65536` moves no word and reports done | `v1-findings` | `moved 0 words`, `STATUS 2`, IRQ 10 cycles after programming began |
+| `XFER_LEN = 65536` moves no word and reports done | `v1-findings` | `moved 0 words`, `STATUS 2`, IRQ after 10 cycles, counted from the start of programming |
 | A write to a busy channel is ignored without an error | `v1-findings` | `PSLVERR=0`, `DST_ADDR` unchanged |
 | An APB read returns the previous read's data | `v1-findings` | three reads, each one behind |
 | A READY-first slave hangs v1 before any read | `v1-findings` | `ARVALID high for 0 cycles`, 0 handshakes |
@@ -121,11 +121,12 @@ All from the chapter's ten examples, green under
 | Cycles per word, 64-word copy | `throughput` | v1 7.98; v2 4.05 (WAIT_VALID), 3.03 (READY_FIRST) |
 | v1's phases per word | `waves` | READ_REQ 3, READ_RESP 1, WRITE_REQ 3, WRITE_RESP 1 |
 | v1's random test varied no slave style | `v1-random` | `style_cp` hit only `wait_valid`; every FSM arc hit, `r_err` 10 times |
-| v2 meets the plan | `v2-tests` | directed, 15 register rules, a 65,535-word copy (`len_cp.max`=1) and 300 random rounds pass; zero bins are `over`, the two zero-length error cells and the two maximum-length error cells |
+| v2 meets the plan | `v2-tests` | directed, 15 register rules, a 65,535-word copy (`len_cp.max`=1; 262,156 cycles, 3.3 s of wall time on the review machine) and 300 random rounds pass; zero bins are `over`, the two zero-length error cells and the two maximum-length error cells |
 | A read error with words queued is reached | `v2-tests` | `rd_err_cp.queued` = 9 (per-channel event: an error on a channel that has words in the FIFO) |
 | Round robin while both owe reads | `v2-tests` | 999 grants, 485 and 514, 0 repeats; 0 reads started at a full FIFO |
 | A fixed-priority arbiter breaks `DMA-101` | scratch mutant of `dma_v2.sv` (`c = k - 1`), not kept | random test fails on seeds 1 to 5, with 1152, 1270, 998, 916 and 933 repeated grants; 0 reads at a full FIFO |
-| The first draft (PRECISE=0) loses queued words on a read error | `v2-tests` | 14 transfers of 300 fail; passes directed, regs and abort |
+| The first draft (PRECISE=0) loses queued words on a read error | `v2-tests` | 14 of 600 channel transfers (300 rounds) fail; passes directed, regs, abort and maxlen (scratch build) |
+| The draft's run diverges from version 2's despite the shared seed | scratch build of the draft with `--coverage` | `rd_err_cp.queued` = 14, one per failure, against 9 in version 2's run |
 | A second language agrees, and its slave must vary to matter | `v2-cocotb` | 30 rounds on Icarus, 0 failures; with the write response delayed 0 to 4 cycles a PRECISE=0 copy fails 3 checks, and without the delay an earlier version of the test passed the draft |
 | The plan report fails while a must-have row has no test | `vplan` | revision 1: 11 of 13, failed on `DMA-009`; revision 2 adds the maxlen test: 12 of 13, "every must-have item has a passing test"; `DMA-104` (should) still open |
 

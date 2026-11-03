@@ -3,18 +3,20 @@
 <rect width="1000" height="700" fill="white"/>
 <text x="30" y="40.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="21" font-weight="700" text-anchor="start" fill="#1B4F72">The testbench: one environment, both versions</text>
 <text x="30" y="64.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="400" text-anchor="start" fill="#1C1C1C">Tests choose the stimulus; the environment is the same for version 1 and version 2.</text>
-<rect x="40" y="88" width="140" height="40" rx="6" fill="white" stroke="#1B4F72" stroke-width="2"/>
-<text x="110.0" y="114.7" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="600" text-anchor="middle" fill="#1C1C1C">directed</text>
-<rect x="198" y="88" width="140" height="40" rx="6" fill="white" stroke="#1B4F72" stroke-width="2"/>
-<text x="268.0" y="114.7" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="600" text-anchor="middle" fill="#1C1C1C">regs</text>
-<rect x="356" y="88" width="140" height="40" rx="6" fill="white" stroke="#1B4F72" stroke-width="2"/>
-<text x="426.0" y="114.7" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="600" text-anchor="middle" fill="#1C1C1C">random</text>
-<rect x="514" y="88" width="140" height="40" rx="6" fill="white" stroke="#1B4F72" stroke-width="2"/>
-<text x="584.0" y="114.7" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="600" text-anchor="middle" fill="#1C1C1C">rate</text>
-<rect x="672" y="88" width="140" height="40" rx="6" fill="white" stroke="#1B4F72" stroke-width="2"/>
-<text x="742.0" y="114.7" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="600" text-anchor="middle" fill="#1C1C1C">abort</text>
-<rect x="830" y="88" width="140" height="40" rx="6" fill="white" stroke="#1B4F72" stroke-width="2"/>
-<text x="900.0" y="114.7" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="600" text-anchor="middle" fill="#1C1C1C">findings</text>
+<rect x="40" y="88" width="120" height="40" rx="6" fill="white" stroke="#1B4F72" stroke-width="2"/>
+<text x="100.0" y="114.7" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="600" text-anchor="middle" fill="#1C1C1C">directed</text>
+<rect x="175" y="88" width="120" height="40" rx="6" fill="white" stroke="#1B4F72" stroke-width="2"/>
+<text x="235.0" y="114.7" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="600" text-anchor="middle" fill="#1C1C1C">regs</text>
+<rect x="310" y="88" width="120" height="40" rx="6" fill="white" stroke="#1B4F72" stroke-width="2"/>
+<text x="370.0" y="114.7" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="600" text-anchor="middle" fill="#1C1C1C">maxlen</text>
+<rect x="445" y="88" width="120" height="40" rx="6" fill="white" stroke="#1B4F72" stroke-width="2"/>
+<text x="505.0" y="114.7" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="600" text-anchor="middle" fill="#1C1C1C">random</text>
+<rect x="580" y="88" width="120" height="40" rx="6" fill="white" stroke="#1B4F72" stroke-width="2"/>
+<text x="640.0" y="114.7" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="600" text-anchor="middle" fill="#1C1C1C">rate</text>
+<rect x="715" y="88" width="120" height="40" rx="6" fill="white" stroke="#1B4F72" stroke-width="2"/>
+<text x="775.0" y="114.7" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="600" text-anchor="middle" fill="#1C1C1C">abort</text>
+<rect x="850" y="88" width="120" height="40" rx="6" fill="white" stroke="#1B4F72" stroke-width="2"/>
+<text x="910.0" y="114.7" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="600" text-anchor="middle" fill="#1C1C1C">findings</text>
 <rect x="20" y="150" width="960" height="520" rx="12" fill="none" stroke="#7FA3C0" stroke-width="1.5" stroke-dasharray="6 5"/>
 <text x="32" y="172.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" text-anchor="start" fill="#7FA3C0">dma_env</text>
 <rect x="50" y="250" width="170" height="60" rx="6" fill="white" stroke="#1B4F72" stroke-width="2"/>
@@ -49,21 +51,22 @@
 <text x="835.0" y="591.9" font-family="'JetBrains Mono', Menlo, monospace" font-size="14" font-weight="400" text-anchor="middle" fill="#7FA3C0">version 2 only</text>
 <path d="M690.0,460.0 L690.0,505.0 L395.0,505.0 L395.0,538.0" fill="none" stroke="#5B3E8E" stroke-width="1.8" stroke-dasharray="6 4" marker-end="url(#ahj)"/>
 <path d="M690.0,460.0 L690.0,505.0 L835.0,505.0 L835.0,538.0" fill="none" stroke="#5B3E8E" stroke-width="1.8" stroke-dasharray="6 4" marker-end="url(#ahj)"/>
-<path d="M900.0,140.0 L965.0,140.0 L965.0,630.0 L615.0,630.0 L615.0,602.0" fill="none" stroke="#1C1C1C" stroke-width="1.4" marker-end="url(#ahg)"/>
+<path d="M910.0,140.0 L965.0,140.0 L965.0,630.0 L615.0,630.0 L615.0,602.0" fill="none" stroke="#1C1C1C" stroke-width="1.4" marker-end="url(#ahg)"/>
 <text x="625.0" y="648.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="500" text-anchor="start" fill="#1C1C1C">sample() when a transfer ends</text>
 <text x="698.0" y="494.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="500" text-anchor="start" fill="#5B3E8E">publish(txn)</text>
-<rect x="50" y="540" width="190" height="60" rx="6" fill="white" stroke="#1B4F72" stroke-width="2"/>
-<text x="145.0" y="567.6" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="600" text-anchor="middle" fill="#1C1C1C">dma_model</text>
-<text x="145.0" y="591.9" font-family="'JetBrains Mono', Menlo, monospace" font-size="14" font-weight="400" text-anchor="middle" fill="#7FA3C0">predict at start</text>
-<path d="M240.0,570.0 L298.0,570.0" fill="none" stroke="#1B4F72" stroke-width="2.2" marker-end="url(#ahd)"/>
-<text x="270.0" y="560.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" font-weight="500" text-anchor="middle" fill="#1C1C1C">owed writes</text>
-<line x1="110.0" y1="140.0" x2="900.0" y2="140.0" stroke="#1C1C1C" stroke-width="1.4"/>
-<line x1="110.0" y1="128.0" x2="110.0" y2="140.0" stroke="#1C1C1C" stroke-width="1.4"/>
-<line x1="268.0" y1="128.0" x2="268.0" y2="140.0" stroke="#1C1C1C" stroke-width="1.4"/>
-<line x1="426.0" y1="128.0" x2="426.0" y2="140.0" stroke="#1C1C1C" stroke-width="1.4"/>
-<line x1="584.0" y1="128.0" x2="584.0" y2="140.0" stroke="#1C1C1C" stroke-width="1.4"/>
-<line x1="742.0" y1="128.0" x2="742.0" y2="140.0" stroke="#1C1C1C" stroke-width="1.4"/>
-<line x1="900.0" y1="128.0" x2="900.0" y2="140.0" stroke="#1C1C1C" stroke-width="1.4"/>
+<rect x="30" y="540" width="170" height="60" rx="6" fill="white" stroke="#1B4F72" stroke-width="2"/>
+<text x="115.0" y="567.6" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="19" font-weight="600" text-anchor="middle" fill="#1C1C1C">dma_model</text>
+<text x="115.0" y="591.9" font-family="'JetBrains Mono', Menlo, monospace" font-size="14" font-weight="400" text-anchor="middle" fill="#7FA3C0">predict at start</text>
+<path d="M200.0,570.0 L298.0,570.0" fill="none" stroke="#1B4F72" stroke-width="2.2" marker-end="url(#ahd)"/>
+<text x="250.0" y="560.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" font-weight="500" text-anchor="middle" fill="#1C1C1C">owed writes</text>
+<line x1="100.0" y1="140.0" x2="910.0" y2="140.0" stroke="#1C1C1C" stroke-width="1.4"/>
+<line x1="100.0" y1="128.0" x2="100.0" y2="140.0" stroke="#1C1C1C" stroke-width="1.4"/>
+<line x1="235.0" y1="128.0" x2="235.0" y2="140.0" stroke="#1C1C1C" stroke-width="1.4"/>
+<line x1="370.0" y1="128.0" x2="370.0" y2="140.0" stroke="#1C1C1C" stroke-width="1.4"/>
+<line x1="505.0" y1="128.0" x2="505.0" y2="140.0" stroke="#1C1C1C" stroke-width="1.4"/>
+<line x1="640.0" y1="128.0" x2="640.0" y2="140.0" stroke="#1C1C1C" stroke-width="1.4"/>
+<line x1="775.0" y1="128.0" x2="775.0" y2="140.0" stroke="#1C1C1C" stroke-width="1.4"/>
+<line x1="910.0" y1="128.0" x2="910.0" y2="140.0" stroke="#1C1C1C" stroke-width="1.4"/>
 <path d="M135.0,140.0 L135.0,248.0" fill="none" stroke="#1C1C1C" stroke-width="1.4" marker-end="url(#ahg)"/>
 <path d="M95.0,140.0 L95.0,400.0 L110.0,400.0 L110.0,538.0" fill="none" stroke="#1C1C1C" stroke-width="1.4" marker-end="url(#ahg)"/>
 <text x="118.0" y="220.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="500" text-anchor="start" fill="#1C1C1C">start(ch, src, dst, len)</text>
