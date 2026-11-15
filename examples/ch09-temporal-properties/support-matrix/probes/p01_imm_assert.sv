@@ -1,8 +1,8 @@
 // Immediate assertion in always_comb: ok is false at t == 5 in the BAD
 // instance only, so one failure there and none in the good one (p01)
 // The failure is counted through an event, so that the always_comb does
-// not read what it writes; the native Yosys front end has no action
-// blocks, so the count is compiled only for simulation.
+// not read what it writes. The count is simulation code: a formal run
+// defines FORMAL, which compiles it out.
 `ifdef FORMAL
 `define COUNT
 `else

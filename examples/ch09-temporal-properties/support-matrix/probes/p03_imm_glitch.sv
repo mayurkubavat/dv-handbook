@@ -4,8 +4,8 @@
 // the real mismatch (BAD, t == 5) to be reported and prints how often the
 // glitch was (p03)
 // The failure is counted through an event, so that the always_comb does
-// not read what it writes; the native Yosys front end has no action
-// blocks, so the count is compiled only for simulation.
+// not read what it writes. The count is simulation code: a formal run
+// defines FORMAL, which compiles it out.
 `ifdef FORMAL
 `define COUNT
 `else

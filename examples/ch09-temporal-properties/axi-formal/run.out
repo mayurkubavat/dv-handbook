@@ -1,0 +1,64 @@
+=== the design: six rules, six covers
+property                     type    status        engine     detail
+dma_v2.u_axi_sva.ArHeld_A    assert  proven        informal-ic3
+dma_v2.u_axi_sva.ArStable_A  assert  proven        informal-ic3
+dma_v2.u_axi_sva.AwHeld_A    assert  proven        informal-ic3
+dma_v2.u_axi_sva.AwStable_A  assert  proven        informal-ic3
+dma_v2.u_axi_sva.WHeld_A     assert  proven        informal-ic3
+dma_v2.u_axi_sva.WStable_A   assert  proven        informal-ic3
+dma_v2.u_axi_sva.ArWait_C    cover   covered       informal-ic3 depth 5
+dma_v2.u_axi_sva.AwWait_C    cover   covered       informal-ic3 depth 8
+dma_v2.u_axi_sva.WWait_C     cover   covered       informal-ic3 depth 8
+dma_v2.u_axi_sva.ArFirst_C   cover   covered       informal-ic3 depth 4
+dma_v2.u_axi_sva.AwFirst_C   cover   covered       informal-ic3 depth 7
+dma_v2.u_axi_sva.WFirst_C    cover   covered       informal-ic3 depth 7
+=== mutant drop: leave the address state after one tick
+property                     type    status        engine     detail
+dma_v2.u_axi_sva.ArHeld_A    assert  cex           informal-ic3 depth 5
+dma_v2.u_axi_sva.ArStable_A  assert  proven        informal-ic3
+dma_v2.u_axi_sva.AwHeld_A    assert  proven        informal-ic3
+dma_v2.u_axi_sva.AwStable_A  assert  proven        informal-ic3
+dma_v2.u_axi_sva.WHeld_A     assert  proven        informal-ic3
+dma_v2.u_axi_sva.WStable_A   assert  proven        informal-ic3
+dma_v2.u_axi_sva.ArWait_C    cover   covered       informal-ic3 depth 5
+dma_v2.u_axi_sva.AwWait_C    cover   covered       informal-ic3 depth 8
+dma_v2.u_axi_sva.WWait_C     cover   covered       informal-ic3 depth 8
+dma_v2.u_axi_sva.ArFirst_C   cover   covered       informal-ic3 depth 4
+dma_v2.u_axi_sva.AwFirst_C   cover   covered       informal-ic3 depth 7
+dma_v2.u_axi_sva.WFirst_C    cover   covered       informal-ic3 depth 7
+=== mutant wander: step the address while it waits
+property                     type    status        engine     detail
+dma_v2.u_axi_sva.ArHeld_A    assert  proven        informal-ic3
+dma_v2.u_axi_sva.ArStable_A  assert  cex           informal-ic3 depth 5
+dma_v2.u_axi_sva.AwHeld_A    assert  proven        informal-ic3
+dma_v2.u_axi_sva.AwStable_A  assert  proven        informal-ic3
+dma_v2.u_axi_sva.WHeld_A     assert  proven        informal-ic3
+dma_v2.u_axi_sva.WStable_A   assert  proven        informal-ic3
+dma_v2.u_axi_sva.ArWait_C    cover   covered       informal-ic3 depth 5
+dma_v2.u_axi_sva.AwWait_C    cover   covered       informal-ic3 depth 8
+dma_v2.u_axi_sva.WWait_C     cover   covered       informal-ic3 depth 8
+dma_v2.u_axi_sva.ArFirst_C   cover   covered       informal-ic3 depth 4
+dma_v2.u_axi_sva.AwFirst_C   cover   covered       informal-ic3 depth 7
+dma_v2.u_axi_sva.WFirst_C    cover   covered       informal-ic3 depth 7
+=== mutant wait: raise ARVALID only once ARREADY has been seen
+property                     type    status        engine     detail
+dma_v2.u_axi_sva.ArHeld_A    assert  proven        informal-ic3
+dma_v2.u_axi_sva.ArStable_A  assert  proven        informal-ic3
+dma_v2.u_axi_sva.AwHeld_A    assert  proven        informal-ic3
+dma_v2.u_axi_sva.AwStable_A  assert  proven        informal-ic3
+dma_v2.u_axi_sva.WHeld_A     assert  proven        informal-ic3
+dma_v2.u_axi_sva.WStable_A   assert  proven        informal-ic3
+dma_v2.u_axi_sva.ArWait_C    cover   covered       informal-ic3 depth 5
+dma_v2.u_axi_sva.AwWait_C    cover   covered       informal-ic3 depth 10
+dma_v2.u_axi_sva.WWait_C     cover   covered       informal-ic3 depth 10
+dma_v2.u_axi_sva.ArFirst_C   cover   unreachable   informal-ic3
+dma_v2.u_axi_sva.AwFirst_C   cover   covered       informal-ic3 depth 9
+dma_v2.u_axi_sva.WFirst_C    cover   covered       informal-ic3 depth 9
+=== one rule, two spellings, as Tcl properties on the design
+property                     type    status        engine     detail
+HeldNext_A                   assert  proven        informal-ic3
+HeldPast_A                   assert  cex           informal-ic3 depth 1
+cycle  PRESETn  ARVALID  ARREADY
+    0        0        1        0
+    1        1        0        0
+verdict: six rules proved; each mutant caught, two by an assertion and one by a cover

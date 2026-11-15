@@ -2,7 +2,7 @@
 title: "Research note: Chapter 9 — Temporal Properties and Assertions"
 date: 2026-11-15
 author: research-agent
-status: complete (documentation only; nothing executed; IEEE 1800 clause 16 not read)
+status: complete (documentation only; nothing executed; IEEE 1800 clause 16 not read); formal-tool parts superseded 2026-11-15, see the revision note below
 feeds: Ch. 9 (and Appendix C, the SVA reference)
 ---
 
@@ -30,6 +30,50 @@ alphabetical: **C** tools, **D** practice, **A** theory and evidence,
 **B** language and clause numbers, **E** Python, **F** worked example,
 then an addendum to C, one unsourced-claims table, BibTeX suggestions and
 confidence notes for the whole note.
+
+## Revision note, 2026-11-15: the book's formal tool is InFormal
+
+After this note was written the author replaced SymbiYosys with InFormal
+(https://github.com/mayurkubavat/informal, version 0.1.0, commit
+5114330) as the formal tool of Chapter 9 and of the formal chapters. The
+note below is left as written, as the record of what was read; this
+section says which of its parts still feed the chapter.
+
+- **Still feeds the chapter:** Part A (theory), Part B (language and
+  clause numbers), Part D (OpenTitan practice), Part E (Python mirror),
+  and in Part C the Verilator and Icarus sections.
+- **No longer feeds the chapter:** Part C §3 and the addendum (Yosys
+  0.68 and SymbiYosys as documented), the "native" and `read_slang`
+  columns of the probe list in Part C §5, and every SymbiYosys step of
+  the worked-example proposal in Part F (`mode bmc` / `cover` /
+  `prove`, the `.sby` files, the induction-failure trace). The chapter
+  names SymbiYosys once, in a comparison table, from its own
+  documentation.
+- **Finding 1 below is overturned for the book's tools.** "The same
+  property as checker and as proof obligation is literally true only
+  for clocked booleans with `$past`" was a statement about Yosys.
+  InFormal's shell does not collect immediate assertions at all (empty
+  table, exit 0), and it takes concurrent assertions with implication,
+  fixed and ranged delays, repetition and the sampled-value functions.
+  The chapter's common form is therefore `assert property (@(posedge
+  clk) disable iff (!rst_n) e);` with `e` restricted to booleans,
+  `|->`, `|=>`, fixed `##N`, `$past`, `$rose`, `$fell`, `$stable`,
+  which Verilator 5.052 and InFormal were both measured to get right.
+- **Finding on the FIFO's induction story is replaced.** `occ <= DEPTH`
+  on the repaired FIFO is proved by InFormal's k-induction with no
+  helper. The helper-invariant lesson is taught on `empty |-> wr_ptr ==
+  rd_ptr` with the helper `count == wr_ptr - rd_ptr`.
+- **Where the measurements are:**
+  `research/informal-measurements/FINDINGS.md` (the tool, sections A to
+  H, with scripts), `research/ch09-formal-log.md` (what was re-run for
+  the chapter and what differed), and
+  `examples/ch09-temporal-properties/support-matrix/FINDINGS.md` (the
+  regenerated matrix: Verilator 5.052 and 5.054, Icarus 13.0, InFormal
+  0.1.0).
+- **Sources added for the tool change** are listed in section 6 of
+  `research/ch09-formal-log.md`; the `refs.bib` keys are
+  `informal-tool`, `sby-docs`, `sby-verific`, `cadence-jasper-fpv`,
+  `synopsys-vcformal` and `siemens-questa-formal`.
 
 ## Which part feeds which chapter section
 

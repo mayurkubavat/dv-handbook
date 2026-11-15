@@ -1,0 +1,15 @@
+=== the correct responder
+property                     type    status        engine     detail
+responder.chk.Window_A       assert  proven        informal-kind
+responder.chk.Waited_C       cover   covered       informal-kind depth 4
+=== the slow-by-one responder
+property                     type    status        engine     detail
+responder.chk.Window_A       assert  cex           informal-kind depth 4
+responder.chk.Waited_C       cover   covered       informal-kind depth 4
+cycle  rst_n    req   slow    gnt  waiting
+    0      0      0      0      0        0
+    1      1      1      1      0        0
+    2      1      0      0      0        1
+    3      1      0      0      0        2
+    4      1      0      0      0        4
+verdict: proved on one responder, refuted on the other in the fewest ticks a late grant takes

@@ -1,6 +1,7 @@
 === the design as it is: the case study's random test
 result: PASS
-covers:  ArWait_C=4183  AwWait_C=5490  WWait_C=4000
+covers:  ArWait_C=4183  AwWait_C=5490  WWait_C=4000  ArFirst_C=1  AwFirst_C=1
+ WFirst_C=1
 === mutant drop: leave the address state after one tick
 <         R_ADDR: if (ARREADY) begin
 >         R_ADDR: begin

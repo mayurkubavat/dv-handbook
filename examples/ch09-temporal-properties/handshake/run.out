@@ -3,8 +3,8 @@
   exit status 1
 --- +verilator+error+limit+100: every failure, to the end
   tick  7: Stable_A failed
-  tick 11: Held_A failed
   tick 11: HeldRaw_A failed
+  tick 11: Held_A failed
   tick 14: HeldRaw_A failed
   tick 16: Answer_A failed
   exit status 0

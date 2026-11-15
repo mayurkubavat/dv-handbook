@@ -1,0 +1,31 @@
+=== the checker, bound to the repaired FIFO
+property                     type    status        engine     detail
+fifo.u_sva.NoOverflow_A      assert  proven        informal-kind
+fifo.u_sva.FullForward_A     assert  proven        informal-kind
+fifo.u_sva.FullBackward_A    assert  proven        informal-kind
+fifo.u_sva.EmptyExact_A      assert  proven        informal-kind
+fifo.u_sva.PushFull_A        assert  proven        informal-kind
+fifo.u_sva.PopEmpty_A        assert  proven        informal-kind
+fifo.u_sva.Sync_A            assert  proven        informal-kind
+fifo.u_sva.FullReached_C     cover   covered       informal-kind depth 17
+fifo.u_sva.PushFull_C        cover   covered       informal-kind depth 18
+fifo.u_sva.PopEmpty_C        cover   covered       informal-kind depth 2
+fifo.u_sva.Drained_C         cover   covered       informal-kind depth 33
+=== bounded model checking alone: a search for counterexamples
+property                     type    status        engine     detail
+EmptyPtrs_A                  assert  undetermined             no engine reached a verdict
+CountPtrs_A                  assert  undetermined             no engine reached a verdict
+=== k-induction, each property alone
+property                     type    status        engine     detail
+EmptyPtrs_A                  assert  undetermined             no engine reached a verdict
+CountPtrs_A                  assert  proven        informal-kind
+=== k-induction, with the property it just proved assumed
+property                     type    status        engine     detail
+EmptyPtrs_A                  assert  proven        informal-kind
+CountPtrs_A                  assert  disabled      informal-kind
+CountPtrs_M                  assume  unprocessed
+=== IC3, no helper
+property                     type    status        engine     detail
+EmptyPtrs_A                  assert  proven        informal-ic3
+CountPtrs_A                  assert  disabled      informal-kind
+verdict: true, and out of reach of induction until a helper invariant is assumed

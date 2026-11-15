@@ -1,0 +1,23 @@
+=== inputs free
+property                     type    status        engine     detail
+responder.chk.Ack_A          assert  cex           informal-kind depth 1
+responder.chk.Req_C          cover   covered       informal-kind depth 0
+=== assumed: the environment never requests
+property                     type    status        engine     detail
+responder.chk.Ack_A          assert  proven        informal-kind
+responder.chk.Req_C          cover   unreachable   informal-kind
+Quiet_M                      assume  unprocessed
+=== assumed as well: it requests on every tick
+property                     type    status        engine     detail
+responder.chk.Ack_A          assert  proven        informal-kind
+responder.chk.Req_C          cover   unreachable   informal-kind
+Quiet_M                      assume  unprocessed
+Busy_M                       assume  unprocessed
+=== a contradiction that takes a tick to bite
+property                     type    status        engine     detail
+responder.chk.Ack_A          assert  proven        informal-kind
+responder.chk.Req_C          cover   covered       informal-kind depth 0
+Busy_M                       assume  unprocessed
+Pulse_M                      assume  unprocessed
+ReqNext_C                    cover   unreachable   informal-kind
+verdict: an assertion proved under assumptions is worth what its cover says

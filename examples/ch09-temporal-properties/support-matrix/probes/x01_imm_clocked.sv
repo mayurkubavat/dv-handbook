@@ -1,8 +1,8 @@
-// Immediate assertion in a clocked always block, the style the native
-// Yosys front end documents: ok is false at t == 5 in the BAD instance
+// Immediate assertion in a clocked always block, the oldest way to
+// write a clocked check: ok is false at t == 5 in the BAD instance
 // only (x01)
-// The native Yosys front end has no action blocks, so the failure count
-// is compiled only for simulation.
+// The failure count is simulation code: a formal run defines FORMAL,
+// which compiles it out.
 `ifdef FORMAL
 `define COUNT
 `else

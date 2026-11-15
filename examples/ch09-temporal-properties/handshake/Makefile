@@ -1,6 +1,6 @@
-# The valid/ready rule as clocked immediate assertions with $past; see
-# run_handshake.sh. Icarus 13.0 compiles $past and then cannot load
-# it, so the example is built with the other simulator only.
+# The valid/ready rule as concurrent assertions in the chapter's
+# subset; see run_handshake.sh. Icarus 13.0 refuses every concurrent
+# assertion, so the example is built with the other simulator only.
 EXAMPLE_LANG  := python
 TOP           := run_handshake.sh
 SOURCES       := run_handshake.sh

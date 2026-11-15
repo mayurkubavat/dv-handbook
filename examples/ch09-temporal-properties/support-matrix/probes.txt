@@ -1,5 +1,4 @@
 # label | probe file | options (see matrix.py)
-toolchain: `sby` with no `[engines]` section | p00_toolchain.sv | sim=n/a: an sby question; engine=none
 immediate `assert (e)` in `always_comb` | p01_imm_assert.sv
 immediate assert with pass and fail action blocks | p02_imm_action.sv
 immediate assert in `always_comb` across a zero-time glitch | p03_imm_glitch.sv | formal=n/a: no zero-time order in a formal model
@@ -10,15 +9,15 @@ deferred `assert final (e)` | p05_deferred_final.sv
 `default clocking` and an unclocked `assert property (e)` | p08_default_clk.sv
 `default disable iff` | p09_default_disable.sv
 overlapped implication `a |-> b` | p10_impl_ov.sv
-non-overlapped `a |=> b`, against `a |-> ##1 b` | p11_impl_nov.sv | v54
+non-overlapped `a |=> b`, against `a |-> ##1 b` | p11_impl_nov.sv
 fixed delay `a ##2 b` | p12_delay_n.sv
-ranged delay `a |-> ##[1:3] b` | p13_delay_range.sv | v54
+ranged delay `a |-> ##[1:3] b` | p13_delay_range.sv
 unbounded delay `a |-> ##[1:$] b` (weak) | p14_delay_unb.sv
 consecutive repetition `a[*3]` | p15_rep_cons.sv
 ranged repetition `a[*1:3] ##1 b` | p16_rep_range.sv
 unbounded repetition `a[*1:$]`, `a[+]`, `a[*]` | p17_rep_unb.sv
 goto repetition `b[->2]` | p18_rep_goto.sv
-nonconsecutive repetition `b[=2] ##1 c` | p19_rep_noncons.sv | v54
+nonconsecutive repetition `b[=2] ##1 c` | p19_rep_noncons.sv
 ranged nonconsecutive `b[=1:2]` | p20_rep_noncons_rng.sv
 `en throughout (a ##2 b)` | p21_throughout.sv
 `(a ##1 b) within (c ##3 d)` | p22_within.sv
@@ -36,17 +35,17 @@ gated `$past(x, 1, en)` | p32_past_gate.sv
 `$stable`, `$changed` | p34_stable_changed.sv
 `$sampled(x)` in an action block | p35_sampled.sv | formal=n/a: action blocks are simulation code
 `$onehot`, `$onehot0`, `$countones`, `$isunknown` | p36_onehot.sv
-`disable iff` rising in mid-attempt | p37_disable_mid.sv | v54
+`disable iff` rising in mid-attempt | p37_disable_mid.sv
 reset as an antecedent term | p38_disable_sync.sv
-`a |-> s_eventually b` at the end of a run | p39_s_eventually.sv
-`assert property (s_eventually e)` under `mode live` | p40_eventually_yosys.sv | sim=n/a: an sby mode; p39 is the simulation row; mode=live; engine=aiger suprove
+`a |-> s_eventually b` at the end of a run | p39_s_eventually.sv | mode=live; engine=informal-ic3
+`assert property (s_eventually e)`, a liveness property | p40_liveness.sv | sim=n/a: no finite run decides it; p39 is the simulation row; mode=live; engine=informal-ic3
 `strong(##[1:$] b)` | p41_strong_kw.sv
 `until`, `s_until`, `until_with` | p42_until.sv
 `always [2:5] a` | p43_always_rng.sv
 `nexttime a` | p44_nexttime.sv
 property `if (m) p else q` | p45_if_else_prop.sv
 followed-by `a #=# b`, `a #-# c` | p46_followed_by.sv
-`assume property` in simulation | p47_assume_sim.sv | formal=n/a: there it constrains; see p48
+`assume property` in simulation | p47_assume_sim.sv | formal=n/a: there it constrains; see the next row
 `assume` constraining a free input | p48_assume_formal.sv | sim=n/a: needs a free input
 `cover property (a ##1 b)` | p49_cover_prop.sv | mode=cover; vflags=--coverage
 `cover property (a |-> b)`, antecedent never true | p50_cover_impl.sv | mode=cover; vflags=--coverage
@@ -64,10 +63,3 @@ two failures, default and `+verilator+error+limit+10` | p61_error_limit.sv | sim
 `expect` statement | p62_expect.sv
 `checker ... endchecker` | p63_checker.sv
 `let` declaration used in a property | p64_let.sv
-`(* anyconst *)` in a file simulators also read | p65_anyconst.sv
-`$initstate` behind `` `ifdef FORMAL `` | p66_initstate.sv
-`mode prove`, `depth 5`: a true property that is not inductive | p67_sby_prove_unknown.sv | sim=n/a: an sby result; mode=prove; depth=5; expect=UNKNOWN,FAIL
-the same property under `abc pdr` | p68_sby_pdr.sv | sim=n/a: an sby result; mode=prove; engine=abc pdr; aigsmt=z3
-`mode cover`: an unreachable `cover` | p69_sby_cover_fail.sv | sim=n/a: an sby result; mode=cover
-`expect fail` and the exit status of `sby` | p70_sby_expect.sv | sim=n/a: an sby option; sbyexpect=fail
-one `` `ASSERT `` macro, two expansions | p71_macro_two_way.sv

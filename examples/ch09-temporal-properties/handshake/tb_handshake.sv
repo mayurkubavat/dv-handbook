@@ -13,7 +13,7 @@ module tb_handshake;
   always #5 clk <= ~clk;
   always_ff @(posedge clk) t <= t + 5'd1;
 
-  wire       rst   = (t == 14);
+  wire       rst_n = (t != 14);
   wire       valid = (t >= 2 && t <= 4) || (t >= 6 && t <= 8) ||
                      (t == 10) || (t == 13);
   wire       ready = (t == 4) || (t == 8) || (t == 16);

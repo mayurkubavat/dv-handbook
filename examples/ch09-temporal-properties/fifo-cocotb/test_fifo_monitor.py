@@ -1,6 +1,6 @@
 """test_fifo_monitor.py -- the FIFO checker as a cocotb monitor.
 
-Icarus runs no concurrent assertion and cannot load $past, so the
+Icarus runs no concurrent assertion, so the
 checks of fifo_sva.sv are written here the same way in Python: state
 in variables, one sample per clock, a plain condition on each sample. The
 monitor samples after the falling edge, when every signal holds the
@@ -51,7 +51,7 @@ class FifoMonitor:
             self.check("FullForward_A", occ != DEPTH or full, cycle)
             self.check("FullBackward_A", not full or occ == DEPTH, cycle)
             self.check("EmptyExact_A", bool(empty) == (occ == 0), cycle)
-            # A condition on this sample and the one before: $past.
+            # A condition on the sample before and on this one: |=>.
             if prev and prev["wr"] and prev["full"] and not prev["rd"]:
                 self.check("PushFull_A", full, cycle)
             if prev and prev["rd"] and prev["empty"] and not prev["wr"]:

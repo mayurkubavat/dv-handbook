@@ -1,9 +1,8 @@
 // assert property with a bare expression and no clock, at module level,
-// which the native Yosys front end accepts and the standard does not
-// without a default clocking: ok is false at t == 5 in the BAD instance
+// which the standard does not accept without a default clocking: ok is false at t == 5 in the BAD instance
 // only (x02)
-// The native Yosys front end has no action blocks, so the failure count
-// is compiled only for simulation.
+// The failure count is simulation code: a formal run defines FORMAL,
+// which compiles it out.
 `ifdef FORMAL
 `define COUNT
 `else

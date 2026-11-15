@@ -2,150 +2,85 @@
 
 Not for the book. Everything here was measured in this container on
 2026-11-15; the tables themselves are in `matrix.md`, the per-row log in
-`run.out`. "Note" is `research/ch09-temporal-properties.md`.
+`run.out`. "Note" is `research/ch09-temporal-properties.md`; the formal
+tool's measurements are in `research/informal-measurements/FINDINGS.md`
+and `research/ch09-formal-log.md`.
+
+Revised the same day when the book's formal tool became InFormal: the
+two formal-front-end columns of the first version are gone, with the
+eight rows that asked questions only about them (p00, p65 to p71); the
+second Verilator release is now run on every row; and there is an
+InFormal column. Sections 3.1 and 3.2 keep the detail behind the
+simulator cells from the first version's scratch runs; every cell of
+both tables was re-measured for this revision and none of the simulator
+cells changed.
 
 ## 0. Environment, and what the runner assumes
 
-- Verilator 5.052, Icarus 13.0, Yosys 0.68 with `read_slang` built in
-  (`yosys -h read_slang` prints its help), z3 from the pip wheel.
-  **`sby --version` prints v0.70, not 0.68** as the note assumes.
-  Verilator 5.054 appeared at `/opt/verilator-5.054/bin` during the work
-  and is the extra column on the rows marked `v54` in `probes*.txt`.
-- `sby` is `#!/usr/bin/env python3` and imports `click`; the venv's
-  python has none, so with `/opt/dvtools/venv/bin` early in `PATH` it
-  dies with `ModuleNotFoundError: No module named 'click'`. Everything
-  here ran with `PATH=/opt/dvtools/bin:$PATH:/opt/dvtools/venv/bin`
-  (venv last: the system python runs `sby`, `z3` is still found).
-- No `suprove` is installed, so `mode live` cannot run (p40).
-- Runner: `matrix.py`, modelled on Chapter 8's, plus a thread pool (one
-  probe per core) because every Verilator build costs about 8 s.
-  Verilator flags are Chapter 8's with `--assert` in place of
-  `--coverage`; the cover rows add `--coverage` (see 3.6). Formal runs
-  are `mode bmc`, `depth 12`, `smtbmc z3` unless the row's options say
-  otherwise.
+- Verilator 5.052 (`/opt/dvtools/bin`), Verilator 5.054
+  (`/opt/verilator-5.054/bin`), Icarus 13.0, InFormal 0.1.0 at commit
+  5114330 (`/opt/dvtools/bin/informal`, CaDiCaL linked, no Bitwuzla).
+  `PATH=/opt/dvtools/bin:$PATH:/opt/dvtools/venv/bin`.
+- Runner: `matrix.py`, with a thread pool (one probe per core) because
+  every Verilator build costs about 8 s. Verilator flags are the
+  book's with `--assert`, `-Wno-fatal`; the cover rows add `--coverage`.
 - Probe design. Each probe has a `dut` with a free-running 4-bit step
   counter `t` as its stimulus and a parameter `BAD` that makes the
   design violate the assertion at a known tick. Simulation instantiates
   `dut #(0) good` and `dut #(1) bad`, counts failures in action blocks,
-  and prints `PROBE pNN PASS|FAIL detail`. Formal makes `dut` the top
-  and runs sby twice, expecting PASS for `BAD=0` and FAIL for `BAD=1`,
-  so an assertion that a front end drops shows as PASS/PASS.
-- Two things the probes had to work around, both findings in themselves:
-  1. The native front end rejects any action block (`syntax error,
-     unexpected TOK_ELSE` / `TOK_ID`), so probes that it could otherwise
-     read hide `else nf++` behind `` `ifndef FORMAL `` (macro `COUNT`).
-     p02 leaves the action blocks bare to show it.
-  2. `always_comb a1: assert (ok) else nf++;` does not run on Verilator
-     5.052: `%Error: ... Active region did not converge after
-     '--converge-limit' of 10000 tries`. The block reads `nf` (in
-     `nf++`), and Verilator keeps it in the sensitivity although the
-     block also writes it. p01 and p03 to p05 count through an event
-     (`else -> failed;`) instead. A chapter listing that counts
-     failures inside an `always_comb` action block will hang the same
-     way.
+  and prints `PROBE pNN PASS|FAIL detail`.
+- InFormal runs. `dut` is the top, read with `+define+FORMAL` (which
+  removes the simulation top and the event-based failure counters of
+  p01 to p05 and the x rows), once with `-parameter BAD 0` and once
+  with 1; `clock clk`, `reset -none` (the counter has an initializer),
+  `informal::set_engines informal-kind` (`informal-ic3` on the two
+  liveness rows, where k-induction is slow), `set_prove_time_limit
+  20s`, engine list `examples/mk/informal-engines.toml` (no external
+  engine). A row runs when every assertion is `proven` with BAD 0 and
+  one is `cex` with BAD 1 (cover rows: all `covered`, then one
+  `unreachable`). A property with status `error` is "no build" with
+  the tool's message; a report with no property of the kind the row
+  asks about is "wrong".
+- The tool has no depth bound and the probes' counter wraps after 16
+  ticks, so an unbounded proof would judge behavior the simulation's 14
+  ticks never reach. Where `t` exists the script adds `assume {t <
+  4'd14}`: every trace ends where the simulation ends. This is a
+  bounded check by construction and the table's caption says so. The
+  two liveness rows do not get the assumption.
+- `always_comb a1: assert (ok) else nf++;` does not run on Verilator
+  5.052: `%Error: ... Active region did not converge after
+  '--converge-limit' of 10000 tries`. p01 and p03 to p05 count through
+  an event (`else -> failed;`) instead.
 
 ## 1. Counts per column
 
-88 rows: the note's 72 (`probes.txt`, p00 to p71) and 16 more
-(`probes-x.txt`: the forms the native front end documents, and
-discriminating probes that the first results asked for). 87 probe files;
-the last x row re-runs p49 without `--coverage`.
+80 rows: 64 in `probes.txt` (p01 to p64) and 16 in `probes-x.txt`. 79
+probe files; the last x row re-runs p49 without `--coverage`.
 
 | Column | runs | wrong | no run | no build | n/a |
 |---|---|---|---|---|---|
-| Verilator 5.052, main 72 | 50 | 6 | 0 | 9 | 7 |
-| Icarus 13.0 `-g2012`, main | 4 | 0 | 1 | 59 | 8 |
-| Yosys native via sby, main | 10 | 0 | 2 | 54 | 6 |
-| Yosys `read_slang` via sby, main | 19 | 3 | 1 | 43 | 6 |
+| Verilator 5.052, main 64 | 47 | 6 | 0 | 9 | 2 |
+| Verilator 5.054, main | 47 | 6 | 0 | 9 | 2 |
+| Icarus 13.0 `-g2012`, main | 3 | 0 | 0 | 58 | 3 |
+| InFormal 0.1.0, main | 39 | 7 | 0 | 12 | 6 |
 | Verilator 5.052, extra 16 | 10 | 4 | 0 | 2 | 0 |
+| Verilator 5.054, extra | 11 | 3 | 0 | 2 | 0 |
 | Icarus, extra | 3 | 1 | 3 | 8 | 1 |
-| Yosys native, extra | 7 | 2 | 0 | 5 | 2 |
-| Yosys `read_slang`, extra | 6 | 0 | 0 | 8 | 2 |
+| InFormal, extra | 5 | 8 | 0 | 1 | 2 |
 
-Verilator 5.054 on the eight † rows: p11, p13, p37, x08, x09 run; p19 no
-build; **x12 and x15 still wrong**. Scratch runs of p16, p17, p18, p22,
-p24, p25 on 5.054 print exactly the 5.052 lines, so none of the six
+Verilator 5.054 differs from 5.052 in one verdict (x08, now right) and
+in the pass counts printed for p11 and x09 (section 2). None of the six
 main-table wrong verdicts is fixed by the next release.
 
-Icarus with `-gsupported-assertions` on its 67 no-build rows: 15 then
-build; **12 of them report nothing when the design is wrong** (p06, p07,
-p31 to p36, p47, p58, p71, x02), two have nothing to miss (p54, p61),
-p30 and p60 fail at vvp load.
+Icarus with `-gsupported-assertions` on its 66 no-build rows: 14 then
+build; **11 of them report nothing when the design is wrong**.
 
-Full matrix run time, clean `build/`, 4 cores: **174 s** (218 s with a
-z3 job running beside it). A re-run over an existing `build/` takes 11 s
-because Verilator skips unchanged builds; `make clean` first for a true
-measurement. Run one probe at a time it would take an estimated 11 minutes.
+Full matrix run time, clean `build/`, 4 cores: **6 min** (360 s wall,
+most of it the second Verilator release on every row). A re-run over an
+existing `build/` is much shorter because Verilator skips unchanged
+builds; `make clean` first for a true measurement.
 
-## 2. The three predictions the chapter depends on
-
-Sources for these runs are scratch files, not in the repo. The FIFO
-wrapper instantiates `fifo` (Chapter 1's, or a copy with a 5-bit `count`
-and `full = (count == 16)`), keeps its own 5-bit `occ` (+1 on
-`wr_en && !full`, -1 on `rd_en && !empty`, async reset like the DUT's),
-assumes `!rst_n` in the first step through an `init` register, and
-writes each property as a clocked immediate assertion guarded by
-`if (rst_n)`. Same verdicts through `read -formal` and `read_slang`
-unless stated.
-
-### 2(a) Chapter 1 FIFO (the full-flag bug)
-
-- `FullForward_A` (`occ == 16` implies `full`), `mode bmc`, `depth 20`:
-  **passes vacuously.**
-  `summary: engine_0 (smtbmc z3) returned pass` / `DONE (PASS, rc=0)`
-- **Disagreement with the note (finding 4, "passes ... in an unbounded
-  proof"):** under `mode prove`, `depth 20`, `smtbmc z3` it is not
-  proved: `engine_0.induction: Temporal induction failed!` /
-  `Assert failed in top: FullForward_A` / `summary: engine_0 (smtbmc
-  z3) returned pass for basecase` / `returned FAIL for induction` /
-  `DONE (UNKNOWN, rc=4)`. Under `abc pdr` it is: `engine_0: Property
-  proved.  Time =     0.51 sec` / `DONE (PASS, rc=0)`. So the vacuous
-  property already needs PDR (or a helper) to "pass unbounded".
-- `FullBackward_A` (`full` implies `occ == 16`): `depth 10` passes
-  (`DONE (PASS, rc=0)`); `depth 20` fails: `engine_0: BMC failed!` /
-  `Assert failed in top: FullBackward_A` / `summary:   failed assertion
-  top.FullBackward_A at top.sv:26.16-26.62 step 17` / `DONE (FAIL,
-  rc=2)`. Step 17 is one reset step, fifteen pushes, and the one-step
-  delay with which a clocked assertion is reported (see 3.4).
-- `FullReached_C` (`cover (occ == 16)`), `mode cover`, `depth 20`:
-  **unreachable.** `engine_0: Unreached cover statement at top:
-  FullReached_C` / `summary: engine_0 (smtbmc z3) returned FAIL` /
-  `DONE (FAIL, rc=2)`. On the fixed FIFO: `Reached cover statement in
-  step 18 at top: FullReached_C` / `DONE (PASS, rc=0)`. `abc pdr`
-  proves `occ != 16` on the buggy FIFO outright.
-- Cost warning: the same unreachable cover at `depth 40` ran z3 for
-  more than five minutes before it was killed; `depth 20` takes 3 s.
-
-### 2(b) Fixed FIFO, `occ <= DEPTH`
-
-- BMC `depth 20`: `DONE (PASS, rc=0)` (11 s native, 4 s slang).
-- `mode prove`, `depth 5`, `smtbmc z3`: **fails induction, as
-  predicted.** `engine_0.induction: Temporal induction failed!` /
-  `Assert failed in top: NoOverflow_A` / `summary: engine_0 (smtbmc z3)
-  returned pass for basecase` / `returned FAIL for induction` /
-  `summary: counterexample trace [induction]:
-  .../engine_0/trace_induct.vcd` / `DONE (UNKNOWN, rc=4)`. `depth 20`
-  gives the same UNKNOWN (10 s): no k fixes it.
-- With the helper `Sync_A: assert (occ == dut.count)` beside it,
-  `depth 5`, **through `read_slang`**: `engine_0.induction: Temporal
-  induction successful.` / `summary: successful proof by k-induction.`
-  / `DONE (PASS, rc=0)`. Agreed.
-- **Through `read -formal` the helper cannot be written that way.** The
-  native front end does not resolve the hierarchical name: `Warning:
-  Identifier `\dut.count' is implicitly declared.` / `Warning: Wire
-  top.\dut.count is used but has no driver.`, the name becomes a free
-  wire, and the run ends `BMC failed!` / `failed assertion top.Sync_A
-  ... step 2` / `DONE (FAIL, rc=2)`: a false counterexample. Nor can
-  the checker be bound in: the native front end parses `bind` and
-  silently drops it (x10: PASS/PASS). On the native front end the
-  helper has to live inside `fifo.sv` or `count` has to be a port. This
-  decides the worked example's front end: white-box helpers need
-  `read_slang`.
-- `abc pdr` (with `aigsmt z3`), no helper: **proves it.** `engine_0:
-  Property proved.  Time =     0.23 sec` / `summary: engine_0 (abc
-  pdr) returned PASS` / `DONE (PASS, rc=0)`. Agreed.
-
-### 2(c) Verilator 5.052, `a |=> b` against `a |-> ##1 b`
+## 2. Verilator 5.052, `a |=> b` against `a |-> ##1 b`
 
 **The verdict is right; the pass action is wrong.** Scratch test, 16
 ticks, `a` at t = 3, 6, 10, 11, 12 and `b` at t = 4, 11, 12, every pass
@@ -171,7 +106,7 @@ both, with the note `passes |=> 14, 13; ##1 14, 12` on 5.052 and
 checker with `|=>` is safe on the pin; a pass action block or a pass
 count on `|=>` is not.
 
-## 3. Disagreements with the research note, and things it did not predict
+## 3. What the cells rest on
 
 ### 3.1 Verilator 5.052 (and 5.054 where stated)
 
@@ -218,7 +153,7 @@ releases:
   correctly, `coverage.dat` has `top.good.c1' 1` / `top.bad.c1' 0`, and
   a `cover property` of an implication does not count vacuous successes
   (#7789, agreed). The book's `sv.mk` has neither flag.
-- p11 `|=>`: see 2(c). The note's "prime suspect for a silent wrong
+- p11 `|=>`: see section 2. The note's "prime suspect for a silent wrong
   result" is half right: wrong pass count, right verdict.
 - x08 `disable iff` pulsed between edges: wrong on 5.052 (the failure
   is reported), right on 5.054, as #8733 says. A reset that is high
@@ -260,7 +195,7 @@ releases:
 - Disagreement: the note expects `error: Error in property_spec of
   concurrent assertion item` for temporal bodies. Measured: a bare
   `syntax error` (p10 and every other temporal row).
-- `-gsupported-assertions`: section 1. Twelve silent passes.
+- `-gsupported-assertions`: section 1. Eleven silent passes.
 - **A failing assertion does not change Icarus's exit status.** Default
   action and `$error` print `ERROR: file:line:` and the run continues to
   `$finish` with exit 0; only `$fatal` exits 1.
@@ -268,7 +203,7 @@ releases:
   runs (documented as dropped; measured as silent).
 - `$past`, `$rose`, `$fell`, `$stable`, `$changed` compile and then
   fail at vvp load: `Error: System task/function $past() is not defined
-  by any module.` (x03 to x05, p66). `$onehot`, `$onehot0`,
+  by any module.` (x03 to x05). `$onehot`, `$onehot0`,
   `$countones`, `$isunknown` work (x06, x14). `let` is refused.
 - p03: Icarus is the only tool that shows the zero-time glitch, 14
   times in 14 ticks, and only when the second signal is produced by
@@ -277,100 +212,45 @@ releases:
   deferred assertions has to be an Icarus listing, and Icarus cannot
   then run the deferred fix.
 
-### 3.3 Yosys native front end (`read -formal`)
+### 3.3 InFormal 0.1.0 (commit 5114330)
 
-- Agreed: clocked immediate `assert`/`assume`/`cover` (x01, p48, p69),
-  module-level `assert property (e);` (x02), `assert final` (p05),
-  `$past`, `$rose`, `$fell`, `$stable`, `$changed`, `$onehot`,
-  `$onehot0`, `$countones` in a clocked `always` (x03 to x06),
-  `$initstate`, `(* anyconst *)`, and a syntax error at `@` for every
-  clocked concurrent form.
-- **Any action block is a syntax error** (p02, p58): `unexpected
-  TOK_ELSE` / `unexpected TOK_ID, expecting ';'`. Not in the note.
-- **`bind` is parsed and silently ignored** (x10: PASS/PASS, no
-  warning in the design log). The note left this as a probe.
-- **`$isunknown` is wrong** (x14): `assert (!$isunknown(v))` fails and
-  `assert ($isunknown(v))` passes. The note lists it as supported.
-- Hierarchical references become free wires: 2(b).
-- `assert #0` is a syntax error (p04); `let`, `default clocking`,
-  `default disable iff`, `checker`, named properties: syntax errors.
-
-### 3.4 Yosys `read_slang`
-
-- Agreed: clocked boolean with `disable iff`, `$past(e)` and
-  `$past(e, n)`, `bind` in all three forms (p55 to p57, x07), `let`,
-  procedural concurrent assertion (p58), immediate and deferred
-  assertions, action blocks accepted and ignored. A module-level
-  `assert property (e)` with no clock is accepted too (x02).
-- **`default disable iff` is silently ignored** (p09: FAIL/FAIL; the
-  in-reset violation is reported, no warning). A file that relies on
-  it gets false failures in formal.
-- **`(* anyconst *)` is not honoured** (p65): a `logic` so marked is
-  free in every step (stability assert fails), a `bit` is constant 0.
-  `$anyconst` and `$initstate` are `unknown system name`. The note's
-  "one symbolic slot" data-ordering idiom needs the native front end or
-  another spelling.
-- **`expect` is dropped** with only a warning in the design log
-  (`expect statement will not be synthesized`): PASS/PASS (p62).
-- `$rose`, `$fell`, `$stable`, `$changed`, `$onehot`, `$isunknown`:
-  `unsupported system task`. Only `$past` of the sampled-value
-  functions exists. `restrict property`: `unsupported assertion
-  statement`. `default clocking`: `unsynthesizable timing control
-  (ignore with '--ignore-timing')`. Named sequences and checkers:
-  `Feature unimplemented (slang_frontend.cc:2936)`. Everything
-  temporal: `encountered unsupported SVA feature`, as predicted.
-- slang's own diagnostics are in `model/design.log`; sby's output only
-  says `Design elaboration failed; see full log for details`.
-
-**The common subset, measured** (the note's finding 1 says "a clocked
-boolean with `$past`"): no single assertion text with a failure count
-is accepted by all of Verilator, native and slang, because of the
-action-block rule. Without an action block, the text all three accept
-is the *clocked immediate* form, `always @(posedge clk) a1: assert
-(e);`, with `$past` (x01, x03); Icarus takes it too, without `$past`.
-The concurrent form `assert property (@(posedge clk) [disable iff (r)]
-e)` is common to Verilator and `read_slang` only. p71's two-way macro
-runs on Verilator and both front ends.
-
-### 3.5 SymbiYosys
-
-- Version 0.70. No default engine, as the addendum read from the
-  source: `ERROR: Config file is lacking engine configuration.` (p00).
-- `abc pdr` without `aigsmt`: a passing proof is fine; a failing one
-  ends `engine_0: Could not determine aigsmt status.` /
-  `DONE (ERROR, rc=16)`, because the default is yices. `aigsmt z3`
-  fixes it. Agreed with the addendum.
-- p67: `DONE (UNKNOWN, rc=4)` with `summary: engine_0 (smtbmc z3)
-  returned FAIL for induction`; p68: PASS under `abc pdr`. Agreed.
-- p69: `Unreached cover statement at dut: c1` / `DONE (FAIL, rc=2)`.
-- p70: with `expect fail`, a failing task ends `DONE (FAIL, rc=0)` and
-  a passing one `DONE (PASS, rc=1)`.
-- p40: `mode live` needs `suprove`: `engine_0: COMMAND NOT FOUND.
-  ERROR.` Liveness cannot be run here.
-- **Contradictory assumptions are not a vacuous pass** (a refinement of
-  p48's premise). With `assume (d < 8); assume (d > 9);` and a false
-  assertion, `mode bmc` and `mode prove` end `Assumptions are
-  unsatisfiable!` / `Status: PREUNSAT` / `DONE (ERROR, rc=16)`, because
-  sby runs smtbmc with `--presat`; `mode cover` ends `Unreached cover
-  statement` / FAIL. The vacuity a cover has to catch is the partial
-  kind (an antecedent made unreachable), not total contradiction.
-- `$past` in the first step is unconstrained in **both** front ends:
-  each of `$past(x) == 0`, `== 15` and `!= 7` at t = 0 fails.
-- A clocked assertion is reported one step after the state that
-  violates it (a violation at t = 5 is "step 6").
-
-## 4. What this changes for the chapter (for gate 1)
-
-1. Verilator's sequence engine cannot be trusted beyond fixed delays,
-   `##[m:n]` in a consequent, `[*N]`, `throughout`, the `until` family,
-   `always [m:n]`, `not`, property `if`, followed-by, local variables
-   and named sequences and properties. Ranged and unbounded repetition,
-   goto, `within`, sequence `or`, `first_match` and ranged-delay
-   antecedents give wrong verdicts on 5.052 **and 5.054**; moving the
-   pin does not help. These want upstream bug reports.
-2. Covers need `--coverage` in the example's flags.
-3. The FIFO worked example works as designed: vacuous forward
-   property, 15-push backward counterexample at step 17, unreachable
-   cover, induction failure and its helper, PDR without the helper. It
-   needs `read_slang` if the helper is to reach `count` from outside.
-4. `default disable iff` must not be used in a file `read_slang` reads.
+- **Right on the whole chapter subset**: clocked boolean, `disable
+  iff`, `default clocking`, `default disable iff`, `|->`, `|=>`,
+  `##N`, `$past(x)`, `$past(x, n)`, `$rose`/`$fell`,
+  `$stable`/`$changed`, `bind` in every form tried (module, one
+  instance, instance list, `.*` to internal signals), a concurrent
+  assertion under `if` in `always_ff`, `assume property` on a free
+  input, `restrict property`, `cover property`, `cover sequence`,
+  `let`, named sequences and properties with arguments.
+- **Right where Verilator is wrong**: p16 ranged repetition, p22
+  `within`, p24 sequence `and`/`or`, p25 `first_match`, x12 ranged
+  delay in an antecedent, x15 `or` of two failing operands. Also
+  builds and is right where Verilator refuses: p23 `intersect` with a
+  variable-length operand, p32 gated `$past`, p44 `nexttime`, p56 and
+  x07 `bind` to instances.
+- **Refused with a message** (status `error` on the property, which
+  the runner records as "no build"): `##[1:$]` (p14), `[*1:$]`, `[+]`,
+  `[*]` (p17, "the repetition range [1:$]"), `[->]` (p18), `[=]` (p19,
+  p20), `not` (p29), `strong(##[1:$] b)` (p41, for its delay range),
+  property `if` (p45), followed-by (p46), an antecedent that has no
+  match (p52), a sequence with its own clock (p59), a property with no
+  clock and no default clocking (x02). `checker ... endchecker` (p63)
+  stops the script: `SystemVerilog errors`.
+- **Silently absent** (the report has no row for the property and
+  nothing is printed; exit 0). Every "wrong" cell in the column is
+  this: immediate assertions in `always_comb` and in clocked blocks
+  (p01, p02, x01, x03 to x06, x14), deferred assertions (p04, p05), a
+  bound checker written with clocked immediate assertions (x10), an
+  immediate `cover` (x11), the `expect` statement (p62), **a property
+  with a local variable (p28)**, and p36, whose module has `$onehot`,
+  `$onehot0`, `$countones` and `$isunknown` assertions together.
+  Taken apart in a scratch run: with the `$isunknown` line deleted the
+  other three assertions are listed and refuted (`cex ... depth 5`), so
+  one `$isunknown` assertion removes every RTL property of its module
+  from the report, without a message (research FINDINGS F.1b).
+- Liveness: `a |-> s_eventually b` (p39) and `s_eventually e` (p40)
+  are proven on the good design and refuted on the bad one by
+  `informal-ic3`.
+- Not in this table, measured in the chapter's examples: asynchronous
+  reset modelled as synchronous (`axi-formal`), contradictory
+  assumptions (`vacuity-formal`), exit status (`examples/mk/informal.tcl`).

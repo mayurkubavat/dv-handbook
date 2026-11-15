@@ -1,6 +1,7 @@
-# Chapter 9: the two support matrices, regenerated from the probes on every
-# run; several minutes, most of it compiling the simulators' output. Needs
-# verilator, iverilog, yosys (with read_slang), sby and z3 on the PATH.
+# The two support matrices, regenerated from the probes on every run;
+# several minutes, most of it compiling the simulators' output. Needs
+# verilator and iverilog on the PATH; the columns for the next Verilator
+# release and for InFormal appear when those programs are found.
 EXAMPLE_LANG := python
 TOP          := matrix.py
 SOURCES      := matrix.py

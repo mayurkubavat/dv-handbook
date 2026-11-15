@@ -1,7 +1,7 @@
 // $past in a clocked immediate assertion: $past(t) is t - 1 from the
 // second tick on; the BAD instance expects a wrong value at t == 5 (x03)
-// The native Yosys front end has no action blocks, so the failure count
-// is compiled only for simulation.
+// The failure count is simulation code: a formal run defines FORMAL,
+// which compiles it out.
 `ifdef FORMAL
 `define COUNT
 `else

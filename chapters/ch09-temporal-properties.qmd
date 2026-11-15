@@ -3,14 +3,32 @@
 > A check that cannot fail has not passed.
 
 ::: {.callout-note title="Learning objectives"}
-After this chapter you can state a requirement as a property of every trace of a design and say which trace would falsify it; classify it as safety or liveness and say what a simulation can and cannot conclude about each; write it as a clocked assertion over the current tick, the previous one and a few monitor registers; pair it with the cover that shows it was exercised; attach it to a design without editing the RTL; and say, for each construct of the assertion language, whether the book's simulator can be trusted with it.
+After this chapter you can state a requirement as a property of every trace of a design and say which trace would falsify it; classify it as safety or liveness and say what a simulation can and cannot conclude about each; write it as a clocked assertion over this tick, the next one and a few monitor registers; pair it with the cover that shows it was exercised; attach it to a design without editing the RTL; hand the same file to a simulator and to a formal tool and read both reports; and say, for each construct of the assertion language, which of the book's tools can be trusted with it.
 :::
 
 ## A property that passed and proved nothing
 
-*The reader can explain how a correct-looking property about the FIFO of @sec-ch01-example ("sixteen entries implies full") passes a bounded check on the buggy design, why its converse fails after fifteen pushes, and why a cover of sixteen entries reports unreachable: the bug the book opened with, found three ways, one of them vacuous.*
+The FIFO of @sec-ch01-example has sixteen entries and a `full` flag that rises at fifteen. A test found that in the first chapter by comparing the design with a queue. Here are three statements about the same design, each written from the specification's sentence "full is asserted when all sixteen entries are occupied, and only then", and each given to a tool that examines every input sequence the design can receive, not the ones a test happened to drive.
 
-<!-- FORMAL: to be written on InFormal -->
+1. If sixteen entries are occupied, `full` is high.
+2. If `full` is high, sixteen entries are occupied.
+3. There is a run in which sixteen entries are occupied.
+
+The first two are the two halves of "exactly when". They are assertions, and the checker that holds them is the subject of @sec-ch09-example. The third is a cover: a request to be shown the situation. The script below reads the design, the checker and the file that attaches one to the other, names the clock and the reset, and asks for a verdict on everything.
+
+```{.tcl include="examples/ch09-temporal-properties/fifo-formal/fifo.tcl"}
+```
+
+```{.text include="examples/ch09-temporal-properties/fifo-formal/run.out"}
+```
+
+The tool is InFormal, a formal property checker, and @sec-ch09-formal says what it is and how far to trust it [@informal-tool]. Its report has one row for each property. *proven* means that no input sequence of any length makes the assertion false. *cex* means that one does, and the tool has kept it: a *counterexample*, the shortest trace it found that ends in a violation. For a cover the two words are *covered*, with the depth of a trace that reaches the condition, and *unreachable*, which is a proof that no trace does.
+
+Read the three rows that matter. Statement 2, `FullBackward_A`, is refuted at depth 16, and the table under the report is the counterexample, one row per clock cycle. Cycle 0 is the reset cycle, in which this tool leaves the registers at arbitrary values (the 8 and the 31 are not the design's). From cycle 1 the trace pushes on every tick. After fifteen pushes the design's `count` is 15, the checker's own count `occ` is 15, and `full` is high: the bug of the first chapter, found without a test and in the fewest cycles that can show it.
+
+Statement 1, `FullForward_A`, is *proven*. A reader who stopped there would conclude that half of the `full` flag's specification holds on this design for all time. The row for statement 3 says what the proof is worth. `FullReached_C` is *unreachable*: this FIFO never holds sixteen entries, because it stops accepting pushes at fifteen. Statement 1 is true of every trace for the reason that "if it rains on the moon, `full` is high" would be: its condition never arises. `NoOverflow_A`, two rows above, is proven for the same reason. Nothing in either row says so. The tool printed the same word, *proven*, for a property that constrains the design and for one that constrains nothing, and only the cover told them apart.
+
+That is the chapter's subject in one run: a property is a statement about all traces, a tool can refute it with one trace or prove it of all of them, and a proof is only as good as the evidence that the property could have failed.
 
 ## What a property is {#sec-ch09-what}
 
@@ -27,11 +45,13 @@ The book has already written a temporal property by hand. The bus monitor of the
 ```{.systemverilog include="examples/ch11-architecture-to-verification/tb/dma_tb_pkg.sv" lines="198-208"}
 ```
 
-The function is called once per clock for each channel. Its argument `was` is a bit the monitor saved on the previous edge, "VALID was high and READY was not", and `then_v` is the payload it saved with it. So the check spans two ticks: something observed on one edge constrains what may be observed on the next. One remembered bit and one remembered word per channel are the whole of the machinery, and this chapter's method is that machinery made systematic. A property that looks back one tick reads the previous values with a system function, `$past`. A property that looks back further keeps what it needs in a register of its own, as the monitor did. In both cases the assertion itself is a condition on one tick, and the temporal part is ordinary sequential logic that a reader can simulate in the head.
+The function is called once per clock for each channel. Its argument `was` is a bit the monitor saved on the previous edge, "VALID was high and READY was not", and `then_v` is the payload it saved with it. So the check spans two ticks: something observed on one edge constrains what may be observed on the next. One remembered bit and one remembered word per channel are the whole of the machinery, and this chapter's method is that machinery made systematic. A property that spans two ticks says so with one operator, "on the next tick", or reads the previous values with a system function, `$past`. A property that spans more keeps what it needs in a register of its own, as the monitor did. The temporal part is then ordinary sequential logic that a reader can simulate in the head, and what is left for the assertion language is small.
 
 That is a choice, and SystemVerilog offers more. The language has three kinds of assertion [@ieee1800-2023, clauses 16.3 to 16.5]. An *immediate* assertion is a procedural statement: it tests an expression when execution reaches it, like an `if` whose else branch reports an error. A *deferred* immediate assertion, written `assert #0` or `assert final`, postpones the report until the time step has settled, so that a value that glitches inside one instant is not reported [@sutherland2015assertions]. A *concurrent* assertion, `assert property`, is clocked and has a language of its own for behavior over many ticks: sequences with delays and repetition, implication between them, reset conditions. It also has its own place in the scheduler. As @sec-ch04-regions laid out, its inputs are sampled in the Preponed region, before anything in the time step has run, it is evaluated in the Observed region, and its action block runs in the Reactive region [@cummingssalz2007events].
 
-This chapter writes every property as an immediate assertion inside a block clocked by the design's clock, using `$past` and monitor registers for anything that spans ticks. The reason is practical. A property is worth most when the same text serves as a simulation checker and as a proof obligation for a formal tool, and the clocked immediate form is the plainest thing a tool can be asked to read: a flip-flop's worth of timing and a boolean. The sequence language is the opposite case. @sec-ch09-sequences describes it, because a verifier will read it in other people's code for a whole career, and @sec-ch09-tools measures what the book's simulator does with it, which is the second reason the chapter's own examples stay out of it.
+This chapter writes every property as a concurrent assertion in one fixed shape, `assert property (@(posedge clk) disable iff (!rst_n) e);`, and keeps the expression `e` inside a small subset of the language: boolean expressions, the two implications `|->` and `|=>`, a delay of a fixed number of ticks, and the sampled-value functions `$past`, `$rose`, `$fell` and `$stable`. Anything that needs more is state in a monitor register. The reason is practical. A property is worth most when the same text serves as a simulation checker and as a proof obligation for a formal tool, and the subset is what the book's simulator and its formal tool were both measured to get right (@sec-ch09-tools). The rest of the sequence language is the opposite case. @sec-ch09-sequences describes it, because a verifier will read it in other people's code for a whole career, and the same measurements show the simulator accepting several of its operators and returning wrong verdicts.
+
+The subset was not the first candidate. An immediate assertion inside a block clocked by the design's clock is plainer still, a flip-flop's worth of timing and a boolean, and both of the book's simulators run it. The formal tool does not: @sec-ch09-formal shows a checker written that way producing an empty report.
 
 Whether the technique earns its cost is a fair question with one old measured answer. On the DECchip 21164 Alpha, checkers embedded in the simulation model were the mechanism that detected 34% of the bugs found, the largest share of any mechanism in the project's tally, ahead of self-checking tests at 11% [@kantrowitznoack1996done]. Those were hand-coded checkers in a 1990s behavioral model, a decade before the assertion language existed, and the same paper is clear that a checker reports a problem only once a test has driven the design into the condition it watches. The figure is evidence that checks placed inside the design find bugs, not a measurement of any language, and the book attaches no other number to the benefit.
 
@@ -65,29 +85,29 @@ The practical consequence is the one device this chapter uses for "must happen".
 
 ## Sequences are regular expressions over cycles {#sec-ch09-sequences}
 
-The concurrent-assertion language builds properties out of *sequences*, and a sequence is a regular expression whose letters are clock ticks [@ieee1800-2023, clause 16.7]. A boolean expression matches one tick on which it is true. Everything else combines matches. This section is a reading guide: the chapter's examples do not use the operators, and the last column of the table says why a reader should be careful before using them on the book's simulator.
+The concurrent-assertion language builds properties out of *sequences*, and a sequence is a regular expression whose letters are clock ticks [@ieee1800-2023, clause 16.7]. A boolean expression matches one tick on which it is true. Everything else combines matches. This section is a reading guide. Of everything in the table the chapter's examples use the two implications and nothing else, and the last column says why a reader should be careful with the rest on the book's simulator.
 
-| Written | Read as | On the simulator measured |
-|---|---|---|
-| `a ##2 b` | a, then b two ticks later: concatenation with a fixed gap | right |
-| `a ##[1:3] b` | a, then b one, two or three ticks later: a union of gaps | right in a consequent; matches lost in an antecedent |
-| `a[*3]` | a on three consecutive ticks | right |
-| `a[*1:3]`, `a[*]`, `a[+]` | a bounded or unbounded run of a, the Kleene star | wrong: false failures on the range, missed failures on the unbounded forms |
-| `b[->2]` | ticks up to and including the second b: *goto* repetition | wrong: missed failure |
-| `b[=2]` | the same, and the match may run on past the second b | does not build in the form measured |
-| `e throughout s` | e holds on every tick of a match of s | right |
-| `s1 within s2` | a match of s1 inside a match of s2 | wrong: missed failure |
-| `s1 intersect s2` | both match over the same ticks | does not build with a variable-length operand |
-| `s1 and s2`, `s1 or s2` | both match from one start; either matches | `or` never fails; `and` reports one failure twice |
-| `first_match(s)` | only the match of s that ends first | wrong with a ranged delay inside |
-| `s \|-> p` | wherever s matches, p holds starting on the tick s ends | right for the antecedents above that are right |
-| `s \|=> p` | the same, starting one tick after s ends | right; pass actions miscounted |
+| Written | Read as | On the simulator measured | On the formal tool measured |
+|---|---|---|---|
+| `a ##2 b` | a, then b two ticks later: concatenation with a fixed gap | right | right |
+| `a ##[1:3] b` | a, then b one, two or three ticks later: a union of gaps | right in a consequent; matches lost in an antecedent | right |
+| `a[*3]` | a on three consecutive ticks | right | right |
+| `a[*1:3]`, `a[*]`, `a[+]` | a bounded or unbounded run of a, the Kleene star | wrong: false failures on the range, missed failures on the unbounded forms | right on the range; unbounded forms refused |
+| `b[->2]` | ticks up to and including the second b: *goto* repetition | wrong: missed failure | refused |
+| `b[=2]` | the same, and the match may run on past the second b | does not build in the form measured | refused |
+| `e throughout s` | e holds on every tick of a match of s | right | right |
+| `s1 within s2` | a match of s1 inside a match of s2 | wrong: missed failure | right |
+| `s1 intersect s2` | both match over the same ticks | does not build with a variable-length operand | right |
+| `s1 and s2`, `s1 or s2` | both match from one start; either matches | `or` never fails; `and` reports one failure twice | right |
+| `first_match(s)` | only the match of s that ends first | wrong with a ranged delay inside | right |
+| `s \|-> p` | wherever s matches, p holds starting on the tick s ends | right for the antecedents above that are right | right |
+| `s \|=> p` | the same, starting one tick after s ends | right; pass actions miscounted | right |
 
-: The sequence operators as regular expressions over clock ticks, with what Verilator 5.052 did with one probe of each. The verdicts are summarized from @tbl-ch09-support and @tbl-ch09-support-x, which carry the detail. {#tbl-ch09-seq}
+: The sequence operators as regular expressions over clock ticks, with what Verilator 5.052 and InFormal 0.1.0 did with one probe of each. *Refused* means the tool named the operator as one it does not support. The verdicts are summarized from @tbl-ch09-support and @tbl-ch09-support-x, which carry the detail. {#tbl-ch09-seq}
 
 Three ideas organize the left two columns. `##n` is concatenation, with the gap counted in ticks, and a ranged gap is a union of concatenations. Repetition is the star of regular expressions, in three forms that differ in what may happen between repeats: `[*n]` allows nothing between, `[->n]` allows ticks without `b` between and ends on the last `b`, and `[=n]` also allows them after it. The remaining operators intersect and select among matches, and regular languages are closed under those operations, so a sequence built with them is still a regular expression. The two implications turn a sequence into a property: for every tick, if a match of the left side starts there, the right side must hold where that match ends. When the left side does not match, the property holds for that tick with nothing checked, which @sec-ch09-vacuity takes up.
 
-A regular expression has an automaton, and that is what a tool builds from a sequence: a set of states, one or more of them active at each tick, advanced by the sampled values. The automaton is also what a verifier builds by hand when the operator is not to be trusted, as registers in a small monitor. @fig-ch09-automaton in the next section draws one both ways. The following example is the reason the chapter prefers the registers.
+A regular expression has an automaton, and that is what a tool builds from a sequence: a set of states, one or more of them active at each tick, advanced by the sampled values. The automaton is also what a verifier builds by hand when the operator is not to be trusted, as registers in a small monitor. @fig-ch09-automaton in the next section draws one both ways. The following example is the reason the chapter prefers the registers on the simulator.
 
 ```{.systemverilog include="examples/ch09-temporal-properties/goto-miss/tb_goto.sv"}
 ```
@@ -98,21 +118,23 @@ A regular expression has an automaton, and that is what a tool builds from a seq
 One rule is checked twice in each of two instances. After `go`, the tick that follows the second `beat` must carry `last`. The assertion says it with goto repetition; the monitor says it with a four-state machine that counts the beats still owed. In the instance that never supplies `last`, the monitor reports the failure and the assertion reports nothing. The simulator compiled the property without a warning, ran it, and missed the only violation in the run. The example's own check is written so that it fails on the day a release reports the failure, at which point the Pitfall below is out of date.
 
 ::: {.callout-warning title="Pitfall"}
-An assertion that the simulator accepts is not an assertion that the simulator checks. On the release this book runs, and on the next one, a consequent with goto repetition reports no failure when the design breaks the rule, and @sec-ch09-tools lists five more constructs with wrong verdicts, in both directions. Before relying on a sequence operator, make it fail once: write the stimulus that violates the property and watch for the report. A property that has never been seen to fail has not been shown to work.
+An assertion that the simulator accepts is not an assertion that the simulator checks. On the release this book runs, and on the next one, a consequent with goto repetition reports no failure when the design breaks the rule, and @sec-ch09-tools lists more constructs with wrong verdicts, in both directions. The formal tool is the more honest of the two here, since it refuses the operators it does not implement, but @sec-ch09-formal has its own list of things it accepts and ignores. Before relying on a sequence operator, make it fail once: write the stimulus that violates the property and watch for the report. A property that has never been seen to fail has not been shown to work.
 :::
 
 ## Properties: implication, reset and sampled values {#sec-ch09-properties}
 
-A clocked immediate assertion has three parts, and the handshake rule of @sec-ch09-what shows all of them.
+A concurrent assertion in the chapter's shape has three parts, and the handshake rule of @sec-ch09-what shows all of them.
 
 ```{.systemverilog include="examples/ch09-temporal-properties/handshake/hs_check.sv"}
 ```
 
-The *clock* is the block's event: every statement in it runs once per rising edge and reads the values the design's own flip-flops capture at that edge. The *guard* is the `if` in front of each assertion, and it is what the concurrent language calls an antecedent: it says on which ticks the rule applies. The *condition* inside `assert` is what must then be true. `Answer_A` is the overlapped form, guard and condition on the same tick: where `ready` is high, `valid` is high. `Held_A` and `Stable_A` are the non-overlapped form, guard on one tick and condition on the next, and the tick before is reached with `$past`.
+The *clock* says when the property is looked at: once per rising edge, on the values the design's own flip-flops capture at that edge. The *reset* term, `disable iff`, switches the property off while its condition is true and abandons any check that is in progress [@ieee1800-2023, clause 16.12]. The *body* is an implication. Its left side, the *antecedent*, says on which ticks the rule applies, and its right side, the *consequent*, is what must then be true. `Answer_A` uses the overlapped form `|->`, both sides on the same tick: where `ready` is high, `valid` is high. `Held_A` and `Stable_A` use the non-overlapped form `|=>`, the left side on one tick and the right side on the next: an offer that is waiting now is still there one tick later, with the same data. `a |=> b` is shorthand for `a |-> ##1 b`, a delay of one tick in front of the consequent [@ieee1800-2023, clause 16.12].
 
-`$past(e)` is the value `e` had at the previous clock tick, and it is one of a family of *sampled-value functions* [@ieee1800-2023, clause 20.12]. The others are shorthand for comparisons with it: `$stable(x)` is `x == $past(x)`, `$changed(x)` is its negation, and `$rose(b)` and `$fell(b)` test a one-bit signal for having been low and now being high, or the reverse. They compare two samples; they do not watch for edges between samples [@sutherland2015assertions]. The examples write the comparisons out with `$past`, so that one function is all a reader has to know. The function has to stand inside a clocked block, since it is the block's clock that defines "previous": moved out to a continuous assignment, the simulator refuses it as an assertion with no clock.
+`$stable(x)` is true when `x` has the value it had at the previous clock tick, and it is one of a family of *sampled-value functions* [@ieee1800-2023, clause 20.12]. `$past(e)` is the previous value itself, and the others are comparisons with it: `$stable(x)` is `x == $past(x)`, `$changed(x)` is its negation, and `$rose(b)` and `$fell(b)` test a one-bit signal for having been low and now being high, or the reverse. They compare two samples; they do not watch for edges between samples [@sutherland2015assertions]. Each needs a clock to define "previous", which the property's own clock supplies.
 
-Two details of the listing are about the edges of a run. On the very first tick there is no previous tick, and `$past` returns something anyway: on the book's simulator, zero, whatever the signal's reset value is (@sec-ch09-tools). And during reset the rules do not apply at all, since a source is entitled to drop everything. So each guard has a reset term, and the register `past_ok` records that the tick before was out of reset too, which makes `$past` refer to a tick the rule may speak about. In the concurrent language the same job is done by `disable iff (rst)`, which abandons any evaluation in progress when its condition is true [@ieee1800-2023, clause 16.12]. `HeldRaw_A` is the rule with no reset term, kept in the file to show the difference.
+The handshake rule can be written a second way, and the difference matters more than it looks. `valid && !ready |=> valid` starts from a tick and speaks about the next one. `$past(valid && !ready) |-> valid` starts from a tick and speaks about the one before. On every tick but one they say the same thing. The exception is the first tick a tool checks, where "the one before" is a tick no specification describes, and each tool fills it in for itself. The book's simulator returns zero from `$past` there, whatever the signal's reset value (@sec-ch09-tools). Its formal tool gives a different answer, with a consequence that @sec-ch09-axi measures. The chapter's rule follows from that: an implication looks forward. `$past` and `$stable` belong on the right of `|=>`, where the tick before is one the property itself has just examined.
+
+During reset the rules do not apply at all, since a source is entitled to drop everything, and that is what `disable iff (!rst_n)` says. `HeldRaw_A` is the rule with no reset term, kept in the file to show the difference.
 
 ```{.systemverilog include="examples/ch09-temporal-properties/handshake/tb_handshake.sv"}
 ```
@@ -123,9 +145,9 @@ Two details of the listing are about the edges of a run. On the very first tick 
 ```{.text include="examples/ch09-temporal-properties/handshake/run.out"}
 ```
 
-The testbench drives four offers and one stray `ready` from a tick counter, so that every rule holds at least once and fails exactly once at a tick known in advance. The second offer changes its data while waiting, and `Stable_A` fails at tick 7. The third is withdrawn, and `Held_A` fails at tick 11. The fourth is cut off by reset at tick 14: `Held_A` says nothing, and `HeldRaw_A`, with no reset term, reports a failure that is not one. The stray `ready` fails `Answer_A` at tick 16. @fig-ch09-attempts draws the waveform with `Held_A`'s verdict under each tick. Most ticks check nothing, because no offer was pending on the tick before; the cover at the foot of the checker counts the five that did.
+The testbench drives four offers and one stray `ready` from a tick counter, so that every rule holds at least once and fails exactly once at a tick known in advance. The second offer changes its data while waiting, and `Stable_A` fails at tick 7. The third is withdrawn, and `Held_A` fails at tick 11. The fourth is cut off by reset at tick 14: `Held_A` says nothing, and `HeldRaw_A`, with no reset term, reports a failure that is not one. The stray `ready` fails `Answer_A` at tick 16. @fig-ch09-attempts draws the waveform with `Held_A`'s verdict under each tick. Most ticks check nothing, because no offer was waiting on the tick before; the cover at the foot of the checker counts the five on which a check was made. It is written to reach as far as the rules do, an offer waiting and then one more tick, so the offer that reset cut off is not counted.
 
-![The handshake example's waveform, with the check `Held_A` drawn under it. A gray box is a tick whose guard was false. A two-tick bar starts where an offer was pending and ends where the assertion ran: twice it passed, once it failed, and once reset switched it off. The failure is at the tick the example's output prints.](../figures/ch09-attempts.svg){#fig-ch09-attempts fig-alt="Waveform of rst, valid, ready and data over eighteen ticks. Below it, a row of gray boxes for ticks at which no offer was pending, green two-tick bars for checks that passed, one amber bar ending at tick 11 for the check that failed and one hatched bar ending at tick 14 for the check that reset switched off."}
+![The handshake example's waveform, with the check `Held_A` drawn under it. A gray box is a tick at which no check was due. A two-tick bar starts where an offer was waiting and ends where the consequent was judged: twice it passed, once it failed, and once reset switched it off. The failure is at the tick the example's output prints.](../figures/ch09-attempts.svg){#fig-ch09-attempts fig-alt="Waveform of rst, valid, ready and data over eighteen ticks. Below it, a row of gray boxes for ticks at which no offer was pending, green two-tick bars for checks that passed, one amber bar ending at tick 11 for the check that failed and one hatched bar ending at tick 14 for the check that reset switched off."}
 
 The first half of the output is the simulator's default, and it is the right default for a regression: the first failed assertion ends the run with a non-zero exit status, so later failures are never reached and the script that launched the test sees the failure. The second half raises the simulator's error limit so that every failure is reported. Read its last line before copying the flag into a regression.
 
@@ -133,16 +155,16 @@ The first half of the output is the simulator's default, and it is the right def
 With the error limit raised, the run above reports five failed assertions and exits with status zero. The limit is the number of errors the simulator tolerates before stopping, and a run that stays under it is, to the shell, a run that passed. Raise the limit to see every failure while debugging; never in a regression whose verdict is the exit status, unless the script also counts the failures in the log, as this example's does.
 :::
 
-One more property of the clocked form needs saying, because the concurrent form does not share it. A concurrent assertion samples in the Preponed region and cannot race with anything. An immediate assertion in a clocked block is ordinary code in the Active region: it reads registers before their non-blocking updates, which is what makes it see the values the flip-flops capture, but it reads a signal that some other block changes with a blocking assignment at the same edge in whatever order the simulator picks (@sec-ch04-races). Every testbench in this chapter drives the design's inputs on the falling edge and checks on the rising one, which removes the question. A checker bound to a design whose inputs arrive from a testbench that writes them at the rising edge has to be read with that race in mind.
+One more property of the concurrent form is worth knowing, because a check written as ordinary procedural code does not share it. A concurrent assertion samples its signals in the Preponed region, before anything in the time step has run, so it cannot race with the code that changes them (@sec-ch04-regions). A monitor register inside a checker is an ordinary flip-flop and behaves like the design's: it reads a signal that some other block changes with a blocking assignment at the same edge in whatever order the simulator picks (@sec-ch04-races). Every testbench in this chapter drives the design's inputs on the falling edge and checks on the rising one, which removes the question.
 
 ### Rules that span more than two ticks
 
-`$past` looks back one tick, or a fixed number with a second argument. A rule with a window in it, "a grant within three ticks of every request", needs to remember each request that is still waiting and how old it is, and that is state. The checker keeps it in a register.
+`|=>` reaches one tick ahead and `$past` one tick back, or a fixed number with a second argument. A rule with a window in it, "a grant within three ticks of every request", needs to remember each request that is still waiting and how old it is, and that is state. The checker keeps it in a register.
 
 ```{.systemverilog include="examples/ch09-temporal-properties/bounded-response/resp_check.sv"}
 ```
 
-Bit `i` of `waiting` says that a request `i+1` ticks old has seen no grant. A new request enters at bit zero; every tick without a grant shifts the bits up; a grant clears them all, since one grant answers every request it is in time for. The assertion is then a condition on a single tick: the oldest bit is not set on a tick without a grant. @fig-ch09-automaton shows where the register comes from. The rule is a regular expression, in sequence notation `req |-> ##[1:3] gnt`; its automaton has one state per age a waiting request can have; and because a request can arrive on every tick, several of those states can be occupied at once. A shift register is exactly a set of occupied states.
+Bit `i` of `waiting` says that a request `i+1` ticks old has seen no grant. A new request enters at bit zero; every tick without a grant shifts the bits up; a grant clears them all, since one grant answers every request it is in time for. The property is then a condition on a single tick: the oldest bit is not set on a tick without a grant. @fig-ch09-automaton shows where the register comes from. The rule is a regular expression, in sequence notation `req |-> ##[1:3] gnt`; its automaton has one state per age a waiting request can have; and because a request can arrive on every tick, several of those states can be occupied at once. A shift register is exactly a set of occupied states.
 
 ![One rule drawn twice. Above, its automaton: a request moves through three ages, a grant returns it to idle, and a third tick without a grant is the failure. Below, the monitor of the listing: one register bit per age, so that requests of different ages are tracked at once, and an assertion on the last bit.](../figures/ch09-automaton.svg){#fig-ch09-automaton fig-alt="State diagram with states idle, age 1, age 2, age 3 and fail. Arcs labeled req and not gnt lead rightwards from idle through the three ages to fail; arcs labeled gnt lead from each age back to idle. Below, a three-bit shift register named waiting, fed by req, whose last bit and the absence of gnt feed an assert box."}
 
@@ -157,14 +179,14 @@ Bit `i` of `waiting` says that a request `i+1` ticks old has seen no grant. A ne
 
 The design answers a request after one tick, or after three when the request is marked slow, and a parameter builds the version whose slow path takes four. Forty ticks of random requests against that version fail the assertion twice. The cover in the checker asks a different question, whether a grant ever arrived on the last permitted tick, and its two counts are worth a look: zero on the broken responder, whose slow grants are all one tick late, and two on the correct one. A cover that reads zero where the specification says the case exists is a finding in its own right, and the next section is about that.
 
-The checker in this form is a few lines longer than the one-line sequence. In exchange, its verdict depends on nothing but flip-flops and a comparison, and a reader who doubts the verdict can put `waiting` in a waveform and watch it.
+The checker in this form is a few lines longer than the one-line sequence. In exchange, its verdict depends on nothing but flip-flops and a comparison, a reader who doubts the verdict can put `waiting` in a waveform and watch it, and both of the book's tools read it the same way, which @sec-ch09-formal shows on this example.
 
 ## Vacuity, and the cover that catches it {#sec-ch09-vacuity}
 
-A guarded assertion makes a promise about the ticks on which its guard is true. On every other tick it holds trivially, and if the guard is never true, it holds on every tick of the run while checking nothing. The formal-methods literature calls the general condition *vacuity*: a formula passes vacuously in a model when some part of it could be replaced by anything at all without changing the verdict, and the commonest case, an implication whose left side never holds, was named *antecedent failure* before the general definition existed [@beer2001vacuity]. The remedy in that literature is an *interesting witness*, a trace on which the formula holds and its parts matter. In an assertion language the witness is a `cover` statement: the same guard, with a request to be told when it was true.
+An implication makes a promise about the ticks on which its antecedent is true. On every other tick it holds trivially, and if the antecedent is never true, it holds on every tick of the run while checking nothing. The formal-methods literature calls the general condition *vacuity*: a formula passes vacuously in a model when some part of it could be replaced by anything at all without changing the verdict, and the commonest case, an implication whose left side never holds, was named *antecedent failure* before the general definition existed [@beer2001vacuity]. The remedy in that literature is an *interesting witness*, a trace on which the formula holds and its parts matter. In an assertion language the witness is a `cover` statement: the same antecedent, with a request to be told when it was true.
 
 ::: {.callout-note title="Definition"}
-An assertion **passes vacuously** when it holds because the situation it constrains never arose. A **cover** is a statement that a condition should be observed at least once; a tool counts the ticks on which it was. Every guarded assertion is paired with a cover of its guard, and a cover that reads zero turns the assertion's pass into no information.
+An assertion **passes vacuously** when it holds because the situation it constrains never arose. A **cover** is a statement that a condition should be observed at least once: a simulator counts the ticks on which it was, and a formal tool either produces a trace that reaches it or proves that none exists. Every implication is paired with a cover of its antecedent, and a cover that reads zero, or *unreachable*, turns the assertion's pass into no information.
 :::
 
 ```{.systemverilog include="examples/ch09-temporal-properties/vacuity/ack_check.sv"}
@@ -184,14 +206,32 @@ An assertion **passes vacuously** when it holds because the situation it constra
 
 The responder is broken in the plainest way: it never acknowledges. The first run passes. The test finished, no assertion failed, and a regression would mark it green. The second line of its report is the only sign of what happened: the cover counted zero ticks on which a request had been made. The test drove none, as tests do when a sequence is disabled, a constraint is too tight or a configuration bit is off. With requests driven, the same assertion fails on every one of them.
 
-There are three ways to arrive at the first run, and the cover catches two of them. The stimulus never reached the guard, as here. Or the environment was constrained so that it could not: an assumption about the inputs, which is the subject of @sec-ch09-where, removes the guard's cases along with the illegal ones. Or the assertion was never compiled in or never bound, and then its cover is missing from the report altogether, which is why a reviewer reads the list of covers against the list of assertions and not only the counts.
+There are three ways to arrive at the first run, and the cover catches two of them. The stimulus never reached the antecedent, as here. Or the environment was constrained so that it could not: a constraint on the inputs that removes the antecedent's cases along with the illegal ones. Or the assertion was never compiled in or never bound, and then its cover is missing from the report altogether, which is why a reviewer reads the list of covers against the list of assertions and not only the counts.
 
-<!-- FORMAL: to be written on InFormal: the same checker under a formal tool: the cover as a reachability query, an over-constraining assumption that makes the assertion pass and the cover unreachable, and what the tool reports for contradictory assumptions. -->
+A formal tool has no stimulus to fall short, which removes the first of the three and sharpens the second. Its inputs are *free*: on every tick each one may take any value, and a verdict covers all the combinations. The only way to narrow them is to say so, with an *assumption*, a property the tool is told to take as given about the inputs (@sec-ch09-where treats the verb properly). The script below gives the same broken responder and the same checker to the formal tool four times.
+
+```{.tcl include="examples/ch09-temporal-properties/vacuity-formal/vacuity.tcl"}
+```
+
+```{.text include="examples/ch09-temporal-properties/vacuity-formal/run.out"}
+```
+
+With the inputs free there is no vacuous pass to be had. The tool is not waiting for a test to make a request; it makes one, and `Ack_A` is refuted in two cycles. The cover is reached in the first cycle the tool examines.
+
+The second run adds one assumption, that the environment never requests. It is the formal counterpart of the test that drove no traffic, and it is how real projects arrive there: an assumption written to keep an illegal input out also keeps a legal one out. `Ack_A` is now *proven*, on a responder that never acknowledges anything. The cover is *unreachable*, and that row is the whole of the warning. A cover in a formal tool is a reachability query. *covered* comes with a trace, and *unreachable* is a proof that the antecedent can never be true under the assumptions in force, which is exactly the statement that the assertion beside it is vacuous.
+
+The third run adds a second assumption that contradicts the first: no request on any tick, and a request on every tick. No input sequence satisfies both, so there are no traces left at all, and every assertion is true of every one of them. The report does not change by a word. The tool measured here does not test its assumptions for consistency, and it lists them as *unprocessed*, which means only that an assumption is not something it proves.
+
+The fourth run is the reason a cover has to be written with care. Its two assumptions, a request on every tick and no request on the tick after one, do not conflict on the first tick. They conflict on the second. `Req_C`, the cover of the antecedent, is reached at depth 0 and looks healthy. `Ack_A` is proven all the same, because its consequent is judged one tick later, where no trace survives. The cover that sees the problem is the one that reaches as far as the assertion does: `ReqNext_C`, a request followed by any tick at all, is unreachable.
+
+::: {.callout-warning title="Pitfall"}
+On the release of the formal tool this book runs, contradictory assumptions prove every assertion, and nothing in the report or the exit status says that they are contradictory. Over-constraint that removes only some of the input space is silent in the same way. The defense is a rule with no exceptions: every assertion ships with a cover, the cover spans the same ticks as the assertion (for `a |=> b`, the cover is `a ##1 1`, "a, and then a tick exists"), and a proof whose cover is unreachable is reported as a failure.
+:::
 
 Two measured facts about the simulator shape how the pairing is done in practice. First, a cover counts nothing unless the simulation was built with coverage enabled: the example's runner passes `--coverage`, and without that flag neither a cover's count nor its optional pass statement exists (@sec-ch09-tools). A cover that silently counts nothing reads exactly like a cover that was never hit, so the flag belongs in the build recipe of every test that has one. Second, the concurrent language lets an assertion carry a pass statement, and it is tempting to count passes as evidence. On the release measured, the pass statement of an implication ran on every one of fourteen ticks of a run in which the antecedent never held. A pass count on that simulator is a count of clock ticks.
 
 ::: {.callout-tip title="In Practice"}
-Write the cover when you write the guard, with the same expression, and give the two the same name with different suffixes; OpenTitan's convention is `_A` for an assertion, `_M` for an assumption and `_C` for a cover [@opentitan-formal-readme]. Its methodology counts an assertion's precondition as a coverage point, to be closed like any other [@opentitan-dv-methodology]. Treat a zero as @sec-ch08-closure treats any hole: a test to write, or an exclusion with a reason.
+Write the cover when you write the antecedent, with the same expression, and give the two the same name with different suffixes; OpenTitan's convention is `_A` for an assertion, `_M` for an assumption and `_C` for a cover [@opentitan-formal-readme]. Its methodology counts an assertion's precondition as a coverage point, to be closed like any other [@opentitan-dv-methodology]. Treat a zero as @sec-ch08-closure treats any hole: a test to write, or an exclusion with a reason.
 :::
 
 ## Assert, assume, cover, and where assertions live {#sec-ch09-where}
@@ -202,20 +242,42 @@ In a simulation the first and the third are the same thing. The inputs come from
 
 Which rules are which depends on the side of the interface you stand on, and a protocol checker written once can serve both. OpenTitan's checker for its TL-UL bus is one module with a parameter that says whether the block it is attached to is a host or a device. Attached to a host, it asserts the rules on host-driven signals and assumes the rules on device-driven ones; attached to a device, the two swap, and the label suffixes swap with them [@opentitan-tlul-assert]. The AXI checker of @sec-ch09-axi is the asserted half of such a pair: the DMA is a master, so the rules on the signals it drives are assertions on it.
 
-<!-- FORMAL: to be written on InFormal: an assumption as a constraint on free inputs, which is where the two verbs come apart; assume-guarantee in one paragraph; over-constraint and the cover that detects it. -->
+In a formal tool the two verbs come apart, and the third run of @sec-ch09-vacuity has already shown how far. The tool chooses the inputs, all of them, on every tick. An assertion is what it tries to break. An assumption is a limit on what it may choose: a trace that violates an assumption is not a counterexample to anything, because it is not a trace the tool considers. The example is the receiving end of the handshake, a sink that is correct only if the source keeps its two rules.
 
-A checker has three places to live, and a project uses all of them.
+```{.systemverilog include="examples/ch09-temporal-properties/assume-formal/hs_sink.sv"}
+```
+
+```{.systemverilog include="examples/ch09-temporal-properties/assume-formal/hs_bind.sv"}
+```
+
+```{.tcl include="examples/ch09-temporal-properties/assume-formal/assume.tcl"}
+```
+
+```{.text include="examples/ch09-temporal-properties/assume-formal/run.out"}
+```
+
+With the inputs free, everything fails, and each failure is correct. The handshake checker's `Held_A` and `Stable_A` are rules for the source, there is no source in the model, and a free input withdraws an offer or changes its data on the first tick it can. The sink's own property `Taken_A` fails too, and its counterexample is a source that changed the word between the tick the sink copied it and the tick the sink answered. That trace is real in the sense that the logic does what the trace shows. It is not a bug in the sink, because the specification of the interface forbids the stimulus.
+
+The second run says so. `Held_M` and `Stable_M` state the source's two rules as assumptions, in the script, and under them the sink's property is proven and so is `Answer_A`, the one rule of the checker that the sink is responsible for. `Held_A` and `Stable_A` are proven as well, and that proof is worth nothing: each is the assertion of a property that the line above it assumed. A report that mixes the two kinds has to be read with the list of assumptions beside it. The cover is still reached, so the assumptions have not removed the case the rules are about.
+
+::: {.callout-note title="Definition"}
+An **assumption** is a property the environment is required to keep. In simulation it is checked like an assertion. In a formal tool it is a constraint: only traces that satisfy every assumption are examined. A proof under assumptions is a proof of the form *if the environment keeps these rules, the design keeps those*, and it is complete only when the other side of the interface has been shown to keep the rules, by an assertion in its own verification. That pairing is called *assume-guarantee* reasoning.
+:::
+
+A property has four places to live, and a project uses all of them. The example above used three: `Taken_A` in the RTL, the handshake rules in a bound checker, and the assumptions in the script.
 
 *In the RTL*, beside the logic it describes. The designer writes it, it documents an intent that is otherwise in nobody's head ("this state is never entered with the counter non-zero"), and it travels with the module into every testbench that instantiates it. lowRISC's verification style guide expects most design properties to be written this way [@lowrisc-dv-style].
 
 *In an interface*, when the property is about a protocol and not about one block. Every module connected through the interface is then checked by the same text.
 
-*In a separate module, attached with `bind`*, when the property is the verifier's and the RTL is not the verifier's to edit. `bind` instantiates one module inside another from outside: the statement names a target module, a checker and its port connections, and the tool behaves as though the instance had been written in the target's source [@ieee1800-2023, clause 23.11]. The connections are resolved in the target's scope, so the checker can be handed internal signals that the target does not export. The same style guide sets out the discipline that keeps this safe: a checker's ports are all inputs, since a checker that drives or forces anything has stopped being a passive observer; it is bound to the design and never instantiated by hand in the testbench; it reaches signals through its ports and not through absolute hierarchical paths; and a block's binds are collected in one file [@lowrisc-dv-style]. The two worked examples follow those rules, and each has a bind file of a single statement.
+*In a separate module, attached with `bind`*, when the property is the verifier's and the RTL is not the verifier's to edit. `bind` instantiates one module inside another from outside: the statement names a target module, a checker and its port connections, and the tool behaves as though the instance had been written in the target's source [@ieee1800-2023, clause 23.11]. The connections are resolved in the target's scope, so the checker can be handed internal signals that the target does not export. The same style guide sets out the discipline that keeps this safe: a checker's ports are all inputs, since a checker that drives or forces anything has stopped being a passive observer; it is bound to the design and never instantiated by hand in the testbench; it reaches signals through its ports and not through absolute hierarchical paths; and a block's binds are collected in one file [@lowrisc-dv-style]. The worked examples follow those rules, and each has a bind file of a single statement.
 
-The book's simulator limits one of the choices. It binds a checker to a module, which attaches it to every instance of that module. Binding to one named instance, or to a list of instances, does not build on the release measured (@sec-ch09-tools). A checker that must behave differently per instance takes a parameter, as the FIFO's takes its depth from the module it is bound into.
+*In the formal tool's script*, as a line of Tcl that names the property and gives its expression. This is the natural home for what belongs to one proof and not to the design: the assumptions of a particular environment, a helper property, an experiment. Two limits follow from its being a single expression. It cannot declare state, so a property that needs a monitor register needs the register in a module (the FIFO checker's `occ` could not be written in a script). And a simulator never sees it, so a rule that should also be checked in simulation does not go there.
+
+The book's tools each limit one of the choices. The simulator binds a checker to a module, which attaches it to every instance of that module; binding to one named instance does not build on the releases measured (@sec-ch09-tools). A checker that must behave differently per instance takes a parameter, as the FIFO's takes its depth from the module it is bound into. The formal tool reads properties in all four places, `bind` included, with one trap that @sec-ch09-formal measures: it collects concurrent assertions and silently ignores immediate ones.
 
 ::: {.callout-tip title="In Practice"}
-Large projects seldom write `assert` directly. OpenTitan wraps every assertion in a macro, and one header chooses the macro bodies by tool, so that a single line in the RTL becomes a concurrent assertion for one tool, a clocked immediate one for another, and nothing at all for synthesis [@opentitan-prim-assert]. Two things about that layer bear on this chapter. The form it falls back to for the open formal flow is the form this chapter teaches. And the flavor it selects for the book's simulator is the empty one: the largest open user of the assertion language runs its assertions on other simulators, and nothing in that project is evidence about this one. The evidence the book has is the table in the next section.
+Large projects seldom write `assert` directly. OpenTitan wraps every assertion in a macro, and one header chooses the macro bodies by tool, so that a single line in the RTL becomes a concurrent assertion for one tool, a clocked immediate one for another, and nothing at all for synthesis [@opentitan-prim-assert]. Two things about that layer bear on this chapter. It exists because no one spelling of an assertion is accepted by every tool, which is the problem this chapter answers with a subset and a table of measurements. And the flavor it selects for the book's simulator is the empty one: the largest open user of the assertion language runs its assertions on other simulators, and nothing in that project is evidence about this one. The evidence the book has is the table in the next section.
 :::
 
 One rule of hygiene applies wherever an assertion lives. Tools are allowed to compile assertions out, and a simulation built that way must behave the same apart from the missing reports. So the expression inside `assert` has no side effects: a call that randomizes an object or advances a model does not go there, a rule the same style guide states for `randomize()` in particular [@lowrisc-dv-style].
@@ -226,32 +288,90 @@ Every statement this chapter makes about a tool comes from a probe: a few lines 
 
 {{< include /examples/ch09-temporal-properties/support-matrix/matrix.md >}}
 
-<!-- FORMAL: to be written on InFormal: the formal-tool columns of the two tables are not discussed below and are to be replaced or re-measured for the tool the book uses. -->
+Read the tables for four things.
 
-Read the two simulator columns for three things.
+*What the chapter's subset costs nothing to use.* A clocked boolean, `disable iff`, both implications, a fixed delay, `$past` with one or two arguments, `$rose`, `$fell` and `$stable`, a `bind` to a module with named connections or reading internal signals, and a concurrent cover: each of those rows reads *runs* under the book's simulator and under its formal tool. That is the subset of @sec-ch09-what, and it is what the examples are written in.
 
-*What the chapter's subset costs nothing to use.* On the book's simulator, a clocked immediate assertion, `$past` with one or two arguments, the sampled-value functions, a `bind` to a module with named connections or reading internal signals, and immediate and concurrent covers all give right verdicts. That subset is what the examples are written in. The simple concurrent forms are right as well: a clocked boolean, `disable iff`, both implications, fixed and ranged delays in a consequent, fixed repetition and `throughout`.
+*Where the simulator builds and the verdict is wrong.* Six rows of @tbl-ch09-support and four of @tbl-ch09-support-x are marked wrong for the simulator the book pins, and they are the reason for the chapter's caution, because nothing at build time or run time distinguishes them from the rows that work. Unbounded repetition, goto repetition, `within`, `first_match` over a ranged delay and a sequence `or` whose operands both fail report no failure on a design that violates the property. Ranged repetition reports a failure on a design that satisfies it. A ranged delay in an antecedent loses some of its matches, so that one of three violations is reported. A `disable iff` condition that pulses between two clock edges fails to cancel the check; the next release gets that one right and the others the same. And a cover in a build without `--coverage` counts nothing and says nothing. A further set of constructs is refused at build time with a message, which is the honest outcome: nonconsecutive repetition, `intersect` with a variable-length operand, `nexttime`, `strong`, `expect`, properties with two clocks, the gated form of `$past`, and binding to a named instance or a list of instances.
 
-*Where a build succeeds and the verdict is wrong.* Six rows of @tbl-ch09-support and four of @tbl-ch09-support-x are marked wrong for the simulator, and they are the reason for the chapter's caution, because nothing at build time or run time distinguishes them from the rows that work. Unbounded repetition, goto repetition, `within`, `first_match` over a ranged delay and a sequence `or` whose operands both fail report no failure on a design that violates the property. Ranged repetition reports a failure on a design that satisfies it. A ranged delay in an antecedent loses some of its matches, so that one of three violations is reported. A `disable iff` condition that pulses between two clock edges fails to cancel the check, on the release the book pins; the next release gets that one right and the others the same. And a cover in a build without `--coverage` counts nothing and says nothing. A further set of constructs is refused at build time with a message, which is the honest outcome: nonconsecutive repetition, `intersect` with a variable-length operand, `nexttime`, `strong`, `expect`, properties with two clocks, the gated form of `$past`, and the two forms of `bind` already mentioned.
+*What the simulator does at the edges of a run.* On the first tick `$past` returns zero, not the signal's reset value. A failed assertion ends the run with a non-zero exit status unless the error limit is raised, and then the status is zero (@sec-ch09-properties). The pass statement of an implication runs on vacuous passes too (@sec-ch09-vacuity), and on the pinned release the pass counts of `a |=> b` and of `a |-> ##1 b` differ on the same run, though the two are one property; the chapter prints no pass count for that reason. A concurrent check that has matched its antecedent and is still waiting for its consequent when the test ends is dropped without a report. And a checker that reads an asynchronous reset in its `disable iff`, as every checker in this chapter does, draws a lint warning that the net is used both synchronously and asynchronously; the examples switch that one warning off in their build flags, with a comment that says why.
 
-*What the simulator does at the edges of a run.* On the first tick `$past` returns zero, not the signal's reset value, so a rule that compares against `$past` needs a guard like `past_ok`. A failed assertion ends the run with a non-zero exit status unless the error limit is raised, and then the status is zero (@sec-ch09-properties). The pass statement of an implication runs on vacuous passes too (@sec-ch09-vacuity). A concurrent check that has matched its antecedent and is still waiting for its consequent when the test ends is dropped without a report. And a checker that reads an asynchronous reset inside a clocked block, as every reset guard in this chapter does, draws a lint warning that the net is used both synchronously and asynchronously; the examples switch that one warning off in their build flags, with a comment that says why.
+*What the formal tool does with the same files.* Three patterns account for its column. It is right on every operator of the sequence language that it accepts, including each one the simulator gets wrong: ranged repetition, `within`, sequence `and` and `or`, `first_match`, and a ranged delay in an antecedent. It refuses the operators it does not implement by name, as an error on the property: delays and repetitions with no upper bound, goto and nonconsecutive repetition, `not`, property `if`, the followed-by operators, a second clock inside a property. And every cell marked *wrong* in its column is the same event. The property is not in the report, and no message says it was left out: immediate and deferred assertions in any block, immediate covers, the `expect` statement, a property with a local variable, and a module in which one assertion calls `$isunknown`. A file whose checks are all written in those forms produces an empty table and a clean exit.
 
-The other simulator is a short story. Icarus runs immediate assertions and nothing else. Every concurrent form is refused at compile time. Under the option that tells it to accept what it can, fifteen of the refused probes build, and twelve of those report nothing when the design is wrong: the assertions were dropped, silently. `$past` and its relatives compile and then fail when the simulation is loaded. An immediate `cover` is accepted and never counts. A failing immediate assertion prints a message and leaves the exit status at zero, so a regression on that simulator needs an explicit `$fatal` in the assertion's else branch. One row goes the other way: an immediate assertion in a combinational block, across a signal that glitches within one time step, reports the glitch on every tick on Icarus and never on the book's main simulator, and that false report is the one deferred assertions exist to remove [@sutherland2015assertions]. For anything temporal on Icarus, the property is written as a monitor in the testbench language, which is what the cocotb version of the next section does.
+The other simulator is a short story. Icarus runs immediate assertions and nothing else. Every concurrent form is refused at compile time. Under the option that tells it to accept what it can, fourteen of the refused probes build, and eleven of those report nothing when the design is wrong: the assertions were dropped, silently. `$past` and its relatives compile and then fail when the simulation is loaded. An immediate `cover` is accepted and never counts. A failing immediate assertion prints a message and leaves the exit status at zero, so a regression on that simulator needs an explicit `$fatal` in the assertion's else branch. One row goes the other way: an immediate assertion in a combinational block, across a signal that glitches within one time step, reports the glitch on every tick on Icarus and never on the book's main simulator, and that false report is the one deferred assertions exist to remove [@sutherland2015assertions]. For anything temporal on Icarus, the property is written as a monitor in the testbench language, which is what the cocotb version of @sec-ch09-example does.
+
+### The formal tool, and the ones it is not
+
+The formal examples of this book run on InFormal, an open-source property checker, at version 0.1.0 and commit `5114330` of its repository [@informal-tool]. The repository has no tagged release, so the commit is the pin. Its own description of its state is the one to keep in mind: "the SystemVerilog and SVA coverage is a subset, command and file formats may change, and there are no binary releases yet. Do not rely on it for sign-off" [@informal-tool]. The book uses it for teaching: every verdict printed in this chapter can be reproduced on a laptop, and every limit the chapter reports was measured at that commit and may not hold at the next one.
+
+| Tool | Kind | Property input, by its own documentation | In this book |
+|---|---|---|---|
+| InFormal 0.1.0 | open source, pre-release [@informal-tool] | scripts in the command style of JasperGold and VC Formal; a subset of the concurrent assertion language [@informal-tool] | every formal example, measured |
+| SymbiYosys | a front-end driver for formal flows built on Yosys, from YosysHQ [@sby-docs] | immediate `assert`, `assume` and `cover`; its SystemVerilog and SVA support is documented as a feature of the commercial Tabby CAD Suite and the Verific front end included in it [@sby-docs; @sby-verific] | not run |
+| Jasper FPV App | commercial, Cadence | properties in SVA or PSL [@cadence-jasper-fpv] | not run |
+| VC Formal | commercial, Synopsys | SVA properties, in its property-verification application [@synopsys-vcformal] | not run |
+| Questa One formal verification | commercial, Siemens | property verification that needs no stimulus, with libraries of assertions for standard interfaces [@siemens-questa-formal] | not run |
+
+: The formal tool this book runs, and four it does not. The third column paraphrases each tool's own documentation or product page and is not a measurement. {#tbl-ch09-formal-tools}
+
+The scripts in this chapter use the commands the commercial tools share, `analyze`, `elaborate`, `clock`, `reset`, `assert`, `assume`, `cover` and `prove`, so a reader with access to one of those tools has little to translate. Nothing in the chapter is a statement about how those tools behave.
 
 ## From property to proof {#sec-ch09-formal}
 
-*The reader can say what a formal tool does with the checkers of this chapter that a simulator does not: search every input sequence up to a bound for a counterexample, attempt a proof for all time by induction, fail that proof on a true property because of states no run can reach, and repair it with a helper invariant; and can say what an assumption constrains and how a cover shows that it did not constrain too much.*
+A simulation checks a property on the traces its tests produce. A formal tool checks it on all of them. The earlier sections have used one already; this section says what the tool is told, what its answers mean, and where the release the book runs has to be read with care.
 
-<!-- FORMAL: to be written on InFormal -->
+The tool is told three things: the design, the clock, and the reset. It is told nothing about the inputs. The script below takes the bounded-response checker of @sec-ch09-properties, with the same bind file the simulation used, and asks for verdicts on the correct responder and on the slow one.
+
+```{.tcl include="examples/ch09-temporal-properties/response-formal/response.tcl"}
+```
+
+```{.text include="examples/ch09-temporal-properties/response-formal/run.out"}
+```
+
+`analyze` reads source files and `elaborate` builds the design under a top module, here with a parameter. `clock` names the clock. `reset -expression` gives a condition that the tool holds true in the first cycle and false in every cycle after it, so every trace starts with one cycle of reset. `prove -all` then takes each assertion and each cover in turn. The two lines before it are for the book's sake: they select one proof engine and a time limit, so that the report is the same from run to run. `expect` and `finish` are two procedures the book's scripts share, shown below.
+
+On the correct responder `Window_A` is proven. That one word replaces every seed the random test of @sec-ch09-properties could have been run with: no sequence of requests, slow or fast, of any length, leaves a request ungranted for three ticks. On the slow responder the assertion is refuted at depth 4, and the trace is the shortest possible: one slow request in the first cycle after reset, and the monitor bit walking up the register until it reaches the top with no grant. The depth is the index of the cycle in which the property fails, counting the reset cycle as cycle 0.
+
+The cover is the instructive row. In the simulation of the slow responder `Waited_C` read zero, and the text drew a conclusion from it. Here it is *covered* on that same design: a trace exists in which a grant arrives on the last permitted tick, because a fast request's grant can land on the third tick of a slow one. The simulation's zero was a fact about forty random ticks. A zero in simulation says the test did not go there; only *unreachable* says the design cannot.
+
+A proof is a statement about a model, and three properties of this tool's model are worth knowing before trusting one.
+
+*Inputs are free.* Every input takes every value on every tick unless an assumption says otherwise (@sec-ch09-where). A design that is correct only with a well-behaved neighbor will be refuted, correctly.
+
+*State that a property needs has to exist in the model.* A property is an expression over signals. The FIFO checker judges the design against its own count of pushes and pops, and that counter is a register in a module, bound into the design. It could not be written in the script.
+
+*Reset is one cycle, and it is synchronous.* In the reset cycle the registers hold arbitrary values, and they take their reset values in the cycle after it. The tool models every reset that way, including the asynchronous resets of this chapter's designs, whose registers in hardware are at their reset values for as long as reset is held. The counterexample table of the opening section shows the effect: the 8 and the 31 in cycle 0. Properties under `disable iff (!rst_n)` are not judged in that cycle, so the arbitrary values are harmless, with one exception: a property that looks backwards from the first cycle after reset. @sec-ch09-axi measures that case.
+
+::: {.callout-warning title="Pitfall"}
+The formal tool at the commit this book pins does not collect immediate assertions. A checker written as `always @(posedge clk) if (rst_n) Name_A: assert (expr);`, which both of the book's simulators run correctly, gives an empty property table and an exit status of zero: no property, no failure, no message (@tbl-ch09-support-x). The first draft of this chapter's checkers was written in that form, and every one of them "passed". Count the rows of a formal report against the assertions in the source before reading any of them.
+:::
+
+The same care applies to the tool's exit status, and it is the reason for the two shared procedures.
+
+```{.tcl include="examples/mk/informal.tcl"}
+```
+
+`informal shell` exits with status 0 when a property is refuted, when one is left undetermined and when the table is empty; only an error in the script itself changes the status. A build that ran the tool and tested its exit status would pass every design. So each script in this book states the verdict it expects for each property, including the refutations it is there to demonstrate, and exits with a status of its own.
+
+Four more limits belong on the record. Each is a measurement of this commit and a thing to re-check on a later one.
+
+- There is no bound to set and none reported. A search for counterexamples that finds nothing ends, at the time limit, with *undetermined*, and the report does not say how deep it looked. "No counterexample within N cycles", the usual result of bounded model checking, cannot be stated from this tool's output.
+- A proof by induction that does not succeed also ends as *undetermined* at the time limit. The tool shows no failing induction step, so the trace that would explain why the proof is stuck is not available. @sec-ch09-example meets this.
+- Vacuity is not checked. A vacuous proof, an over-constrained environment and contradictory assumptions all print *proven* (@sec-ch09-vacuity). Covers are the reader's job.
+- With no engine selected, the tool runs all its engines at once and reports the first answer. Which engine that is can change from run to run, the counterexample changes with it, and its depth is not always the shortest. Selecting one engine for each `prove`, as these scripts do, made the report repeatable apart from its timings.
+
+None of this makes the verdicts wrong. Where two engines could be compared on the examples of this chapter they agreed, and the tool's documentation says that it checks each proof and replays each counterexample before it reports either [@informal-tool]. The limits are about what the report leaves unsaid.
+
+How the engines work is the subject of the formal chapters later in this book: bounded model checking, which unrolls the design a cycle at a time looking for a violation; k-induction, which tries to show that a violation cannot be the first one after a run of good cycles; and IC3, which assembles a proof from small facts about the states the design can reach. So are the techniques for making a hard proof finish, from cutting a design down to the part a property needs to proving a property for one symbolic value in place of all of them. This chapter needs only the three verdicts and one observation from the next section: a true property can defeat one engine and fall to another.
 
 ## Worked example: the FIFO, checked and proved {#sec-ch09-example}
 
-@sec-ch01-example found the FIFO's bug with a queue in the testbench, and @sec-ch02-example wrote the plan. This example states the plan's flag and overflow items as properties, puts them in a module that is bound to the design, and runs one file against two FIFOs: the original, and a repaired copy whose counter is one bit wider and whose `full` compares against the depth.
+@sec-ch01-example found the FIFO's bug with a queue in the testbench, and @sec-ch02-example wrote the plan. This example states the plan's flag and overflow items as properties, puts them in a module that is bound to the design, and runs one file against two FIFOs, in simulation and in the formal tool: the original, and a repaired copy whose counter is one bit wider and whose `full` compares against the depth.
 
 ```{.systemverilog include="examples/ch09-temporal-properties/fifo-checker/fifo_sva.sv"}
 ```
 
-The checker keeps three registers. `occ` is the occupancy as the contract defines it, counted from accepted pushes and pops, and every check judges the design against it; a checker that compared the design's flags with the design's own counter would be checking that the RTL agrees with itself. `was_full` remembers one fact about the past for a cover, and `past_ok` is the reset guard for `$past` from @sec-ch09-properties. The item numbers in the comments are the plan's. "Full exactly when sixteen entries are held" is written as two assertions, one per direction, and the reason is the result below. `Sync_A` is the only place the design's internal `count` is read. In a simulation it says that the two counters agree, which is cheap insurance against a mistake in `occ`; its other use belongs to the formal half of this example.
+The checker keeps two registers. `occ` is the occupancy as the contract defines it, counted from accepted pushes and pops, and every check judges the design against it; a checker that compared the design's flags with the design's own counter would be checking that the RTL agrees with itself. `was_full` remembers one fact about the past for a cover. The item numbers in the comments are the plan's. "Full exactly when sixteen entries are held" is written as two assertions, one per direction, and the reason is the result below. The two covers of the next-tick rules end in `##1 1'b1`, one more tick of anything, so that each reaches as far as its assertion does (@sec-ch09-vacuity). `Sync_A` is the only place the design's internal `count` is read. It says that the two counters agree, which is cheap insurance against a mistake in `occ`.
 
 ```{.systemverilog include="examples/ch09-temporal-properties/fifo-checker/fifo_bind.sv"}
 ```
@@ -267,7 +387,7 @@ The bind file attaches the checker to the module `fifo`, takes the depth from th
 ```{.text include="examples/ch09-temporal-properties/fifo-checker/run.out"}
 ```
 
-On the repaired FIFO the run passes and all four covers are hit, so each guarded assertion was exercised and both ends of the occupancy range were visited. On the original the first failure is `FullBackward_A` at tick 35: `full` is high and the checker has counted fifteen entries. Allowed to continue, the run fails that one assertion 114 times and no other.
+On the repaired FIFO the run passes and all four covers are hit, so each implication was exercised and both ends of the occupancy range were visited. On the original the first failure is `FullBackward_A` at tick 35: `full` is high and the checker has counted fifteen entries. Allowed to continue, the run fails that one assertion 114 times and no other.
 
 The line to study is the last cover report. `FullForward_A`, "sixteen entries implies full", did not fail on a design whose `full` flag is wrong. It could not: the design refuses pushes once `full` is high, `full` goes high at fifteen, and the occupancy never reaches sixteen. `FullReached_C` counted zero. The assertion passed vacuously on every tick of the run, and had the checker been written with that direction alone, the bug this book opened with would have gone through a four-hundred-cycle random test with every assertion green. `NoOverflow_A` passed for the same reason and is no evidence either: a FIFO that never fills cannot overflow.
 
@@ -275,11 +395,33 @@ The line to study is the last cover report. `FullForward_A`, "sixteen entries im
 What the two runs establish, in order: that a checker bound to a design needs no cooperation from the testbench beyond traffic; that an equivalence in the specification is two implications, and a bug can satisfy one of them completely; that the implication it satisfied passed vacuously, and only the cover said so; and that the checker's verdict rests on a counter built from the contract, which is the same independence @sec-ch01-example asked of its queue.
 :::
 
-<!-- FORMAL: to be written on InFormal: the same fifo_sva.sv and fifo_bind.sv under the formal tool: FullForward_A proved on the original FIFO, FullBackward_A refuted with a counterexample of fifteen pushes, FullReached_C unreachable; then the repaired FIFO proved for all time, the induction step that fails without Sync_A, and the proof with it. -->
+### The same file, proved
+
+The opening section gave this checker and the original FIFO to the formal tool, and its report is the simulation's result with the luck removed: `FullBackward_A` refuted after fifteen pushes, where the random test needed thirty-five ticks to get there, and `FullReached_C` unreachable, where the random test could only say that four hundred cycles had not reached it. What remains is the repaired FIFO, and one property that shows where proof gets hard.
+
+```{.tcl include="examples/ch09-temporal-properties/fifo-proof/fifo_proof.tcl"}
+```
+
+```{.text include="examples/ch09-temporal-properties/fifo-proof/run.out"}
+```
+
+The first table is the result the example was built for. All seven assertions are proven on the repaired design, and every cover is reached, the cover of sixteen entries at depth 17: a reset cycle and sixteen pushes. The flags are right for every sequence of pushes and pops there is. The engine is k-induction, and it needed no help from the author: `NoOverflow_A` and the rest went through as written.
+
+The second half is about a property that does need help. It is written in the script, because it speaks of the design's pointers, which the checker has no ports for: when the FIFO is empty, the write pointer equals the read pointer. It is true. The first run is bounded model checking alone, which only searches for counterexamples, and it shows the limit named in @sec-ch09-formal: both properties are true, so the search finds nothing and the verdict is *undetermined*, with no depth to report.
+
+k-induction then proves the second property, `CountPtrs_A`, at once, and leaves the first undetermined at the end of its ten seconds. Nothing is wrong with the property. An induction proof starts from *any* state in which the property has held so far, including states the design can never be in, and this design has plenty: a `count` of one beside two equal pointers is a legal combination of bits that no sequence of pushes and pops produces. In that state the property holds, and one pop later the FIFO is empty with its pointers apart. The engine cannot rule such states out by looking at the property alone. What rules it out is the relation between the three registers, `count == wr_ptr - rd_ptr`, which is exactly `CountPtrs_A`.
+
+So the third run uses it. `CountPtrs_A` has just been proven on its own; the script disables it as an assertion and adds the same expression as an assumption, and under that assumption k-induction proves `EmptyPtrs_A` immediately. A property used this way is a *helper invariant*: a fact about the design, proved first, that confines a later proof to states worth considering. The step from "proved" to "assumed" was made by hand here, and it is sound only in that order. Assuming a helper that has not been proved is the over-constraint of @sec-ch09-vacuity under another name.
+
+The last run changes the engine and removes the helper. IC3 proves `EmptyPtrs_A` alone. It discovers a fact that does the helper's work for itself, which is what that algorithm is for, at the cost of more time than the helped proof took.
+
+::: {.callout-tip title="In Practice"}
+*Undetermined* is not a verdict on the design. Before concluding that a property is too hard, ask what unreachable state the proof might be starting from and write the relation that excludes it as a helper; prove the helper first, alone. Then try another engine. The formal chapters later in the book take both moves apart.
+:::
 
 ### The same checks where the checker cannot run
 
-Icarus accepts neither the bind nor `$past`, so on that simulator the checker is written in the testbench's language. The structure does not change: state in variables, one sample per clock, a plain condition on each sample.
+Icarus accepts no concurrent assertion, so on that simulator the checker is written in the testbench's language. The structure does not change: state in variables, one sample per clock, a plain condition on each sample.
 
 ```{.python include="examples/ch09-temporal-properties/fifo-cocotb/test_fifo_monitor.py"}
 ```
@@ -287,7 +429,7 @@ Icarus accepts neither the bind nor `$past`, so on that simulator the checker is
 ```{.text include="examples/ch09-temporal-properties/fifo-cocotb/run.out"}
 ```
 
-Two decisions in the monitor carry the semantics. The first is the sampling point. The SystemVerilog checker runs at the rising edge and reads what the flip-flops are about to capture. The Python monitor waits for the falling edge and then for the read-only phase at the end of that time step, where every signal has settled [@cocotb-timing-model]; with inputs driven on falling edges, those are the values the next rising edge captures, so the two checkers judge the same samples. A monitor that sampled just after the rising edge would see registered outputs one tick later than the assertion does, and every check with `$past` in it would be off by one. The second is where a failure goes. A background coroutine that raises an exception can be lost when the test that started it returns first [@cocotb-docs], so the monitor appends failures to a list and the test asserts the list is empty, after asserting that every cover was hit. The counts differ from the SystemVerilog run because the two languages draw different random numbers from the same seed; the checks are the same, less `Sync_A`, which reads a register the monitor has no port for, and the verdict is the same.
+Two decisions in the monitor carry the semantics. The first is the sampling point. The SystemVerilog checker runs at the rising edge and reads what the flip-flops are about to capture. The Python monitor waits for the falling edge and then for the read-only phase at the end of that time step, where every signal has settled [@cocotb-timing-model]; with inputs driven on falling edges, those are the values the next rising edge captures, so the two checkers judge the same samples. A monitor that sampled just after the rising edge would see registered outputs one tick later than the assertion does, and every next-tick check would be off by one. The second is where a failure goes. A background coroutine that raises an exception can be lost when the test that started it returns first [@cocotb-docs], so the monitor appends failures to a list and the test asserts the list is empty, after asserting that every cover was hit. The counts differ from the SystemVerilog run because the two languages draw different random numbers from the same seed; the checks are the same, less `Sync_A`, which reads a register the monitor has no port for, and the verdict is the same.
 
 ## Worked example: the AXI handshake rules {#sec-ch09-axi}
 
@@ -299,7 +441,7 @@ The DMA of the case study is an AXI4-Lite master, and the protocol puts two obli
 ```{.systemverilog include="examples/ch09-temporal-properties/axi-rules/dma_bind.sv"}
 ```
 
-There is one register per channel, "VALID was waiting on the tick before", and it is both the guard of the two assertions and the thing the cover counts. Resetting the register is what makes the guards reset-safe: after reset no channel was waiting, so no rule applies on the first tick. The checker is attached by port name and the case study's testbench is compiled with two more files on its command line and no other change.
+Each rule is one implication to the next tick: a channel that is waiting now still has VALID high one tick later, and its payload is `$stable`. Each channel has a cover of the waiting, written to reach the tick on which the rules are judged. The three registers at the foot of the file belong to a third rule, taken up below. The checker is attached by port name and the case study's testbench is compiled with two more files on its command line and no other change.
 
 ```{.text include="examples/ch09-temporal-properties/axi-rules/run_axi.sh"}
 ```
@@ -307,45 +449,68 @@ There is one register per channel, "VALID was waiting on the tick before", and i
 ```{.text include="examples/ch09-temporal-properties/axi-rules/run.out"}
 ```
 
-The design passes its own random test with the checker bound, and the covers say the pass means something: each channel waited for READY on thousands of ticks, because the test picks the slave's READY behavior at random from four styles and most of them make VALID wait. A pass alone would still leave one question open, which is whether these assertions can fail at all, and the chapter's rule is that a property is trusted after it has been seen to fail. The script therefore builds two mutants of the design, each one line away from the original and each breaking one rule on the read-address channel: one leaves the address state after a single tick whether or not READY came, the other steps the address while it waits. Each mutant fails the assertion written for the rule it breaks. The same was not done for the two write channels, and the exercises ask for it.
+The design passes its own random test with the checker bound, and the first three covers say the pass means something: each channel waited for READY on thousands of ticks, because the test picks the slave's READY behavior at random from four styles and most of them make VALID wait. A pass alone would still leave one question open, which is whether these assertions can fail at all, and the chapter's rule is that a property is trusted after it has been seen to fail. The script therefore builds two mutants of the design, each one line away from the original and each breaking one rule on the read-address channel: one leaves the address state after a single tick whether or not READY came, the other steps the address while it waits. Each mutant fails the assertion written for the rule it breaks. The same was not done for the two write channels, and the exercises ask for it.
 
-The specification has a third rule for a master, and it does not fit the mold. A source must not wait for READY before raising VALID. No single trace violates that: in a run where READY happened to be high first, a master that was waiting for it and a master that was not behave identically. The rule says that a run with READY held low must still reach VALID, which is a statement that a certain trace *exists*, not that every trace has some shape, and so it is not a property in the sense of @sec-ch09-what. In simulation it is checked by a directed test whose slave withholds READY and a cover of `VALID && !READY` that must not read zero; the three covers above are that check, satisfied here by a slave that often withholds READY.
+The specification has a third rule for a master, and it does not fit the mold. A source must not wait for READY before raising VALID. No single trace violates that: in a run where READY happened to be high first, a master that was waiting for it and a master that was not behave identically. The rule says that a run with READY held low must still reach VALID, which is a statement that a certain trace *exists*, not that every trace has some shape, and so it is not a property in the sense of @sec-ch09-what. It is a cover. The checker keeps one bit per channel, "READY has been high since reset", and covers VALID high while that bit is still clear. In the simulation above each of the three was hit once, which is all a single run can offer: after the first handshake on a channel the bit is set for good.
 
-<!-- FORMAL: to be written on InFormal: the six assertions proved on the DMA with the slave's inputs free; the refutation of a mutant as a counterexample trace; "must not wait for READY" as a reachability cover under the assumption that READY is held low; the slave-side rules on the R and B channels as assumptions. -->
+### The rules, proved
+
+```{.tcl include="examples/ch09-temporal-properties/axi-formal/axi.tcl"}
+```
+
+```{.text include="examples/ch09-temporal-properties/axi-formal/run.out"}
+```
+
+There is no slave in this model and no APB master either. Every input of the DMA is free, so the tool programs the registers however it likes and answers on the bus however it likes, tick by tick. Under that, the six rules are proven. They hold against every slave, including ones no testbench author would think to write, and no assumption was needed, because nothing in these six rules depends on the slave behaving well. The engine here is IC3; k-induction alone, the engine of the FIFO proofs, had not finished the six after several minutes on the book's machine.
+
+The covers are reached, the three `First` covers among them, and here they carry the weight the simulation could not give them. Each is a trace, found by the tool, in which a channel's VALID is high and its READY has never been: the master does not wait.
+
+The mutants repeat the experiment of the simulation with a different kind of answer. Each of the first two is refuted at depth 5, by the assertion for the rule it breaks and by no other. The third mutant is new. It raises ARVALID only on a tick after ARREADY was seen high, which is the behavior the third rule forbids. All six assertions are still proven on it, as the argument above said they must be: a master that waits for READY keeps VALID up and its address still. What changes is one cover. `ArFirst_C` is *unreachable*, a proof that this design never offers an address to a slave that has not already shown READY, and a slave that waits for VALID before raising READY, which the specification permits [@arm-ihi0022c], would wait forever. A simulation finds that only if its slave model is of that kind and the test waits long enough to call the silence a hang. Here it is one row of a table.
+
+The last block returns to the two spellings of @sec-ch09-properties, as properties typed into the script against the unmodified design. `HeldNext_A`, the rule looking forward, is proven. `HeldPast_A`, the same rule looking back through `$past`, is refuted at depth 1, and the two-row trace shows how: in cycle 0, the reset cycle, ARVALID is 1.
+
+::: {.callout-warning title="Pitfall"}
+That counterexample is not in the design. ARVALID is a register with an asynchronous reset, and in hardware it is 0 for as long as reset is held. The formal tool at the commit this book pins models the reset as synchronous, so in the reset cycle the register holds an arbitrary value, and `$past` in the first cycle after reset reads it. A rule written `$past(valid && !ready) |-> valid` therefore fails one cycle after reset on a correct design, while `valid && !ready |=> valid` is proven. The simulator has the mirror-image habit, a `$past` that reads zero on the first tick whatever the reset value. Write stability rules forwards, with `|=>`.
+:::
+
+Slave-side rules are the other half of the interface. The DMA also receives two channels, read data and write response, and a slave must hold VALID and the payload on those exactly as a master must on its own. In this proof they would be assumptions, not assertions, and they were not needed. They become necessary the moment a property depends on the slave keeping its side, in the way `Taken_A` depended on the source in @sec-ch09-where.
 
 ## Future directions
 
 ::: {.callout-important title="Future Directions"}
-Three things are moving, and the chapter claims no result for any of them. The first is the simulator. Its support for the sequence language is recent and has changed in each of the releases this chapter looked at [@verilator-changes]; of the ten wrong verdicts measured on the pinned release, the next release corrects one. The tables of @sec-ch09-tools are regenerated from their probes on every check of the examples, and the day they change, the reading guide of @sec-ch09-sequences can start to become a toolkit. The second is monitoring as a field of its own. Runtime verification studies exactly the question a simulation checker faces, what can be concluded about a temporal formula from a finite prefix, and gives verdicts in three values, satisfied, violated and not yet known, where a simulator gives two [@bauer2007rvltl]; the semantics of a property on a trace that was cut short is a research topic with its own literature [@eisner2003truncated]. The third is generation. Language models are being evaluated on writing assertions from specifications and on formal-verification tasks more broadly [@assertllm; @fveval-formal]. An assertion written by a model raises the question of this chapter in its sharpest form, since a property that is wrong in the vacuous direction passes every test it is given.
+Three things are moving, and the chapter claims no result for any of them. The first is the tools. The simulator's support for the sequence language is recent and has changed in each of the releases this chapter looked at [@verilator-changes]; of the ten wrong verdicts measured on the pinned release, the next release corrects one. The formal tool is a pre-release by its own account [@informal-tool], and each limit in @sec-ch09-formal is a statement about one commit. The tables of @sec-ch09-tools are regenerated from their probes on every check of the examples, and the day they change, the reading guide of @sec-ch09-sequences can start to become a toolkit. The second is monitoring as a field of its own. Runtime verification studies exactly the question a simulation checker faces, what can be concluded about a temporal formula from a finite prefix, and gives verdicts in three values, satisfied, violated and not yet known, where a simulator gives two [@bauer2007rvltl]; the semantics of a property on a trace that was cut short is a research topic with its own literature [@eisner2003truncated]. The third is generation. Language models are being evaluated on writing assertions from specifications and on formal-verification tasks more broadly [@assertllm; @fveval-formal]. An assertion written by a model raises the question of this chapter in its sharpest form, since a property that is wrong in the vacuous direction passes every test it is given.
 :::
 
 ## Summary
 
 - A property is a set of traces, and a design satisfies it when every trace it can produce is in the set. Ask of every property which trace would falsify it.
 - A safety property is refuted by a finite prefix and a liveness property is not; a simulation can refute safety, can never confirm either, and can say nothing about liveness until a bound turns it into safety.
-- The chapter's form is a clocked immediate assertion: a guard, a condition, `$past` for the tick before, and a monitor register for anything older. A shift register is the set of occupied states of the rule's automaton.
-- Guard every rule against reset, and guard `$past` against the first tick after it.
-- Every guarded assertion has a cover of its guard. A pass with the cover at zero is no information, and a cover counts only in a build with coverage enabled.
-- In simulation an assumption is checked like an assertion; what differs is who is blamed.
-- A checker's ports are inputs only, and it is attached with `bind`, to a module, from one file.
-- The sequence language is regular expressions over clock ticks. On the simulator measured, ten probes build and give the wrong verdict; make a property fail once before trusting it to pass.
-- With the error limit raised, a run with failed assertions exits with status zero.
-- An equivalence is two implications. The FIFO's bug satisfies one of them vacuously and fails the other at tick 35.
+- The chapter's form is one concurrent assertion shape: a clock, `disable iff` for reset, and a boolean or an implication to this tick or the next, with a monitor register for anything longer. A shift register is the set of occupied states of the rule's automaton.
+- Implications look forward. `a |=> b` and `$past(a) |-> b` differ on the first tick a tool checks, and the book's two tools fill that tick in differently.
+- Every assertion has a cover that reaches as far as the assertion does. A pass with the cover at zero, or a proof with the cover unreachable, is no information.
+- In simulation an assumption is checked like an assertion. In a formal tool it removes traces, and enough of them prove anything.
+- A formal tool reports *proven*, a counterexample, or *undetermined*. The first is about every input sequence; the last is about the tool.
+- A checker's ports are inputs only, and it is attached with `bind`, to a module, from one file. State a property needs lives in the checker, not in the tool's script.
+- The sequence language is regular expressions over clock ticks. On the simulator measured, ten probes build and give the wrong verdict; on the formal tool measured, immediate assertions vanish without a message. Make a property fail once before trusting it to pass.
+- Neither tool's exit status can be trusted alone: the simulator's is zero with the error limit raised, and the formal tool's is zero always.
+- An equivalence is two implications. The FIFO's bug satisfies one of them vacuously and fails the other at tick 35 of a random test and at depth 16 of a proof.
+- A true property can be out of reach of induction until a helper invariant, proved first, is assumed.
 - Icarus runs immediate assertions only and exits with status zero when one fails; anything temporal is a monitor in the testbench language, sampled where the assertion would sample.
-- "Must not wait for READY" is not a trace property. It is checked by forcing the situation and covering the response.
+- "Must not wait for READY" is not a trace property. It is a cover, and a formal tool can prove it unreachable.
 
 ## Exercises
 
 ::: {.callout-note title="Exercise"}
-1. For each assertion of the FIFO checker other than `Sync_A`, describe in words the shortest trace that would make it fail on some FIFO, and say whether the random test of the worked example could produce it.
-2. Delete `past_ok` from the two guards of the FIFO checker that use it. Predict from @sec-ch09-tools what happens on the first tick after reset, then run it.
+1. For each assertion of the FIFO checker other than `Sync_A`, describe in words the shortest trace that would make it fail on some FIFO, and say whether the random test of the worked example could produce it. Then compare your trace for `FullBackward_A` with the one the formal tool printed.
+2. Rewrite `Held_A` of the handshake checker as `$past(valid && !ready) |-> valid`. Predict from @sec-ch09-tools what the simulator does with it on the first tick, and from @sec-ch09-axi what the formal tool does with it in the sink example; then run both.
 3. The bounded-response checker gives one grant to every waiting request. Change the rule to "each request gets its own grant" and say what the monitor's state has to become. Is three bits still enough?
-4. Write the handshake rule `Held_A` with `$rose` and `$fell` in place of `$past`, and say which of the testbench's four offers, if any, the two versions judge differently.
-5. Add a cover to the vacuity example that would have exposed the missing acknowledge even in the run with no requests, or explain why no cover can.
-6. Extend the AXI runner with one mutant for each write channel, and make the script fail if either mutant passes.
-7. The slave model of the case study drives the read-data and write-response channels. Write the held and stable rules for those two channels as a second checker and bind it. Say which module's bug a failure would be.
+4. In the vacuity example's last run, replace `Pulse_M` with an assumption that conflicts with `Busy_M` only on the fourth tick. Write the cover that detects it, and say what the general rule is.
+5. Add a cover to the vacuity example that would have exposed the missing acknowledge even in the simulation with no requests, or explain why no cover can.
+6. Extend both AXI runners with one mutant for each write channel, and make each script fail if a mutant survives.
+7. The slave model of the case study drives the read-data and write-response channels. Write the held and stable rules for those two channels as a second checker and bind it. Say which module's bug a failure would be in simulation, and whether the rules are assertions or assumptions when the DMA is proved alone.
 8. Point the cocotb monitor at the original FIFO. Before running, say which check fails first and at which sample; afterwards, explain any difference from the tick the SystemVerilog checker printed.
-9. Rewrite `resp_check.sv` as a concurrent assertion with a ranged delay, run both forms against both responders, and compare the verdicts with the row for that construct in @tbl-ch09-support.
+9. Rewrite `resp_check.sv` as a concurrent assertion with a ranged delay, run both forms against both responders on both tools, and compare the verdicts with the row for that construct in @tbl-ch09-support.
+10. In the FIFO proof, assume `CountPtrs_M` without first proving `CountPtrs_A`, and change the expression to one that is false. What does the report say about `EmptyPtrs_A`, and which row would have warned you?
 :::
 
 ## Further reading
@@ -360,3 +525,4 @@ Three things are moving, and the chapter claims no result for any of them. The f
 - Mike Kantrowitz and Lisa M. Noack, *I'm Done Simulating; Now What?*, Design Automation Conference, 1996 [@kantrowitznoack1996done].
 - The OpenTitan project's assertion macros, its TL-UL protocol checker and its formal-verification guide, as a large open body of assertions to read [@opentitan-prim-assert; @opentitan-tlul-assert; @opentitan-formal-readme].
 - IEEE Std 1800-2023, the clauses on assertions, on sampled-value functions and on binding [@ieee1800-2023].
+- The InFormal repository, for the tool's own account of what its shell accepts and how its results are checked [@informal-tool].

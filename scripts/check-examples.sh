@@ -11,7 +11,8 @@
 #      make lint          always
 #      make run           unless the Makefile declares REQUIRES := <something>
 #                         that this machine cannot satisfy (commercial
-#                         simulator, UVM-SystemC library, ...)
+#                         simulator, UVM-SystemC library, an optional
+#                         program that is not on the PATH, ...)
 #
 #  Results go to examples/status.json, which CI and STATUS.md both read.
 #  Exit code is non-zero if any lint or run failed.
@@ -71,7 +72,11 @@ for d in $DIRS; do
   elif grep -q '^skipped' "$d/lint.log"; then
     lint="skipped"
   fi
-  if [[ -n "$requires" ]]; then
+  # REQUIRES names what a run needs beyond the book's toolchain. When it
+  # is the name of a program on the PATH (an optional tool such as
+  # `informal`) the need is met and the example runs; anything else, a
+  # commercial simulator or a library, is skipped as before.
+  if [[ -n "$requires" ]] && ! command -v "$requires" >/dev/null 2>&1; then
     run="skipped ($requires)"; ((skip++))
   else
     (cd "$d" && $RUN make -s run >"$d/run.log" 2>&1); rc=$?

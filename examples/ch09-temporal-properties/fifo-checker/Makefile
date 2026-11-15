@@ -1,4 +1,4 @@
-# The worked example: a FIFO checker written as clocked immediate
+# The worked example: a FIFO checker written as concurrent
 # assertions, bound to the design and simulated on Verilator; see
 # run_checker.sh.
 EXAMPLE_LANG  := python

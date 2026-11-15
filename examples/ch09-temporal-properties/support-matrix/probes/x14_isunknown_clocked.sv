@@ -1,8 +1,8 @@
 // $isunknown in clocked immediate assertions: v is always known, so
 // !$isunknown(v) holds, and the BAD instance's claim at t == 5 that v is
 // unknown must fail (x14)
-// The native Yosys front end has no action blocks, so the failure count
-// is compiled only for simulation.
+// The failure count is simulation code: a formal run defines FORMAL,
+// which compiles it out.
 `ifdef FORMAL
 `define COUNT
 `else

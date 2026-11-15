@@ -1,103 +1,93 @@
-verilator 5.052, icarus 13.0, yosys 0.68 with read_slang, sby 0.70, verilator 5.054
-p00 toolchain: `sby` with no `[engines verilator: n/a      icarus: n/a      native: no run   slang: no run   next: n/a     
-p01 immediate `assert (e)` in `always_ verilator: runs     icarus: runs     native: runs     slang: runs    
-p02 immediate assert with pass and fai verilator: runs     icarus: runs     native: no build slang: runs    
-p03 immediate assert in `always_comb`  verilator: runs     icarus: runs     native: n/a      slang: n/a     
-p04 deferred `assert #0 (e)`           verilator: runs     icarus: no build native: no build slang: runs    
-p05 deferred `assert final (e)`        verilator: runs     icarus: no build native: runs     slang: runs    
-p06 `assert property (@(posedge clk) e verilator: runs     icarus: no build native: no build slang: runs    
-p07 `disable iff (!rst_n)` on a clocke verilator: runs     icarus: no build native: no build slang: runs    
-p08 `default clocking` and an unclocke verilator: runs     icarus: no build native: no build slang: no build
-p09 `default disable iff`              verilator: runs     icarus: no build native: no build slang: wrong   
-p10 overlapped implication `a |-> b`   verilator: runs     icarus: no build native: no build slang: no build
-p11 non-overlapped `a |=> b`, against  verilator: runs     icarus: no build native: no build slang: no build next: runs    
-p12 fixed delay `a ##2 b`              verilator: runs     icarus: no build native: no build slang: no build
-p13 ranged delay `a |-> ##[1:3] b`     verilator: runs     icarus: no build native: no build slang: no build next: runs    
-p14 unbounded delay `a |-> ##[1:$] b`  verilator: runs     icarus: no build native: no build slang: no build
-p15 consecutive repetition `a[*3]`     verilator: runs     icarus: no build native: no build slang: no build
-p16 ranged repetition `a[*1:3] ##1 b`  verilator: wrong    icarus: no build native: no build slang: no build
-p17 unbounded repetition `a[*1:$]`, `a verilator: wrong    icarus: no build native: no build slang: no build
-p18 goto repetition `b[->2]`           verilator: wrong    icarus: no build native: no build slang: no build
-p19 nonconsecutive repetition `b[=2] # verilator: no build icarus: no build native: no build slang: no build next: no build
-p20 ranged nonconsecutive `b[=1:2]`    verilator: no build icarus: no build native: no build slang: no build
-p21 `en throughout (a ##2 b)`          verilator: runs     icarus: no build native: no build slang: no build
-p22 `(a ##1 b) within (c ##3 d)`       verilator: wrong    icarus: no build native: no build slang: no build
-p23 `a[*1:3] intersect (b ##2 c)`      verilator: no build icarus: no build native: no build slang: no build
-p24 sequence `and`, sequence `or`      verilator: wrong    icarus: no build native: no build slang: no build
-p25 `first_match(a ##[1:3] b) |-> c`   verilator: wrong    icarus: no build native: no build slang: no build
-p26 named `sequence` with arguments    verilator: runs     icarus: no build native: no build slang: no build
-p27 named `property` with arguments, u verilator: runs     icarus: no build native: no build slang: no build
-p28 property-local variable carrying d verilator: runs     icarus: no build native: no build slang: no build
-p29 `not (a ##1 b)`                    verilator: runs     icarus: no build native: no build slang: no build
-p30 `$past(x)`                         verilator: runs     icarus: no build native: no build slang: runs    
-p31 `$past(x, 3)`                      verilator: runs     icarus: no build native: no build slang: runs    
-p32 gated `$past(x, 1, en)`            verilator: no build icarus: no build native: no build slang: no build
-p33 `$rose`, `$fell`, on one bit and o verilator: runs     icarus: no build native: no build slang: no build
-p34 `$stable`, `$changed`              verilator: runs     icarus: no build native: no build slang: no build
-p35 `$sampled(x)` in an action block   verilator: runs     icarus: no build native: n/a      slang: n/a     
-p36 `$onehot`, `$onehot0`, `$countones verilator: runs     icarus: no build native: no build slang: no build
-p37 `disable iff` rising in mid-attemp verilator: runs     icarus: no build native: no build slang: no build next: runs    
-p38 reset as an antecedent term        verilator: runs     icarus: no build native: no build slang: no build
-p39 `a |-> s_eventually b` at the end  verilator: runs     icarus: no build native: no build slang: no build
-p40 `assert property (s_eventually e)` verilator: n/a      icarus: n/a      native: no run   slang: no build next: n/a     
-p41 `strong(##[1:$] b)`                verilator: no build icarus: no build native: no build slang: no build
-p42 `until`, `s_until`, `until_with`   verilator: runs     icarus: no build native: no build slang: no build
-p43 `always [2:5] a`                   verilator: runs     icarus: no build native: no build slang: no build
-p44 `nexttime a`                       verilator: no build icarus: no build native: no build slang: no build
-p45 property `if (m) p else q`         verilator: runs     icarus: no build native: no build slang: no build
-p46 followed-by `a #=# b`, `a #-# c`   verilator: runs     icarus: no build native: no build slang: no build
-p47 `assume property` in simulation    verilator: runs     icarus: no build native: n/a      slang: n/a     
-p48 `assume` constraining a free input verilator: n/a      icarus: n/a      native: runs     slang: runs     next: n/a     
-p49 `cover property (a ##1 b)`         verilator: runs     icarus: no build native: no build slang: no build
-p50 `cover property (a |-> b)`, antece verilator: runs     icarus: no build native: no build slang: no build
-p51 `cover sequence`                   verilator: runs     icarus: no build native: no build slang: no build
-p52 antecedent that can never match    verilator: runs     icarus: no build native: no build slang: no build
-p53 pass action block on a vacuous suc verilator: runs     icarus: no build native: n/a      slang: n/a     
-p54 `restrict property`                verilator: runs     icarus: no build native: no build slang: no build
-p55 `bind` to a module, named port con verilator: runs     icarus: no build native: no build slang: runs    
-p56 `bind` to one instance             verilator: no build icarus: no build native: no build slang: runs    
-p57 `bind` reading internal signals th verilator: runs     icarus: no build native: no build slang: runs    
-p58 concurrent assertion inside `alway verilator: runs     icarus: no build native: no build slang: runs    
-p59 property with two clocks           verilator: no build icarus: no build native: no build slang: no build
-p60 `$assertoff`, `$asserton`          verilator: runs     icarus: no build native: n/a      slang: n/a     
-p61 two failures, default and `+verila verilator: runs     icarus: n/a      native: n/a      slang: n/a     
-p62 `expect` statement                 verilator: no build icarus: no build native: no build slang: wrong   
-p63 `checker ... endchecker`           verilator: runs     icarus: no build native: no build slang: no build
-p64 `let` declaration used in a proper verilator: runs     icarus: no build native: no build slang: runs    
-p65 `(* anyconst *)` in a file simulat verilator: runs     icarus: runs     native: runs     slang: wrong   
-p66 `$initstate` behind `` `ifdef FORM verilator: runs     icarus: no run   native: runs     slang: no build
-p67 `mode prove`, `depth 5`: a true pr verilator: n/a      icarus: n/a      native: runs     slang: runs     next: n/a     
-p68 the same property under `abc pdr`  verilator: n/a      icarus: n/a      native: runs     slang: runs     next: n/a     
-p69 `mode cover`: an unreachable `cove verilator: n/a      icarus: n/a      native: runs     slang: runs     next: n/a     
-p70 `expect fail` and the exit status  verilator: n/a      icarus: n/a      native: runs     slang: runs     next: n/a     
-p71 one `` `ASSERT `` macro, two expan verilator: runs     icarus: no build native: runs     slang: runs    
-72 constructs
-  Verilator: 50 runs, 6 wrong, 9 no build, 7 n/a
-  Icarus: 4 runs, 1 no run, 59 no build, 8 n/a
-  Yosys native: 10 runs, 2 no run, 54 no build, 6 n/a
-  Yosys `read_slang`: 19 runs, 3 wrong, 1 no run, 43 no build, 6 n/a
-  Verilator next: 3 runs, 1 no build, 7 n/a
-  Icarus with -gsupported-assertions, on its 59 no-build rows: 14 build, 11 of them wrong
-x01 immediate `assert (e)` in `always  verilator: runs     icarus: runs     native: runs     slang: runs    
-x02 module-level `assert property (e); verilator: no build icarus: no build native: runs     slang: runs    
-x03 `$past(x)` in a clocked immediate  verilator: runs     icarus: no run   native: runs     slang: runs    
-x04 `$rose`, `$fell` in clocked immedi verilator: runs     icarus: no run   native: runs     slang: no build
-x05 `$stable`, `$changed` in clocked i verilator: runs     icarus: no run   native: runs     slang: no build
-x06 `$onehot`, `$onehot0`, `$countones verilator: runs     icarus: runs     native: runs     slang: no build
-x07 `bind` with an instance list       verilator: no build icarus: no build native: no build slang: runs    
-x08 `disable iff` pulsed between two c verilator: wrong    icarus: no build native: n/a      slang: n/a      next: runs    
-x09 `a |=> b` with overlapping attempt verilator: runs     icarus: no build native: no build slang: no build next: runs    
-x10 `bind` of a checker written with c verilator: runs     icarus: no build native: wrong    slang: runs    
-x11 immediate `cover (e)` in a clocked verilator: runs     icarus: wrong    native: runs     slang: runs    
-x12 sequence antecedent with a ranged  verilator: wrong    icarus: no build native: no build slang: no build next: wrong   
-x13 sequence antecedent with a fixed d verilator: runs     icarus: no build native: no build slang: no build
-x14 `$isunknown` in a clocked immediat verilator: runs     icarus: runs     native: wrong    slang: no build
-x15 sequence `or` of two operands that verilator: wrong    icarus: no build native: no build slang: no build next: wrong   
-p49 `cover property (a ##1 b)`, built  verilator: wrong    icarus: n/a      native: n/a      slang: n/a     
+verilator 5.052, icarus 13.0, verilator 5.054, informal 0.1.0
+p01 immediate `assert (e)` in `alw verilator: runs     next: runs     icarus: runs     informal: wrong
+p02 immediate assert with pass and verilator: runs     next: runs     icarus: runs     informal: wrong
+p03 immediate assert in `always_co verilator: runs     next: runs     icarus: runs     informal: n/a
+p04 deferred `assert #0 (e)`       verilator: runs     next: runs     icarus: no build informal: wrong
+p05 deferred `assert final (e)`    verilator: runs     next: runs     icarus: no build informal: wrong
+p06 `assert property (@(posedge cl verilator: runs     next: runs     icarus: no build informal: runs
+p07 `disable iff (!rst_n)` on a cl verilator: runs     next: runs     icarus: no build informal: runs
+p08 `default clocking` and an uncl verilator: runs     next: runs     icarus: no build informal: runs
+p09 `default disable iff`          verilator: runs     next: runs     icarus: no build informal: runs
+p10 overlapped implication `a |->  verilator: runs     next: runs     icarus: no build informal: runs
+p11 non-overlapped `a |=> b`, agai verilator: runs     next: runs     icarus: no build informal: runs
+p12 fixed delay `a ##2 b`          verilator: runs     next: runs     icarus: no build informal: runs
+p13 ranged delay `a |-> ##[1:3] b` verilator: runs     next: runs     icarus: no build informal: runs
+p14 unbounded delay `a |-> ##[1:$] verilator: runs     next: runs     icarus: no build informal: no build
+p15 consecutive repetition `a[*3]` verilator: runs     next: runs     icarus: no build informal: runs
+p16 ranged repetition `a[*1:3] ##1 verilator: wrong    next: wrong    icarus: no build informal: runs
+p17 unbounded repetition `a[*1:$]` verilator: wrong    next: wrong    icarus: no build informal: no build
+p18 goto repetition `b[->2]`       verilator: wrong    next: wrong    icarus: no build informal: no build
+p19 nonconsecutive repetition `b[= verilator: no build next: no build icarus: no build informal: no build
+p20 ranged nonconsecutive `b[=1:2] verilator: no build next: no build icarus: no build informal: no build
+p21 `en throughout (a ##2 b)`      verilator: runs     next: runs     icarus: no build informal: runs
+p22 `(a ##1 b) within (c ##3 d)`   verilator: wrong    next: wrong    icarus: no build informal: runs
+p23 `a[*1:3] intersect (b ##2 c)`  verilator: no build next: no build icarus: no build informal: runs
+p24 sequence `and`, sequence `or`  verilator: wrong    next: wrong    icarus: no build informal: runs
+p25 `first_match(a ##[1:3] b) |->  verilator: wrong    next: wrong    icarus: no build informal: runs
+p26 named `sequence` with argument verilator: runs     next: runs     icarus: no build informal: runs
+p27 named `property` with argument verilator: runs     next: runs     icarus: no build informal: runs
+p28 property-local variable carryi verilator: runs     next: runs     icarus: no build informal: wrong
+p29 `not (a ##1 b)`                verilator: runs     next: runs     icarus: no build informal: no build
+p30 `$past(x)`                     verilator: runs     next: runs     icarus: no build informal: runs
+p31 `$past(x, 3)`                  verilator: runs     next: runs     icarus: no build informal: runs
+p32 gated `$past(x, 1, en)`        verilator: no build next: no build icarus: no build informal: runs
+p33 `$rose`, `$fell`, on one bit a verilator: runs     next: runs     icarus: no build informal: runs
+p34 `$stable`, `$changed`          verilator: runs     next: runs     icarus: no build informal: runs
+p35 `$sampled(x)` in an action blo verilator: runs     next: runs     icarus: no build informal: n/a
+p36 `$onehot`, `$onehot0`, `$count verilator: runs     next: runs     icarus: no build informal: wrong
+p37 `disable iff` rising in mid-at verilator: runs     next: runs     icarus: no build informal: runs
+p38 reset as an antecedent term    verilator: runs     next: runs     icarus: no build informal: runs
+p39 `a |-> s_eventually b` at the  verilator: runs     next: runs     icarus: no build informal: runs
+p40 `assert property (s_eventually verilator: n/a      next: n/a      icarus: n/a      informal: runs
+p41 `strong(##[1:$] b)`            verilator: no build next: no build icarus: no build informal: no build
+p42 `until`, `s_until`, `until_wit verilator: runs     next: runs     icarus: no build informal: runs
+p43 `always [2:5] a`               verilator: runs     next: runs     icarus: no build informal: runs
+p44 `nexttime a`                   verilator: no build next: no build icarus: no build informal: runs
+p45 property `if (m) p else q`     verilator: runs     next: runs     icarus: no build informal: no build
+p46 followed-by `a #=# b`, `a #-#  verilator: runs     next: runs     icarus: no build informal: no build
+p47 `assume property` in simulatio verilator: runs     next: runs     icarus: no build informal: n/a
+p48 `assume` constraining a free i verilator: n/a      next: n/a      icarus: n/a      informal: runs
+p49 `cover property (a ##1 b)`     verilator: runs     next: runs     icarus: no build informal: runs
+p50 `cover property (a |-> b)`, an verilator: runs     next: runs     icarus: no build informal: runs
+p51 `cover sequence`               verilator: runs     next: runs     icarus: no build informal: runs
+p52 antecedent that can never matc verilator: runs     next: runs     icarus: no build informal: no build
+p53 pass action block on a vacuous verilator: runs     next: runs     icarus: no build informal: n/a
+p54 `restrict property`            verilator: runs     next: runs     icarus: no build informal: runs
+p55 `bind` to a module, named port verilator: runs     next: runs     icarus: no build informal: runs
+p56 `bind` to one instance         verilator: no build next: no build icarus: no build informal: runs
+p57 `bind` reading internal signal verilator: runs     next: runs     icarus: no build informal: runs
+p58 concurrent assertion inside `a verilator: runs     next: runs     icarus: no build informal: runs
+p59 property with two clocks       verilator: no build next: no build icarus: no build informal: no build
+p60 `$assertoff`, `$asserton`      verilator: runs     next: runs     icarus: no build informal: n/a
+p61 two failures, default and `+ve verilator: runs     next: runs     icarus: n/a      informal: n/a
+p62 `expect` statement             verilator: no build next: no build icarus: no build informal: wrong
+p63 `checker ... endchecker`       verilator: runs     next: runs     icarus: no build informal: no build
+p64 `let` declaration used in a pr verilator: runs     next: runs     icarus: no build informal: runs
+64 constructs
+  Verilator: 47 runs, 6 wrong, 9 no build, 2 n/a
+  Verilator next: 47 runs, 6 wrong, 9 no build, 2 n/a
+  Icarus: 3 runs, 58 no build, 3 n/a
+  InFormal: 39 runs, 7 wrong, 12 no build, 6 n/a
+  Icarus with -gsupported-assertions, on its 58 no-build rows: 13 build, 10 of them wrong
+x01 immediate `assert (e)` in `alw verilator: runs     next: runs     icarus: runs     informal: wrong
+x02 module-level `assert property  verilator: no build next: no build icarus: no build informal: no build
+x03 `$past(x)` in a clocked immedi verilator: runs     next: runs     icarus: no run   informal: wrong
+x04 `$rose`, `$fell` in clocked im verilator: runs     next: runs     icarus: no run   informal: wrong
+x05 `$stable`, `$changed` in clock verilator: runs     next: runs     icarus: no run   informal: wrong
+x06 `$onehot`, `$onehot0`, `$count verilator: runs     next: runs     icarus: runs     informal: wrong
+x07 `bind` with an instance list   verilator: no build next: no build icarus: no build informal: runs
+x08 `disable iff` pulsed between t verilator: wrong    next: runs     icarus: no build informal: n/a
+x09 `a |=> b` with overlapping att verilator: runs     next: runs     icarus: no build informal: runs
+x10 `bind` of a checker written wi verilator: runs     next: runs     icarus: no build informal: wrong
+x11 immediate `cover (e)` in a clo verilator: runs     next: runs     icarus: wrong    informal: wrong
+x12 sequence antecedent with a ran verilator: wrong    next: wrong    icarus: no build informal: runs
+x13 sequence antecedent with a fix verilator: runs     next: runs     icarus: no build informal: runs
+x14 `$isunknown` in a clocked imme verilator: runs     next: runs     icarus: runs     informal: wrong
+x15 sequence `or` of two operands  verilator: wrong    next: wrong    icarus: no build informal: runs
+p49 `cover property (a ##1 b)`, bu verilator: wrong    next: wrong    icarus: n/a      informal: n/a
 16 more
   Verilator: 10 runs, 4 wrong, 2 no build
+  Verilator next: 11 runs, 3 wrong, 2 no build
   Icarus: 3 runs, 1 wrong, 3 no run, 8 no build, 1 n/a
-  Yosys native: 7 runs, 2 wrong, 5 no build, 2 n/a
-  Yosys `read_slang`: 6 runs, 8 no build, 2 n/a
-  Verilator next: 2 runs, 2 wrong
+  InFormal: 5 runs, 8 wrong, 1 no build, 2 n/a
   Icarus with -gsupported-assertions, on its 8 no-build rows: 1 build, 1 of them wrong

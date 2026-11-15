@@ -1,6 +1,6 @@
 {
-  "checked": "2026-11-15T07:58:40Z",
-  "pass": 76,
+  "checked": "2026-11-15T15:45:28Z",
+  "pass": 82,
   "fail": 0,
   "skipped_run": 2,
   "examples": [
@@ -411,6 +411,20 @@
       "expect": "pass"
     },
     {
+      "dir": "examples/ch09-temporal-properties/assume-formal",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "informal",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch09-temporal-properties/axi-formal",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "informal",
+      "expect": "pass"
+    },
+    {
       "dir": "examples/ch09-temporal-properties/axi-rules",
       "lint": "pass",
       "run": "pass",
@@ -439,6 +453,20 @@
       "expect": "pass"
     },
     {
+      "dir": "examples/ch09-temporal-properties/fifo-formal",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "informal",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch09-temporal-properties/fifo-proof",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "informal",
+      "expect": "pass"
+    },
+    {
       "dir": "examples/ch09-temporal-properties/goto-miss",
       "lint": "pass",
       "run": "pass",
@@ -453,6 +481,13 @@
       "expect": "pass"
     },
     {
+      "dir": "examples/ch09-temporal-properties/response-formal",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "informal",
+      "expect": "pass"
+    },
+    {
       "dir": "examples/ch09-temporal-properties/support-matrix",
       "lint": "pass",
       "run": "pass",
@@ -464,6 +499,13 @@
       "lint": "pass",
       "run": "pass",
       "requires": "",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch09-temporal-properties/vacuity-formal",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "informal",
       "expect": "pass"
     },
     {

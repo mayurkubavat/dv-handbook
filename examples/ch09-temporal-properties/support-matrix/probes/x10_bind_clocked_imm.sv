@@ -1,8 +1,8 @@
-// bind of a checker whose assertion is a clocked immediate one, so that
-// the native Yosys front end can show whether it binds: ok is false at t
-// == 5 in the BAD instance (x10)
-// The native Yosys front end has no action blocks, so the failure count
-// is compiled only for simulation.
+// bind of a checker whose assertion is a clocked immediate one, which
+// separates a tool that does not bind from one that does not read the
+// assertion: ok is false at t == 5 in the BAD instance (x10)
+// The failure count is simulation code: a formal run defines FORMAL,
+// which compiles it out.
 `ifdef FORMAL
 `define COUNT
 `else

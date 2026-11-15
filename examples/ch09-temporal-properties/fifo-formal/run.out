@@ -1,0 +1,32 @@
+property                     type    status        engine     detail
+fifo.u_sva.NoOverflow_A      assert  proven        informal-kind
+fifo.u_sva.FullForward_A     assert  proven        informal-kind
+fifo.u_sva.FullBackward_A    assert  cex           informal-kind depth 16
+fifo.u_sva.EmptyExact_A      assert  proven        informal-kind
+fifo.u_sva.PushFull_A        assert  proven        informal-kind
+fifo.u_sva.PopEmpty_A        assert  proven        informal-kind
+fifo.u_sva.Sync_A            assert  proven        informal-kind
+fifo.u_sva.FullReached_C     cover   unreachable   informal-kind
+fifo.u_sva.PushFull_C        cover   covered       informal-kind depth 17
+fifo.u_sva.PopEmpty_C        cover   covered       informal-kind depth 2
+fifo.u_sva.Drained_C         cover   covered       informal-kind depth 31
+--- the counterexample to FullBackward_A, one row per cycle
+cycle  rst_n  wr_en  rd_en  count    occ   full
+    0      0      1      1      8     31      0
+    1      1      1      1      0      0      0
+    2      1      1      0      1      1      0
+    3      1      1      0      2      2      0
+    4      1      1      0      3      3      0
+    5      1      1      0      4      4      0
+    6      1      1      0      5      5      0
+    7      1      1      0      6      6      0
+    8      1      1      0      7      7      0
+    9      1      1      0      8      8      0
+   10      1      1      0      9      9      0
+   11      1      1      0     10     10      0
+   12      1      1      0     11     11      0
+   13      1      1      0     12     12      0
+   14      1      1      0     13     13      0
+   15      1      1      0     14     14      0
+   16      1      1      0     15     15      1
+verdict: one direction refuted, the other proved of a state that cannot be reached

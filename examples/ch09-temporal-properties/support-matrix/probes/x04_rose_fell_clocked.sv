@@ -1,8 +1,8 @@
 // $rose and $fell in clocked immediate assertions, with the signals of
 // p33: in the BAD instance s rises one tick late, so the first assertion
 // fails at t == 3 and at t == 4 (x04)
-// The native Yosys front end has no action blocks, so the failure count
-// is compiled only for simulation.
+// The failure count is simulation code: a formal run defines FORMAL,
+// which compiles it out.
 `ifdef FORMAL
 `define COUNT
 `else

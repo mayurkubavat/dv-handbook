@@ -9,14 +9,20 @@ The glossary grows with the book. It holds only terms that a written chapter def
 Agent
 : A loop that decides which tools to call and in what order, as distinct from the tools themselves, which are deterministic programs that can be tested on their own. See @sec-appI.
 
+Antecedent
+: The left side of an implication in an assertion: the condition that says on which ticks the rule applies. The right side, the consequent, is what must then hold. See @sec-ch09-properties.
+
 Assertion
-: A property written in a form a tool can check, together with the instruction to check it. In this book's subset, a condition inside a block clocked by the design's clock. See @sec-ch09-what.
+: A property written in a form a tool can check, together with the instruction to check it. In this book's subset, a concurrent assertion with a clock, a reset that switches it off, and a boolean or an implication to this tick or the next. See @sec-ch09-what.
 
 Associative array
 : A SystemVerilog container indexed by a key of any type, such as an address, a string or a struct, that holds only the entries written to it. See @sec-ch05-aggregates.
 
 Assumption
-: A property the environment is expected to keep, stated about a block's inputs. In simulation it is checked like an assertion; a failure blames the stimulus, not the design. See @sec-ch09-where.
+: A property the environment is expected to keep, stated about a block's inputs. In simulation it is checked like an assertion; a failure blames the stimulus, not the design. In a formal tool it is a constraint: only traces that satisfy every assumption are examined, so an assumption that is too strong proves things that are false. See @sec-ch09-where.
+
+Assume-guarantee reasoning
+: Proving a block's properties under assumptions about its neighbors, and discharging each assumption as an assertion in the neighbor's own verification. See @sec-ch09-where.
 
 Back-pressure
 : The receiver's use of `ready` in a valid/ready handshake to slow the sender. See @sec-ch03-pipelines.
@@ -58,10 +64,10 @@ Context
 : The sequence of tokens a generative model sees on one call; the model's entire input. See @sec-ch34-model.
 
 Counterexample
-: A trace that a property does not permit and the design can produce; one is enough to refute the property. See @sec-ch09-what.
+: A trace that a property does not permit and the design can produce; one is enough to refute the property. A formal tool reports one with its depth, the cycle in which the property fails. See @sec-ch09-what.
 
 Cover (property)
-: A statement that a condition should be observed at least once, counted by the tool. Paired with every guarded assertion to show the guard was reached. See @sec-ch09-vacuity.
+: A statement that a condition should be observed at least once. A simulator counts the ticks on which it was; a formal tool produces a trace that reaches it or proves it unreachable. Paired with every assertion to show that its antecedent can be true. See @sec-ch09-vacuity.
 
 Covergroup
 : A SystemVerilog type that holds coverpoints, crosses, options and a sampling rule. It is declared once and instantiated with `new`; a covergroup declared in a class must be constructed in that class's `new`, or it collects nothing. See @sec-ch08-covergroup.
@@ -98,11 +104,17 @@ Formal verification
 Four-state
 : Having four values per bit: zero, one, unknown (X) and high impedance (Z). A four-state variable can hold an unknown and propagates it. Compare *two-state*; see @sec-ch04-fourstate and @sec-ch05-types.
 
+Free input
+: An input of a design in a formal model: it may take any value on every tick unless an assumption constrains it. See @sec-ch09-vacuity.
+
 Functional coverage
 : Coverage a person writes from the verification plan, as covergroups and assertion cover directives, to record which behaviors the tests reached. Compare *code coverage*; see @sec-ch02-coverage and @sec-ch08.
 
 Functional verification
 : Comparison of the RTL's behavior against the specification by simulating it with a testbench. It is what "verification" means unqualified in this book. See @sec-ch01-definitions.
+
+Helper invariant
+: A property of a design's state that is proved first and then assumed, so that a later proof starts only from states that satisfy it. See @sec-ch09-example.
 
 Handle
 : A variable that names a class object. It starts `null`, and assigning one handle to another makes two names for one object, not a copy. See @sec-ch05-classes.
@@ -233,11 +245,17 @@ Trace
 Two-state
 : Having only the values zero and one. A two-state variable cannot hold an unknown; assigning X to it stores 0. Compare *four-state*; see @sec-ch04-fourstate and @sec-ch05-types.
 
+Undetermined
+: A formal tool's report that it neither proved nor refuted a property within its limits. It says nothing about the design. See @sec-ch09-formal.
+
 Unknown (X)
 : A simulator's statement that it does not know which value a bit has. It is not a value hardware can hold. See @sec-ch04-fourstate.
 
+Unreachable (cover)
+: A formal tool's proof that no trace of the design, under the assumptions in force, makes a cover's condition true. See @sec-ch09-vacuity.
+
 Vacuous pass
-: A pass of an assertion whose guard was never true, so that nothing was checked. Detected by a cover of the guard that reads zero. See @sec-ch09-vacuity.
+: A pass of an assertion whose antecedent was never true, so that nothing was checked; in a formal tool, a proof of that kind. Detected by a cover of the antecedent that reads zero or is unreachable. See @sec-ch09-vacuity.
 
 Valid/ready handshake
 : A two-wire contract in which the sender raises `valid` to offer a beat and the receiver raises `ready` to accept one. The beat transfers only in a cycle where both are high. See @sec-ch03-pipelines.

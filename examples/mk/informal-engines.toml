@@ -1,0 +1,9 @@
+# informal-engines.toml -- the engine list the book's formal examples
+# hand to `informal shell --engines`.
+#
+# The file names external model checkers that join InFormal's
+# portfolio. The examples select one in-house engine by name for each
+# `prove` (informal-bmc, informal-kind or informal-ic3), and those
+# need no entry here, so the list is empty. Without --engines the tool
+# looks for config/engines.toml under the current directory and stops
+# when it is not there.

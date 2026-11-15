@@ -1,8 +1,8 @@
 // $stable and $changed in clocked immediate assertions, with the signals
 // of p34: the BAD instance expects the change one tick late, so each
 // assertion fails twice (x05)
-// The native Yosys front end has no action blocks, so the failure count
-// is compiled only for simulation.
+// The failure count is simulation code: a formal run defines FORMAL,
+// which compiles it out.
 `ifdef FORMAL
 `define COUNT
 `else

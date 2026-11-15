@@ -1,8 +1,8 @@
 // $onehot, $onehot0 and $countones in clocked immediate assertions, with
 // the vector of p36: two bits set at t == 5 in the BAD instance, three
 // failures (x06)
-// The native Yosys front end has no action blocks, so the failure count
-// is compiled only for simulation.
+// The failure count is simulation code: a formal run defines FORMAL,
+// which compiles it out.
 `ifdef FORMAL
 `define COUNT
 `else

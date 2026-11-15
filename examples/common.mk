@@ -13,13 +13,17 @@
 #  that chapters can talk about verification, not build systems.
 #
 #  Required variables (set in the example's Makefile before the include):
-#      EXAMPLE_LANG   sv | cocotb | systemc      which recipe file to load
+#      EXAMPLE_LANG   sv | cocotb | systemc | python | informal
+#                                                which recipe file to load
 #      TOP            top-level module name (HDL) or executable name (SystemC)
 #      SOURCES        source files, relative to the example directory
 #
 #  Optional variables:
 #      REQUIRES       commercial   -> CI runs `make lint` only;
 #                                     `make run` needs a commercial tool
+#                     informal     -> `make run` needs that program; the
+#                                     checker runs the example when it is
+#                                     on the PATH and skips it when not
 #      PLUSARGS       extra +args passed to the simulation (SV / UVM)
 #      UVM            1 to compile the UVM library and pass +UVM_TESTNAME
 #      UVM_TEST       name of the uvm_test to run (when UVM=1)
@@ -49,6 +53,7 @@
 #      examples/mk/sv.mk             <- SystemVerilog / UVM recipes
 #      examples/mk/cocotb.mk         <- cocotb / pyuvm recipes
 #      examples/mk/systemc.mk        <- SystemC / UVM-SystemC recipes
+#      examples/mk/informal.mk       <- formal runs on InFormal
 #      examples/<chapter>/<lang>/Makefile
 # ======================================================================
 # Directory that holds this file, regardless of where make was invoked from.

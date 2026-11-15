@@ -1,0 +1,19 @@
+=== inputs free: the source may do anything
+property                     type    status        engine     detail
+hs_sink.Taken_A              assert  cex           informal-kind depth 2
+hs_sink.u_hs.Answer_A        assert  cex           informal-kind depth 2
+hs_sink.u_hs.Held_A          assert  cex           informal-kind depth 2
+hs_sink.u_hs.Stable_A        assert  cex           informal-kind depth 2
+hs_sink.u_hs.HeldRaw_A       assert  cex           informal-kind depth 2
+hs_sink.u_hs.Waited_C        cover   covered       informal-kind depth 2
+=== the source's two rules assumed
+property                     type    status        engine     detail
+hs_sink.Taken_A              assert  proven        informal-kind
+hs_sink.u_hs.Answer_A        assert  proven        informal-kind
+hs_sink.u_hs.Held_A          assert  proven        informal-kind
+hs_sink.u_hs.Stable_A        assert  proven        informal-kind
+hs_sink.u_hs.HeldRaw_A       assert  proven        informal-kind
+hs_sink.u_hs.Waited_C        cover   covered       informal-kind depth 2
+Held_M                       assume  unprocessed
+Stable_M                     assume  unprocessed
+verdict: the sink is correct against a source that keeps the rules, and only against that one
