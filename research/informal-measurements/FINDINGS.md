@@ -759,3 +759,16 @@ items below are ordered by how much they can mislead.
   apart from times.
 - Memory: the 65536x8 memory probe had a process killed by the kernel
   on 15 GB; keep `--mem-gb` in mind for CI.
+
+## H. Symbolic constant and one tracked word (added after the first run)
+
+`tech/sym_fifo.sv`, `tech/sym_fifo.tcl`: a wrapper adds a free input
+`sd` held constant by `assume {$stable(sd)}` (the stand-in for
+`$anyconst`), and ghost logic that tracks one nondeterministically
+picked push of that value and counts the words ahead of it. Property:
+`in_q && ahead == 0 |-> rd_data == sd` on the fixed FIFO (16x8), 60 s
+limit: `informal-kind` undetermined, `informal-ic3` undetermined,
+`ric3-ic3` proven in 32.06 s; cover of the tracked word leaving with
+nine words in the FIFO covered at depth 10. Mutant (read pointer steps
+by 2, `tech/sym_fifo_mut.tcl`): see the output line below.
+a_integrity                  assert  cex           informal-bmc depth 3 in 0.02 s
