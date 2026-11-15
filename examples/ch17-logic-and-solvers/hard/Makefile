@@ -5,5 +5,5 @@ EXAMPLE_LANG  := python
 TOP           := run_hard.py
 SOURCES       := run_hard.py ../dpll/dpll.py ../cdcl/cdcl.py \
                  ../cdcl/cdcl_vsids.py ../common/gen.py
-EXPECT_OUTPUT := the median cost peaks where about half
+EXPECT_OUTPUT := the median cost peaks at
 include ../../common.mk

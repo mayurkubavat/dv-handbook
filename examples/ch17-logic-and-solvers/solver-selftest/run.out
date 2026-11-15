@@ -1,3 +1,13 @@
-3000 random formulas of up to 25 variables:
-dpll.py, cdcl.py and cdcl_vsids.py agree with z3 on every one
-921 satisfiable, each model checked clause by clause; 2079 unsatisfiable
+1. small formulas, up to 25 variables, clauses of 1 to 4 literals
+   1500 formulas, 477 satisfiable, 1023 unsatisfiable
+   most conflicts on one formula: dpll 4, cdcl 1, cdcl_vsids 1
+2. random 3-SAT, 30 to 60 variables, 4.0 to 4.6 clauses for each
+   240 formulas, 133 satisfiable, 107 unsatisfiable
+   most conflicts on one formula: dpll 401, cdcl 296, cdcl_vsids 189
+3. pigeonhole, adder miters with and without the bug, multiplier miters,
+   2 to 6 holes or bits
+   20 formulas, 5 satisfiable, 15 unsatisfiable
+   most conflicts on one formula: dpll 4,096, cdcl 1,014, cdcl_vsids 1,751
+1760 formulas: dpll.py, cdcl.py and cdcl_vsids.py agree with z3 on every one
+every model satisfies every clause and assigns every variable
+2457 learned clauses checked: each follows from its formula

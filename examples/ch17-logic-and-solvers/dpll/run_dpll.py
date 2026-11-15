@@ -47,6 +47,7 @@ for n in range(2, 8):
     print(f"   {n}  {cnf.nvars:9d}  {len(cnf.clauses):7d}  "
           f"{s.decisions:9,d}  {s.conflicts:9,d}  {4 ** n - 1:7,d}")
     assert s.decisions == 4 ** n - 1 and s.conflicts == 4 ** n
+    assert (cnf.nvars, len(cnf.clauses)) == (15 * n - 6, 45 * n - 19)
 print("   UNSATISFIABLE at every width: the adders are equal;")
 print("   decisions = 4^N - 1 in every row: one per node of the tree")
 print("   over the 2N input bits")

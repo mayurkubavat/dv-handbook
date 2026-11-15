@@ -25,4 +25,5 @@
                  5.0      300       3 / 30                99      167
                  5.4      324       0 / 30                76      117
                  5.8      348       0 / 30                70      133
-   the median cost peaks where about half the formulas are satisfiable
+   the median cost peaks at 4.6, where 6 of 30 formulas are satisfiable;
+   half are satisfiable somewhere between 4.2 and 4.6

@@ -207,3 +207,247 @@ has crossing edges; a barycenter ordering did not remove them.
 - Figures regenerated after the last run: byte-identical SVGs.
 - `fifo-model/run.out`: the tool's 81-column size line is wrapped by
   `common/informal_model.py` before its parenthesis.
+
+## 10. Round 1 fixes
+
+Started 2026-11-15 after gate 2a (text: B1-B7, N1-N27) and gate 2b
+(code: B1-B3, N1-N11). One line per finding; "T-" is the text review,
+"C-" the code review. Kept current while the work proceeds; entries
+marked (pending) are not done yet.
+
+### 10.1 Sources read in this round (2026-11-15)
+
+Command-line fetches were refused by the proxy; pages were read through
+the fetch tool, which returns extracts and short quotations.
+
+- Buss and Nordstrom, "Proof Complexity and SAT Solving", Handbook of
+  Satisfiability 2nd ed., read in the authors' preprint
+  (csc.kth.se/~jakobn/research/ProofComplexityChapter.pdf; the preprint
+  numbers itself chapter 1 and its running head still says 2008).
+  Subsection 1.4.1 "Resolution Length": "Haken [Hak85] proved that the
+  PHP formulas consisting of clauses (1.7a) and (1.7b) require length
+  exp(Omega(n))" in resolution, for m = n + 1 pigeons. Section 1.3.1,
+  p. 9 of the preprint: CDCL, "when run on unsatisfiable CNF formulas,
+  is a search procedure for resolution proofs". New key
+  `buss2021proof`. Chapter number 7 and DOI 10.3233/FAIA200990 are
+  from a search listing of the publisher record, not from the page.
+- Haken 1985: abstract read on a bibliographic mirror of the DOI
+  (lclem.github.io/bibliographer). It says the shortest resolution
+  proof "cannot be bounded by any polynomial" of the formula's length,
+  that the formulas are Cook and Reckhow's pigeonhole tautologies, and
+  that extended resolution has polynomial-length proofs. The Crossref
+  record has no abstract. The body of the paper is still unread.
+- Beame, Kautz, Sabharwal 2004: first page of the JAIR PDF. Names
+  printed in full: Paul Beame, Henry Kautz, Ashish Sabharwal. Abstract:
+  "We also show that a slight variant of CL with unlimited restarts is
+  as powerful as RES itself."
+- Tseitin 1983: Springer chapter page. Author "G. S. Tseitin", editors
+  Joerg H. Siekmann and Graham Wrightson, pp. 466-483, 1983. The page
+  does not say where the paper first appeared (the footnote text is not
+  on the page), so the 1968 Russian original stays unverified.
+- Bollig and Wegener 1996, Bryant 1991: the papers' first pages and the
+  IEEE pages could not be reached. The zbMATH Open records (read through
+  the MaRDI portal) print "Beate Bollig", "Ingo Wegener" and "Randal E.
+  Bryant".
+- z3's bit-vector procedure: nothing read; no claim is made (T-B4).
+
+### 10.2 Text review (gate 2a)
+
+- T-B1 fixed. The sentence now says "fails at step k"; a new sentence
+  after the formula says the formula has Bad on the last step only and
+  that "within k" is the disjunction over bounds 0 to k; the definition
+  of bound adds the same. Checked against ch09 (depth = index of the
+  last cycle, reset cycle 0): unchanged and consistent.
+- T-B2 fixed. Quoted with its qualifier ("a slight variant of CL with
+  unlimited restarts") from the abstract, plus a sentence that it is a
+  statement about proofs that exist, not about heuristics.
+- T-B3 fixed by reading sources. Haken is cited for what its abstract
+  says (no polynomial bound; extended resolution has short proofs);
+  the exponential form exp(Omega(n)) is cited to `buss2021proof`. Bib
+  note of `haken1985intractability` now says "Abstract read". Summary
+  bullet and the engines table say "theorem about/for resolution".
+  Exercise 12 offers "false as stated" and (a), (b) are reworded to
+  "no resolution refutations of polynomial size", so (a) is a theorem
+  by the abstract and (b) is false for the designs Beame and Liew
+  treat. `STATUS.md` still says Haken is unread: not edited (outside
+  this round's permissions); the author or the next session must
+  correct that line.
+- T-B4 fixed by weakening. Line on "decided on its bits" replaced by
+  what was measured plus "the example does not look inside the solver";
+  summary bullet and the engines table row reworded to the measurement;
+  learning objective 6 no longer says "from search".
+- T-B5 fixed with C-B3 (see there). Prose now also says the peak row is
+  one row past the half point; the summary attributes "near half" to
+  the published measurements.
+- T-B6 (a) fixed by removal: "first published in Russian in 1968" is
+  gone from the text and the bib note; editors added from the Springer
+  page. (b) fixed: "as those authors also report" removed, and the
+  future-directions sentence now says "the solvers measured here".
+  (c) `beame2004towards` completed from the paper's first page.
+  `bollig1996improving` and `bryant1991complexity` completed from
+  zbMATH Open records, NOT from the documents or the publisher, which
+  could not be reached; the bib notes say so. Tseitin stays "G. S."
+  because the publisher's page prints initials. Author to confirm or
+  revert the two zbMATH-sourced names.
+- T-B7 fixed: "penciled". No other British spelling found by grep over
+  the chapter, the ch17 examples and the figure generator.
+- T-N1 fixed: "under 170 lines" in three places and the cdcl Makefile.
+- T-N2 fixed: "As this chapter encodes the two", with 5,741 against
+  2,123 clauses (11-bit multiplier miter: 656 variables, 2,123 clauses
+  from `gen.multiplier_miter(11)`).
+- T-N3 fixed: clauses proportional to the gate's number of inputs.
+- T-N4, T-N5 fixed as the reviewer suggests.
+- T-N6 fixed: "sixth line"; the implication figure's caption says which
+  level-1 causes are omitted (also C-N9). Caption only: SVG unchanged.
+- T-N7 fixed: "This learned clause"; "lemmas the solver derived";
+  summary says "a lemma implied by the formula".
+- T-N8 fixed: "no solver whose reasoning stays within resolution".
+- T-N9 fixed: the hardware reading is called an analogy, the FIFO
+  counter-example to over-reading it is cited (at most 185 conflicts
+  per unsatisfiable bound), the pointer to ch09's helper invariant is
+  dropped, the table cell says "pigeonhole formulas (theorem, for
+  resolution)".
+- T-N10 fixed: truncation stated; Beame and Liew's designs named and
+  the chapter's multiplier called a relative, not one of them.
+- T-N11 fixed: the carry-chain explanation is marked as likely and
+  unmeasured; the loss up to six bits is stated (229 against 208).
+- T-N12 fixed in prose (the listing's `count` is not memoized and the
+  text now says so); `robdd.py` not changed.
+- T-N13, T-N14 fixed as suggested.
+- T-N15 fixed: T(s_i, x_i, s_{i+1}), Bad(s_k, x_k), and a sentence on
+  the constraint term C(s_i, x_i).
+- T-N16 fixed: "evaluated at width m"; a fourth pitfall item on
+  context-determined width, cited to the standard without a clause
+  number (clause not re-read).
+- T-N17 fixed: "about five to eight for each bit from eight bits on"
+  (0.82, 6.25, 31.07 s in the committed table).
+- T-N18 fixed: 115 = 105 + 1 + 9, checked against `fifo_bmc.aag` (nine
+  latch lines whose third field is the latch's own literal).
+- T-N19 fixed: every line of `counter.btor2` is now accounted for.
+- T-N20 fixed as suggested.
+- T-N21 fixed: all four "the last section" are now labels.
+- T-N22 fixed: "trail" introduced where `dpll.py` is described; the
+  `dpll.py` splice starts at line 24 so that `lit_value` and `assign`
+  are printed; "those two paragraphs".
+- T-N23 no finding.
+- T-N24 partly. (vi) conference version of Beame and Liew named in the
+  bib note (venue from the reviewer's Crossref reading; not re-read).
+  (i) GRASP and first-UIP attributions, (ii), (iv), (v) and the other
+  bib details: not done, each needs a source read first. (iii) is a
+  `STATUS.md` line, not editable here.
+- T-N25 fixed for exercise 3: the renumbering is stated exactly and
+  both counts are printed in the exercise (1,023 and 3,109 decisions at
+  five bits; measured with `dpll.py` on the renumbered clauses, result
+  UNSAT, 3,110 conflicts). The book has no solutions section in any
+  chapter, so the expected count is in the exercise itself. Line 149
+  now agrees with it. Exercise 9 gained the two practical notes.
+- T-N26 fixed: 12(b) see T-B3; "Which ten?" removed from exercise 10;
+  references to exercises by number removed from the prose.
+- T-N27 not done: cutting three passages is the author's call. The
+  chapter grew in this round.
+
+### 10.3 Code review (gate 2b)
+
+- C-B1 fixed. `solver-selftest/selftest.py` now has three streams, all
+  refereed by z3: (1) 1,500 small mixed formulas (was 3,000; halved to
+  keep the run near 13 s); (2) 240 random 3-SAT formulas of 30 to 60
+  variables at 4.0 to 4.6 clauses per variable; (3) pigeonhole, adder
+  miters with and without the bug and multiplier miters for 2 to 6
+  holes or bits, verdict also known by construction. Every model is
+  checked for completeness and against every clause; up to 20 learned
+  clauses per learning solver are checked to follow from the formula
+  (on every fourth formula of stream 2 and all of stream 3: 2,457
+  clauses). A conflict limit of 200,000 turns a looping solver into a
+  failure. `dpll.py` is left out above 40 variables, 5 holes and 4-bit
+  multipliers. The output prints the largest conflict count per stream
+  (stream 1: cdcl 1; stream 2: cdcl 296, cdcl_vsids 189; stream 3:
+  1,014 and 1,751) and the script asserts stream 2 reaches 100.
+  Mutations of `cdcl/cdcl.py`, each applied to a scratch copy of the
+  examples and `selftest.py` run there (exit status 1 in every case;
+  "stream" is the first stream that failed):
+  - M0 (the reviewer's) `watches[false_lit] += watching[i + 1:]`
+    deleted: fails in stream 2, first formula (verdict).
+  - M1 moved watch not added to the new literal's list: stream 1.
+  - M2 backjump to the lowest level in the learned clause instead of
+    the second highest: stream 2 (exception in conflict analysis).
+  - M3 learned unit clause not asserted: stream 1.
+  - M4 asserting literal with the wrong sign: stream 1.
+  - M5 learned clause drops its level-1 literals: stream 2.
+  - M6 `qhead` not reset on backjump: stream 1.
+  - M7 conflict at level 0 reported as satisfiable: stream 1.
+  - M8 input unit clauses ignored: stream 1.
+  - M9 backjump one level only: stream 2 (exception).
+  - M10 clause dropped from the watch list when its other watch is
+    true: stream 2.
+  Five of the eleven (M0, M2, M5, M9, M10) pass the old kind of formula
+  and are caught only by the new streams. python-sat was not needed
+  and is not used anywhere.
+- C-B2 fixed. `tseitin-tools/run_tools.py` reads `build/fa_abc.cnf`
+  with `common/dimacs.py`, prints its header (`p cnf 8 18`), and
+  asserts and prints the split: 14 three-literal clauses over variables
+  2 to 7 with 8 models, in each of which x3 = x5 ^ x6, x2 = x3 ^ x7 and
+  x4 = majority(x5, x6, x7); 4 unit clauses (-8 2 4 -1), of which 2 and
+  4 assert sum and cout; one model of the whole file, inputs 1 1 1.
+  The statistics line of ABC (17 clauses) is no longer printed. Prose,
+  Makefile comment and the closing line ("14 for abc's three nodes")
+  agree. "A factor of six" is replaced by "from fourteen defining
+  clauses to a hundred".
+- C-B3 fixed. The closing lines of `hard/run_hard.py` are computed from
+  the table: the ratio of the largest median, its satisfiable count,
+  and the two neighboring ratios between which the count crosses half
+  (asserted adjacent). Output: "the median cost peaks at 4.6, where 6
+  of 30 formulas are satisfiable; half are satisfiable somewhere
+  between 4.2 and 4.6". `EXPECT_OUTPUT` is "the median cost peaks at";
+  the chapter's splice is now lines 18-29.
+- C-N1 fixed. `run_dpll.py`, `run_cdcl.py` assert (15N - 6, 45N - 19)
+  for every adder miter; `run_hard.py` asserts the adder's clause count
+  and the whole row (adder conflicts 12/13, 27/35, 54/84, 106/116,
+  208/229, 410/310); `run_unroll.py` pins the conflicts column of both
+  unrollings through `bmc`'s report callback (FIFO: 1, 1, 1, 1, 2, 5,
+  13, 23, 33, 44, 58, 76, 99, 124, 152, 185, 195), without touching the
+  spliced `bmc_aag.py`.
+- C-N2 fixed. `tseitin/encode.py` checks `or_all` over three inputs
+  exhaustively (silent assert; `run.out` unchanged).
+- C-N3 fixed as a comment in `word_vs_bits.py` and a docstring in
+  `gen.multiplier_miter`; the chapter's splice of that file is now
+  lines 33-57.
+- C-N4 fixed in prose (T-N17).
+- C-N5 fixed in prose and in the `cdcl` Makefile comment (T-N1).
+- C-N6 fixed. `gen.adder_miter(1, bug=True)` raises ValueError; the
+  usage text says N is at least 2. `adderbug 2` is still SAT.
+- C-N7 fixed. `cdcl_vsids.py` scales `bump` and
+  every activity by 2^-512 when `bump` exceeds 2^512 (after about
+  6,900 conflicts). A power of two keeps every comparison, so no count
+  moved: `cdcl/run.out` and `hard/run.out` tables are byte-identical,
+  including 7,786 conflicts on the 7-bit multiplier, which crosses the
+  threshold. Probe: 8-bit multiplier stopped at 16,000 conflicts, every
+  activity finite (the old code reaches inf near 13,837). The chapter's
+  splice is now lines 15-34 with one sentence on the four new lines.
+- C-N8 fixed. `common/informal_model.py` prints `tool: informal 0.1.0`
+  as the first line of both model examples; `bitvector` prints
+  `tool: z3 5.4.1` as its last line (outside the spliced ranges).
+- C-N9 fixed in the caption (T-N6).
+- C-N10 not fixed: `common/` has no Makefile and the example Makefiles
+  hold assignments only; the directory is ignored by git and was
+  removed by hand after the runs.
+- C-N11 not fixed (checker timeout is outside the chapter). The
+  selftest itself now fails instead of hanging on a looping solver.
+
+### 10.4 Counts that changed, and checks
+
+- Changed: selftest output (1,760 formulas; 477 + 133 + 5 satisfiable;
+  2,457 learned clauses); ABC reported as 14 + 4 clauses, not 17;
+  hard's closing line; exercise 3 now prints 3,109. No solver count in
+  any table moved; `production/` tables untouched and not re-run.
+- `make clean` in all fifteen directories, then
+  `scripts/check-examples.sh ch17` twice from clean (second run with
+  another PYTHONHASHSEED): 14 pass, `production` skipped (cadical not
+  on the PATH), every `run.out` byte-identical between the two runs.
+  The checker rewrote `examples/status.json` (timestamp).
+- `figures/gen_ch17_figures.py`: all ten SVGs byte-identical to the
+  committed ones, so no figure number changed.
+- `scripts/check-structure.sh`, `scripts/check-citations.sh`: pass.
+- Chapter length is now 13,929 words by `wc -w` (was 12,814); the
+  outline's ceiling was 13,000.
+- The book was not rendered in this round; the new bib entry and the
+  changed formula have not been through Quarto.

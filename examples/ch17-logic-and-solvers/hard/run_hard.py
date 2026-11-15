@@ -48,11 +48,14 @@ print("2. is a*b equal to b*a? beside the adder miter of the same width")
 print("   (conflicts of cdcl.py and cdcl_vsids.py; all unsatisfiable)")
 print("         adder                         multiplier")
 print("   bits  clauses   cdcl  cdcl_vsids    clauses   cdcl  cdcl_vsids")
-want = {2: (8, 8), 3: (25, 27), 4: (87, 134), 5: (282, 439),
-        6: (1014, 1751), 7: (3655, 7786)}
+want = {2: (12, 13, 8, 8), 3: (27, 35, 25, 27), 4: (54, 84, 87, 134),
+        5: (106, 116, 282, 439), 6: (208, 229, 1014, 1751),
+        7: (410, 310, 3655, 7786)}
 for n, expected in want.items():
     row, got = f"   {n:4d}", []
-    for cnf in (gen.adder_miter(n), gen.multiplier_miter(n)):
+    adder, multiplier = gen.adder_miter(n), gen.multiplier_miter(n)
+    assert len(adder.clauses) == 45 * n - 19, "five gates to a column"
+    for cnf in (adder, multiplier):
         row += f"  {len(cnf.clauses):7d}"
         for solver in (Cdcl, CdclVsids):
             result, s = run(solver, cnf)
@@ -60,15 +63,17 @@ for n, expected in want.items():
             got.append(s.conflicts)
         row += f"  {got[-2]:5,d}  {got[-1]:10,d}  "
     print(row.rstrip())
-    assert tuple(got[2:]) == expected, (n, got)
+    assert tuple(got) == expected, (n, got)
 
 VARS, RUNS = 60, 30
 print(f"3. random 3-SAT, {VARS} variables, {RUNS} formulas per row, "
       f"cdcl_vsids.py")
 print("   clauses/variables  clauses  satisfiable  median conflicts"
       "  largest")
+RATIOS = [tenth / 10 for tenth in (30, 34, 38, 42, 46, 50, 54, 58)]
 sat_column, medians = [], []
-for tenth in (30, 34, 38, 42, 46, 50, 54, 58):
+for ratio in RATIOS:
+    tenth = round(ratio * 10)
     m = VARS * tenth // 10
     sat, conflicts = 0, []
     for seed in range(RUNS):
@@ -85,5 +90,12 @@ for tenth in (30, 34, 38, 42, 46, 50, 54, 58):
           f"{medians[-1]:16d}  {max(conflicts):7d}")
 assert sat_column == [30, 30, 28, 22, 6, 3, 0, 0], sat_column
 assert medians == [3, 7, 24, 65, 109, 99, 76, 70], medians
-print("   the median cost peaks where about half the formulas are "
-      "satisfiable")
+# The closing lines are computed from the table, not written by hand.
+peak = medians.index(max(medians))
+below = max(i for i, sat in enumerate(sat_column) if 2 * sat > RUNS)
+above = min(i for i, sat in enumerate(sat_column) if 2 * sat < RUNS)
+assert above == below + 1, "the satisfiable count is not monotone here"
+print(f"   the median cost peaks at {RATIOS[peak]}, where "
+      f"{sat_column[peak]} of {RUNS} formulas are satisfiable;")
+print(f"   half are satisfiable somewhere between {RATIOS[below]} and "
+      f"{RATIOS[above]}")

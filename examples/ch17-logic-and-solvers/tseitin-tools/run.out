@@ -2,6 +2,10 @@ tool: Yosys 0.68
 yosys aigmap:     aag 12 3 0 2 9
 the regenerated graph equals ../aig/fa.aag: True
 abc strash:       and = 7
-abc write_cnf:    Vars = 8. Clauses = 17.
+abc write_cnf:    p cnf 8 18
+  14 clauses of 3 literals over variables 2 to 7, with 8 models; in each,
+  x3 = x5 ^ x6, x2 = x3 ^ x7, x4 = majority(x5, x6, x7): True
+  4 unit clauses: -8 2 4 -1; 2 and 4 assert sum and cout
+  models of the whole file: 1, with x5 x6 x7 = 1 1 1
 yosys sat:        p cnf 40 100
-one circuit: 17 clauses by hand, 17 others from abc, 100 from yosys
+one circuit: 17 clauses by hand, 14 for abc's three nodes, 100 from yosys

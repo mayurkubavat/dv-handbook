@@ -40,6 +40,7 @@ def model(here, sources, top, depth, btor2_ref=None, aag_ref=None):
     if not shutil.which("informal"):
         print("skipped: informal is not on the PATH")
         sys.exit(0)
+    print("tool: " + run(["--version"], here)[0].strip())
     build = here / "build"
     build.mkdir(exist_ok=True)
     file = f"build/{top}.btor2"

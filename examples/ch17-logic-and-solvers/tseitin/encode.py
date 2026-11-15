@@ -68,6 +68,18 @@ for text, units in (("sum=1 cout=1 a=0", [5, 8, -1]),
         print("  " + " ".join(f"{n}={bits[v - 1]}" for n, v in var.items()))
     assert len(found) == (0 if -1 in units else 1)
 
+# The builder's many-input OR, used by the miters of later examples,
+# checked the same way: for each of the eight input rows exactly one
+# value of the output satisfies its clauses, and it is the OR.
+wide = Cnf()
+ins = wide.vars(3)
+out = wide.or_all(ins)
+for bits in itertools.product((0, 1), repeat=3):
+    fits = [g for g in (0, 1) if all(
+        any((bits + (g,))[abs(x) - 1] == (x > 0) for x in c)
+        for c in wide.clauses)]
+    assert out == 4 and fits == [int(any(bits))], (bits, fits)
+
 # An encoding with a clause missing still looks like an encoding.
 extra, flipped = [], 0
 for i in range(len(hand)):

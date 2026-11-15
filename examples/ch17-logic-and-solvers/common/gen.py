@@ -1,7 +1,8 @@
 """gen.py -- the instance families the chapter measures.
 
     python3 gen.py adder N out.cnf      two N-bit adders differ? (unsat)
-    python3 gen.py adderbug N out.cnf   the same, one gate wrong (sat)
+    python3 gen.py adderbug N out.cnf   the same, one gate wrong (sat);
+                                        N is at least 2
     python3 gen.py mul N out.cnf        N-bit a*b differs from b*a? (unsat)
     python3 gen.py php N out.cnf        N+1 pigeons in N holes (unsat)
     python3 gen.py rand N M SEED out.cnf   random 3-SAT, N vars, M clauses
@@ -54,6 +55,8 @@ def majority(cnf, a, b, bug_at=None):
 
 def adder_miter(n, bug=False):
     """Satisfiable exactly when the two adders differ on some input."""
+    if bug and n < 2:                   # column 0 has no gate to get wrong
+        raise ValueError("the wrong gate needs a second column: N >= 2")
     cnf = Cnf()
     a, b = cnf.vars(n), cnf.vars(n)
     s1 = ripple(cnf, a, b)
@@ -74,6 +77,7 @@ def multiply(cnf, a, b):
 
 
 def multiplier_miter(n):
+    """a*b against b*a: the operands are exchanged in the second copy."""
     cnf = Cnf()
     a, b = cnf.vars(n), cnf.vars(n)
     p1, p2 = multiply(cnf, a, b), multiply(cnf, b, a)

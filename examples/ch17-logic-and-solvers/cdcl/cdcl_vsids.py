@@ -23,6 +23,10 @@ class CdclVsids(Cdcl):
         for lit in learned:
             self.activity[abs(lit)] += self.bump
         self.bump /= 0.95               # older conflicts fade
+        if self.bump > 2.0 ** 512:      # rescale before a float overflows
+            self.bump *= 2.0 ** -512
+            for var in self.activity:
+                self.activity[var] *= 2.0 ** -512
         return learned, back
 
     def pick(self):

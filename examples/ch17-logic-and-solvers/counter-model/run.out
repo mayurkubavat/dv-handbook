@@ -1,3 +1,4 @@
+tool: informal 0.1.0
 $ informal lower counter.sv --top counter > build/counter.btor2
 20 lines of Btor2
 the regenerated Btor2 equals counter.btor2: True

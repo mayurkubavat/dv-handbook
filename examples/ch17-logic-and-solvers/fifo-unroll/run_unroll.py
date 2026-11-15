@@ -13,14 +13,26 @@ import pathlib
 from bmc_aag import bmc
 
 HERE = pathlib.Path(__file__).parent
+conflicts = []                          # the last column, bound by bound
+
+
+def report(line):
+    print(line)
+    if line.split()[0].isdigit():
+        conflicts.append(int(line.split()[-1]))
+
 
 print("1. the counter: counter.aag")
-k, u, model = bmc(HERE / "counter.aag", 10)
+k, u, model = bmc(HERE / "counter.aag", 10, report)
 assert k == 6 and (u.nvars, len(u.clauses) + 1) == (141, 401)
+assert conflicts == [1, 1, 1, 1, 2, 6, 0], conflicts
 
 print("2. the FIFO: fifo_bmc.aag")
-k, u, model = bmc(HERE / "fifo_bmc.aag", 20)
+del conflicts[:]
+k, u, model = bmc(HERE / "fifo_bmc.aag", 20, report)
 assert k == 16 and (u.nvars, len(u.clauses) + 1) == (1795, 5221)
+assert conflicts == [1, 1, 1, 1, 2, 5, 13, 23, 33, 44, 58, 76, 99, 124,
+                     152, 185, 195], conflicts
 per_frame = (len(u.aig.inputs) + len(u.aig.ands),
              3 * len(u.aig.ands) + len(u.aig.constraints))
 print(f"each further frame adds {per_frame[0]} variables and "

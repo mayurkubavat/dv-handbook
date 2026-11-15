@@ -1,4 +1,4 @@
-# Clause learning in 150 lines: one conflict analyzed step by step,
+# Clause learning in under 170 lines: one conflict analyzed step by step,
 # and the adder miter under three solvers that differ in one idea
 # each. About ten seconds, most of it cdcl.py at 12 bits.
 EXAMPLE_LANG  := python

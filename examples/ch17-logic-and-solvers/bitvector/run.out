@@ -15,3 +15,4 @@
    bvudiv(x, 0) != 255: unsat;  bvurem(x, 0) != x: unsat
 5. '<' in z3's Python interface is signed: is there a, b where
    (a < b) differs from ULT(a, b): sat;  with both below 128: unsat
+tool: z3 5.4.1

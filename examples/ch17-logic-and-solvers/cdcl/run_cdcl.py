@@ -110,6 +110,7 @@ want = {2: (12, 13), 3: (27, 35), 4: (54, 84), 5: (106, 116),
 for n, expected in want.items():
     cnf = gen.adder_miter(n)
     row = f"   {n:2d}  {cnf.nvars:9d}  {len(cnf.clauses):7d}"
+    assert (cnf.nvars, len(cnf.clauses)) == (15 * n - 6, 45 * n - 19)
     if n <= 7:
         result, s = run(Dpll, cnf)
         assert result is False and s.decisions == 4 ** n - 1

@@ -46,6 +46,9 @@ def ask(formula):
 
 
 def ask_bits(w):
+    # The sizes and the verdict would be the same for a multiplier
+    # compared with itself; that the second copy has its operands
+    # exchanged is pinned by the conflict counts of ../hard.
     cnf = gen.multiplier_miter(w)
     x = [None] + [z3.Bool(f"x{v}") for v in range(1, cnf.nvars + 1)]
     s = z3.Solver()
@@ -94,3 +97,4 @@ r2 = ask(z3.And((a < b) != z3.ULT(a, b), z3.ULT(a, 128), z3.ULT(b, 128)))[1]
 print(f"   (a < b) differs from ULT(a, b): {r1};  "
       f"with both below 128: {r2}")
 assert (r1, r2) == ("sat", "unsat")
+print("tool: z3", z3.get_version_string())
