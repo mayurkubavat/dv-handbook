@@ -1,8 +1,8 @@
 {
-  "checked": "2026-11-15T18:52:10Z",
-  "pass": 82,
+  "checked": "2026-11-15T20:50:24Z",
+  "pass": 97,
   "fail": 0,
-  "skipped_run": 2,
+  "skipped_run": 3,
   "examples": [
     {
       "dir": "examples/appF-counter/cocotb",
@@ -576,6 +576,111 @@
       "lint": "pass",
       "run": "pass",
       "requires": "",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch17-logic-and-solvers/aig",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch17-logic-and-solvers/bdd",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch17-logic-and-solvers/bitvector",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch17-logic-and-solvers/cdcl",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch17-logic-and-solvers/counter-model",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "informal",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch17-logic-and-solvers/dpll",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch17-logic-and-solvers/fifo-model",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "informal",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch17-logic-and-solvers/fifo-unroll",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch17-logic-and-solvers/fifo-unroll-z3",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch17-logic-and-solvers/hard",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch17-logic-and-solvers/production",
+      "lint": "pass",
+      "run": "skipped (cadical)",
+      "requires": "cadical",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch17-logic-and-solvers/solver-selftest",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch17-logic-and-solvers/truth-table",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch17-logic-and-solvers/tseitin",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch17-logic-and-solvers/tseitin-tools",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "yosys",
       "expect": "pass"
     }
   ]

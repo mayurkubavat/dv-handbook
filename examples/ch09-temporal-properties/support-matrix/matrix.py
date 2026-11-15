@@ -366,7 +366,10 @@ def summary(rows, vnext):
 
 def cell(c):
     verdict, why = c
-    return verdict + (" — " + why.replace("|", "\\|") if why else "")
+    # A bare dollar in a note would open inline math in the book's
+    # Markdown, so it is escaped along with the column separator.
+    why = why.replace("|", "\\|").replace("$", "\\$")
+    return verdict + (" — " + why if why else "")
 
 
 def table(rows, vers, vnext, what, label):
