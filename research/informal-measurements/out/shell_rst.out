@@ -1,0 +1,56 @@
+=== clock + reset
+property                     type    status        engine     detail
+a_async_in_reset             assert  proven        informal-kind 0.02 s
+a_after_reset                assert  proven        informal-kind 0.02 s
+a_iv                         assert  proven        informal-kind 0.02 s
+a_nr_zero                    assert  cex           informal-kind depth 1 in 0.02 s
+a_rst_stays_high             assert  proven        informal-kind 0.02 s
+c_rst_low_later              cover   unreachable   informal-kind 0.02 s
+c_a3                         cover   covered       informal-kind depth 4 in 0.02 s
+=== clock, no reset command
+property                     type    status        engine     detail
+a_async_in_reset             assert  cex           informal-kind depth 0 in 0.02 s
+a_after_reset                assert  proven        informal-kind 0.02 s
+a_iv                         assert  proven        informal-kind 0.02 s
+a_nr_zero                    assert  cex           informal-kind depth 0 in 0.02 s
+a_rst_stays_high             assert  cex           informal-kind depth 1 in 0.02 s
+c_rst_low_later              cover   covered       informal-kind depth 1 in 0.02 s
+c_a3                         cover   covered       informal-kind depth 0 in 0.02 s
+=== reset -none
+property                     type    status        engine     detail
+a_async_in_reset             assert  cex           informal-kind depth 0 in 0.02 s
+a_after_reset                assert  proven        informal-kind 0.02 s
+a_iv                         assert  proven        informal-kind 0.02 s
+a_nr_zero                    assert  cex           informal-kind depth 0 in 0.02 s
+a_rst_stays_high             assert  cex           informal-kind depth 1 in 0.02 s
+c_rst_low_later              cover   covered       informal-kind depth 1 in 0.02 s
+c_a3                         cover   covered       informal-kind depth 0 in 0.02 s
+=== no clock command
+property                     type    status        engine     detail
+a_async_in_reset             assert  error                    a_async_in_reset: no clock: declare one with `clock` / `create_clock`
+a_after_reset                assert  error                    a_async_in_reset: no clock: declare one with `clock` / `create_clock`
+a_iv                         assert  error                    a_async_in_reset: no clock: declare one with `clock` / `create_clock`
+a_nr_zero                    assert  error                    a_async_in_reset: no clock: declare one with `clock` / `create_clock`
+a_rst_stays_high             assert  error                    a_async_in_reset: no clock: declare one with `clock` / `create_clock`
+c_rst_low_later              cover   error                    a_async_in_reset: no clock: declare one with `clock` / `create_clock`
+c_a3                         cover   error                    a_async_in_reset: no clock: declare one with `clock` / `create_clock`
+=== reset on a name that is not there
+ERROR in {reset -expression {!rstn}}: reset {!rstn}: unknown name(s) in module rst: rstn
+property                     type    status        engine     detail
+a_async_in_reset             assert  cex           informal-kind depth 0 in 0.02 s
+a_after_reset                assert  proven        informal-kind 0.02 s
+a_iv                         assert  proven        informal-kind 0.02 s
+a_nr_zero                    assert  cex           informal-kind depth 0 in 0.02 s
+a_rst_stays_high             assert  cex           informal-kind depth 1 in 0.02 s
+c_rst_low_later              cover   covered       informal-kind depth 1 in 0.02 s
+c_a3                         cover   covered       informal-kind depth 0 in 0.02 s
+=== clock on a name that is not there
+ERROR in {clock ck}: clock ck: unknown name(s) in module rst: ck
+property                     type    status        engine     detail
+a_async_in_reset             assert  error                    a_async_in_reset: no clock: declare one with `clock` / `create_clock`
+a_after_reset                assert  error                    a_async_in_reset: no clock: declare one with `clock` / `create_clock`
+a_iv                         assert  error                    a_async_in_reset: no clock: declare one with `clock` / `create_clock`
+a_nr_zero                    assert  error                    a_async_in_reset: no clock: declare one with `clock` / `create_clock`
+a_rst_stays_high             assert  error                    a_async_in_reset: no clock: declare one with `clock` / `create_clock`
+c_rst_low_later              cover   error                    a_async_in_reset: no clock: declare one with `clock` / `create_clock`
+c_a3                         cover   error                    a_async_in_reset: no clock: declare one with `clock` / `create_clock`

@@ -1,0 +1,3 @@
+last supplied:  assertion reports 0, monitor reports 0
+last missing:   assertion reports 0, monitor reports 1
+verdict: the simulator missed the failure the monitor saw

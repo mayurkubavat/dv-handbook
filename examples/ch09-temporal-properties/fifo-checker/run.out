@@ -1,0 +1,9 @@
+=== simulation: the repaired FIFO, 400 random cycles
+PASS: 400 cycles, no assertion failed
+covers:  FullReached_C=113  PushFull_C=69  PopEmpty_C=51  Drained_C=96
+=== simulation: the original FIFO, same test, same seed
+  tick 35: FullBackward_A failed
+the same run allowed to continue past its failures:
+  FullBackward_A failed 114 times
+covers:  FullReached_C=0  PushFull_C=69  PopEmpty_C=51  Drained_C=97
+verdict: the repaired FIFO passes with every cover hit; the original fails FullBackward_A

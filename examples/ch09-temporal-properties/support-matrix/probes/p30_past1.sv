@@ -1,0 +1,35 @@
+// $past(t) equals t - 1 from the second tick on; the BAD instance expects
+// a wrong value at t == 5. The first tick is excluded from the assertion
+// and what $past returns there is printed instead (p30)
+module dut #(parameter bit BAD = 0) (input logic clk);
+  int nf = 0;
+  logic [3:0] t = 0;                 // step counter: the stimulus
+  always_ff @(posedge clk) t <= t + 4'd1;
+  wire [3:0] prev = t - 4'd1 - {3'd0, BAD && t == 4'd5};
+  wire [3:0] tn = ~t;                // 15 on the first tick
+  logic [3:0] first;
+  always_ff @(posedge clk) if (t == 4'd0) first <= $past(tn);
+  a1: assert property (@(posedge clk)
+    (t == 4'd0) || ($past(t) == prev)) else nf++;
+endmodule
+`ifndef FORMAL
+module top;
+  bit clk;
+  always #5 clk = ~clk;
+  dut #(.BAD(0)) good (.clk);
+  dut #(.BAD(1)) bad (.clk);
+  initial begin
+    repeat (14) @(posedge clk);
+    #1;
+    if (good.nf == 0 && bad.nf == 1)
+      $display(
+        "PROBE p30 PASS on the first tick $past reads %b",
+        good.first);
+    else
+      $display(
+        "PROBE p30 FAIL failures good=%0d bad=%0d, want 0 and 1",
+        good.nf, bad.nf);
+    $finish;
+  end
+endmodule
+`endif

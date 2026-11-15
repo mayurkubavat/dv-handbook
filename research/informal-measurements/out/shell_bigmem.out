@@ -1,0 +1,20 @@
+=== AW=8
+property                     type    status        engine     detail
+a_rw                         assert  proven        informal-kind 23.52 s
+a_bad                        assert  cex           ric3-bmc   depth 2 in 4.00 s
+proven 1 cex 1 covered 0 unreachable 0 undetermined 0 error 0 wall 27525 ms
+=== AW=12
+property                     type    status        engine     detail
+a_rw                         assert  undetermined             no engine reached a verdict
+a_bad                        assert  undetermined             no engine reached a verdict
+proven 0 cex 0 covered 0 unreachable 0 undetermined 2 error 0 wall 67830 ms
+=== AW=13
+property                     type    status        engine     detail
+a_rw                         assert  undetermined             no engine reached a verdict
+a_bad                        assert  undetermined             no engine reached a verdict
+proven 0 cex 0 covered 0 unreachable 0 undetermined 2 error 0 wall 60879 ms
+=== AW=16
+property                     type    status        engine     detail
+a_rw                         assert  undetermined             no engine reached a verdict
+a_bad                        assert  undetermined             no engine reached a verdict
+proven 0 cex 0 covered 0 unreachable 0 undetermined 2 error 0 wall 8115 ms

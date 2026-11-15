@@ -1,0 +1,4 @@
+property                     type    status        engine     detail
+a_live                       assert  undetermined             no engine reached a verdict
+a_always_g                   assert  cex           informal-ic3 depth 4 in 0.04 s
+wall 40090 ms

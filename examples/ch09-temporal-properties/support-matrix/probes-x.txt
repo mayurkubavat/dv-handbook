@@ -1,0 +1,17 @@
+# label | probe file | options (see matrix.py)
+immediate `assert (e)` in `always @(posedge clk)` | x01_imm_clocked.sv
+module-level `assert property (e);` with no clock | x02_prop_bare.sv
+`$past(x)` in a clocked immediate assert | x03_past_clocked.sv
+`$rose`, `$fell` in clocked immediate asserts | x04_rose_fell_clocked.sv
+`$stable`, `$changed` in clocked immediate asserts | x05_stable_changed_clocked.sv
+`$onehot`, `$onehot0`, `$countones` in clocked immediate asserts | x06_onehot_clocked.sv
+`bind` with an instance list | x07_bind_inst_list.sv
+`disable iff` pulsed between two clock edges | x08_disable_pulse.sv | v54; formal=n/a: one clock, nothing between its edges
+`a |=> b` with overlapping attempts, against `a |-> ##1 b` | x09_impl_nov_overlap.sv | v54
+`bind` of a checker written with clocked immediate asserts | x10_bind_clocked_imm.sv
+immediate `cover (e)` in a clocked `always` | x11_cover_imm.sv | mode=cover; vflags=--coverage
+sequence antecedent with a ranged delay `(a ##[1:3] b) |-> c` | x12_seq_ante_range.sv | v54
+sequence antecedent with a fixed delay `(a ##2 b) |-> c` | x13_seq_ante_fixed.sv
+`$isunknown` in a clocked immediate assert | x14_isunknown_clocked.sv
+sequence `or` of two operands that both fail | x15_seq_or_equal.sv | v54
+`cover property (a ##1 b)`, built without `--coverage` | p49_cover_prop.sv | iv=n/a: as p49; formal=n/a: as p49

@@ -9,8 +9,14 @@ The glossary grows with the book. It holds only terms that a written chapter def
 Agent
 : A loop that decides which tools to call and in what order, as distinct from the tools themselves, which are deterministic programs that can be tested on their own. See @sec-appI.
 
+Assertion
+: A property written in a form a tool can check, together with the instruction to check it. In this book's subset, a condition inside a block clocked by the design's clock. See @sec-ch09-what.
+
 Associative array
 : A SystemVerilog container indexed by a key of any type, such as an address, a string or a struct, that holds only the entries written to it. See @sec-ch05-aggregates.
+
+Assumption
+: A property the environment is expected to keep, stated about a block's inputs. In simulation it is checked like an assertion; a failure blames the stimulus, not the design. See @sec-ch09-where.
 
 Back-pressure
 : The receiver's use of `ready` in a valid/ready handshake to slow the sender. See @sec-ch03-pipelines.
@@ -20,6 +26,9 @@ Beat
 
 Bin
 : The unit a coverpoint counts. Each bin names a value, a set of values, or a sequence of values, and the coverage percentage is computed over bins. See @sec-ch08-bins.
+
+Bind
+: The SystemVerilog statement that instantiates one module inside another from outside the target's source, used to attach a checker to RTL without editing it. See @sec-ch09-where.
 
 Class
 : A SystemVerilog type with data members and methods. Its instances are objects, created by `new` and reached through handles. See @sec-ch05-classes.
@@ -47,6 +56,12 @@ Constraint block
 
 Context
 : The sequence of tokens a generative model sees on one call; the model's entire input. See @sec-ch34-model.
+
+Counterexample
+: A trace that a property does not permit and the design can produce; one is enough to refute the property. See @sec-ch09-what.
+
+Cover (property)
+: A statement that a condition should be observed at least once, counted by the tool. Paired with every guarded assertion to show the guard was reached. See @sec-ch09-vacuity.
 
 Covergroup
 : A SystemVerilog type that holds coverpoints, crosses, options and a sampling rule. It is declared once and instantiated with `new`; a covergroup declared in a class must be constructed in that class's `new`, or it collects nothing. See @sec-ch08-covergroup.
@@ -106,11 +121,17 @@ Interface class
 Iteration within a timestep
 : One pass of the simulator's loop at a single value of simulation time. Many passes may run before time advances. Also called a *delta cycle*. See @sec-ch04-iteration.
 
+Liveness property
+: A property that says something good eventually happens. No finite prefix of a run refutes it, so a simulation cannot fail it until a bound is added. See @sec-ch09-ltl.
+
 Metastability
 : Indecision in a flip-flop about whether its output should be zero or one, caused by a data change too close to the sampling edge. The chance that it persists falls exponentially with time but never reaches zero. See @sec-ch03-metastability.
 
 Modport
 : A view of an interface: a list of which of its signals a module connected through that view may drive and which it may only read. See @sec-ch05-interfaces.
+
+Monitor register
+: State a checker keeps for itself, as ordinary sequential logic, so that a rule spanning several ticks becomes a condition on one. See @sec-ch09-properties.
 
 Netlist
 : What synthesis produces: the design's behavior expressed as instances of library cells and the wires between them. See @sec-ch03-rtl.
@@ -119,6 +140,12 @@ Non-blocking assignment
 : An assignment (`<=`) whose right side is evaluated when the statement executes and whose target is updated later in the same timestep: in the NBA region for design code, in Re-NBA for code that runs in the Reactive set. See @sec-ch04-regions.
 
 ## O–R {#sec-appG-o}
+
+`rand`, `randc`
+: Qualifiers on class members that `randomize()` assigns. A `randc` member cycles through every value of its range before repeating one. See @sec-ch07-methods.
+
+`randomize()`
+: The built-in class method that solves the class's constraints, assigns its random members, and returns 1, or returns 0 and assigns nothing when the constraints cannot be satisfied. See @sec-ch07-methods.
 
 Object
 : An instance of a class, created by `new` and reached through a handle. See @sec-ch05-classes.
@@ -138,6 +165,9 @@ Primary clock
 Process
 : A thread of execution in a design or testbench: an `always` block, an `initial` block, or a continuous assignment. See @sec-ch04-model.
 
+Property
+: A set of traces: the ones a requirement permits. A design satisfies it when every trace it can produce is in the set. See @sec-ch09-what.
+
 Pure virtual method
 : A method declared without a body in an abstract (`virtual`) class. Every concrete subclass must implement it, and the abstract class cannot itself be constructed. See @sec-ch06-abstract.
 
@@ -147,14 +177,8 @@ Queue
 Race condition
 : Two or more statements scheduled in the same timestep whose result depends on the order they run in, where the language does not fix that order. See @sec-ch04-races.
 
-`rand`, `randc`
-: Qualifiers on class members that `randomize()` assigns. A `randc` member cycles through every value of its range before repeating one. See @sec-ch07-methods.
-
 Random stability
 : The resistance of random results to code changes. In SystemVerilog it comes from every thread and object having its own random number generator, so that an object's sequence depends only on the thread that constructed it and on its own earlier calls. See @sec-ch07-seeds.
-
-`randomize()`
-: The built-in class method that solves the class's constraints, assigns its random members, and returns 1, or returns 0 and assigns nothing when the constraints cannot be satisfied. See @sec-ch07-methods.
 
 Region
 : One of the ordered stages a SystemVerilog timestep is divided into, such as Preponed, Active, NBA, Observed, Reactive and Postponed. The order between regions may be relied on; the order between processes within one region may not. See @sec-ch04-regions.
@@ -170,14 +194,23 @@ Reset domain crossing (RDC)
 
 ## S–Z {#sec-appG-s}
 
+Safety property
+: A property that says something bad never happens. Every violation shows in a finite prefix of the run, which is why a simulation can report it. See @sec-ch09-ltl.
+
 Sample (coverage)
 : One evaluation of a covergroup, in which each coverpoint's expression is read and counted into its bins. Sampling is triggered by a clocking event, a block event, or an explicit call to `sample()`. See @sec-ch08-covergroup.
 
 Sample (generative model)
 : One draw from the distribution a generative model produces. Output differs between runs unless the sampler is seeded. See @sec-ch34-model.
 
+Sampled-value function
+: `$past` and its relatives `$rose`, `$fell`, `$stable` and `$changed`: functions that compare a signal's value at this clock tick with its value at an earlier one. See @sec-ch09-properties.
+
 Seed
 : The value that initializes a simulation's random number generation, so that a random test can be run again. See @sec-ch07-seeds.
+
+Sequence (assertion)
+: A regular expression over clock ticks, built from boolean expressions with delays and repetition; the left side of an implication in the concurrent-assertion language. See @sec-ch09-sequences.
 
 Synchronizer
 : A structure that carries a signal safely into another clock domain. The common two-flop synchronizer samples the signal and waits a clock period before sampling it again, trading metastability for an uncertainty of one cycle in latency. It synchronizes control, not data. See @sec-ch03-cdc.
@@ -194,11 +227,17 @@ Token
 Tool (agent tool layer)
 : A deterministic program that takes a design, a testbench or a log and returns structured data, runs in continuous integration, and needs no model. See @sec-appI.
 
+Trace
+: The value of every signal at every clock tick of one run, from reset until the run stops. See @sec-ch09-what.
+
 Two-state
 : Having only the values zero and one. A two-state variable cannot hold an unknown; assigning X to it stores 0. Compare *four-state*; see @sec-ch04-fourstate and @sec-ch05-types.
 
 Unknown (X)
 : A simulator's statement that it does not know which value a bit has. It is not a value hardware can hold. See @sec-ch04-fourstate.
+
+Vacuous pass
+: A pass of an assertion whose guard was never true, so that nothing was checked. Detected by a cover of the guard that reads zero. See @sec-ch09-vacuity.
 
 Valid/ready handshake
 : A two-wire contract in which the sender raises `valid` to offer a beat and the receiver raises `ready` to accept one. The beat transfers only in a cycle where both are high. See @sec-ch03-pipelines.

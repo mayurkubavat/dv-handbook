@@ -1,0 +1,9 @@
+=== simulation: no requests driven
+test finished: 21 ticks
+  Ack_A failed 0 times
+covers:  Req_C=0
+=== simulation: requests driven (+traffic)
+test finished: 21 ticks
+  Ack_A failed 5 times
+covers:  Req_C=5
+verdict: a pass with the cover at zero proved nothing

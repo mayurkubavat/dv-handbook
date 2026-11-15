@@ -1,0 +1,7 @@
+property                     type    status        engine     detail
+fifo.u_props.NoOverflow_A    assert  proven        ric3       0.12 s
+fifo.u_props.FullForward_A   assert  proven        ric3-ic3   0.07 s
+fifo.u_props.FullBackward_A  assert  cex           informal-bmc depth 16 in 0.06 s
+fifo.u_props.EmptyExact_A    assert  proven        informal-ic3 0.04 s
+fifo.u_props.FullReached_C   cover   unreachable   ric3-ic3   0.06 s
+exit=0

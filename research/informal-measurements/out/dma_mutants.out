@@ -1,0 +1,26 @@
+=== mutant drop
+property                     type    status        engine     detail
+dma_v2.u_axi.ArHeld_A        assert  cex           ric3-bmc   depth 5 in 0.08 s
+dma_v2.u_axi.ArStable_A      assert  proven        ric3-ic3   0.36 s
+dma_v2.u_axi.AwHeld_A        assert  proven        ric3-ic3   0.14 s
+dma_v2.u_axi.AwStable_A      assert  proven        ric3-ic3   0.19 s
+dma_v2.u_axi.WHeld_A         assert  proven        informal-kind 0.11 s
+dma_v2.u_axi.WStable_A       assert  proven        ric3       0.35 s
+dma_v2.u_axi.ArHeld_reg_A    assert  cex           informal-bmc depth 5 in 0.09 s
+dma_v2.u_axi.ArStable_reg_A  assert  proven        ric3-ic3   0.15 s
+dma_v2.u_axi.ArWait_C        cover   covered       informal-ic3 depth 5 in 0.09 s
+dma_v2.u_axi.AwWait_C        cover   covered       ric3-ic3   depth 8 in 0.09 s
+dma_v2.u_axi.WWait_C         cover   covered       informal-bmc depth 8 in 0.08 s
+=== mutant wander
+property                     type    status        engine     detail
+dma_v2.u_axi.ArHeld_A        assert  proven        informal-ic3 0.10 s
+dma_v2.u_axi.ArStable_A      assert  cex           informal-bmc depth 5 in 0.32 s
+dma_v2.u_axi.AwHeld_A        assert  proven        informal-ic3 0.09 s
+dma_v2.u_axi.AwStable_A      assert  proven        ric3-ic3   0.43 s
+dma_v2.u_axi.WHeld_A         assert  proven        informal-ic3 0.08 s
+dma_v2.u_axi.WStable_A       assert  proven        informal-ic3-mt 0.29 s
+dma_v2.u_axi.ArHeld_reg_A    assert  proven        informal-kind-ic3 0.10 s
+dma_v2.u_axi.ArStable_reg_A  assert  cex           informal-bmc depth 5 in 0.12 s
+dma_v2.u_axi.ArWait_C        cover   covered       informal-bmc depth 5 in 0.09 s
+dma_v2.u_axi.AwWait_C        cover   covered       informal-bmc depth 8 in 0.09 s
+dma_v2.u_axi.WWait_C         cover   covered       informal-bmc depth 8 in 0.09 s

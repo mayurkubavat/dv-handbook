@@ -1,0 +1,9 @@
+=== the slow-by-one responder, 40 random ticks, seed 1
+  tick 15: Window_A failed
+  tick 20: Window_A failed
+  Window_A failed 2 times
+covers:  Waited_C=0
+=== the correct responder, same test, same seed
+  Window_A failed 0 times
+covers:  Waited_C=2
+verdict: the monitor register caught the late grant

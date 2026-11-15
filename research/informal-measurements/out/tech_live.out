@@ -1,0 +1,43 @@
+--- engines {}
+property                     type    status        engine     detail
+a_live                       assert  undetermined             no engine reached a verdict
+a_bounded                    assert  proven        informal-kind 6.40 s
+a_tooshort                   assert  cex           informal-bmc-10 depth 209 in 0.40 s
+a_always_g                   assert  cex           informal-bmc depth 203 in 3.70 s
+wall 71133 ms
+--- engines {informal-kind}
+property                     type    status        engine     detail
+a_live                       assert  undetermined             no engine reached a verdict
+a_bounded                    assert  proven        informal-kind 0.72 s
+a_tooshort                   assert  cex           informal-kind depth 201 in 0.54 s
+a_always_g                   assert  cex           informal-kind depth 203 in 17.89 s
+wall 80973 ms
+--- engines {informal-ic3}
+property                     type    status        engine     detail
+a_live                       assert  undetermined             no engine reached a verdict
+a_bounded                    assert  undetermined             no engine reached a verdict
+a_tooshort                   assert  undetermined             no engine reached a verdict
+a_always_g                   assert  undetermined             no engine reached a verdict
+wall 240110 ms
+--- engines {informal-bmc}
+property                     type    status        engine     detail
+a_live                       assert  undetermined             no engine reached a verdict
+a_bounded                    assert  undetermined             no engine reached a verdict
+a_tooshort                   assert  cex           informal-bmc depth 201 in 0.06 s
+a_always_g                   assert  cex           informal-bmc depth 203 in 1.27 s
+wall 122100 ms
+--- engines {ric3-ic3}
+property                     type    status        engine     detail
+a_live                       assert  undetermined             no engine reached a verdict
+a_bounded                    assert  undetermined             no engine reached a verdict
+a_tooshort                   assert  undetermined             no engine reached a verdict
+a_always_g                   assert  undetermined             no engine reached a verdict
+wall 120094 ms
+--- with fairness assume {s_eventually req}
+property                     type    status        engine     detail
+a_live                       assert  undetermined             no engine reached a verdict
+a_bounded                    assert  proven        informal-kind 7.08 s
+a_tooshort                   assert  cex           informal-bmc-10 depth 209 in 0.33 s
+a_always_g                   assert  undetermined             no engine reached a verdict
+m_fair                       assume  unprocessed              
+exit=0

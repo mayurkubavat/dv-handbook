@@ -1,0 +1,30 @@
+--- whole design
+property                     type    status        engine     detail
+a_hold_q                     assert  proven        informal-ic3 0.04 s
+a_gnt_once                   assert  proven        informal-ic3 0.05 s
+a_no_early                   assert  proven        informal-kind 0.06 s
+c_gnt                        cover   covered       ric3       depth 202 in 0.44 s
+--- stopat u_timer.expired
+informal: 1 cut point(s) (stopat) are free in this model: u_timer.expired. A proof holds for the design; a counterexample may use values the design cannot produce there
+property                     type    status        engine     detail
+a_hold_q                     assert  proven        informal-kind 0.04 s
+a_gnt_once                   assert  proven        informal-kind-ic3 0.04 s
+a_no_early                   assert  cex           informal-ic3-cadical depth 3 in 0.04 s
+c_gnt                        cover   covered       informal-bmc-65 depth 64 in 0.04 s
+stopat -list: u_timer.expired
+--- stopat u_timer.t (the 16-bit register)
+informal: 1 cut point(s) (stopat) are free in this model: u_timer.t. A proof holds for the design; a counterexample may use values the design cannot produce there
+property                     type    status        engine     detail
+a_hold_q                     assert  proven        informal-kind 0.04 s
+a_gnt_once                   assert  proven        informal-kind 0.04 s
+a_no_early                   assert  cex           informal-kind depth 3 in 0.04 s
+c_gnt                        cover   covered       informal-bmc-10 depth 9 in 0.04 s
+--- black box: elaborate -bbox_m {timer}
+informal: black boxes in this model (outputs free, contents not modelled): timer. A proof holds for the design; a counterexample may use output values the boxed logic cannot produce
+property                     type    status        engine     detail
+a_hold_q                     assert  proven        informal-kind 0.04 s
+a_gnt_once                   assert  proven        informal-ic3 0.04 s
+a_no_early                   assert  cex           informal-kind depth 3 in 0.04 s
+c_gnt                        cover   covered       informal-bmc depth 3 in 0.04 s
+name inside box: a_in
+exit=0

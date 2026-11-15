@@ -1,0 +1,57 @@
+--- engines {}
+property                     type    status        engine     detail
+a_live                       assert  cex           informal-bmc depth 5 in 0.04 s
+a_idle                       assert  cex           informal-bmc depth 3 in 0.02 s
+a_step                       assert  proven        informal-ic3 0.06 s
+a_until                      assert  cex           informal-bmc depth 5 in 0.04 s
+a_wuntil                     assert  proven        informal-ic3 0.02 s
+wall 189 ms
+--- engines {informal-bmc}
+property                     type    status        engine     detail
+a_live                       assert  cex           informal-bmc depth 5 in 0.02 s
+a_idle                       assert  cex           informal-bmc depth 3 in 0.02 s
+a_step                       assert  undetermined             no engine reached a verdict
+a_until                      assert  cex           informal-bmc depth 5 in 0.02 s
+a_wuntil                     assert  undetermined             no engine reached a verdict
+wall 40132 ms
+--- engines {informal-kind}
+property                     type    status        engine     detail
+a_live                       assert  cex           informal-kind depth 5 in 0.02 s
+a_idle                       assert  cex           informal-kind depth 3 in 0.02 s
+a_step                       assert  proven        informal-kind 10.34 s
+a_until                      assert  cex           informal-kind depth 5 in 0.02 s
+a_wuntil                     assert  proven        informal-kind 0.02 s
+wall 10449 ms
+--- engines {informal-ic3}
+property                     type    status        engine     detail
+a_live                       assert  cex           informal-ic3 depth 6 in 0.02 s
+a_idle                       assert  cex           informal-ic3 depth 3 in 0.02 s
+a_step                       assert  proven        informal-ic3 0.02 s
+a_until                      assert  cex           informal-ic3 depth 5 in 0.02 s
+a_wuntil                     assert  proven        informal-ic3 0.02 s
+wall 130 ms
+--- engines {ric3-ic3}
+property                     type    status        engine     detail
+a_live                       assert  undetermined             no engine reached a verdict
+a_idle                       assert  undetermined             no engine reached a verdict
+a_step                       assert  undetermined             no engine reached a verdict
+a_until                      assert  undetermined             no engine reached a verdict
+a_wuntil                     assert  proven        ric3-ic3   0.02 s
+wall 28 ms
+--- fairness: assume {s_eventually !stall}
+property                     type    status        engine     detail
+a_live                       assert  proven        informal-ic3 0.09 s
+a_idle                       assert  cex           informal-ic3 depth 3 in 0.04 s
+a_step                       assert  proven        informal-ic3 0.07 s
+a_until                      assert  proven        informal-ic3 0.07 s
+a_wuntil                     assert  proven        informal-ic3 0.04 s
+m_fair                       assume  unprocessed              
+--- same session plus a wide bounded property
+property                     type    status        engine     detail
+a_live                       assert  proven        informal-ic3 0.09 s
+a_idle                       assert  cex           informal-bmc depth 302 in 1.86 s
+a_step                       assert  proven        informal-ic3 0.07 s
+a_until                      assert  proven        informal-ic3 0.07 s
+a_wuntil                     assert  proven        informal-ic3 0.04 s
+m_fair                       assume  unprocessed              
+a_wide                       assert  unprocessed              

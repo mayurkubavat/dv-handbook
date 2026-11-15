@@ -1,0 +1,17 @@
+property                     type    status        engine     detail
+dma_v2.u_axi.ArHeld_A        assert  proven        informal-ic3-cadical 0.14 s
+dma_v2.u_axi.ArStable_A      assert  proven        ric3       0.32 s
+dma_v2.u_axi.AwHeld_A        assert  proven        informal-ic3 0.08 s
+dma_v2.u_axi.AwStable_A      assert  proven        ric3-ic3   0.28 s
+dma_v2.u_axi.WHeld_A         assert  proven        informal-ic3 0.09 s
+dma_v2.u_axi.WStable_A       assert  proven        informal-ic3 0.12 s
+dma_v2.u_axi.ArHeld_reg_A    assert  proven        informal-kind-ic3 0.10 s
+dma_v2.u_axi.ArStable_reg_A  assert  proven        ric3-ic3   0.29 s
+dma_v2.u_axi.ArWait_C        cover   covered       informal-bmc depth 5 in 0.06 s
+dma_v2.u_axi.AwWait_C        cover   covered       informal-bmc depth 8 in 0.09 s
+dma_v2.u_axi.WWait_C         cover   covered       ric3-bmc   depth 8 in 0.15 s
+wall 1760 ms
+
+real	0m1.803s
+user	0m4.909s
+sys	0m0.631s

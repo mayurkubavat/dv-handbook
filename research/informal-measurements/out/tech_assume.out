@@ -1,0 +1,30 @@
+--- no assumptions
+property                     type    status        engine     detail
+a_gnt_after_busy             assert  proven        informal-ic3-cadical 0.04 s
+a_false                      assert  cex           ric3-ic3   depth 202 in 0.32 s
+c_gnt                        cover   covered       ric3-ic3   depth 202 in 0.28 s
+c_busy                       cover   covered       informal-ic3 depth 2 in 0.04 s
+--- partial over-constraint: assume {!req}
+property                     type    status        engine     detail
+a_gnt_after_busy             assert  proven        ric3-ic3   0.05 s
+a_false                      assert  proven        informal-ic3-cadical 0.04 s
+c_gnt                        cover   unreachable   informal-ic3-cadical 0.02 s
+c_busy                       cover   unreachable   informal-kind 0.02 s
+m_noreq                      assume  unprocessed              
+--- contradiction: assume {d < 4'd8} and {d > 4'd9}
+property                     type    status        engine     detail
+a_gnt_after_busy             assert  proven        informal-ic3 0.05 s
+a_false                      assert  proven        informal-ic3 0.04 s
+c_gnt                        cover   unreachable   informal-ic3-cadical 0.04 s
+c_busy                       cover   unreachable   informal-ic3 0.04 s
+m_lo                         assume  unprocessed              
+m_hi                         assume  unprocessed              
+--- contradiction that needs state: assume {busy |-> !busy ##0 req} style: assume {req} and {!req ##1 1'b1}
+property                     type    status        engine     detail
+a_gnt_after_busy             assert  proven        informal-kind-ic3 0.04 s
+a_false                      assert  proven        informal-ic3 0.06 s
+c_gnt                        cover   unreachable   informal-ic3 0.04 s
+c_busy                       cover   unreachable   informal-ic3-cadical 0.04 s
+m_dead                       assume  unprocessed              
+m_req                        assume  unprocessed              
+exit=0

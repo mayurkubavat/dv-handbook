@@ -1,0 +1,40 @@
+=== ch01-what-is-dv/rtl/fifo.sv
+informal: svlang: the design has no assertions
+property                     type    status        engine     detail
+elaborated; prove -all (no clock/reset given): proven 0 cex 0 covered 0 unreachable 0 undetermined 0 error 0
+=== ch09-temporal-properties/rtl/fifo_fixed.sv
+informal: svlang: the design has no assertions
+property                     type    status        engine     detail
+elaborated; prove -all (no clock/reset given): proven 0 cex 0 covered 0 unreachable 0 undetermined 0 error 0
+=== ch03-digital-design/rtl/top.sv ch03-digital-design/rtl/datapath.sv ch03-digital-design/rtl/sync2.sv ch03-digital-design/rtl/regblock.sv
+property                     type    status        engine     detail
+elaborated; prove -all (no clock/reset given): proven 0 cex 0 covered 0 unreachable 0 undetermined 0 error 0
+=== ch11-architecture-to-verification/rtl/dma_v1.v
+property                     type    status        engine     detail
+elaborated; prove -all (no clock/reset given): proven 0 cex 0 covered 0 unreachable 0 undetermined 0 error 0
+=== ch11-architecture-to-verification/rtl/dma_regs_pkg.sv ch11-architecture-to-verification/rtl/dma_v2.sv
+informal: svlang: the design has no assertions
+property                     type    status        engine     detail
+elaborated; prove -all (no clock/reset given): proven 0 cex 0 covered 0 unreachable 0 undetermined 0 error 0
+=== appF-counter/rtl/counter.sv
+informal: svlang: the design has no assertions
+property                     type    status        engine     detail
+elaborated; prove -all (no clock/reset given): proven 0 cex 0 covered 0 unreachable 0 undetermined 0 error 0
+=== ch09-temporal-properties/vacuity/responder.sv ch09-temporal-properties/vacuity/ack_check.sv
+property                     type    status        engine     detail
+elaborated; prove -all (no clock/reset given): proven 0 cex 0 covered 0 unreachable 0 undetermined 0 error 0
+=== ch09-temporal-properties/bounded-response/responder.sv ch09-temporal-properties/bounded-response/resp_check.sv
+informal: svlang: the design has no assertions
+property                     type    status        engine     detail
+elaborated; prove -all (no clock/reset given): proven 0 cex 0 covered 0 unreachable 0 undetermined 0 error 0
+=== ch09-temporal-properties/handshake/hs_check.sv
+property                     type    status        engine     detail
+elaborated; prove -all (no clock/reset given): proven 0 cex 0 covered 0 unreachable 0 undetermined 0 error 0
+=== ch04-simulation/race/safe.sv
+informal: svlang: the design has no assertions
+property                     type    status        engine     detail
+elaborated; prove -all (no clock/reset given): proven 0 cex 0 covered 0 unreachable 0 undetermined 0 error 0
+=== ch04-simulation/fourstate/dut_unreset.sv
+informal: svlang: the design has no assertions
+property                     type    status        engine     detail
+elaborated; prove -all (no clock/reset given): proven 0 cex 0 covered 0 unreachable 0 undetermined 0 error 0

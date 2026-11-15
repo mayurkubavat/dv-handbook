@@ -1,0 +1,12 @@
+=== the design as it is: the case study's random test
+result: PASS
+covers:  ArWait_C=4183  AwWait_C=5490  WWait_C=4000
+=== mutant drop: leave the address state after one tick
+<         R_ADDR: if (ARREADY) begin
+>         R_ADDR: begin
+  first: ArHeld_A failed
+=== mutant wander: step the address while it waits
+<         R_ADDR: if (ARREADY) begin
+>         R_ADDR: if (!ARREADY) ARADDR <= ARADDR + 4; else begin
+  first: ArStable_A failed
+verdict: no rule failed on the design; each mutant failed the rule it breaks

@@ -1,0 +1,18 @@
+[options]
+mode prove
+depth 20
+aigsmt z3
+
+[engines]
+abc pdr
+
+[script]
+read_slang --top dma_v2 dma_regs_pkg.sv dma.sv axil_master_sva.sv dma_bind.sv wrap.sv
+prep -top dma_v2
+
+[files]
+/home/user/dv-handbook/examples/ch11-architecture-to-verification/rtl/dma_regs_pkg.sv
+dma.sv /home/user/dv-handbook/research/informal-measurements/dma/mutants/dma_drop.sv
+/home/user/dv-handbook/examples/ch09-temporal-properties/axi-rules/axil_master_sva.sv
+/home/user/dv-handbook/examples/ch09-temporal-properties/axi-rules/dma_bind.sv
+/home/user/dv-handbook/research/informal-measurements/sby/wrap.sv

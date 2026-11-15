@@ -1,0 +1,20 @@
+     -.--ns INFO     gpi                                ../gpi/GpiCommon.cpp:242  in gpi_load_users                  Loaded entry library: '/usr/local/lib/libpython3.13.so.1.0'
+     -.--ns INFO     gpi                                ../gpi/GpiCommon.cpp:233  in gpi_load_users                  Running entry func 'initialize' from loaded library '/opt/dvtools/venv/lib/python3.13/site-packages/cocotb/simulator.cpython-313-x86_64-linux-gnu.so'
+     -.--ns INFO     pygpi                              ..ib/pygpi/embed.cpp:114  in initialize                      Using Python 3.13.8 interpreter at /opt/dvtools/venv/bin/python3
+     -.--ns INFO     gpi                                ../gpi/GpiCommon.cpp:74   in gpi_print_registered_impl       GPI: VPI support registered
+     0.00ns INFO     cocotb.initialize                  Initialized cocotb v2.1.0 from /opt/dvtools/venv/lib/python3.13/site-packages/cocotb
+     0.00ns INFO     cocotb.initialize                  Running on Icarus Verilog version 13.0 (stable)
+     0.00ns INFO     cocotb.regression                  Running tests
+     0.00ns INFO     cocotb.regression                  running test_fifo_monitor.random_traffic_under_the_monitor (1/1)
+  4025.00ns INFO     cocotb.fifo                        cover FullReached_C: 117
+  4025.00ns INFO     cocotb.fifo                        cover PushFull_C: 73
+  4025.00ns INFO     cocotb.fifo                        cover PopEmpty_C: 75
+  4025.00ns INFO     cocotb.fifo                        0 checks failed
+  4025.00ns INFO     cocotb.regression                  test_fifo_monitor.random_traffic_under_the_monitor passed
+  4025.00ns INFO     cocotb.regression                  ************************************************************************************************************
+                                                        ** TEST                                                STATUS  SIM TIME (ns)  REAL TIME (s)  RATIO (ns/s) **
+                                                        ************************************************************************************************************
+                                                        ** test_fifo_monitor.random_traffic_under_the_monitor   PASS        4025.00  **
+                                                        ************************************************************************************************************
+                                                        ** TESTS=1 PASS=1 FAIL=0 SKIP=0                                     4025.00  **
+                                                        ************************************************************************************************************

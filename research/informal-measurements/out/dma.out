@@ -1,0 +1,15 @@
+property                     type    status        engine     detail
+dma_v2.u_axi.ArHeld_A        assert  cex           informal-ic3-cadical depth 1 in 0.06 s
+dma_v2.u_axi.ArStable_A      assert  cex           informal-kind depth 1 in 0.08 s
+dma_v2.u_axi.AwHeld_A        assert  cex           informal-ic3-cadical depth 1 in 0.09 s
+dma_v2.u_axi.AwStable_A      assert  cex           informal-bmc depth 1 in 0.10 s
+dma_v2.u_axi.WHeld_A         assert  cex           informal-bmc depth 1 in 0.06 s
+dma_v2.u_axi.WStable_A       assert  cex           informal-ic3 depth 1 in 0.06 s
+dma_v2.u_axi.ArWait_C        cover   covered       informal-bmc depth 1 in 0.04 s
+dma_v2.u_axi.AwWait_C        cover   covered       informal-ic3 depth 1 in 0.07 s
+dma_v2.u_axi.WWait_C         cover   covered       informal-bmc depth 1 in 0.06 s
+wall 851 ms
+
+real	0m0.888s
+user	0m1.876s
+sys	0m0.266s

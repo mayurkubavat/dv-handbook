@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 520" width="1000" height="520" role="img" aria-label="State diagram with states idle, age 1, age 2, age 3 and fail, and below it a three-bit shift register named waiting whose bits are the three age states">
+<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#7FA3C0"/></marker><marker id="ahj" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#5B3E8E"/></marker><marker id="ahd" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#1B4F72"/></marker><marker id="ahc" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#B7791F"/></marker><marker id="ahg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#1C1C1C"/></marker><pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="6" stroke="#CBD2D9" stroke-width="2"/></pattern></defs>
+<rect width="1000" height="520" fill="white"/>
+<text x="30" y="40.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="21" font-weight="700" text-anchor="start" fill="#1B4F72">One rule, as an automaton and as registers</text>
+<text x="30" y="64.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="400" text-anchor="start" fill="#1C1C1C">Every request is granted one, two or three ticks later; in sequence notation, req |-&gt; ##[1:3] gnt.</text>
+<circle cx="140" cy="210" r="46" fill="white" stroke="#1B4F72" stroke-width="2.5"/>
+<text x="140" y="215.2" font-family="'JetBrains Mono', Menlo, monospace" font-size="15" font-weight="700" text-anchor="middle" fill="#1C1C1C">idle</text>
+<path d="M54.0,144.0 L106.9,176.9" fill="none" stroke="#1C1C1C" stroke-width="1.4" marker-end="url(#ahg)"/>
+<text x="50.0" y="138.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="400" text-anchor="end" fill="#7FA3C0">reset</text>
+<circle cx="345" cy="210" r="46" fill="white" stroke="#1B4F72" stroke-width="2.5"/>
+<text x="345" y="207.2" font-family="'JetBrains Mono', Menlo, monospace" font-size="15" font-weight="700" text-anchor="middle" fill="#1C1C1C">age 1</text>
+<text x="345" y="226.2" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="400" text-anchor="middle" fill="#7FA3C0">waiting[0]</text>
+<circle cx="550" cy="210" r="46" fill="white" stroke="#1B4F72" stroke-width="2.5"/>
+<text x="550" y="207.2" font-family="'JetBrains Mono', Menlo, monospace" font-size="15" font-weight="700" text-anchor="middle" fill="#1C1C1C">age 2</text>
+<text x="550" y="226.2" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="400" text-anchor="middle" fill="#7FA3C0">waiting[1]</text>
+<circle cx="755" cy="210" r="46" fill="white" stroke="#1B4F72" stroke-width="2.5"/>
+<text x="755" y="207.2" font-family="'JetBrains Mono', Menlo, monospace" font-size="15" font-weight="700" text-anchor="middle" fill="#1C1C1C">age 3</text>
+<text x="755" y="226.2" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="400" text-anchor="middle" fill="#7FA3C0">waiting[2]</text>
+<circle cx="925" cy="210" r="38" fill="#FBF1DC" stroke="#B7791F" stroke-width="2.5"/>
+<text x="925" y="215.2" font-family="'JetBrains Mono', Menlo, monospace" font-size="15" font-weight="700" text-anchor="middle" fill="#1C1C1C">fail</text>
+<path d="M186.0,210.0 Q242.5,210.0 296.0,210.0" fill="none" stroke="#1C1C1C" stroke-width="2" marker-end="url(#ahg)"/>
+<text x="241.8" y="200.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="500" text-anchor="middle" fill="#1C1C1C">req</text>
+<path d="M391.0,210.0 Q447.5,210.0 501.0,210.0" fill="none" stroke="#1C1C1C" stroke-width="2" marker-end="url(#ahg)"/>
+<text x="446.8" y="200.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="500" text-anchor="middle" fill="#1C1C1C">!gnt</text>
+<path d="M596.0,210.0 Q652.5,210.0 706.0,210.0" fill="none" stroke="#1C1C1C" stroke-width="2" marker-end="url(#ahg)"/>
+<text x="651.8" y="200.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="500" text-anchor="middle" fill="#1C1C1C">!gnt</text>
+<path d="M801.0,210.0 Q840.0,210.0 884.0,210.0" fill="none" stroke="#B7791F" stroke-width="3" marker-end="url(#ahc)"/>
+<text x="841.2" y="200.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="500" text-anchor="middle" fill="#B7791F">!gnt</text>
+<path d="M307.0,235.9 Q242.5,280.0 180.5,237.6" fill="none" stroke="#2E7D32" stroke-width="2" marker-end="url(#ahg)"/>
+<text x="243.1" y="276.4" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="500" text-anchor="middle" fill="#2E7D32">gnt</text>
+<path d="M509.5,231.7 Q345.0,320.0 183.2,233.2" fill="none" stroke="#2E7D32" stroke-width="2" marker-end="url(#ahg)"/>
+<text x="378.3" y="292.3" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="500" text-anchor="middle" fill="#2E7D32">gnt</text>
+<path d="M713.7,230.2 Q447.5,360.0 184.0,231.5" fill="none" stroke="#2E7D32" stroke-width="2" marker-end="url(#ahg)"/>
+<text x="527.7" y="307.4" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="500" text-anchor="middle" fill="#2E7D32">gnt</text>
+<text x="140.0" y="108.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="400" text-anchor="middle" fill="#7FA3C0">a request can start</text>
+<text x="140.0" y="124.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="400" text-anchor="middle" fill="#7FA3C0">at every tick</text>
+<text x="30.0" y="398.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="400" text-anchor="start" fill="#1C1C1C">The same three states as a shift register: several can be set at once, one per request still waiting.</text>
+<rect x="285.0" y="420.0" width="120.0" height="44.0" rx="3" fill="white" stroke="#123A56" stroke-width="2"/>
+<text x="345.0" y="447.2" font-family="'JetBrains Mono', Menlo, monospace" font-size="15" font-weight="600" text-anchor="middle" fill="#1C1C1C">waiting[0]</text>
+<path d="M293,464 L299,456 L305,464" fill="none" stroke="#123A56" stroke-width="1.5"/>
+<rect x="490.0" y="420.0" width="120.0" height="44.0" rx="3" fill="white" stroke="#123A56" stroke-width="2"/>
+<text x="550.0" y="447.2" font-family="'JetBrains Mono', Menlo, monospace" font-size="15" font-weight="600" text-anchor="middle" fill="#1C1C1C">waiting[1]</text>
+<path d="M498,464 L504,456 L510,464" fill="none" stroke="#123A56" stroke-width="1.5"/>
+<rect x="695.0" y="420.0" width="120.0" height="44.0" rx="3" fill="white" stroke="#123A56" stroke-width="2"/>
+<text x="755.0" y="447.2" font-family="'JetBrains Mono', Menlo, monospace" font-size="15" font-weight="600" text-anchor="middle" fill="#1C1C1C">waiting[2]</text>
+<path d="M703,464 L709,456 L715,464" fill="none" stroke="#123A56" stroke-width="1.5"/>
+<path d="M170.0,442.0 L285.0,442.0" fill="none" stroke="#1B4F72" stroke-width="2.2" marker-end="url(#ahd)"/>
+<text x="225.0" y="434.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" font-weight="500" text-anchor="middle" fill="#1C1C1C">req</text>
+<path d="M405.0,442.0 L490.0,442.0" fill="none" stroke="#1B4F72" stroke-width="2.2" marker-end="url(#ahd)"/>
+<path d="M610.0,442.0 L695.0,442.0" fill="none" stroke="#1B4F72" stroke-width="2.2" marker-end="url(#ahd)"/>
+<path d="M815.0,442.0 L905.0,442.0" fill="none" stroke="#B7791F" stroke-width="1.8" stroke-dasharray="6 4" marker-end="url(#ahc)"/>
+<text x="860.0" y="434.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" font-weight="500" text-anchor="middle" fill="#B7791F">&amp;&amp; !gnt</text>
+<rect x="905.0" y="424.0" width="80.0" height="36.0" rx="4" fill="#FBF1DC" stroke="#B7791F" stroke-width="2"/>
+<text x="945.0" y="447.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="14" font-weight="600" text-anchor="middle" fill="#1C1C1C">assert</text>
+<text x="550.0" y="490.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="600" text-anchor="middle" fill="#2E7D32">a grant clears every bit</text>
+</svg>

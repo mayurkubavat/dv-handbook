@@ -1,0 +1,154 @@
+--- defs {} engines: {informal-bmc}
+property                     type    status        engine     detail
+fifo.u_props.NoOverflow_A    assert  undetermined             no engine reached a verdict
+fifo.u_props.FullForward_A   assert  undetermined             no engine reached a verdict
+fifo.u_props.FullBackward_A  assert  undetermined             no engine reached a verdict
+fifo.u_props.EmptyExact_A    assert  undetermined             no engine reached a verdict
+fifo.u_props.FullReached_C   cover   covered       informal-bmc depth 17 in 0.02 s
+wall 120146 ms
+--- defs {} engines: {informal-kind}
+property                     type    status        engine     detail
+fifo.u_props.NoOverflow_A    assert  proven        informal-kind 0.50 s
+fifo.u_props.FullForward_A   assert  proven        informal-kind 2.62 s
+fifo.u_props.FullBackward_A  assert  proven        informal-kind 2.18 s
+fifo.u_props.EmptyExact_A    assert  proven        informal-kind 3.39 s
+fifo.u_props.FullReached_C   cover   covered       informal-kind depth 17 in 0.08 s
+wall 8807 ms
+--- defs {} engines: {informal-ic3}
+property                     type    status        engine     detail
+fifo.u_props.NoOverflow_A    assert  proven        informal-ic3 0.10 s
+fifo.u_props.FullForward_A   assert  proven        informal-ic3 0.12 s
+fifo.u_props.FullBackward_A  assert  proven        informal-ic3 0.10 s
+fifo.u_props.EmptyExact_A    assert  proven        informal-ic3 0.02 s
+fifo.u_props.FullReached_C   cover   covered       informal-ic3 depth 17 in 0.10 s
+wall 468 ms
+--- defs {} engines: {informal-ic3-cadical}
+property                     type    status        engine     detail
+fifo.u_props.NoOverflow_A    assert  proven        informal-ic3-cadical 0.20 s
+fifo.u_props.FullForward_A   assert  proven        informal-ic3-cadical 0.30 s
+fifo.u_props.FullBackward_A  assert  proven        informal-ic3-cadical 0.08 s
+fifo.u_props.EmptyExact_A    assert  proven        informal-ic3-cadical 0.02 s
+fifo.u_props.FullReached_C   cover   covered       informal-ic3-cadical depth 17 in 0.12 s
+wall 750 ms
+--- defs {} engines: {informal-ic3-mt}
+property                     type    status        engine     detail
+fifo.u_props.NoOverflow_A    assert  proven        informal-ic3-mt 0.04 s
+fifo.u_props.FullForward_A   assert  proven        informal-ic3-mt 0.06 s
+fifo.u_props.FullBackward_A  assert  proven        informal-ic3-mt 0.04 s
+fifo.u_props.EmptyExact_A    assert  proven        informal-ic3-mt 0.04 s
+fifo.u_props.FullReached_C   cover   covered       informal-ic3-mt depth 17 in 0.06 s
+wall 272 ms
+--- defs {} engines: {informal-kind-ic3}
+property                     type    status        engine     detail
+fifo.u_props.NoOverflow_A    assert  proven        informal-kind-ic3 0.14 s
+fifo.u_props.FullForward_A   assert  proven        informal-kind-ic3 0.22 s
+fifo.u_props.FullBackward_A  assert  proven        informal-kind-ic3 0.06 s
+fifo.u_props.EmptyExact_A    assert  proven        informal-kind-ic3 0.02 s
+fifo.u_props.FullReached_C   cover   covered       informal-kind-ic3 depth 17 in 0.08 s
+wall 550 ms
+--- defs {} engines: {ric3-ic3}
+property                     type    status        engine     detail
+fifo.u_props.NoOverflow_A    assert  proven        ric3-ic3   0.06 s
+fifo.u_props.FullForward_A   assert  proven        ric3-ic3   0.04 s
+fifo.u_props.FullBackward_A  assert  proven        ric3-ic3   0.06 s
+fifo.u_props.EmptyExact_A    assert  proven        ric3-ic3   0.04 s
+fifo.u_props.FullReached_C   cover   covered       ric3-ic3   depth 17 in 0.04 s
+wall 254 ms
+--- defs {} engines: {ric3}
+property                     type    status        engine     detail
+fifo.u_props.NoOverflow_A    assert  proven        ric3       0.09 s
+fifo.u_props.FullForward_A   assert  proven        ric3       0.04 s
+fifo.u_props.FullBackward_A  assert  proven        ric3       0.07 s
+fifo.u_props.EmptyExact_A    assert  proven        ric3       0.04 s
+fifo.u_props.FullReached_C   cover   covered       ric3       depth 17 in 0.04 s
+wall 294 ms
+--- defs {} engines: {}
+property                     type    status        engine     detail
+fifo.u_props.NoOverflow_A    assert  proven        ric3-ic3   0.20 s
+fifo.u_props.FullForward_A   assert  proven        ric3-ic3   0.11 s
+fifo.u_props.FullBackward_A  assert  proven        informal-ic3-mt 0.14 s
+fifo.u_props.EmptyExact_A    assert  proven        informal-ic3 0.10 s
+fifo.u_props.FullReached_C   cover   covered       ric3-ic3   depth 17 in 0.11 s
+wall 660 ms
+--- defs {+define+HELPER} engines: {informal-bmc}
+property                     type    status        engine     detail
+fifo.u_props.NoOverflow_A    assert  undetermined             no engine reached a verdict
+fifo.u_props.FullForward_A   assert  undetermined             no engine reached a verdict
+fifo.u_props.FullBackward_A  assert  undetermined             no engine reached a verdict
+fifo.u_props.EmptyExact_A    assert  undetermined             no engine reached a verdict
+fifo.u_props.FullReached_C   cover   covered       informal-bmc depth 17 in 0.02 s
+fifo.u_props.Sync_A          assert  undetermined             no engine reached a verdict
+wall 150237 ms
+--- defs {+define+HELPER} engines: {informal-kind}
+property                     type    status        engine     detail
+fifo.u_props.NoOverflow_A    assert  proven        informal-kind 0.54 s
+fifo.u_props.FullForward_A   assert  proven        informal-kind 2.78 s
+fifo.u_props.FullBackward_A  assert  proven        informal-kind 2.34 s
+fifo.u_props.EmptyExact_A    assert  proven        informal-kind 3.53 s
+fifo.u_props.FullReached_C   cover   covered       informal-kind depth 17 in 0.08 s
+fifo.u_props.Sync_A          assert  proven        informal-kind 0.02 s
+wall 9332 ms
+--- defs {+define+HELPER} engines: {informal-ic3}
+property                     type    status        engine     detail
+fifo.u_props.NoOverflow_A    assert  proven        informal-ic3 0.10 s
+fifo.u_props.FullForward_A   assert  proven        informal-ic3 0.10 s
+fifo.u_props.FullBackward_A  assert  proven        informal-ic3 0.08 s
+fifo.u_props.EmptyExact_A    assert  proven        informal-ic3 0.02 s
+fifo.u_props.FullReached_C   cover   covered       informal-ic3 depth 17 in 0.12 s
+fifo.u_props.Sync_A          assert  proven        informal-ic3 0.02 s
+wall 473 ms
+--- defs {+define+HELPER} engines: {informal-ic3-cadical}
+property                     type    status        engine     detail
+fifo.u_props.NoOverflow_A    assert  proven        informal-ic3-cadical 0.16 s
+fifo.u_props.FullForward_A   assert  proven        informal-ic3-cadical 0.26 s
+fifo.u_props.FullBackward_A  assert  proven        informal-ic3-cadical 0.06 s
+fifo.u_props.EmptyExact_A    assert  proven        informal-ic3-cadical 0.02 s
+fifo.u_props.FullReached_C   cover   covered       informal-ic3-cadical depth 17 in 0.12 s
+fifo.u_props.Sync_A          assert  proven        informal-ic3-cadical 0.02 s
+wall 680 ms
+--- defs {+define+HELPER} engines: {informal-ic3-mt}
+property                     type    status        engine     detail
+fifo.u_props.NoOverflow_A    assert  proven        informal-ic3-mt 0.06 s
+fifo.u_props.FullForward_A   assert  proven        informal-ic3-mt 0.06 s
+fifo.u_props.FullBackward_A  assert  proven        informal-ic3-mt 0.04 s
+fifo.u_props.EmptyExact_A    assert  proven        informal-ic3-mt 0.04 s
+fifo.u_props.FullReached_C   cover   covered       informal-ic3-mt depth 17 in 0.04 s
+fifo.u_props.Sync_A          assert  proven        informal-ic3-mt 0.04 s
+wall 312 ms
+--- defs {+define+HELPER} engines: {informal-kind-ic3}
+property                     type    status        engine     detail
+fifo.u_props.NoOverflow_A    assert  proven        informal-kind-ic3 0.16 s
+fifo.u_props.FullForward_A   assert  proven        informal-kind-ic3 0.32 s
+fifo.u_props.FullBackward_A  assert  proven        informal-kind-ic3 0.08 s
+fifo.u_props.EmptyExact_A    assert  proven        informal-kind-ic3 0.02 s
+fifo.u_props.FullReached_C   cover   covered       informal-kind-ic3 depth 17 in 0.10 s
+fifo.u_props.Sync_A          assert  proven        informal-kind-ic3 0.02 s
+wall 731 ms
+--- defs {+define+HELPER} engines: {ric3-ic3}
+property                     type    status        engine     detail
+fifo.u_props.NoOverflow_A    assert  proven        ric3-ic3   0.04 s
+fifo.u_props.FullForward_A   assert  proven        ric3-ic3   0.06 s
+fifo.u_props.FullBackward_A  assert  proven        ric3-ic3   0.08 s
+fifo.u_props.EmptyExact_A    assert  proven        ric3-ic3   0.04 s
+fifo.u_props.FullReached_C   cover   covered       ric3-ic3   depth 17 in 0.04 s
+fifo.u_props.Sync_A          assert  proven        ric3-ic3   0.04 s
+wall 313 ms
+--- defs {+define+HELPER} engines: {ric3}
+property                     type    status        engine     detail
+fifo.u_props.NoOverflow_A    assert  proven        ric3       0.07 s
+fifo.u_props.FullForward_A   assert  proven        ric3       0.04 s
+fifo.u_props.FullBackward_A  assert  proven        ric3       0.07 s
+fifo.u_props.EmptyExact_A    assert  proven        ric3       0.04 s
+fifo.u_props.FullReached_C   cover   covered       ric3       depth 17 in 0.04 s
+fifo.u_props.Sync_A          assert  proven        ric3       0.04 s
+wall 327 ms
+--- defs {+define+HELPER} engines: {}
+property                     type    status        engine     detail
+fifo.u_props.NoOverflow_A    assert  proven        ric3       0.17 s
+fifo.u_props.FullForward_A   assert  proven        ric3-ic3   0.10 s
+fifo.u_props.FullBackward_A  assert  proven        informal-ic3-mt 0.12 s
+fifo.u_props.EmptyExact_A    assert  proven        informal-ic3 0.06 s
+fifo.u_props.FullReached_C   cover   covered       informal-bmc-10 depth 18 in 0.04 s
+fifo.u_props.Sync_A          assert  proven        ric3-ic3   0.06 s
+wall 553 ms
+exit=0

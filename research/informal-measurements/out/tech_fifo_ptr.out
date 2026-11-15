@@ -1,0 +1,39 @@
+=== DEPTH=16 engine informal-kind
+a_empty_ptrs                 assert  undetermined             no engine reached a verdict
+h_count                      assert  proven        informal-kind 0.02 s
+=== DEPTH=16 engine informal-ic3
+a_empty_ptrs                 assert  proven        informal-ic3 1.75 s
+h_count                      assert  proven        informal-ic3 0.73 s
+=== DEPTH=16 engine ric3-ic3
+a_empty_ptrs                 assert  proven        ric3-ic3   0.16 s
+h_count                      assert  proven        ric3-ic3   0.10 s
+=== DEPTH=16 informal-kind with the helper assumed
+a_empty_ptrs                 assert  proven        informal-kind 0.02 s
+h_count                      assert  disabled      ric3-ic3   0.10 s
+m_count                      assume  unprocessed              
+=== DEPTH=64 engine informal-kind
+a_empty_ptrs                 assert  undetermined             no engine reached a verdict
+h_count                      assert  proven        informal-kind 0.04 s
+=== DEPTH=64 engine informal-ic3
+a_empty_ptrs                 assert  undetermined             no engine reached a verdict
+h_count                      assert  undetermined             no engine reached a verdict
+=== DEPTH=64 engine ric3-ic3
+a_empty_ptrs                 assert  proven        ric3-ic3   1.89 s
+h_count                      assert  proven        ric3-ic3   0.42 s
+=== DEPTH=64 informal-kind with the helper assumed
+a_empty_ptrs                 assert  proven        informal-kind 0.02 s
+h_count                      assert  disabled      ric3-ic3   0.42 s
+m_count                      assume  unprocessed              
+=== DEPTH=256 engine informal-kind
+a_empty_ptrs                 assert  undetermined             no engine reached a verdict
+h_count                      assert  proven        informal-kind 0.06 s
+=== DEPTH=256 engine informal-ic3
+a_empty_ptrs                 assert  undetermined             no engine reached a verdict
+h_count                      assert  undetermined             no engine reached a verdict
+=== DEPTH=256 engine ric3-ic3
+a_empty_ptrs                 assert  undetermined             no engine reached a verdict
+h_count                      assert  proven        ric3-ic3   1.25 s
+=== DEPTH=256 informal-kind with the helper assumed
+a_empty_ptrs                 assert  proven        informal-kind 0.02 s
+h_count                      assert  disabled      ric3-ic3   1.25 s
+m_count                      assume  unprocessed              

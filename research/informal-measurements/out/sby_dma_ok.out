@@ -1,0 +1,68 @@
+SBY  7:41:49 [../build/sby_dma_ok] Removing directory '/home/user/dv-handbook/research/informal-measurements/build/sby_dma_ok'.
+SBY  7:41:49 [../build/sby_dma_ok] Copy '/home/user/dv-handbook/examples/ch11-architecture-to-verification/rtl/dma_regs_pkg.sv' to '/home/user/dv-handbook/research/informal-measurements/sby/../build/sby_dma_ok/src/dma_regs_pkg.sv'.
+SBY  7:41:49 [../build/sby_dma_ok] Copy '/home/user/dv-handbook/examples/ch11-architecture-to-verification/rtl/dma_v2.sv' to '/home/user/dv-handbook/research/informal-measurements/sby/../build/sby_dma_ok/src/dma.sv'.
+SBY  7:41:49 [../build/sby_dma_ok] Copy '/home/user/dv-handbook/examples/ch09-temporal-properties/axi-rules/axil_master_sva.sv' to '/home/user/dv-handbook/research/informal-measurements/sby/../build/sby_dma_ok/src/axil_master_sva.sv'.
+SBY  7:41:49 [../build/sby_dma_ok] Copy '/home/user/dv-handbook/examples/ch09-temporal-properties/axi-rules/dma_bind.sv' to '/home/user/dv-handbook/research/informal-measurements/sby/../build/sby_dma_ok/src/dma_bind.sv'.
+SBY  7:41:49 [../build/sby_dma_ok] Copy '/home/user/dv-handbook/research/informal-measurements/sby/wrap.sv' to '/home/user/dv-handbook/research/informal-measurements/sby/../build/sby_dma_ok/src/wrap.sv'.
+SBY  7:41:50 [../build/sby_dma_ok] engine_0: abc pdr
+SBY  7:41:50 [../build/sby_dma_ok] base: starting process "cd ../build/sby_dma_ok/src; yosys -ql ../model/design.log ../model/design.ys"
+SBY  7:41:50 [../build/sby_dma_ok] base: finished (returncode=0)
+SBY  7:41:50 [../build/sby_dma_ok] prep: starting process "cd ../build/sby_dma_ok/model; yosys -ql design_prep.log design_prep.ys"
+SBY  7:41:50 [../build/sby_dma_ok] prep: finished (returncode=0)
+SBY  7:41:50 [../build/sby_dma_ok] aig: starting process "cd ../build/sby_dma_ok/model; yosys -ql design_aiger.log design_aiger.ys"
+SBY  7:41:50 [../build/sby_dma_ok] aig: Warning: Treating undriven bit dma_v2.\WREADY like $anyseq.
+SBY  7:41:50 [../build/sby_dma_ok] aig: Warning: Treating undriven bit dma_v2.\PRESETn like $anyseq.
+SBY  7:41:50 [../build/sby_dma_ok] aig: Warning: Treating undriven bit dma_v2.\PCLK like $anyseq.
+SBY  7:41:50 [../build/sby_dma_ok] aig: Warning: Treating undriven bit dma_v2.\PADDR [0] like $anyseq.
+SBY  7:41:50 [../build/sby_dma_ok] aig: Warning: Treating undriven bit dma_v2.\PADDR [1] like $anyseq.
+SBY  7:41:50 [../build/sby_dma_ok] aig: Warning: Treating undriven bit dma_v2.\PADDR [2] like $anyseq.
+SBY  7:41:50 [../build/sby_dma_ok] aig: Warning: Treating undriven bit dma_v2.\PADDR [3] like $anyseq.
+SBY  7:41:50 [../build/sby_dma_ok] aig: Warning: Treating undriven bit dma_v2.\PADDR [4] like $anyseq.
+SBY  7:41:50 [../build/sby_dma_ok] aig: Warning: Treating undriven bit dma_v2.\PADDR [5] like $anyseq.
+SBY  7:41:50 [../build/sby_dma_ok] aig: Warning: Treating undriven bit dma_v2.\AWREADY like $anyseq.
+SBY  7:41:50 [../build/sby_dma_ok] aig: Warning: Treating undriven bit dma_v2.\ARREADY like $anyseq.
+SBY  7:41:50 [../build/sby_dma_ok] aig: Warning: Treating a total of 11 undriven bits in dma_v2 like $anyseq.
+SBY  7:41:50 [../build/sby_dma_ok] aig: finished (returncode=0)
+SBY  7:41:50 [../build/sby_dma_ok] engine_0: starting process "cd ../build/sby_dma_ok; yosys-abc -c 'read_aiger model/design_aiger.aig; fold; strash; pdr -v -l; write_cex -a engine_0/trace.aiw'"
+SBY  7:41:51 [../build/sby_dma_ok] engine_0: ======== ABC command line "read_aiger model/design_aiger.aig; fold; strash; pdr -v -l; write_cex -a engine_0/trace.aiw"
+SBY  7:41:51 [../build/sby_dma_ok] engine_0: Warning: The last 3 outputs are interpreted as constraints.
+SBY  7:41:51 [../build/sby_dma_ok] engine_0: VarMax = 300. FrameMax = 10000. QueMax = 0. TimeMax = 219. MonoCNF = no. SkipGen = no. SolveAll = no.
+SBY  7:41:51 [../build/sby_dma_ok] engine_0: Frame Clauses                                                     Max Queue Flops Time
+SBY  7:41:51 [../build/sby_dma_ok] engine_0: 1 : 0 4                                                                 1     5      0.02 sec  T/O =  0  PRV =  0
+SBY  7:41:51 [../build/sby_dma_ok] engine_0: 2 : 0 39 46 ~1                                                           3    50      0.05 sec  T/O =  0  PRV =  0
+SBY  7:41:51 [../build/sby_dma_ok] engine_0: Proved output 0 in frame 2.
+SBY  7:41:51 [../build/sby_dma_ok] engine_0: Proved output 2 in frame 2.
+SBY  7:41:51 [../build/sby_dma_ok] engine_0: Proved output 4 in frame 2.
+SBY  7:41:51 [../build/sby_dma_ok] engine_0: 3 : 0 21 36 3 ~8                                                         0    50      0.06 sec  T/O =  0  PRV =  3
+SBY  7:41:51 [../build/sby_dma_ok] engine_0: 4 : 0 21 36 7 47 ~8                                                      4    96      0.08 sec  T/O =  0  PRV =  3
+SBY  7:41:51 [../build/sby_dma_ok] engine_0: 4 : 0 21 37 13 113 ~8                                                    4   155      0.11 sec  T/O =  0  PRV =  3
+SBY  7:41:51 [../build/sby_dma_ok] engine_0: 4 : 0 21 38 17 181 ~8                                                    4   207      0.14 sec  T/O =  0  PRV =  3
+SBY  7:41:51 [../build/sby_dma_ok] engine_0: 4 : 0 21 38 19 201 ~8                                                    2   214      0.14 sec  T/O =  0  PRV =  3
+SBY  7:41:51 [../build/sby_dma_ok] engine_0: Proved output 1 in frame 4.
+SBY  7:41:51 [../build/sby_dma_ok] engine_0: Proved output 3 in frame 4.
+SBY  7:41:51 [../build/sby_dma_ok] engine_0: Proved output 5 in frame 4.
+SBY  7:41:51 [../build/sby_dma_ok] engine_0: 5 : 0 21 35 18 0 0 ~209                                                  0   214      0.16 sec  T/O =  0  PRV =  6
+SBY  7:41:51 [../build/sby_dma_ok] engine_0: Block =   13  Oblig =   543  Clause =   305  Call =  2026 (sat=71.6%)  Cex =   0  Start =   4
+SBY  7:41:51 [../build/sby_dma_ok] engine_0: SAT solving =     0.08 sec ( 44.89 %)
+SBY  7:41:51 [../build/sby_dma_ok] engine_0: unsat     =     0.00 sec (  1.41 %)
+SBY  7:41:51 [../build/sby_dma_ok] engine_0: sat       =     0.08 sec ( 43.48 %)
+SBY  7:41:51 [../build/sby_dma_ok] engine_0: Generalize  =     0.08 sec ( 41.94 %)
+SBY  7:41:51 [../build/sby_dma_ok] engine_0: Push clause =     0.01 sec (  6.73 %)
+SBY  7:41:51 [../build/sby_dma_ok] engine_0: Ternary sim =     0.01 sec (  4.53 %)
+SBY  7:41:51 [../build/sby_dma_ok] engine_0: Containment =     0.00 sec (  0.10 %)
+SBY  7:41:51 [../build/sby_dma_ok] engine_0: CNF compute =     0.01 sec (  2.77 %)
+SBY  7:41:51 [../build/sby_dma_ok] engine_0: Refinement  =     0.00 sec (  0.00 %)
+SBY  7:41:51 [../build/sby_dma_ok] engine_0: TOTAL       =     0.18 sec (100.00 %)
+SBY  7:41:52 [../build/sby_dma_ok] engine_0: Property proved.  Time =     0.22 sec
+SBY  7:41:52 [../build/sby_dma_ok] engine_0: Counter-example is not available.
+SBY  7:41:52 [../build/sby_dma_ok] engine_0: finished (returncode=0)
+SBY  7:41:52 [../build/sby_dma_ok] engine_0: Status returned by engine: PASS
+SBY  7:41:52 [../build/sby_dma_ok] summary: Elapsed clock time [H:MM:SS (secs)]: 0:00:02 (2)
+SBY  7:41:52 [../build/sby_dma_ok] summary: Elapsed process time [H:MM:SS (secs)]: 0:00:00 (0)
+SBY  7:41:52 [../build/sby_dma_ok] summary: engine_0 (abc pdr) returned PASS
+SBY  7:41:52 [../build/sby_dma_ok] summary: engine_0 did not produce any traces
+SBY  7:41:52 [../build/sby_dma_ok] DONE (PASS, rc=0)
+
+real	0m2.201s
+user	0m0.942s
+sys	0m0.136s
