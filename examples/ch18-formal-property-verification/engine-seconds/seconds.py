@@ -5,12 +5,13 @@
 Runs seconds.tcl through the book's wrapper and reads the tool's own
 report, the one place where the time of each `prove` is printed. What
 this script prints holds the verdicts only, so that two runs print
-the same text; the seconds go to tbl-seconds.md, with the date and
-the versions of the tools, and that file differs from run to run by
-design. The verdicts are checked against the ones the chapter
-states; the seconds are not checked against anything.
+the same text; with MEASURE=1 in the environment the seconds go to
+tbl-seconds.md, with the date and the versions of the tools, and that
+file then differs from run to run by design. The verdicts are
+checked against the ones the chapter states; the seconds are not checked against anything.
 """
 import datetime
+import os
 import pathlib
 import re
 import sys
@@ -70,6 +71,12 @@ for (name, engine), status, seconds in runs:
 if failed:
     sys.exit(1)
 
+# The table is rewritten only when asked for (MEASURE=1), so that an
+# ordinary run checks the verdicts and leaves the committed table, and
+# the date in its caption, as they were measured.
+if os.environ.get("MEASURE") != "1":
+    print("verdict: every run ended as the chapter states")
+    sys.exit(0)
 today = datetime.date.today().isoformat()
 ric3 = tables.version("ric3")
 tables.write(
