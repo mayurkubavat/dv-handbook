@@ -1,0 +1,112 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 600" width="1000" height="600" role="img" aria-label="Datapath of version 2: source register and read pointer with an increment, length and words-left counter with a decrement and a not-zero test feeding the arbiter, a channel multiplexer to ARADDR, and the FIFO from RDATA to WDATA">
+<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#7FA3C0"/></marker><marker id="ahj" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#5B3E8E"/></marker><marker id="ahd" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#1B4F72"/></marker><marker id="ahc" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#B7791F"/></marker><marker id="ahg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#1C1C1C"/></marker><pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="6" stroke="#CBD2D9" stroke-width="2"/></pattern></defs>
+<rect width="1000" height="600" fill="white"/>
+<text x="30" y="40.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="21" font-weight="700" text-anchor="start" fill="#1B4F72">One channel&#x27;s read datapath in version 2</text>
+<text x="30" y="64.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="400" text-anchor="start" fill="#1C1C1C">Registers, multiplexers and operators: the level at which an assertion or a white-box coverpoint is written.</text>
+<path d="M20.0,170.0 L128.0,170.0" fill="none" stroke="#1B4F72" stroke-width="2.2" marker-end="url(#ahd)"/>
+<text x="22.0" y="160.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" font-weight="500" text-anchor="start" fill="#1C1C1C">PWDATA[31:2]</text>
+<line x1="47.4" y1="177.0" x2="57.4" y2="163.0" stroke="#1B4F72" stroke-width="1.5"/>
+<text x="56.4" y="188.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="11" font-weight="400" text-anchor="start" fill="#7FA3C0">30</text>
+<rect x="130.0" y="151.0" width="90.0" height="38.0" rx="3" fill="white" stroke="#123A56" stroke-width="2"/>
+<text x="175.0" y="168.2" font-family="'JetBrains Mono', Menlo, monospace" font-size="15" font-weight="600" text-anchor="middle" fill="#1C1C1C">src</text>
+<text x="175.0" y="184.2" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="400" text-anchor="middle" fill="#7FA3C0">[29:0]</text>
+<path d="M138,189 L144,181 L150,189" fill="none" stroke="#123A56" stroke-width="1.5"/>
+<path d="M250,130 L278,147.6 L278,192.4 L250,210 Z" fill="#DCE9F3" stroke="#123A56" stroke-width="2"/>
+<text x="264.0" y="226.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="600" text-anchor="middle" fill="#B7791F">start</text>
+<path d="M220.0,170.0 L248.0,170.0" fill="none" stroke="#1B4F72" stroke-width="2.2" marker-end="url(#ahd)"/>
+<rect x="320.0" y="151.0" width="100.0" height="38.0" rx="3" fill="white" stroke="#123A56" stroke-width="2"/>
+<text x="370.0" y="168.2" font-family="'JetBrains Mono', Menlo, monospace" font-size="15" font-weight="600" text-anchor="middle" fill="#1C1C1C">rd_ptr</text>
+<text x="370.0" y="184.2" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="400" text-anchor="middle" fill="#7FA3C0">[29:0]</text>
+<path d="M328,189 L334,181 L340,189" fill="none" stroke="#123A56" stroke-width="1.5"/>
+<path d="M278.0,170.0 L318.0,170.0" fill="none" stroke="#1B4F72" stroke-width="2.2" marker-end="url(#ahd)"/>
+<circle cx="450" cy="250" r="17" fill="white" stroke="#123A56" stroke-width="2"/>
+<text x="450" y="254.6" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" font-weight="700" text-anchor="middle" fill="#1C1C1C">+1</text>
+<path d="M420.0,170.0 L450.0,170.0 L450.0,231.0" fill="none" stroke="#1B4F72" stroke-width="2.2" marker-end="url(#ahd)"/>
+<path d="M433.0,250.0 L230.0,250.0 L230.0,192.0 L248.0,192.0" fill="none" stroke="#1B4F72" stroke-width="2.2" marker-end="url(#ahd)"/>
+<path d="M370.0,110.0 L370.0,149.0" fill="none" stroke="#B7791F" stroke-width="1.8" stroke-dasharray="6 4" marker-end="url(#ahc)"/>
+<text x="362.0" y="116.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="600" text-anchor="end" fill="#B7791F">en: start | rd_good</text>
+<path d="M560,130 L588,147.6 L588,192.4 L560,210 Z" fill="#DCE9F3" stroke="#123A56" stroke-width="2"/>
+<text x="574.0" y="226.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="600" text-anchor="middle" fill="#B7791F">r_pick</text>
+<path d="M450.0,170.0 L558.0,170.0" fill="none" stroke="#1B4F72" stroke-width="2.2" marker-end="url(#ahd)"/>
+<text x="530.0" y="162.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="11" font-weight="400" text-anchor="middle" fill="#7FA3C0">ch0</text>
+<path d="M500.0,115.0 L500.0,192.0 L558.0,192.0" fill="none" stroke="#1B4F72" stroke-width="2.2" marker-end="url(#ahd)"/>
+<text x="506.0" y="114.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="11" font-weight="400" text-anchor="start" fill="#7FA3C0">ch1 rd_ptr</text>
+<rect x="630.0" y="148.0" width="90.0" height="44.0" rx="8" fill="white" stroke="#1B4F72" stroke-width="2"/>
+<text x="675.0" y="175.6" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" text-anchor="middle" fill="#1C1C1C">{p, 00}</text>
+<path d="M588.0,170.0 L628.0,170.0" fill="none" stroke="#1B4F72" stroke-width="2.2" marker-end="url(#ahd)"/>
+<rect x="760.0" y="151.0" width="100.0" height="38.0" rx="3" fill="white" stroke="#123A56" stroke-width="2"/>
+<text x="810.0" y="168.2" font-family="'JetBrains Mono', Menlo, monospace" font-size="15" font-weight="600" text-anchor="middle" fill="#1C1C1C">ARADDR</text>
+<text x="810.0" y="184.2" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="400" text-anchor="middle" fill="#7FA3C0">[31:0]</text>
+<path d="M768,189 L774,181 L780,189" fill="none" stroke="#123A56" stroke-width="1.5"/>
+<path d="M720.0,170.0 L758.0,170.0" fill="none" stroke="#1B4F72" stroke-width="2.2" marker-end="url(#ahd)"/>
+<path d="M860.0,170.0 L985.0,170.0" fill="none" stroke="#1B4F72" stroke-width="2.2" marker-end="url(#ahd)"/>
+<text x="920.0" y="160.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" font-weight="500" text-anchor="middle" fill="#1C1C1C">to AXI AR</text>
+<line x1="892.5" y1="177.0" x2="902.5" y2="163.0" stroke="#1B4F72" stroke-width="1.5"/>
+<text x="901.5" y="188.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="11" font-weight="400" text-anchor="start" fill="#7FA3C0">32</text>
+<rect x="130.0" y="331.0" width="90.0" height="38.0" rx="3" fill="white" stroke="#123A56" stroke-width="2"/>
+<text x="175.0" y="348.2" font-family="'JetBrains Mono', Menlo, monospace" font-size="15" font-weight="600" text-anchor="middle" fill="#1C1C1C">len</text>
+<text x="175.0" y="364.2" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="400" text-anchor="middle" fill="#7FA3C0">[15:0]</text>
+<path d="M138,369 L144,361 L150,369" fill="none" stroke="#123A56" stroke-width="1.5"/>
+<path d="M20.0,350.0 L128.0,350.0" fill="none" stroke="#1B4F72" stroke-width="2.2" marker-end="url(#ahd)"/>
+<text x="22.0" y="340.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" font-weight="500" text-anchor="start" fill="#1C1C1C">PWDATA[15:0]</text>
+<line x1="47.4" y1="357.0" x2="57.4" y2="343.0" stroke="#1B4F72" stroke-width="1.5"/>
+<text x="56.4" y="368.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="11" font-weight="400" text-anchor="start" fill="#7FA3C0">16</text>
+<path d="M250,310 L278,327.6 L278,372.4 L250,390 Z" fill="#DCE9F3" stroke="#123A56" stroke-width="2"/>
+<text x="264.0" y="406.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="600" text-anchor="middle" fill="#B7791F">start</text>
+<path d="M220.0,350.0 L248.0,350.0" fill="none" stroke="#1B4F72" stroke-width="2.2" marker-end="url(#ahd)"/>
+<rect x="320.0" y="331.0" width="100.0" height="38.0" rx="3" fill="white" stroke="#123A56" stroke-width="2"/>
+<text x="370.0" y="348.2" font-family="'JetBrains Mono', Menlo, monospace" font-size="15" font-weight="600" text-anchor="middle" fill="#1C1C1C">rd_left</text>
+<text x="370.0" y="364.2" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="400" text-anchor="middle" fill="#7FA3C0">[15:0]</text>
+<path d="M328,369 L334,361 L340,369" fill="none" stroke="#123A56" stroke-width="1.5"/>
+<path d="M278.0,350.0 L318.0,350.0" fill="none" stroke="#1B4F72" stroke-width="2.2" marker-end="url(#ahd)"/>
+<circle cx="450" cy="430" r="17" fill="white" stroke="#123A56" stroke-width="2"/>
+<text x="450" y="434.6" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" font-weight="700" text-anchor="middle" fill="#1C1C1C">-1</text>
+<path d="M420.0,350.0 L450.0,350.0 L450.0,411.0" fill="none" stroke="#1B4F72" stroke-width="2.2" marker-end="url(#ahd)"/>
+<path d="M433.0,430.0 L230.0,430.0 L230.0,372.0 L248.0,372.0" fill="none" stroke="#1B4F72" stroke-width="2.2" marker-end="url(#ahd)"/>
+<circle cx="520" cy="350" r="17" fill="white" stroke="#123A56" stroke-width="2"/>
+<text x="520" y="354.6" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" font-weight="700" text-anchor="middle" fill="#1C1C1C">!=0</text>
+<path d="M450.0,350.0 L501.0,350.0" fill="none" stroke="#1B4F72" stroke-width="2.2" marker-end="url(#ahd)"/>
+<rect x="600.0" y="320.0" width="160.0" height="60.0" rx="8" fill="#F4F6F8" stroke="#1B4F72" stroke-width="2"/>
+<text x="680.0" y="347.6" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" text-anchor="middle" fill="#1C1C1C">round robin</text>
+<text x="680.0" y="366.2" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="400" text-anchor="middle" fill="#7FA3C0">busy &amp; !abort</text>
+<path d="M537.0,350.0 L598.0,350.0" fill="none" stroke="#B7791F" stroke-width="1.8" stroke-dasharray="6 4" marker-end="url(#ahc)"/>
+<path d="M650.0,320.0 L650.0,260.0 L574.0,260.0 L574.0,232.0" fill="none" stroke="#B7791F" stroke-width="1.8" stroke-dasharray="6 4" marker-end="url(#ahc)"/>
+<text x="656.0" y="290.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="600" text-anchor="start" fill="#B7791F">r_pick</text>
+<path d="M870.0,450.0 L870.0,350.0 L762.0,350.0" fill="none" stroke="#B7791F" stroke-width="1.8" stroke-dasharray="6 4" marker-end="url(#ahc)"/>
+<text x="876.0" y="420.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="600" text-anchor="start" fill="#B7791F">f_cnt &lt;</text>
+<text x="876.0" y="436.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="600" text-anchor="start" fill="#B7791F">DEPTH</text>
+<path d="M20.0,500.0 L318.0,500.0" fill="none" stroke="#1B4F72" stroke-width="2.2" marker-end="url(#ahd)"/>
+<text x="22.0" y="490.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" font-weight="500" text-anchor="start" fill="#1C1C1C">RDATA, from AXI R</text>
+<line x1="104.4" y1="507.0" x2="114.4" y2="493.0" stroke="#1B4F72" stroke-width="1.5"/>
+<text x="113.4" y="518.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="11" font-weight="400" text-anchor="start" fill="#7FA3C0">32</text>
+<rect x="320.0" y="476.0" width="100.0" height="48.0" rx="0" fill="white" stroke="#123A56" stroke-width="1.5"/>
+<text x="370.0" y="504.2" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="400" text-anchor="middle" fill="#1C1C1C">{ch, word}</text>
+<rect x="420.0" y="476.0" width="100.0" height="48.0" rx="0" fill="white" stroke="#123A56" stroke-width="1.5"/>
+<text x="470.0" y="504.2" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="400" text-anchor="middle" fill="#1C1C1C">{ch, word}</text>
+<rect x="320.0" y="476.0" width="200.0" height="48.0" rx="0" fill="none" stroke="#123A56" stroke-width="2.5"/>
+<text x="420.0" y="542.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="700" text-anchor="middle" fill="#1C1C1C">FIFO</text>
+<rect x="640.0" y="481.0" width="100.0" height="38.0" rx="3" fill="white" stroke="#123A56" stroke-width="2"/>
+<text x="690.0" y="498.2" font-family="'JetBrains Mono', Menlo, monospace" font-size="15" font-weight="600" text-anchor="middle" fill="#1C1C1C">WDATA</text>
+<text x="690.0" y="514.2" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="400" text-anchor="middle" fill="#7FA3C0">[31:0]</text>
+<path d="M648,519 L654,511 L660,519" fill="none" stroke="#123A56" stroke-width="1.5"/>
+<path d="M520.0,500.0 L638.0,500.0" fill="none" stroke="#1B4F72" stroke-width="2.2" marker-end="url(#ahd)"/>
+<path d="M470.0,476.0 L470.0,450.0 L870.0,450.0" fill="none" stroke="#B7791F" stroke-width="1.8" stroke-dasharray="6 4"/>
+<path d="M740.0,500.0 L985.0,500.0" fill="none" stroke="#1B4F72" stroke-width="2.2" marker-end="url(#ahd)"/>
+<text x="920.0" y="490.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" font-weight="500" text-anchor="middle" fill="#1C1C1C">to AXI W</text>
+<line x1="808.5" y1="507.0" x2="818.5" y2="493.0" stroke="#1B4F72" stroke-width="1.5"/>
+<text x="817.5" y="518.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="11" font-weight="400" text-anchor="start" fill="#7FA3C0">32</text>
+<path d="M30.0,580.0 L66.0,580.0" fill="none" stroke="#1B4F72" stroke-width="2.2" marker-end="url(#ahd)"/>
+<text x="74.0" y="585.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="400" text-anchor="start" fill="#1C1C1C">data</text>
+<path d="M130.0,580.0 L166.0,580.0" fill="none" stroke="#B7791F" stroke-width="1.8" stroke-dasharray="6 4" marker-end="url(#ahc)"/>
+<text x="174.0" y="585.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="400" text-anchor="start" fill="#1C1C1C">control</text>
+<rect x="250.0" y="567.0" width="34.0" height="26.0" rx="3" fill="white" stroke="#123A56" stroke-width="2"/>
+<text x="267.0" y="585.2" font-family="'JetBrains Mono', Menlo, monospace" font-size="15" font-weight="600" text-anchor="middle" fill="#1C1C1C"></text>
+<path d="M258,593 L264,585 L270,593" fill="none" stroke="#123A56" stroke-width="1.5"/>
+<text x="292.0" y="585.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="400" text-anchor="start" fill="#1C1C1C">register</text>
+<path d="M370,565 L386,571.6 L386,588.4 L370,595 Z" fill="#DCE9F3" stroke="#123A56" stroke-width="2"/>
+<text x="394.0" y="585.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="400" text-anchor="start" fill="#1C1C1C">multiplexer</text>
+<rect x="495.0" y="568.0" width="20.0" height="24.0" rx="0" fill="white" stroke="#123A56" stroke-width="1.5"/>
+<rect x="515.0" y="568.0" width="20.0" height="24.0" rx="0" fill="white" stroke="#123A56" stroke-width="1.5"/>
+<rect x="495.0" y="568.0" width="40.0" height="24.0" rx="0" fill="none" stroke="#123A56" stroke-width="2.5"/>
+<text x="543.0" y="585.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="400" text-anchor="start" fill="#1C1C1C">FIFO</text>
+</svg>

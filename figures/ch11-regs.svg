@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 570" width="1000" height="570" role="img" aria-label="Bit-field diagram of the five version 2 registers with access types; unassigned bits are reserved and read as zero">
+<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#7FA3C0"/></marker><marker id="ahj" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#5B3E8E"/></marker><marker id="ahd" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#1B4F72"/></marker><marker id="ahc" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#B7791F"/></marker><marker id="ahg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#1C1C1C"/></marker><pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="6" stroke="#CBD2D9" stroke-width="2"/></pattern></defs>
+<rect width="1000" height="570" fill="white"/>
+<text x="30" y="40.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="21" font-weight="700" text-anchor="start" fill="#1B4F72">Version 2 register map, bit by bit</text>
+<text x="30" y="64.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="400" text-anchor="start" fill="#1C1C1C">2 channels; channel n&#x27;s registers sit at 0x20 x n plus the offset. Drawn from dma_regs.yaml.</text>
+<text x="192.3" y="120.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="11" font-weight="400" text-anchor="middle" fill="#7FA3C0">31</text>
+<text x="365.2" y="120.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="11" font-weight="400" text-anchor="middle" fill="#7FA3C0">24</text>
+<text x="562.7" y="120.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="11" font-weight="400" text-anchor="middle" fill="#7FA3C0">16</text>
+<text x="587.3" y="120.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="11" font-weight="400" text-anchor="middle" fill="#7FA3C0">15</text>
+<text x="760.2" y="120.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="11" font-weight="400" text-anchor="middle" fill="#7FA3C0">8</text>
+<text x="883.6" y="120.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="11" font-weight="400" text-anchor="middle" fill="#7FA3C0">3</text>
+<text x="908.3" y="120.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="11" font-weight="400" text-anchor="middle" fill="#7FA3C0">2</text>
+<text x="933.0" y="120.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="11" font-weight="400" text-anchor="middle" fill="#7FA3C0">1</text>
+<text x="957.7" y="120.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="11" font-weight="400" text-anchor="middle" fill="#7FA3C0">0</text>
+<text x="40.0" y="158.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="15" font-weight="700" text-anchor="start" fill="#1C1C1C">SRC_ADDR</text>
+<text x="40.0" y="176.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="400" text-anchor="start" fill="#7FA3C0">+0x00</text>
+<rect x="180.0" y="136.0" width="740.6" height="40.0" rx="2" fill="white" stroke="#1B4F72" stroke-width="2"/>
+<text x="550.3" y="156.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" font-weight="600" text-anchor="middle" fill="#1C1C1C">addr</text>
+<text x="550.3" y="171.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="10.5" font-weight="600" text-anchor="middle" fill="#1B4F72">rw</text>
+<rect x="920.6" y="136.0" width="49.4" height="40.0" rx="2" fill="#F4F6F8" stroke="#7FA3C0" stroke-width="2"/>
+<text x="945.3" y="156.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" font-weight="600" text-anchor="middle" fill="#1C1C1C">0</text>
+<text x="945.3" y="171.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="10.5" font-weight="600" text-anchor="middle" fill="#7FA3C0">ro</text>
+<text x="40.0" y="228.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="15" font-weight="700" text-anchor="start" fill="#1C1C1C">DST_ADDR</text>
+<text x="40.0" y="246.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="400" text-anchor="start" fill="#7FA3C0">+0x04</text>
+<rect x="180.0" y="206.0" width="740.6" height="40.0" rx="2" fill="white" stroke="#1B4F72" stroke-width="2"/>
+<text x="550.3" y="226.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" font-weight="600" text-anchor="middle" fill="#1C1C1C">addr</text>
+<text x="550.3" y="241.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="10.5" font-weight="600" text-anchor="middle" fill="#1B4F72">rw</text>
+<rect x="920.6" y="206.0" width="49.4" height="40.0" rx="2" fill="#F4F6F8" stroke="#7FA3C0" stroke-width="2"/>
+<text x="945.3" y="226.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" font-weight="600" text-anchor="middle" fill="#1C1C1C">0</text>
+<text x="945.3" y="241.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="10.5" font-weight="600" text-anchor="middle" fill="#7FA3C0">ro</text>
+<text x="40.0" y="298.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="15" font-weight="700" text-anchor="start" fill="#1C1C1C">XFER_LEN</text>
+<text x="40.0" y="316.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="400" text-anchor="start" fill="#7FA3C0">+0x08</text>
+<rect x="575.0" y="276.0" width="395.0" height="40.0" rx="2" fill="white" stroke="#1B4F72" stroke-width="2"/>
+<text x="772.5" y="296.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" font-weight="600" text-anchor="middle" fill="#1C1C1C">words</text>
+<text x="772.5" y="311.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="10.5" font-weight="600" text-anchor="middle" fill="#1B4F72">rw</text>
+<rect x="180.0" y="276.0" width="395.0" height="40.0" rx="2" fill="url(#hatch)" stroke="#CBD2D9" stroke-width="1"/>
+<text x="194.0" y="301.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" text-anchor="start" fill="#7FA3C0">reserved, reads 0</text>
+<text x="40.0" y="368.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="15" font-weight="700" text-anchor="start" fill="#1C1C1C">CTRL</text>
+<text x="40.0" y="386.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="400" text-anchor="start" fill="#7FA3C0">+0x0C</text>
+<rect x="945.3" y="346.0" width="24.7" height="40.0" rx="2" fill="#FBF1DC" stroke="#B7791F" stroke-width="2"/>
+<text x="957.7" y="366.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="11" font-weight="400" text-anchor="middle" fill="#7FA3C0">0</text>
+<text x="957.7" y="381.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="10.5" font-weight="600" text-anchor="middle" fill="#B7791F">wo</text>
+<rect x="920.6" y="346.0" width="24.7" height="40.0" rx="2" fill="white" stroke="#1B4F72" stroke-width="2"/>
+<text x="933.0" y="366.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="11" font-weight="400" text-anchor="middle" fill="#7FA3C0">1</text>
+<text x="933.0" y="381.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="10.5" font-weight="600" text-anchor="middle" fill="#1B4F72">rw</text>
+<rect x="180.0" y="346.0" width="740.6" height="40.0" rx="2" fill="url(#hatch)" stroke="#CBD2D9" stroke-width="1"/>
+<text x="194.0" y="371.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" text-anchor="start" fill="#7FA3C0">reserved, reads 0</text>
+<rect x="741.0" y="354.0" width="173.6" height="24.0" rx="3" fill="white" stroke="white" stroke-width="0"/>
+<text x="910.6" y="371.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="600" text-anchor="end" fill="#1C1C1C">irq_en [1]  start [0]</text>
+<text x="40.0" y="438.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="15" font-weight="700" text-anchor="start" fill="#1C1C1C">STATUS</text>
+<text x="40.0" y="456.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="400" text-anchor="start" fill="#7FA3C0">+0x10</text>
+<rect x="945.3" y="416.0" width="24.7" height="40.0" rx="2" fill="#F4F6F8" stroke="#7FA3C0" stroke-width="2"/>
+<text x="957.7" y="436.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="11" font-weight="400" text-anchor="middle" fill="#7FA3C0">0</text>
+<text x="957.7" y="451.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="10.5" font-weight="600" text-anchor="middle" fill="#7FA3C0">ro</text>
+<rect x="920.6" y="416.0" width="24.7" height="40.0" rx="2" fill="#E6F2E7" stroke="#2E7D32" stroke-width="2"/>
+<text x="933.0" y="436.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="11" font-weight="400" text-anchor="middle" fill="#7FA3C0">1</text>
+<text x="933.0" y="451.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="10.5" font-weight="600" text-anchor="middle" fill="#2E7D32">w1c</text>
+<rect x="895.9" y="416.0" width="24.7" height="40.0" rx="2" fill="#E6F2E7" stroke="#2E7D32" stroke-width="2"/>
+<text x="908.3" y="436.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="11" font-weight="400" text-anchor="middle" fill="#7FA3C0">2</text>
+<text x="908.3" y="451.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="10.5" font-weight="600" text-anchor="middle" fill="#2E7D32">w1c</text>
+<rect x="180.0" y="416.0" width="715.9" height="40.0" rx="2" fill="url(#hatch)" stroke="#CBD2D9" stroke-width="1"/>
+<text x="194.0" y="441.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" text-anchor="start" fill="#7FA3C0">reserved, reads 0</text>
+<rect x="655.5" y="424.0" width="234.4" height="24.0" rx="3" fill="white" stroke="white" stroke-width="0"/>
+<text x="885.9" y="441.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="600" text-anchor="end" fill="#1C1C1C">error [2]  done [1]  busy [0]</text>
+<rect x="180.0" y="500.0" width="28.0" height="20.0" rx="2" fill="white" stroke="#1B4F72" stroke-width="2"/>
+<text x="216.0" y="515.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="400" text-anchor="start" fill="#1C1C1C">read-write</text>
+<rect x="310.0" y="500.0" width="28.0" height="20.0" rx="2" fill="#F4F6F8" stroke="#7FA3C0" stroke-width="2"/>
+<text x="346.0" y="515.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="400" text-anchor="start" fill="#1C1C1C">read-only</text>
+<rect x="440.0" y="500.0" width="28.0" height="20.0" rx="2" fill="#FBF1DC" stroke="#B7791F" stroke-width="2"/>
+<text x="476.0" y="515.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="400" text-anchor="start" fill="#1C1C1C">write-only, reads 0</text>
+<rect x="650.0" y="500.0" width="28.0" height="20.0" rx="2" fill="#E6F2E7" stroke="#2E7D32" stroke-width="2"/>
+<text x="686.0" y="515.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="400" text-anchor="start" fill="#1C1C1C">write 1 to clear</text>
+<rect x="820.0" y="500.0" width="28.0" height="20.0" rx="2" fill="url(#hatch)" stroke="#CBD2D9" stroke-width="1"/>
+<text x="856.0" y="515.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="400" text-anchor="start" fill="#1C1C1C">reserved</text>
+</svg>

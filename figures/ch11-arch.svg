@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 600" width="1000" height="600" role="img" aria-label="Black-box view of the DMA: APB signals on the left, five AXI channels on the right, IRQ below, and inside the programmer&#x27;s model and four behavioral promises">
+<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#7FA3C0"/></marker><marker id="ahj" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#5B3E8E"/></marker><marker id="ahd" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#1B4F72"/></marker><marker id="ahc" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#B7791F"/></marker><marker id="ahg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#1C1C1C"/></marker><pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="6" stroke="#CBD2D9" stroke-width="2"/></pattern></defs>
+<rect width="1000" height="600" fill="white"/>
+<text x="30" y="40.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="21" font-weight="700" text-anchor="start" fill="#1B4F72">The architecture view: interfaces and promises</text>
+<text x="30" y="64.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="400" text-anchor="start" fill="#1C1C1C">What a user of the DMA can observe. No state machine, no FIFO, no arbiter appears.</text>
+<rect x="330.0" y="100.0" width="340.0" height="420.0" rx="10" fill="#F4F6F8" stroke="#1B4F72" stroke-width="3"/>
+<text x="500.0" y="130.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="19" font-weight="700" text-anchor="middle" fill="#1B4F72">dma_v2</text>
+<text x="350.0" y="164.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="700" text-anchor="start" fill="#1C1C1C">Programmer&#x27;s model</text>
+<text x="350.0" y="184.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" font-weight="400" text-anchor="start" fill="#7FA3C0">per channel n, base 0x20 x n</text>
+<rect x="350.0" y="196.0" width="300.0" height="24.0" rx="3" fill="white" stroke="#CBD2D9" stroke-width="1"/>
+<text x="362.0" y="213.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" font-weight="400" text-anchor="start" fill="#7FA3C0">0x00</text>
+<text x="420.0" y="213.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="14" font-weight="600" text-anchor="start" fill="#1C1C1C">SRC_ADDR</text>
+<rect x="350.0" y="222.0" width="300.0" height="24.0" rx="3" fill="white" stroke="#CBD2D9" stroke-width="1"/>
+<text x="362.0" y="239.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" font-weight="400" text-anchor="start" fill="#7FA3C0">0x04</text>
+<text x="420.0" y="239.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="14" font-weight="600" text-anchor="start" fill="#1C1C1C">DST_ADDR</text>
+<rect x="350.0" y="248.0" width="300.0" height="24.0" rx="3" fill="white" stroke="#CBD2D9" stroke-width="1"/>
+<text x="362.0" y="265.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" font-weight="400" text-anchor="start" fill="#7FA3C0">0x08</text>
+<text x="420.0" y="265.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="14" font-weight="600" text-anchor="start" fill="#1C1C1C">XFER_LEN</text>
+<rect x="350.0" y="274.0" width="300.0" height="24.0" rx="3" fill="white" stroke="#CBD2D9" stroke-width="1"/>
+<text x="362.0" y="291.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" font-weight="400" text-anchor="start" fill="#7FA3C0">0x0C</text>
+<text x="420.0" y="291.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="14" font-weight="600" text-anchor="start" fill="#1C1C1C">CTRL</text>
+<rect x="350.0" y="300.0" width="300.0" height="24.0" rx="3" fill="white" stroke="#CBD2D9" stroke-width="1"/>
+<text x="362.0" y="317.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" font-weight="400" text-anchor="start" fill="#7FA3C0">0x10</text>
+<text x="420.0" y="317.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="14" font-weight="600" text-anchor="start" fill="#1C1C1C">STATUS</text>
+<text x="350.0" y="360.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="700" text-anchor="start" fill="#1C1C1C">Behavior</text>
+<text x="356.0" y="384.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="400" text-anchor="start" fill="#1C1C1C">- copies XFER_LEN words, in order</text>
+<text x="356.0" y="408.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="400" text-anchor="start" fill="#1C1C1C">- two channels run at once</text>
+<text x="356.0" y="432.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="400" text-anchor="start" fill="#1C1C1C">- precise errors: DONE and ERROR,</text>
+<text x="368.0" y="456.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="400" text-anchor="start" fill="#1C1C1C">no word after the failing one</text>
+<text x="356.0" y="480.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="400" text-anchor="start" fill="#1C1C1C">- at most 4.5 cycles per word</text>
+<text x="40.0" y="150.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" text-anchor="start" fill="#1B4F72">APB3 slave</text>
+<path d="M40.0,200.0 L328.0,200.0" fill="none" stroke="#1B4F72" stroke-width="2.2" marker-end="url(#ahd)"/>
+<text x="170.0" y="190.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" font-weight="500" text-anchor="middle" fill="#1C1C1C">PSEL PENABLE PWRITE</text>
+<text x="170.0" y="222.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" font-weight="500" text-anchor="middle" fill="#1C1C1C">PADDR PWDATA</text>
+<path d="M330.0,270.0 L42.0,270.0" fill="none" stroke="#1B4F72" stroke-width="2.2" marker-end="url(#ahd)"/>
+<text x="170.0" y="260.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" font-weight="500" text-anchor="middle" fill="#1C1C1C">PRDATA PREADY PSLVERR</text>
+<text x="40.0" y="320.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" font-weight="400" text-anchor="start" fill="#7FA3C0">PCLK, PRESETn</text>
+<text x="700.0" y="130.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" text-anchor="start" fill="#1B4F72">AXI4-Lite master</text>
+<path d="M670.0,175.0 L958.0,175.0" fill="none" stroke="#1B4F72" stroke-width="2.2" marker-end="url(#ahd)"/>
+<text x="682.0" y="167.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="14" font-weight="700" text-anchor="start" fill="#1B4F72">AR</text>
+<text x="714.0" y="167.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="500" text-anchor="start" fill="#1C1C1C">ARADDR ARVALID</text>
+<text x="714.0" y="193.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="400" text-anchor="start" fill="#7FA3C0">&lt;- ARREADY</text>
+<path d="M958.0,241.0 L672.0,241.0" fill="none" stroke="#1B4F72" stroke-width="2.2" marker-end="url(#ahd)"/>
+<text x="682.0" y="233.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="14" font-weight="700" text-anchor="start" fill="#1B4F72">R</text>
+<text x="714.0" y="233.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="500" text-anchor="start" fill="#1C1C1C">RDATA RRESP RVALID</text>
+<text x="714.0" y="259.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="400" text-anchor="start" fill="#7FA3C0">-&gt; RREADY</text>
+<path d="M670.0,307.0 L958.0,307.0" fill="none" stroke="#1B4F72" stroke-width="2.2" marker-end="url(#ahd)"/>
+<text x="682.0" y="299.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="14" font-weight="700" text-anchor="start" fill="#1B4F72">AW</text>
+<text x="714.0" y="299.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="500" text-anchor="start" fill="#1C1C1C">AWADDR AWVALID</text>
+<text x="714.0" y="325.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="400" text-anchor="start" fill="#7FA3C0">&lt;- AWREADY</text>
+<path d="M670.0,373.0 L958.0,373.0" fill="none" stroke="#1B4F72" stroke-width="2.2" marker-end="url(#ahd)"/>
+<text x="682.0" y="365.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="14" font-weight="700" text-anchor="start" fill="#1B4F72">W</text>
+<text x="714.0" y="365.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="500" text-anchor="start" fill="#1C1C1C">WDATA WSTRB WVALID</text>
+<text x="714.0" y="391.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="400" text-anchor="start" fill="#7FA3C0">&lt;- WREADY</text>
+<path d="M958.0,439.0 L672.0,439.0" fill="none" stroke="#1B4F72" stroke-width="2.2" marker-end="url(#ahd)"/>
+<text x="682.0" y="431.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="14" font-weight="700" text-anchor="start" fill="#1B4F72">B</text>
+<text x="714.0" y="431.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="500" text-anchor="start" fill="#1C1C1C">BRESP BVALID</text>
+<text x="714.0" y="457.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="400" text-anchor="start" fill="#7FA3C0">-&gt; BREADY</text>
+<path d="M500.0,520.0 L500.0,572.0" fill="none" stroke="#B7791F" stroke-width="1.8" stroke-dasharray="6 4" marker-end="url(#ahc)"/>
+<text x="510.0" y="566.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="14" font-weight="700" text-anchor="start" fill="#B7791F">IRQ</text>
+<text x="40.0" y="560.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="400" text-anchor="start" fill="#7FA3C0">solid: data and handshakes; dashed: interrupt</text>
+</svg>

@@ -90,41 +90,42 @@ independently draftable/verifiable/releasable.
 8. Functional Coverage — covergroups, crosses, coverage-model design, closure
 9. SystemVerilog Assertions — sequences, properties, protocol checkers, `bind`
 10. Connecting Testbench and DUT — virtual interfaces, modports, DPI-C
+11. From Architecture to Verification: a DMA Case Study — architecture spec → microarchitecture → vPlan → testbench → coverage, on one DMA in two versions (added 2026-11-03 at the author's request; planned Chapters 11–35 shift to 12–36)
 
 ### Part III · UVM
-11. UVM Architecture — components, phases, factory, config DB
-12. Sequences, Sequencers, Drivers — layering, arbitration, virtual sequences
-13. Monitors, Scoreboards, Checkers — TLM analysis ports, reference models, predictors
-14. Register Abstraction Layer — RAL, adapters, built-in register tests
-15. Reuse at Scale — agents → environments → VIP; block → subsystem → SoC
-16. Advanced UVM — callbacks, objections, reporting, IEEE 1800.2, performance
+12. UVM Architecture — components, phases, factory, config DB
+13. Sequences, Sequencers, Drivers — layering, arbitration, virtual sequences
+14. Monitors, Scoreboards, Checkers — TLM analysis ports, reference models, predictors
+15. Register Abstraction Layer — RAL, adapters, built-in register tests
+16. Reuse at Scale — agents → environments → VIP; block → subsystem → SoC
+17. Advanced UVM — callbacks, objections, reporting, IEEE 1800.2, performance
 
 ### Part IV · Beyond Simulation
-17. Formal Verification — property checking, bounded proofs, formal apps, when formal beats simulation
-18. Emulation and Prototyping — transactors, hybrid flows, hardware-assisted verification
-19. Gate-Level, Timing and Low-Power Verification — GLS strategy, UPF, power-aware simulation
-20. Structural Verification — lint, CDC, RDC, X-propagation
-21. Portable Stimulus (PSS) — graph-based, test-intent reuse across sim/emulation/silicon
-22. System-Level Verification — SystemC/TLM-2.0 virtual platforms, firmware co-verification, performance
+18. Formal Verification — property checking, bounded proofs, formal apps, when formal beats simulation
+19. Emulation and Prototyping — transactors, hybrid flows, hardware-assisted verification
+20. Gate-Level, Timing and Low-Power Verification — GLS strategy, UPF, power-aware simulation
+21. Structural Verification — lint, CDC, RDC, X-propagation
+22. Portable Stimulus (PSS) — graph-based, test-intent reuse across sim/emulation/silicon
+23. System-Level Verification — SystemC/TLM-2.0 virtual platforms, firmware co-verification, performance
 
 ### Part V · Alternative and Open-Source Flows
-23. Python Verification with cocotb
-24. pyuvm — UVM in Python
-25. SystemC and UVM-SystemC
-26. The Open-Source Ecosystem — Verilator, Icarus, Yosys/SymbiYosys, FC4SC, CRAVE, SVUnit, Chisel-based flows
+24. Python Verification with cocotb
+25. pyuvm — UVM in Python
+26. SystemC and UVM-SystemC
+27. The Open-Source Ecosystem — Verilator, Icarus, Yosys/SymbiYosys, FC4SC, CRAVE, SVUnit, Chisel-based flows
 
 ### Part VI · Verification Engineering in Practice
-27. Testbench Infrastructure — build systems, regressions, CI/CD for hardware
-28. Debug Methodology — waveform/transaction-level debug, triage, root-cause
-29. Metrics and Closure — coverage merging, ranking, dashboards, sign-off
-30. Verifying Standard Protocols — AMBA, PCIe (deep case study), Ethernet, DDR
-31. Safety, Security and Compliance — ISO 26262, DO-254, fault injection, security verification
-32. The DV Engineer's Craft — reviews, methodology docs, estimation, working with design teams
+28. Testbench Infrastructure — build systems, regressions, CI/CD for hardware
+29. Debug Methodology — waveform/transaction-level debug, triage, root-cause
+30. Metrics and Closure — coverage merging, ranking, dashboards, sign-off
+31. Verifying Standard Protocols — AMBA, PCIe (deep case study), Ethernet, DDR
+32. Safety, Security and Compliance — ISO 26262, DO-254, fault injection, security verification
+33. The DV Engineer's Craft — reviews, methodology docs, estimation, working with design teams
 
 ### Part VII · The Future of Verification
-33. Machine Learning in Verification — coverage-directed generation, regression optimization, bug prediction
-34. The Road Ahead — chiplets/UCIe, 3D-IC, HLS verification, evolving standards
-35. Generative AI and Agentic DV — LLM-assisted testbench/SVA generation, spec-to-vPlan, debug assistants, agentic flows, RAG over specs, risks and evaluation
+34. Machine Learning in Verification — coverage-directed generation, regression optimization, bug prediction
+35. The Road Ahead — chiplets/UCIe, 3D-IC, HLS verification, evolving standards
+36. Generative AI and Agentic DV — LLM-assisted testbench/SVA generation, spec-to-vPlan, debug assistants, agentic flows, RAG over specs, risks and evaluation
 
 **The generative-AI chapter closes the book** (author, 2026-09-08). Swapped with
 The Road Ahead for that reason. Consequences to honour: every new chapter is

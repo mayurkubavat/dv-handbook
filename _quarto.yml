@@ -26,6 +26,7 @@ book:
         - chapters/ch06-oop-testbench-design.qmd
         - chapters/ch07-constrained-random.qmd
         - chapters/ch08-functional-coverage.qmd
+        - chapters/ch11-architecture-to-verification.qmd
     - part: "Part VII · The Future of Verification"
       chapters:
         - chapters/ch34-generative-ai-agentic-dv.qmd

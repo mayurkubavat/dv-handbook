@@ -1,0 +1,17 @@
+generated files match dma_regs.yaml
+Version 1 (as found): 1 channel(s), 5 registers each
+  0x00 SRC_ADDR  addr[31:0] rw
+  0x04 DST_ADDR  addr[31:0] rw
+  0x08 XFER_LEN  words[31:0] rw
+  0x0C CTRL      start[0] rw, irq_en[1] rw
+  0x10 STATUS    busy[0] ro, done[1] ro, error[2] ro
+Version 2 (two channels): 2 channel(s), 5 registers each
+  0x00 SRC_ADDR  addr[31:2] rw, zero[1:0] ro
+  0x04 DST_ADDR  addr[31:2] rw, zero[1:0] ro
+  0x08 XFER_LEN  words[15:0] rw
+  0x0C CTRL      start[0] wo, irq_en[1] rw
+  0x10 STATUS    busy[0] ro, done[1] w1c, error[2] w1c
+  rule: A write to SRC_ADDR, DST_ADDR, XFER_LEN or CTRL of a busy channel is refused with PSLVERR and changes nothing.
+  rule: An access to an unmapped offset completes with PSLVERR.
+  rule: PRDATA and PSLVERR are valid in the access phase, as APB3 requires.
+  rule: IRQ is high while any channel has irq_en set and done or error set.

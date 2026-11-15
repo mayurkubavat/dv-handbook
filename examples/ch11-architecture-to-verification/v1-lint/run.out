@@ -1,0 +1,7 @@
+--- version 1: verilator --lint-only -Wall -Wno-DECLFILENAME -Wno-UNUSEDSIGNAL
+MULTIDRIVENPROC line 184: Variable written to in always block also written by another always block: 'ctrl'
+MULTIDRIVENPROC line 189: Variable written to in always block also written by another always block: 'status'
+UNUSEDPARAM line 73: Parameter is not used: 'STATUS_IDLE'
+--- version 2: verilator --lint-only -Wall -Wno-DECLFILENAME -Wno-UNUSEDSIGNAL
+no warnings
+verdict: version 1 has 2 registers written by two always blocks; version 2 has none

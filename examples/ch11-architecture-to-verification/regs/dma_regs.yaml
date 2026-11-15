@@ -1,0 +1,66 @@
+# dma_regs.yaml -- the DMA's programmer's model, written once.
+#
+# The generator beside this file turns it into the SystemVerilog package
+# the testbench and version 2 RTL import, the register table the chapter
+# prints, and the bit-field figure. Version 1 is described as found in
+# its RTL; version 2 is the architecture the chapter writes, with every
+# question version 1 left open answered in a field's `note`.
+
+v1:
+  title: "Version 1 (as found)"
+  channels: 1
+  stride: 0x0
+  registers:
+    - {name: SRC_ADDR, offset: 0x00, fields: [{name: addr, bits: [31, 0],
+       access: rw, note: "Source byte address; alignment not checked"}]}
+    - {name: DST_ADDR, offset: 0x04, fields: [{name: addr, bits: [31, 0],
+       access: rw, note: "Destination byte address; alignment not checked"}]}
+    - {name: XFER_LEN, offset: 0x08, fields: [{name: words, bits: [31, 0],
+       access: rw, note: "Length in words; only bits 15:0 are counted"}]}
+    - {name: CTRL, offset: 0x0C, fields: [
+       {name: start, bits: [0, 0], access: rw,
+        note: "Write 1 to start; cleared by hardware"},
+       {name: irq_en, bits: [1, 1], access: rw,
+        note: "Raise IRQ when the transfer ends"}]}
+    - {name: STATUS, offset: 0x10, fields: [
+       {name: busy, bits: [0, 0], access: ro, note: "Transfer running"},
+       {name: done, bits: [1, 1], access: ro,
+        note: "Transfer ended; cleared by the next start"},
+       {name: error, bits: [2, 2], access: ro,
+        note: "An AXI response was not OKAY"}]}
+
+v2:
+  title: "Version 2 (two channels)"
+  channels: 2
+  stride: 0x20
+  registers:
+    - {name: SRC_ADDR, offset: 0x00, fields: [
+       {name: addr, bits: [31, 2], access: rw,
+        note: "Source word address"},
+       {name: zero, bits: [1, 0], access: ro,
+        note: "Read as zero: transfers are word-aligned"}]}
+    - {name: DST_ADDR, offset: 0x04, fields: [
+       {name: addr, bits: [31, 2], access: rw,
+        note: "Destination word address"},
+       {name: zero, bits: [1, 0], access: ro,
+        note: "Read as zero: transfers are word-aligned"}]}
+    - {name: XFER_LEN, offset: 0x08, fields: [
+       {name: words, bits: [15, 0], access: rw,
+        note: "Length in words, 0 to 65535; 0 ends at once"}]}
+    - {name: CTRL, offset: 0x0C, fields: [
+       {name: start, bits: [0, 0], access: wo,
+        note: "Write 1 to start; reads as zero"},
+       {name: irq_en, bits: [1, 1], access: rw,
+        note: "Raise IRQ when this channel ends"}]}
+    - {name: STATUS, offset: 0x10, fields: [
+       {name: busy, bits: [0, 0], access: ro, note: "Transfer running"},
+       {name: done, bits: [1, 1], access: w1c,
+        note: "Transfer ended; write 1 to clear"},
+       {name: error, bits: [2, 2], access: w1c,
+        note: "An AXI response was not OKAY; write 1 to clear"}]}
+  rules:
+    - "A write to SRC_ADDR, DST_ADDR, XFER_LEN or CTRL of a busy channel
+       is refused with PSLVERR and changes nothing."
+    - "An access to an unmapped offset completes with PSLVERR."
+    - "PRDATA and PSLVERR are valid in the access phase, as APB3 requires."
+    - "IRQ is high while any channel has irq_en set and done or error set."
