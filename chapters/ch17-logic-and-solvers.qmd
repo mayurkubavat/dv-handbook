@@ -88,7 +88,7 @@ A line starting with `c` is a comment. The line `p cnf 8 17` is the header: eigh
 ![The full adder of the listing with the variable number of every wire, and the seventeen clauses of `full_adder.cnf` in the five groups its comments name. Two XOR gates give four clauses each and two ANDs and an OR three each.](../figures/ch17-tseitin.svg){#fig-ch17-tseitin fig-alt="Gate diagram: inputs a, b and cin numbered 1 to 3; an XOR producing p, 4; an XOR producing sum, 5; an AND producing g, 6; an AND producing t, 7; an OR producing cout, 8. To the right, five groups of clauses, one per gate."}
 
 ::: {.callout-note title="Definition"}
-The **Tseitin encoding** of a circuit introduces one variable for each input and for each gate output, and for each gate the clauses stating that its output variable equals the gate's function of its input variables. The result is in conjunctive normal form and its size is linear in the size of the circuit: for each gate a number of clauses proportional to its number of inputs, three or four for the two-input gates of this chapter. Two formulas are **equisatisfiable** if either both are satisfiable or neither is. The encoding of a circuit, with a question about its outputs added, is equisatisfiable with that question asked of the circuit directly.
+The **Tseitin encoding** of a circuit introduces one variable for each input and for each gate output, and for each gate the clauses stating that its output variable equals the gate's function of its input variables. The result is in conjunctive normal form and its size is linear in the size of the circuit: three or four clauses for each of the two-input gates of this chapter. Two formulas are **equisatisfiable** if either both are satisfiable or neither is. The encoding of a circuit, with a question about its outputs added, is equisatisfiable with that question asked of the circuit directly.
 :::
 
 The construction is named for G. S. Tseitin, whose paper on the complexity of derivation in propositional calculus is cited here as it appears in English, in a 1983 collection of classical papers on computational logic [@tseitin1983complexity]. *Equisatisfiable* is weaker than *equivalent*, and has to be: the encoded formula talks about eight variables where the circuit's function has three, so the two cannot have the same truth table. What the encoding promises is narrower and is what a verifier needs. Every assignment of the inputs extends to exactly one satisfying assignment of all eight variables, the one in which each gate variable holds the value the gate computes; and no other assignment satisfies the clauses.
@@ -126,7 +126,7 @@ Unit propagation is what a hardware engineer does when reading a schematic with 
 
 Read it against @fig-ch17-tseitin. The three unit clauses set `sum`, `cout` and `a`. With `a` low the AND gate's output `g` is low. `cout` is high and `g` is not, so the OR gate's other input `t` is high. `t` is an AND, so both of its inputs, `p` and `cin`, are high. `p` is `a ^ b` and `a` is low, so `b` is high. Eight assignments, each forced. Then the clause $(\lnot \mathit{sum} \lor \lnot p \lor \lnot \mathit{cin})$, which says that `sum` cannot be high when `p` and `cin` both are, has no true literal left. The formula is unsatisfiable, and the program made no choice anywhere: the line reads *0 decisions*.
 
-Most questions are not that kind. When propagation stops with variables still unassigned and no conflict, the solver has to guess: pick a variable, give it a value, propagate, and if a conflict follows, take the guess back and try the other value. If both values lead to conflict, the trouble is further up, and the guess before it is taken back in turn. That is the procedure of Davis, Logemann and Loveland [@davis1962machine], built on an earlier procedure of Davis and Putnam [@davis1960computing] and called DPLL after the four of them. Here it is whole.
+Most questions are not that kind. When propagation stops with variables still unassigned and no conflict, the solver has to guess: pick a variable, give it a value, propagate, and if a conflict follows, take the guess back and try the other value. If both values lead to conflict, the trouble is further up, and the guess before it is taken back in turn. The procedure is called DPLL, after Davis, Putnam, Logemann and Loveland, the four authors of the two papers it comes from [@davis1960computing; @davis1962machine; @buss2021proof]. Here it is whole.
 
 ```{.python include="examples/ch17-logic-and-solvers/dpll/dpll.py" lines="24-86"}
 ```
@@ -196,7 +196,7 @@ The whole procedure is called *conflict-driven clause learning*, CDCL; the *Hand
 
 ### What each idea bought
 
-`cdcl.py` picks variables in the same order as `dpll.py`, lowest number first and true first, so that the table below isolates learning. The third solver is a subclass that changes one method.
+`cdcl.py` picks variables in the same order as `dpll.py`, lowest number first and true first, so that the table below isolates learning. The third solver is a subclass that changes how the next variable is chosen.
 
 ```{.python include="examples/ch17-logic-and-solvers/cdcl/cdcl_vsids.py" lines="15-34"}
 ```
@@ -332,7 +332,7 @@ Under all three orders the size more than doubles for each added bit over the la
 A node count means nothing without the package's conventions. This chapter counts decision nodes and leaves out the two terminals. A package that counts its terminals reports two more for the same diagram, and a package with *complement edges*, which shares a function and its negation in one node, reports different numbers again. The shape of the growth carries between packages; the constants do not. Say which count a number is before comparing it with anyone else's.
 :::
 
-BDDs are the engine of symbolic model checking, which holds sets of states as diagrams and does not list them [@burch1992symbolic], and they are the right tool where *all* solutions are wanted. The method of this chapter's worked example was introduced under the title *Symbolic Model Checking without BDDs* [@biere1999symbolic], and this section measured a reason to want that. A SAT solver gives up canonicity, answers one question at a time, and in exchange is not obliged to build a complete picture of a function whose complete picture is enormous.
+BDDs are the engine of symbolic model checking, which represents sets of states as diagrams in place of listing them, the approach the bounded method of this chapter's worked example was proposed as an alternative to [@biere1999symbolic; see also @burch1992symbolic], and they are the right tool where *all* solutions are wanted. The method of this chapter's worked example was introduced under the title *Symbolic Model Checking without BDDs* [@biere1999symbolic], and this section measured a reason to want that. A SAT solver gives up canonicity, answers one question at a time, and in exchange is not obliged to build a complete picture of a function whose complete picture is enormous.
 
 ## And-inverter graphs, and the files tools exchange {#sec-ch17-aig}
 
