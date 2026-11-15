@@ -19,7 +19,11 @@ run() {
 echo "=== the slow-by-one responder, 40 random ticks, seed 1"
 run slow 1
 [ "$(failures <build/slow.log | wc -l)" -gt 0 ] || exit 1
+need "$(covers build/slow.dat)" 'Waited_C=0 $' \
+    "the slow responder granted on the last permitted tick"
 echo "=== the correct responder, same test, same seed"
 run good 0
 [ "$(failures <build/good.log | wc -l)" -eq 0 ] || exit 1
+need "$(covers build/good.dat)" 'Waited_C=[1-9]' \
+    "the correct responder never granted on the last permitted tick"
 echo "verdict: the monitor register caught the late grant"

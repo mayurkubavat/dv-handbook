@@ -89,6 +89,11 @@ for d in $DIRS; do
         run="fail (failed, but not with '$expect_output')"
       else run="pass (failed as expected)"; fi
     elif [[ $rc -ne 0 ]]; then run="fail"
+    # A run that found a tool it needs missing says so on a line of its
+    # own beginning "skipped" and exits 0, as a lint target may.
+    elif grep -q '^skipped' "$d/run.log"; then
+      run="skipped ($(grep -m1 '^skipped' "$d/run.log" | cut -c10-60))"
+      ((skip++))
     # A passing example may also pin a line it must print, so that a tool
     # missing from the machine cannot leave a half-run recorded as a pass.
     elif [[ -n "$expect_output" ]] \

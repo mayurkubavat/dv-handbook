@@ -87,9 +87,10 @@ x15 sequence `or` of two operands  verilator: wrong    next: wrong    icarus: no
 p49 `cover property (a ##1 b)`, bu verilator: wrong    next: wrong    icarus: n/a      informal: n/a
 x16 failed immediate assertion wit verilator: runs     next: runs     icarus: runs     informal: n/a
 x17 concurrent assertion inside an verilator: runs     next: runs     icarus: no build informal: runs
-18 more
-  Verilator: 12 runs, 4 wrong, 2 no build
-  Verilator next: 13 runs, 3 wrong, 2 no build
-  Icarus: 4 runs, 1 wrong, 3 no run, 9 no build, 1 n/a
-  InFormal: 6 runs, 8 wrong, 1 no build, 3 n/a
+x18 obligation pending at `$finish verilator: runs     next: runs     icarus: n/a      informal: n/a
+19 more
+  Verilator: 13 runs, 4 wrong, 2 no build
+  Verilator next: 14 runs, 3 wrong, 2 no build
+  Icarus: 4 runs, 1 wrong, 3 no run, 9 no build, 2 n/a
+  InFormal: 6 runs, 8 wrong, 1 no build, 4 n/a
   Icarus with -gsupported-assertions, on its 9 no-build rows: 2 build, 2 of them wrong

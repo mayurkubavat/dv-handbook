@@ -1,4 +1,4 @@
-=== the design as it is: the case study's random test
+=== the design as it is: its random test
 result: PASS
 covers:  ArWait_C=4183  AwWait_C=5490  WWait_C=4000  ArFirst_C=1  AwFirst_C=1
  WFirst_C=1

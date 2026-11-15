@@ -9,8 +9,12 @@ assertion clocked on that edge would sample.
 
 The monitor records what it sees and the test decides: a failed check
 is appended to a list that the test asserts is empty, so a check can
-not be lost inside a background task.
+not be lost inside a background task. The Makefile runs the test a
+second time on the original FIFO with FIFO_EXPECT=bug, and then the
+test requires the failure the SystemVerilog checker reports there, so
+a monitor whose checks were lost would fail the build.
 """
+import os
 import random
 
 import cocotb
@@ -93,5 +97,14 @@ async def random_traffic_under_the_monitor(dut):
     for line in mon.failures[:3]:
         dut._log.info("failed %s", line)
     dut._log.info("%d checks failed", len(mon.failures))
+    if os.environ.get("FIFO_EXPECT") == "bug":
+        # The original FIFO: it must fail as it does under fifo_sva.sv,
+        # on FullBackward_A alone and never holding sixteen entries.
+        assert mon.failures, "the monitor passed the original FIFO"
+        other = [f for f in mon.failures
+                 if not f.startswith("FullBackward_A ")]
+        assert not other, other[0]
+        assert mon.covers["FullReached_C"] == 0, "sixteen entries reached"
+        return
     assert all(mon.covers.values()), "a cover was never hit"
     assert not mon.failures, mon.failures[0]

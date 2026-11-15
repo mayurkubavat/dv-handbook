@@ -1,6 +1,6 @@
-# axi.tcl -- the AXI master rules proved on the DMA of the case study.
+# axi.tcl -- the AXI master rules proved on the DMA engine.
 # The checker and its bind file are the ones the simulation used. No
-# slave is modelled: every input of the design is free.
+# slave is modeled: every input of the design is free.
 set here [file dirname [info script]]
 set c11  $here/../../ch11-architecture-to-verification
 set sva  [list $here/../axi-rules/axil_master_sva.sv \

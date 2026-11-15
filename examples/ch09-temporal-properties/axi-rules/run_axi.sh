@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# run_axi.sh -- the AXI master rules on the DMA of the case study: in
+# run_axi.sh -- the AXI master rules on the DMA engine: in
 # its own random test, then in the same test against two one-line
 # mutants of the design that each break one rule.
 set -euo pipefail
@@ -30,7 +30,7 @@ mutant() {
   need "$f" " $2 failed \$" "mutant $1 did not fail $2"
 }
 
-echo "=== the design as it is: the case study's random test"
+echo "=== the design as it is: its random test"
 build asis $RTL
 ./build/asis/Vtb_v2 +test=random +n=300 +verilator+seed+1 \
     +verilator+coverage+file+build/asis.dat | grep -E '^result: PASS'

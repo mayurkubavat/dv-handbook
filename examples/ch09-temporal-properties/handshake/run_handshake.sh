@@ -21,5 +21,11 @@ echo "  exit status $rc"
 covers build/hs.dat
 n=$(failures <build/all.log | wc -l)
 [ "$n" -eq 5 ] || { echo "unexpected: $n failures, wanted 5"; exit 1; }
+plan='^ *tick +7: Stable_A failed +tick 11: HeldRaw_A failed'
+plan="$plan"' +tick 11: Held_A failed +tick 14: HeldRaw_A failed'
+plan="$plan"' +tick 16: Answer_A failed $'
+need "$(failures <build/all.log)" "$plan" \
+    "a rule failed at a tick other than the planned one"
+need "$(covers build/hs.dat)" 'Waited_C=5 $' "Waited_C did not count five"
 echo "verdict: three rules failed once each;" \
      "only the rule with no reset term failed at the reset"

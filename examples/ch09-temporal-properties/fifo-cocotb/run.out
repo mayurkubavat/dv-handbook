@@ -18,3 +18,12 @@
                                                         ************************************************************************************************************
                                                         ** TESTS=1 PASS=1 FAIL=0 SKIP=0                                     4025.00  **
                                                         ************************************************************************************************************
+=== the same monitor on the original FIFO
+  cover FullReached_C: 0
+  cover PushFull_C: 74
+  cover PopEmpty_C: 75
+  failed FullBackward_A at sample 28
+  failed FullBackward_A at sample 29
+  failed FullBackward_A at sample 31
+  118 checks failed
+the monitor failed the original FIFO, as required

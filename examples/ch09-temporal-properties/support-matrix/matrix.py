@@ -37,6 +37,9 @@ Each row of probes.txt is `label | file | options`; the options are
   sim=errlimit        count default failure messages over two runs
   sim=status          one failure with no action block: was it printed,
                       did the run go on, and what was the exit status
+  sim=pending         one build per operator (PENDING_OPS) of an
+                      obligation still open at $finish: what is
+                      reported before and after it, and the exit status
   iv=n/a: why         no Icarus column
   formal=n/a: why     no InFormal column
   vflags=FLAGS        more Verilator flags, where a row needs them
@@ -63,7 +66,7 @@ VFLAGS = ["--binary", "--timing", "--timescale", "1ns/1ps",
           "--assert", "--top-module", "top"]
 VERILATOR = "verilator"
 # The release after the book's pin. The tables need every column, so
-# the run stops, and leaves matrix.md alone, when a tool is missing.
+# the run is skipped, and leaves matrix.md alone, when a tool is missing.
 VNEXT = os.environ.get("VERILATOR_NEXT",
                        "/opt/verilator-5.054/bin/verilator")
 # InFormal: one engine for each run and a time limit, so that two runs
@@ -119,6 +122,8 @@ def icarus(probe, flag=None, mode="run"):
 
 
 def verilator(probe, binary, tag, mode, extra):
+    if mode == "pending":
+        return pending(probe, binary, tag, extra)
     mdir = BUILD / (tag + "_" + probe.stem + "".join(extra))
     # Built from nothing every time: Verilator skips an unchanged input
     # and then prints no warnings, and a warning is part of the cell.
@@ -151,6 +156,55 @@ def error_limit(exe, mdir):
            f"limit 10: {seen[1][0]}, "
            f"{'stops' if not seen[1][1] else 'runs on'}")
     ok = seen[0][:2] == (1, False) and seen[1][:2] == (2, True)
+    return ("runs" if ok else "wrong"), why
+
+
+# The operators of the sim=pending row, by the define that selects each.
+PENDING_OPS = [("OP_SEV", "s_eventually"), ("OP_UNB", "##[1:$]"),
+               ("OP_RNG", "##[1:3]"), ("OP_UNTIL", "until"),
+               ("OP_SUNTIL", "s_until")]
+
+
+def pending(probe, binary, tag, extra):
+    """An obligation still open when the run ends, once per operator:
+    on the design where it is never met, did the action block run
+    (before $finish, or by the final block), was a failure reported
+    after $finish, with or without the assertion's label, and what was
+    the exit status? The row runs when every build reached $finish and
+    the design where the obligation is met printed no failure and
+    exited 0."""
+    seen, ok = {}, True
+    for define, name in PENDING_OPS:
+        for good in (False, True):
+            flags = extra + ["-D" + define] + (["-DGOOD"] if good else [])
+            mdir = BUILD / f"{tag}_{probe.stem}_{define}{'_good' * good}"
+            shutil.rmtree(mdir, ignore_errors=True)
+            rc, out = run([binary] + VFLAGS + flags
+                          + ["--Mdir", str(mdir), str(probe)])
+            if rc != 0:
+                return classify(out, False)
+            rc, out = run([str(mdir / "Vtop")], cwd=mdir)
+            before, _, after = out.partition("PROBE")
+            counts = re.findall(r"(\d+) failures", after)
+            told = "Assertion failed" in after
+            if not after or len(counts) < 2:
+                return "no run", first_error(out)
+            if good:
+                ok = ok and rc == 0 and not told and counts == ["0", "0"]
+                continue
+            what = "silent"
+            if told:
+                what = ("reported after `$finish`"
+                        + ("" if ".a1" in after else ", unlabeled"))
+            what += f", exit status {rc}"
+            ran = max(int(n) for n in counts)
+            if ran:
+                what += f", action block ran {ran}"
+            seen.setdefault(what, []).append(f"`{name}`")
+    why = "; ".join(", ".join(ops) + ": " + what
+                    for what, ops in seen.items())
+    if not any("action block" in w for w in seen):
+        why += "; no action block ran"
     return ("runs" if ok else "wrong"), why
 
 
@@ -371,9 +425,11 @@ def main():
     BUILD.mkdir(exist_ok=True)
     vnext = VNEXT if pathlib.Path(VNEXT).exists() else ""
     if missing(vnext):
-        print("matrix.py: not measured, and matrix.md left as it is: "
-              "missing " + ", ".join(missing(vnext)), file=sys.stderr)
-        return 1
+        # A skip, not a failure: the checker records a run whose output
+        # begins "skipped" as skipped, and keeps the committed tables.
+        print("skipped: missing " + ", ".join(missing(vnext))
+              + "; not measured, and matrix.md left as it is")
+        return 0
     vers = versions(vnext)
     print("verilator " + vers["v"] + ", icarus " + vers["iv"]
           + (", verilator " + vers["vn"] if vnext else "")

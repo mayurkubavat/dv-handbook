@@ -1,4 +1,4 @@
-# The AXI master rules proved on the DMA of the case study with InFormal,
+# The AXI master rules proved on the DMA engine with InFormal,
 # three mutants caught, and one spelling of a rule that the tool's reset
 # model refutes on a correct design; see axi.tcl.
 C11           := ../../ch11-architecture-to-verification

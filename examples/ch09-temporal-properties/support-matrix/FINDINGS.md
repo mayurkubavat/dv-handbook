@@ -252,5 +252,5 @@ releases:
   are proven on the good design and refuted on the bad one by
   `informal-ic3`.
 - Not in this table, measured in the chapter's examples: asynchronous
-  reset modelled as synchronous (`axi-formal`), contradictory
+  reset modeled as synchronous (`axi-formal`), contradictory
   assumptions (`vacuity-formal`), exit status (`examples/mk/informal.tcl`).
