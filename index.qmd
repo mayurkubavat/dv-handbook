@@ -4,13 +4,53 @@ This is a working draft of *Design Verification: From First Principles to Agenti
 
 ## Who this book is for
 
-The book is for three readers. A student or a designer moving into verification can read it from the front and finish able to plan, build and close a verification effort. A working verification engineer can open it at the chapter that matches the day's problem and find the rule, the reason for it and a program that shows it. A lead can use the planning, closure and practice chapters to set and defend sign-off criteria. No prior verification experience is assumed. Digital logic and some programming are.
+The book is for four readers. A student or a designer moving into verification can read it from the front and finish able to plan, build and close a verification effort. A working verification engineer can open it at the chapter that matches the day's problem and find the rule, the reason for it and a program that shows it. A lead can use the planning, closure and practice chapters to set and defend sign-off criteria. And an engineer who experiments, trying a new workflow, a tool from software, a solver, a statistical argument or a model in the loop, can use it as a reference for what each technique is, what it has been measured to do, and how to run a fair trial of it on their own design. No prior verification experience is assumed. Digital logic and some programming are.
+
+That fourth reader shapes the book. Verification has always borrowed: the solver under constrained-random stimulus comes from logic, coverage closure is a sampling problem, the regression is a build system, and the newest tools are language models. The book treats software engineering, mathematics, silicon practice and machine learning as parts of the discipline rather than as appendices to it, and it measures before it recommends.
 
 ## How the book is organized
 
-The book is planned in seven parts. Part I lays the foundations: what verification is (@sec-ch01), how it is planned (@sec-ch02), what a verifier needs to know about digital design (@sec-ch03), and how a simulator actually executes a design (@sec-ch04). Part II teaches SystemVerilog as a verification language, from its types and classes (@sec-ch05, @sec-ch06) through constrained-random stimulus (@sec-ch07) and functional coverage (@sec-ch08) to assertions. Part III covers UVM. Part IV goes beyond simulation, to formal, emulation, structural checks and portable stimulus. Part V covers the open-source and Python flows: cocotb, pyuvm, SystemC and UVM-SystemC. Part VI is verification engineering in practice: infrastructure, debug, closure, protocols and the craft. Part VII looks ahead, and the book closes with generative AI and agentic verification (@sec-ch34).
+The book is planned in seven parts. Part I lays the foundations: what verification is (@sec-ch01), how it is planned (@sec-ch02), what a verifier needs to know about digital design (@sec-ch03), and how a simulator actually executes a design (@sec-ch04). Part II teaches SystemVerilog as a verification language, from its types and classes (@sec-ch05, @sec-ch06) through constrained-random stimulus (@sec-ch07), functional coverage (@sec-ch08) and temporal properties, and closes with a case study that carries one design from architecture to coverage (@sec-ch11). Part III covers testbench architecture and methodology, UVM taught beside pyuvm and cocotb, and ends by building one design three ways. Part IV, *Proof and Probability*, is the mathematics: logic and solvers, formal property verification, equivalence and static checks, the statistics of random testing, and graphs and portable stimulus. Part V, *Borrowed from Software*, covers property-based testing, fuzzing, mutation testing, hardware construction languages and compiler IRs, and reproducible build and regression. Part VI, *Systems, Silicon and Sign-off*, covers processor verification on RISC-V, system-level and hardware-assisted verification, debug, closure, gate-level work and tapeout on an open process kit, post-silicon validation, and safety and security. Part VII, *Machines in the Loop*, covers machine learning in verification, how to run an experiment on a new workflow, and closes the book with generative AI and agentic verification (@sec-ch34).
 
 Chapters not yet written are left out of this build rather than shown as empty pages, so the parts present are the parts that exist.
+
+## Reading paths
+
+The front-to-back order is one path. Four others suit particular readers:
+
+- **The SystemVerilog and UVM engineer**: Part I, Part II, Part III, then debug and closure in Part VI.
+- **Formal first**: Part I, then the assertions chapter of Part II, then Part IV, and the case study at the end of Part II read as a target for proof rather than simulation.
+- **The Python and open-source engineer**: Part I, the case study at the end of Part II, the cocotb and pyuvm threads of Part III, then Part V.
+- **The AI experimenter**: Part I, the coverage chapter (@sec-ch08), the statistics and mutation chapters, the experiments chapter of Part VII, then the closing chapter (@sec-ch34) and the agent tool layer (@sec-appI).
+
+## A map of the fields
+
+Each technique in the book comes from somewhere, and knowing where tells a reader which literature to search when the book runs out. The table places the book's subjects by the field they borrow from.
+
+| Field | What the book takes from it |
+|---|---|
+| Software engineering | Classes and design patterns for testbenches; regression as a build graph and continuous integration; property-based testing and shrinking; coverage-guided fuzzing; mutation testing as a measure of checkers; reproducible toolchains |
+| Mathematics | Boolean satisfiability and SMT under constrained-random stimulus and formal; temporal logic under assertions; model checking and induction; probability and statistics for seeds, coverage and stopping; graphs for state machines, netlists and portable stimulus |
+| Silicon | Clocks, resets, crossings and timing; protocols; processor and ISA verification; gate-level simulation and open process kits; post-silicon validation; safety and security |
+| Machine learning and AI | Coverage-directed generation; regression ranking and failure clustering; language models and agents in the verification loop; how to evaluate them |
+
+: Where the book's techniques come from. {#tbl-preface-fields}
+
+And when a reader arrives with a question rather than a technique, the second table says where to start.
+
+| The question | Where to start |
+|---|---|
+| Does the design do what the specification says, for these inputs? | Simulation with a self-checking testbench (Part II) |
+| What has the test campaign actually exercised? | Functional coverage (@sec-ch08) |
+| Can this bad state *ever* happen? | Assertions, then formal property verification (Parts II and IV) |
+| How many seeds is enough, and what does a clean regression prove? | The statistics of random testing (Part IV) |
+| Did my tests check anything, or only reach it? | Mutation testing (Part V) |
+| Is the RTL well formed before I simulate it? | Structural and static checks (@sec-ch03, Part IV) |
+| Is the generated RTL the same design as the hand-written one? | Equivalence checking (Part IV) |
+| Will this tool, method or model help on my design? | Experiments and evaluation (Part VII) |
+| What can an agent do in verification today, and what should it not judge? | Generative AI and agentic verification (@sec-ch34) |
+
+: Questions and the techniques that answer them. {#tbl-preface-questions}
 
 ## How to read a chapter
 

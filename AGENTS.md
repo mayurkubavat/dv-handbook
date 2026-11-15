@@ -52,7 +52,7 @@ passed by evidence, not by the drafter's own satisfaction.
   ships: those are verified by a reviewer that *runs* the code against designs
   it constructs itself, because three of the four blocking bugs found in Ch.3
   were things the prose asserted and nobody had executed. A verdict of "needs
-  another pass" means another pass and another review, not a judgement call.
+  another pass" means another pass and another review, not a judgement call, within the three-round timebox under House rules.
 - **Escalate to the author regardless of the gates** for: a change to the
   book's structure or scope, anything that would make a public claim about a
   named company or person, and any finding that suggests an earlier approved
@@ -82,10 +82,16 @@ Never hand-edit a state to look further along than the evidence supports.
 - The generative-AI chapter closes the book. Register every new chapter in
   `_quarto.yml` under its `part:` entry (add the part, numeral in its title,
   if it is not there yet), always **before**
-  `chapters/ch34-generative-ai-agentic-dv.qmd`, never after. Its file keeps the `ch34-` name for history; it is chapter 35.
+  `chapters/ch34-generative-ai-agentic-dv.qmd`, never after. Its file keeps the `ch34-` name for history; it is chapter 36.
 - Cross-reference by label (`@sec-...`, `@tbl-...`), never by hard-coded chapter,
-  section, figure or table number. Part numbers ("Part II") are exempt: parts are
-  fixed structure and Quarto cannot label them.
+  section, figure or table number. Part numbers ("Part II") are tolerated
+  because Quarto cannot label parts, but new prose should name a part by its
+  subject ("the formal chapters", "the methodology part") or point at a chapter
+  label: the 2026-11-15 restructure showed that parts move too, and every
+  numeral is an edit the next restructure has to find.
+- Review rounds are timeboxed: after three gate-2 rounds that still return
+  blocking findings, stop and escalate the remaining findings to the author
+  with a recommendation, instead of starting a fourth round unasked.
 - Every chapter opens with a one-line epigraph, then a `callout-note` titled
   "Learning objectives". That box is the template's opener, not a seventh
   callout kind.

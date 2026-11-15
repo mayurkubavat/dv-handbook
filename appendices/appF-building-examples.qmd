@@ -14,7 +14,7 @@ make run      # build and simulate (or execute) the example
 make clean    # remove generated files
 ```
 
-That uniformity is deliberate. A reader who has run the SystemVerilog example in @sec-ch05 already knows how to run the cocotb examples of Part V, and the continuous-integration script that checks every listing in this book (@sec-appF-checking) needs no knowledge of which language it is building.
+That uniformity is deliberate. A reader who has run the SystemVerilog example in @sec-ch05 already knows how to run every cocotb example in the book, and the continuous-integration script that checks every listing in this book (@sec-appF-checking) needs no knowledge of which language it is building.
 
 The uniformity comes from layering. An example's `Makefile` sets a handful of variables and includes one shared file. That file loads a language-specific recipe file. The layout looks like this:
 

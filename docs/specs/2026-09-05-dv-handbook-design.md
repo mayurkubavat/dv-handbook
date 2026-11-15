@@ -15,6 +15,14 @@ practice, and the future of verification including machine learning and
 generative/agentic AI. Written in the spirit of Patterson-style teaching
 textbooks, with UVM Golden Reference Manual-style reference appendices.
 
+**Vision (author, 2026-11-15):** "a reference to DV/RTL engineers experimenting
+new workflows, references, and innovating by merging fields of SWE, AI,
+Silicon, Mathematics, etc." The book therefore names a fourth reader beside
+the student, the working engineer and the lead: the engineer who experiments.
+Software engineering, mathematics, silicon practice and machine learning are
+parts of the discipline in this book, each with its own chapters, and every
+technique is presented with what it has been measured to do.
+
 ## 2. Decisions (2026-09-05)
 
 | Topic | Decision | Rationale |
@@ -72,70 +80,83 @@ First file read in any session. Contents:
 A Stop hook in the agent settings blocks ending a session while `STATUS.md` is untouched.
 The assistant's private memory is for cross-project preferences only; the repo file is the source of truth.
 
-## 4. Section 2 — Table of contents (APPROVED)
+## 4. Section 2 — Table of contents (APPROVED; revised 2026-11-15)
 
-Seven parts, 35 chapters, 8 appendices. Order = teaching arc. Each chapter is
-independently draftable/verifiable/releasable.
+Seven parts, 36 chapters, appendices. Order = teaching arc. Each chapter is
+independently draftable/verifiable/releasable. Revised on 2026-11-15 after the
+second whole-book review (author: "lets implement all of these"): part numerals
+and every written chapter keep their place; the unwritten chapters are
+reorganized around the vision in section 1. The table of 2026-09-05 is in git
+history.
 
 ### Part I · Foundations
 1. What Is Design Verification? — cost of bugs, verification gap, DV in the silicon lifecycle
 2. Verification Planning — spec → features → vPlan → coverage → sign-off criteria
 3. Digital Design for Verifiers — RTL, clocks/resets, FSMs, pipelines, interfaces; verifier vs designer thinking
-4. Simulation Fundamentals — event-driven scheduling, regions, races, delta cycles, and how far a real simulator implements the model (corrected 2026-09-09: the earlier line called Verilator cycle-based, which its own documentation contradicts — it schedules statically at compile time and implements the Active and NBA regions only, so the honest contrast is "two regions, not the full set", not "cycle-based versus event-driven")
+4. Simulation Fundamentals — event-driven scheduling, regions, races, delta cycles, and how far a real simulator implements the model (Verilator schedules statically and implements the Active and NBA regions only)
 
 ### Part II · SystemVerilog for Verification
 5. The SystemVerilog Testbench Language — types, classes, interfaces, clocking blocks
 6. Object-Oriented Testbench Design — inheritance, polymorphism, parameterization, patterns
 7. Constrained-Random Stimulus — randomization, constraint solving, distributions
 8. Functional Coverage — covergroups, crosses, coverage-model design, closure
-9. SystemVerilog Assertions — sequences, properties, protocol checkers, `bind`
-10. Connecting Testbench and DUT — virtual interfaces, modports, DPI-C
-11. From Architecture to Verification: a DMA Case Study — architecture spec → microarchitecture → vPlan → testbench → coverage, on one DMA in two versions (added 2026-11-03 at the author's request; planned Chapters 11–35 shift to 12–36)
+9. Temporal Properties and Assertions — SVA from regular sequences and linear temporal logic; safety and liveness; vacuity; `bind`; the same property as a simulation checker and as a proof obligation (SymbiYosys); a Python monitor as the non-SVA mirror
+10. Reference Models and the Foreign Boundary — DPI-C, VPI as cocotb uses it, SystemC or Python models as predictors, co-simulation pitfalls (interfaces and modports are already in Ch 5)
+11. From Architecture to Verification: a DMA Case Study — architecture spec → microarchitecture → vPlan → testbench → coverage, on one DMA in two versions
 
-### Part III · UVM
-12. UVM Architecture — components, phases, factory, config DB
-13. Sequences, Sequencers, Drivers — layering, arbitration, virtual sequences
-14. Monitors, Scoreboards, Checkers — TLM analysis ports, reference models, predictors
-15. Register Abstraction Layer — RAL, adapters, built-in register tests
-16. Reuse at Scale — agents → environments → VIP; block → subsystem → SoC
-17. Advanced UVM — callbacks, objections, reporting, IEEE 1800.2, performance
+### Part III · Testbench Architecture and Methodology
+12. Testbench Architecture — components, phases, factory, configuration; UVM (IEEE 1800.2) shown beside pyuvm
+13. Stimulus Architecture — sequences, sequencers, drivers, layering, virtual sequences; cocotb coroutines as the minimal form
+14. Checking Architecture — monitors, scoreboards, predictors, analysis paths
+15. Registers and Reuse — register models generated from a machine-readable spec, adapters, built-in tests; agent → VIP, block → SoC
+16. One Design, Three Testbenches — the Ch 11 DMA in UVM, pyuvm and cocotb: same plan and coverage model, compared on lines, run time and what each could not express
+(Advanced UVM — callbacks, objections, reporting, performance — becomes callouts in 12–15 and entries in Appendix B.)
 
-### Part IV · Beyond Simulation
-18. Formal Verification — property checking, bounded proofs, formal apps, when formal beats simulation
-19. Emulation and Prototyping — transactors, hybrid flows, hardware-assisted verification
-20. Gate-Level, Timing and Low-Power Verification — GLS strategy, UPF, power-aware simulation
-21. Structural Verification — lint, CDC, RDC, X-propagation
-22. Portable Stimulus (PSS) — graph-based, test-intent reuse across sim/emulation/silicon
-23. System-Level Verification — SystemC/TLM-2.0 virtual platforms, firmware co-verification, performance
+### Part IV · Proof and Probability
+17. Logic and Solvers for Verifiers — propositional logic, SAT, bit-vector SMT, BDDs, and-inverter graphs; what the engines under Ch 7 and Ch 18 do and why they blow up
+18. Formal Property Verification — bounded model checking, k-induction, IC3/PDR at reading level, assumptions and over-constraint, covers and vacuity, on SymbiYosys
+19. Equivalence, Structural and Static Verification — lint, CDC, RDC, X-propagation as static analyses; combinational and sequential equivalence; connectivity and register checks
+20. The Statistics of Random Testing and Coverage — hit probability, coupon collector, bounds after N clean seeds, uniformity tests, t-way combinatorial coverage, estimating unseen coverage; information theory as a section
+21. Graphs, Tours and Portable Stimulus — state graphs, transition tours, reachability; PSS as a graph-based stimulus standard
 
-### Part V · Alternative and Open-Source Flows
-24. Python Verification with cocotb
-25. pyuvm — UVM in Python
-26. SystemC and UVM-SystemC
-27. The Open-Source Ecosystem — Verilator, Icarus, Yosys/SymbiYosys, FC4SC, CRAVE, SVUnit, Chisel-based flows
+### Part V · Borrowed from Software
+22. Property-Based Testing for Hardware — generators, properties, shrinking; Hypothesis driving cocotb
+23. Fuzzing Hardware — coverage-guided and differential fuzzing on Verilator models; fuzz vs constrained-random measured
+24. Mutation Testing: Qualifying the Testbench — fault models, equivalent mutants, kill rate beside coverage; MCY on the book's designs
+25. Hardware Construction Languages and Compiler IRs — Chisel, Amaranth, SpinalHDL; FIRRTL, CIRCT/MLIR, RTLIL; verifying generators and generated RTL; HLS verification
+26. Reproducible Verification: Build, Regression and CI — hermetic toolchains, seeds as inputs, regression as a build graph, flaky-test triage; the book's own CI as the example
 
-### Part VI · Verification Engineering in Practice
-28. Testbench Infrastructure — build systems, regressions, CI/CD for hardware
-29. Debug Methodology — waveform/transaction-level debug, triage, root-cause
-30. Metrics and Closure — coverage merging, ranking, dashboards, sign-off
-31. Verifying Standard Protocols — AMBA, PCIe (deep case study), Ethernet, DDR
-32. Safety, Security and Compliance — ISO 26262, DO-254, fault injection, security verification
-33. The DV Engineer's Craft — reviews, methodology docs, estimation, working with design teams
+### Part VI · Systems, Silicon and Sign-off
+27. Processor Verification: a RISC-V Case Study — instruction-stream generation, lock-step co-simulation against an ISS, RVFI, ISA formal checks, Sail as the oracle
+28. System-Level and Hardware-Assisted Verification — SystemC/TLM-2.0 virtual platforms, firmware co-verification, emulation and FPGA prototyping
+29. Debug Methodology — waveform/transaction-level debug, triage, minimization, root cause
+30. Metrics, Closure and Sign-off — coverage merging and ranking, bug-rate curves, the coverage database as a dataset
+31. Gate-Level, Low-Power and Tapeout on an Open PDK — GLS and equivalence on a real open-PDK netlist, power intent, tapeout sign-off as a checklist
+32. Post-Silicon Validation and Bring-Up — observability, reuse of pre-silicon assets, closing the loop to the plan (needs a research note first; may begin as a section of 31)
+33. Safety and Security Verification — fault injection, ISO 26262 and DO-254 evidence, information-flow and security properties
 
-### Part VII · The Future of Verification
-34. Machine Learning in Verification — coverage-directed generation, regression optimization, bug prediction
-35. The Road Ahead — chiplets/UCIe, 3D-IC, HLS verification, evolving standards
+### Part VII · Machines in the Loop
+34. Machine Learning in Verification — coverage-directed generation, regression selection, failure clustering, each with a baseline
+35. Experiments and Evaluation: Measuring a New Workflow — baseline, metric, seeds, cost, leakage, threats to validity; AI-for-hardware benchmarks; review and estimation practice; open questions in place of "The Road Ahead"
 36. Generative AI and Agentic DV — LLM-assisted testbench/SVA generation, spec-to-vPlan, debug assistants, agentic flows, RAG over specs, risks and evaluation
 
-**The generative-AI chapter closes the book** (author, 2026-09-08). Swapped with
-The Road Ahead for that reason. Consequences to honour: every new chapter is
-registered in `_quarto.yml` *before* it, never after; its file keeps the name
-`ch34-...` for continuity of history, so file name and chapter number differ
-here and nowhere else.
+**The generative-AI chapter closes the book** (author, 2026-09-08). Consequences
+to honour: every new chapter is registered in `_quarto.yml` *before* it, never
+after; its file keeps the name `ch34-...` for continuity of history, so file
+name and chapter number differ here and nowhere else.
+
+Dropped as standalone chapters on 2026-11-15: cocotb, pyuvm, SystemC and
+UVM-SystemC, and the open-source ecosystem survey (absorbed into Chs 10, 12,
+13, 16, 22, 28 and Appendix E); Advanced UVM (callouts and Appendix B);
+Verifying Standard Protocols (APB and AXI are in Ch 11; a protocol-checker
+catalogue becomes reference material); The DV Engineer's Craft and The Road
+Ahead (merged into Ch 35).
 
 ### Appendices (GRM-style reference)
 A. SV quick reference · B. UVM class/macro reference · C. SVA cheat sheet ·
-D. UVM command-line/config reference · E. cocotb/pyuvm API reference ·
+D. UVM command-line/config reference · E. What runs where: the measured
+support matrices of every chapter, generated in CI, with the cocotb/pyuvm API
+pointers (revised 2026-11-15) ·
 F. Tool setup (macOS/Linux) · G. Glossary · H. Selected exercise solutions ·
 I. An agent tool layer and derived documentation for the book's examples (added 2026-09-07; see `docs/specs/2026-09-07-agentic-tooling-catalog.md`).
 Plus bibliography and index.
@@ -146,10 +167,13 @@ learning objectives → motivation (real bug/story) → concepts → worked exam
 directions → summary → exercises → further reading.
 
 ### 4.2 Phasing
-~600–800 pages; 2–3 years at a sustainable pace.
-- **Edition 1 (v0.x → v1.0):** Parts I–III + appendices A–D, F, G
-- **Edition 2:** Parts IV–V + appendix E
-- **Edition 3:** Parts VI–VII + appendices H, I
+~600–800 pages; 2–3 years at a sustainable pace. Revised 2026-11-15:
+- **Edition 1 (v0.x → v1.0):** Parts I–II complete (Chs 9, 10), then Chs 17,
+  18, 20, 22 and 24 — the chapters no other DV textbook has, all on the
+  toolchain already in CI — plus appendices A, C, F, G and the preface maps.
+  Writing order: 9, 17, 18, 20, 24, then 10.
+- **Edition 2:** Part III, the rest of Parts IV and V, appendices B and E
+- **Edition 3:** Parts VI–VII, appendices H, I
 TOC is a plan, not a contract; `STATUS.md` tracks reality.
 
 ## 4a. Section 3 — Design style (APPROVED 2026-09-06)

@@ -160,12 +160,13 @@ This book is organized around tools, in the order a practitioner meets them. The
 | Simulation with a testbench language | Does this behavior happen, for these stimuli? | Part II |
 | Constrained-random stimulus and coverage | What have we actually exercised? | Part II |
 | Assertions | Did this rule ever break, at any cycle, in any test? | Part II |
-| Methodology (UVM) | How do a hundred engineers build one testbench that outlives the project? | Part III |
-| Formal verification | Can this *ever* happen? | Part IV |
-| Emulation and prototyping | Does it work with real software, at speed? | Part IV |
+| Methodology (UVM, pyuvm, cocotb) | How do a hundred engineers build one testbench that outlives the project? | Part III |
+| Logic, solvers and formal verification | Can this *ever* happen? | Part IV |
+| Statistics of random testing | How many seeds is enough, and what does a clean regression prove? | Part IV |
 | Structural checks (lint, clock-domain and reset-domain crossing) | Is the RTL well formed, before we simulate it? | Part IV |
 | Portable stimulus | Can one description of test intent drive simulation, emulation and silicon? | Part IV |
-| Python and SystemC flows | The same questions, from outside the SystemVerilog ecosystem | Part V |
+| Property-based testing, fuzzing, mutation testing | What do techniques from software find that ours miss, and did our tests check anything? | Part V |
+| Processor verification, emulation and silicon | Does it work with real software, at speed, and after tapeout? | Part VI |
 | Regression, debug, metrics | How do we run all of this every night and know where we stand? | Part VI |
 | Machine learning and agents | Which of these can a machine now do, and how would we know? | Part VII |
 
@@ -224,7 +225,7 @@ Notice also what the coverage line says. The random test reached fifteen of seve
 Do not conclude that directed tests are useless. They are the right tool for a specific scenario a specification calls out by name, for reproducing a bug, and for the first day of bring-up when nothing works. The lesson is narrower: a directed test tells you about the scenarios its author imagined, and a design's bugs are, by definition, the scenarios nobody imagined.
 :::
 
-The same random test is provided in Python, using cocotb, for readers coming from Part V; it finds the same bug at cycle 25 rather than 27, because its random sequence differs:
+The same random test is provided in Python, using cocotb, for readers coming from Python; it finds the same bug at cycle 25 rather than 27, because its random sequence differs:
 
 ```{.python include="examples/ch01-what-is-dv/cocotb/test_fifo_random.py"}
 ```
