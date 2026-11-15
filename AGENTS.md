@@ -82,7 +82,7 @@ Never hand-edit a state to look further along than the evidence supports.
 - The generative-AI chapter closes the book. Register every new chapter in
   `_quarto.yml` under its `part:` entry (add the part, numeral in its title,
   if it is not there yet), always **before**
-  `chapters/ch34-generative-ai-agentic-dv.qmd`, never after. Its file keeps the `ch34-` name for history; it is chapter 36.
+  `chapters/ch34-generative-ai-agentic-dv.qmd`, never after. Its file keeps the `ch34-` name for history; it is chapter 37.
 - Cross-reference by label (`@sec-...`, `@tbl-...`), never by hard-coded chapter,
   section, figure or table number. Part numbers ("Part II") are tolerated
   because Quarto cannot label parts, but new prose should name a part by its

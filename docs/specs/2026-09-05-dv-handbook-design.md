@@ -82,7 +82,7 @@ The assistant's private memory is for cross-project preferences only; the repo f
 
 ## 4. Section 2 — Table of contents (APPROVED; revised 2026-11-15)
 
-Seven parts, 36 chapters, appendices. Order = teaching arc. Each chapter is
+Seven parts, 37 chapters, appendices. Order = teaching arc. Each chapter is
 independently draftable/verifiable/releasable. Revised on 2026-11-15 after the
 second whole-book review (author: "lets implement all of these"): part numerals
 and every written chapter keep their place; the unwritten chapters are
@@ -114,31 +114,32 @@ history.
 
 ### Part IV · Proof and Probability
 17. Logic and Solvers for Verifiers — propositional logic, SAT, bit-vector SMT, BDDs, and-inverter graphs; what the engines under Ch 7 and Ch 18 do and why they blow up
-18. Formal Property Verification — bounded model checking, k-induction, IC3/PDR at reading level, assumptions and over-constraint, covers and vacuity, on SymbiYosys
-19. Equivalence, Structural and Static Verification — lint, CDC, RDC, X-propagation as static analyses; combinational and sequential equivalence; connectivity and register checks
-20. The Statistics of Random Testing and Coverage — hit probability, coupon collector, bounds after N clean seeds, uniformity tests, t-way combinatorial coverage, estimating unseen coverage; information theory as a section
-21. Graphs, Tours and Portable Stimulus — state graphs, transition tours, reachability; PSS as a graph-based stimulus standard
+18. Formal Property Verification — bounded model checking, k-induction, IC3/PDR at reading level, assumptions and over-constraint, covers and vacuity, liveness and fairness; three reference tables (SVA forms, shell commands, engine selection); on InFormal, the author's open formal tool, pinned by commit
+19. Formal Techniques: Abstraction, Symbolic Reasoning and Decomposition — a catalog of 31 techniques in six families (shrinking the problem: black box, cut point, counter and memory abstraction; symbolic constants and data independence; modeling code; decomposition and helper invariants; constraining and bug hunting; trusting the result), each entry with the same six parts and a runnable example on InFormal
+20. Equivalence, Structural and Static Verification — lint, CDC, RDC, X-propagation as static analyses; combinational and sequential equivalence; connectivity and register checks
+21. The Statistics of Random Testing and Coverage — hit probability, coupon collector, bounds after N clean seeds, uniformity tests, t-way combinatorial coverage, estimating unseen coverage; information theory as a section
+22. Graphs, Tours and Portable Stimulus — state graphs, transition tours, reachability; PSS as a graph-based stimulus standard
 
 ### Part V · Borrowed from Software
-22. Property-Based Testing for Hardware — generators, properties, shrinking; Hypothesis driving cocotb
-23. Fuzzing Hardware — coverage-guided and differential fuzzing on Verilator models; fuzz vs constrained-random measured
-24. Mutation Testing: Qualifying the Testbench — fault models, equivalent mutants, kill rate beside coverage; MCY on the book's designs
-25. Hardware Construction Languages and Compiler IRs — Chisel, Amaranth, SpinalHDL; FIRRTL, CIRCT/MLIR, RTLIL; verifying generators and generated RTL; HLS verification
-26. Reproducible Verification: Build, Regression and CI — hermetic toolchains, seeds as inputs, regression as a build graph, flaky-test triage; the book's own CI as the example
+23. Property-Based Testing for Hardware — generators, properties, shrinking; Hypothesis driving cocotb
+24. Fuzzing Hardware — coverage-guided and differential fuzzing on Verilator models; fuzz vs constrained-random measured
+25. Mutation Testing: Qualifying the Testbench — fault models, equivalent mutants, kill rate beside coverage; MCY on the book's designs
+26. Hardware Construction Languages and Compiler IRs — Chisel, Amaranth, SpinalHDL; FIRRTL, CIRCT/MLIR, RTLIL; verifying generators and generated RTL; HLS verification
+27. Reproducible Verification: Build, Regression and CI — hermetic toolchains, seeds as inputs, regression as a build graph, flaky-test triage; the book's own CI as the example
 
 ### Part VI · Systems, Silicon and Sign-off
-27. Processor Verification: a RISC-V Case Study — instruction-stream generation, lock-step co-simulation against an ISS, RVFI, ISA formal checks, Sail as the oracle
-28. System-Level and Hardware-Assisted Verification — SystemC/TLM-2.0 virtual platforms, firmware co-verification, emulation and FPGA prototyping
-29. Debug Methodology — waveform/transaction-level debug, triage, minimization, root cause
-30. Metrics, Closure and Sign-off — coverage merging and ranking, bug-rate curves, the coverage database as a dataset
-31. Gate-Level, Low-Power and Tapeout on an Open PDK — GLS and equivalence on a real open-PDK netlist, power intent, tapeout sign-off as a checklist
-32. Post-Silicon Validation and Bring-Up — observability, reuse of pre-silicon assets, closing the loop to the plan (needs a research note first; may begin as a section of 31)
-33. Safety and Security Verification — fault injection, ISO 26262 and DO-254 evidence, information-flow and security properties
+28. Processor Verification: a RISC-V Case Study — instruction-stream generation, lock-step co-simulation against an ISS, RVFI, ISA formal checks, Sail as the oracle
+29. System-Level and Hardware-Assisted Verification — SystemC/TLM-2.0 virtual platforms, firmware co-verification, emulation and FPGA prototyping
+30. Debug Methodology — waveform/transaction-level debug, triage, minimization, root cause
+31. Metrics, Closure and Sign-off — coverage merging and ranking, bug-rate curves, the coverage database as a dataset
+32. Gate-Level, Low-Power and Tapeout on an Open PDK — GLS and equivalence on a real open-PDK netlist, power intent, tapeout sign-off as a checklist
+33. Post-Silicon Validation and Bring-Up — observability, reuse of pre-silicon assets, closing the loop to the plan (needs a research note first; may begin as a section of 32)
+34. Safety and Security Verification — fault injection, ISO 26262 and DO-254 evidence, information-flow and security properties
 
 ### Part VII · Machines in the Loop
-34. Machine Learning in Verification — coverage-directed generation, regression selection, failure clustering, each with a baseline
-35. Experiments and Evaluation: Measuring a New Workflow — baseline, metric, seeds, cost, leakage, threats to validity; AI-for-hardware benchmarks; review and estimation practice; open questions in place of "The Road Ahead"
-36. Generative AI and Agentic DV — LLM-assisted testbench/SVA generation, spec-to-vPlan, debug assistants, agentic flows, RAG over specs, risks and evaluation
+35. Machine Learning in Verification — coverage-directed generation, regression selection, failure clustering, each with a baseline
+36. Experiments and Evaluation: Measuring a New Workflow — baseline, metric, seeds, cost, leakage, threats to validity; AI-for-hardware benchmarks; review and estimation practice; open questions in place of "The Road Ahead"
+37. Generative AI and Agentic DV — LLM-assisted testbench/SVA generation, spec-to-vPlan, debug assistants, agentic flows, RAG over specs, risks and evaluation
 
 **The generative-AI chapter closes the book** (author, 2026-09-08). Consequences
 to honour: every new chapter is registered in `_quarto.yml` *before* it, never
@@ -169,9 +170,10 @@ directions → summary → exercises → further reading.
 ### 4.2 Phasing
 ~600–800 pages; 2–3 years at a sustainable pace. Revised 2026-11-15:
 - **Edition 1 (v0.x → v1.0):** Parts I–II complete (Chs 9, 10), then Chs 17,
-  18, 20, 22 and 24 — the chapters no other DV textbook has, all on the
-  toolchain already in CI — plus appendices A, C, F, G and the preface maps.
-  Writing order: 9, 17, 18, 20, 24, then 10.
+  18, 19, 21, 23 and 25 — the chapters no other DV textbook has — plus
+  appendices A, C, F, G and the preface maps. Equivalence (Ch 20) waits for
+  an equivalence command in InFormal. Writing order: 9, 17, 18, 19, 21, 25,
+  then 10.
 - **Edition 2:** Part III, the rest of Parts IV and V, appendices B and E
 - **Edition 3:** Parts VI–VII, appendices H, I
 TOC is a plan, not a contract; `STATUS.md` tracks reality.
