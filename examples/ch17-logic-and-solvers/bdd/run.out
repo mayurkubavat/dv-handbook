@@ -1,0 +1,26 @@
+1. equivalence by canonicity, 4-bit carry out, order a0 b0 a1 b1 ..
+   ripple carry: node 72; majority carry: node 72; same node: True
+   one gate wrong: node 64; same node: False; they differ on 72 of 256 inputs
+2. decision nodes of an N-bit adder's carry out, by variable order
+    N  a0 b0 a1 b1 ..  3N - 1   a0 a1 .. b0 b1 ..  2^(N+1) - 2
+    1               2       2                   2            2
+    2               5       5                   6            6
+    3               8       8                  14           14
+    4              11      11                  30           30
+    5              14      14                  62           62
+    6              17      17                 126          126
+    7              20      20                 254          254
+    8              23      23                 510          510
+    9              26      26               1,022        1,022
+   10              29      29               2,046        2,046
+3. decision nodes of bit N-1 of an N-bit product, three orders
+    N  a0 b0 a1 b1 ..  a0 a1 .. b0 b1 ..  a0 b(N-1) a1 b(N-2) ..
+    2               7                  7                       6
+    3              14                 17                      14
+    4              34                 41                      34
+    5              71                 97                      72
+    6             167                236                     178
+    7             379                567                     422
+    8             926              1,367                     974
+    9           2,186              3,315                   2,382
+   10           5,246              8,012                   6,002

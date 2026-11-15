@@ -1,0 +1,17 @@
+$ informal lower ../../ch01-what-is-dv/rtl/fifo.sv fifo_bmc.sv --top fifo_bmc \
+    > build/fifo_bmc.btor2
+225 lines of Btor2
+$ informal info build/fifo_bmc.btor2
+"inputs": 7, "states": 21, "state_bits": 146, "bad": 1, "constraints": 1
+$ informal simp build/fifo_bmc.btor2 --aag > build/fifo_bmc.aag
+loaded    inputs 28 latches 146 ands 992 bads 1 constraints 1
+simplified inputs 3 latches 10 ands 102 bads 1 constraints 1
+    (0 constant latches)
+aag 115 3 10 0 102 1 1
+the regenerated AIGER equals ../fifo-unroll/fifo_bmc.aag: True
+$ informal check --engines ../../mk/informal-engines.toml --only informal-bmc \
+    build/fifo_bmc.btor2
+UNSAFE (by informal-bmc, depth 16)
+state variables: 21, of which 16 are memory entries; the others:
+  started occ wr_ptr rd_ptr count
+verdict: full is high with fewer than sixteen entries, at depth 16

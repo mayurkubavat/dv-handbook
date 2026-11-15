@@ -1,0 +1,20 @@
+fa.aag: 3 inputs, 0 latches, 2 outputs, 9 ANDs, largest variable 12
+  input   2  v1 = a
+  input   4  v2 = b
+  input   6  v3 = cin
+  and     8  4  2  v4 = v2 & v1
+  and    10  5  3  v5 = !v2 & !v1
+  and    12 11  9  v6 = !v5 & !v4
+  and    14 12  6  v7 = v6 & v3
+  and    16 13  7  v8 = !v6 & !v3
+  and    18 17 15  v9 = !v8 & !v7
+  and    20  4  2  v10 = v2 & v1
+  and    22 12  6  v11 = v6 & v3
+  and    24 23 21  v12 = !v11 & !v10
+  output 18  sum = v9
+  output 25  cout = !v12
+the graph and full_adder.sv agree on 8 of 8 input rows
+structural hashing: 9 ANDs -> 7 ANDs
+  v10 is the same gate as v4
+  v11 is the same gate as v7
+as clauses, three for each AND: 10 variables, 21 clauses

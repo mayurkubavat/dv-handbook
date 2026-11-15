@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 510" width="1000" height="510" role="img" aria-label="A graph in seven columns from the decision b1 = 1 on the left to the conflict on the right. Every path from the decision to the conflict passes through x37 = 1, which is marked as the first unique implication point; three assignments from decision level 1 feed the part after it">
+<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#7FA3C0"/></marker><marker id="ahj" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#5B3E8E"/></marker><marker id="ahd" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#1B4F72"/></marker><marker id="ahc" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#B7791F"/></marker><marker id="ahg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#1C1C1C"/></marker><pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="6" stroke="#CBD2D9" stroke-width="2"/></pattern></defs>
+<rect width="1000" height="510" fill="white"/>
+<text x="30" y="40.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="21" font-weight="700" text-anchor="start" fill="#1B4F72">Why the conflict happened</text>
+<text x="30" y="64.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="400" text-anchor="start" fill="#1C1C1C">Conflict 20 of cdcl.py on the 3-bit adder miter. An arrow runs from each cause to the assignment it forced.</text>
+<line x1="430.0" y1="150.0" x2="430.0" y2="492.0" stroke="#B7791F" stroke-width="1.6" stroke-dasharray="7 5"/>
+<text x="438.0" y="488.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="600" text-anchor="start" fill="#B7791F">the cut: everything to the right follows from x37 = 1 and level 1</text>
+<path d="M75.0,330.0 L191.3,251.4" fill="none" stroke="#CBD2D9" stroke-width="1.3" marker-end="url(#ah)"/>
+<path d="M75.0,330.0 L186.0,330.0" fill="none" stroke="#CBD2D9" stroke-width="1.3" marker-end="url(#ah)"/>
+<path d="M75.0,330.0 L191.3,408.6" fill="none" stroke="#CBD2D9" stroke-width="1.3" marker-end="url(#ah)"/>
+<path d="M217.0,234.0 L328.0,234.0" fill="none" stroke="#CBD2D9" stroke-width="1.3" marker-end="url(#ah)"/>
+<path d="M217.0,330.0 L328.0,330.0" fill="none" stroke="#CBD2D9" stroke-width="1.3" marker-end="url(#ah)"/>
+<path d="M217.0,426.0 L328.0,426.0" fill="none" stroke="#CBD2D9" stroke-width="1.3" marker-end="url(#ah)"/>
+<path d="M572.0,122.0 L511.0,300.7" fill="none" stroke="#1B4F72" stroke-width="1.8" marker-end="url(#ahd)"/>
+<path d="M678.5,122.0 L521.1,306.4" fill="none" stroke="#1B4F72" stroke-width="1.8" marker-end="url(#ahd)"/>
+<path d="M785.0,122.0 L526.0,311.7" fill="none" stroke="#1B4F72" stroke-width="1.8" marker-end="url(#ahd)"/>
+<path d="M359.0,330.0 L470.0,330.0" fill="none" stroke="#1B4F72" stroke-width="1.8" marker-end="url(#ahd)"/>
+<path d="M572.0,122.0 L630.4,253.7" fill="none" stroke="#1B4F72" stroke-width="1.8" marker-end="url(#ahd)"/>
+<path d="M501.0,330.0 L613.6,291.9" fill="none" stroke="#1B4F72" stroke-width="1.8" marker-end="url(#ahd)"/>
+<path d="M501.0,330.0 L613.6,368.1" fill="none" stroke="#1B4F72" stroke-width="1.8" marker-end="url(#ahd)"/>
+<path d="M785.0,122.0 L658.0,350.9" fill="none" stroke="#1B4F72" stroke-width="1.8" marker-end="url(#ahd)"/>
+<path d="M678.5,122.0 L767.8,256.2" fill="none" stroke="#1B4F72" stroke-width="1.8" marker-end="url(#ahd)"/>
+<path d="M643.0,282.0 L754.0,282.0" fill="none" stroke="#1B4F72" stroke-width="1.8" marker-end="url(#ahd)"/>
+<path d="M572.0,122.0 L765.2,354.2" fill="none" stroke="#1B4F72" stroke-width="1.8" marker-end="url(#ahd)"/>
+<path d="M643.0,378.0 L754.0,378.0" fill="none" stroke="#1B4F72" stroke-width="1.8" marker-end="url(#ahd)"/>
+<path d="M785.0,282.0 L897.6,320.1" fill="none" stroke="#1B4F72" stroke-width="1.8" marker-end="url(#ahd)"/>
+<path d="M785.0,378.0 L897.6,339.9" fill="none" stroke="#1B4F72" stroke-width="1.8" marker-end="url(#ahd)"/>
+<path d="M381.0,344.0 Q643.0,520.0 907.0,352.0" fill="none" stroke="#1B4F72" stroke-width="1.8" marker-end="url(#ahd)"/>
+<ellipse cx="75.0" cy="330.0" rx="30" ry="19" fill="white" stroke="#123A56" stroke-width="2"/>
+<text x="75.0" y="334.5" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="600" text-anchor="middle" fill="#1C1C1C">b1=1</text>
+<ellipse cx="217.0" cy="234.0" rx="30" ry="19" fill="white" stroke="#123A56" stroke-width="2"/>
+<text x="217.0" y="238.5" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="600" text-anchor="middle" fill="#1C1C1C">x9=1</text>
+<ellipse cx="217.0" cy="330.0" rx="30" ry="19" fill="white" stroke="#123A56" stroke-width="2"/>
+<text x="217.0" y="334.5" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="600" text-anchor="middle" fill="#1C1C1C">x36=0</text>
+<ellipse cx="217.0" cy="426.0" rx="30" ry="19" fill="white" stroke="#123A56" stroke-width="2"/>
+<text x="217.0" y="430.5" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="600" text-anchor="middle" fill="#1C1C1C">x21=1</text>
+<ellipse cx="359.0" cy="234.0" rx="30" ry="19" fill="white" stroke="#123A56" stroke-width="2"/>
+<text x="359.0" y="238.5" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="600" text-anchor="middle" fill="#1C1C1C">x10=1</text>
+<ellipse cx="359.0" cy="330.0" rx="30" ry="19" fill="white" stroke="#B7791F" stroke-width="3.2"/>
+<text x="359.0" y="334.5" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="600" text-anchor="middle" fill="#1C1C1C">x37=1</text>
+<ellipse cx="359.0" cy="426.0" rx="30" ry="19" fill="white" stroke="#123A56" stroke-width="2"/>
+<text x="359.0" y="430.5" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="600" text-anchor="middle" fill="#1C1C1C">x22=1</text>
+<ellipse cx="501.0" cy="330.0" rx="30" ry="19" fill="white" stroke="#123A56" stroke-width="2"/>
+<text x="501.0" y="334.5" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="600" text-anchor="middle" fill="#1C1C1C">b2=0</text>
+<ellipse cx="643.0" cy="282.0" rx="30" ry="19" fill="white" stroke="#123A56" stroke-width="2"/>
+<text x="643.0" y="286.5" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="600" text-anchor="middle" fill="#1C1C1C">x14=0</text>
+<ellipse cx="643.0" cy="378.0" rx="30" ry="19" fill="white" stroke="#123A56" stroke-width="2"/>
+<text x="643.0" y="382.5" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="600" text-anchor="middle" fill="#1C1C1C">x28=0</text>
+<ellipse cx="785.0" cy="282.0" rx="30" ry="19" fill="white" stroke="#123A56" stroke-width="2"/>
+<text x="785.0" y="286.5" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="600" text-anchor="middle" fill="#1C1C1C">x15=0</text>
+<ellipse cx="785.0" cy="378.0" rx="30" ry="19" fill="white" stroke="#123A56" stroke-width="2"/>
+<text x="785.0" y="382.5" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="600" text-anchor="middle" fill="#1C1C1C">x29=0</text>
+<rect x="893.0" y="310.0" width="68.0" height="40.0" rx="6" fill="#FBF1DC" stroke="#B7791F" stroke-width="2.4"/>
+<text x="927.0" y="335.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="700" text-anchor="middle" fill="#1C1C1C">conflict</text>
+<ellipse cx="572.0" cy="122.0" rx="30" ry="19" fill="#F4F6F8" stroke="#123A56" stroke-width="2"/>
+<text x="572.0" y="126.5" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="600" text-anchor="middle" fill="#1C1C1C">a2=0</text>
+<ellipse cx="678.5" cy="122.0" rx="30" ry="19" fill="#F4F6F8" stroke="#123A56" stroke-width="2"/>
+<text x="678.5" y="126.5" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="600" text-anchor="middle" fill="#1C1C1C">x13=0</text>
+<ellipse cx="785.0" cy="122.0" rx="30" ry="19" fill="#F4F6F8" stroke="#123A56" stroke-width="2"/>
+<text x="785.0" y="126.5" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="600" text-anchor="middle" fill="#1C1C1C">x27=0</text>
+<text x="75.0" y="368.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="400" text-anchor="middle" fill="#7FA3C0">decision,</text>
+<text x="75.0" y="384.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="400" text-anchor="middle" fill="#7FA3C0">level 2</text>
+<text x="359.0" y="300.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="700" text-anchor="middle" fill="#B7791F">first UIP</text>
+<text x="528.0" y="127.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="400" text-anchor="end" fill="#7FA3C0">from level 1:</text>
+<text x="30.0" y="96.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="14" font-weight="600" text-anchor="start" fill="#1C1C1C">learned clause: a2 or x13 or x27 or not x37</text>
+</svg>

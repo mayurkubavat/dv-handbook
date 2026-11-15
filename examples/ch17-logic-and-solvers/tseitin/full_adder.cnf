@@ -1,0 +1,25 @@
+c full_adder.cnf -- the full adder, encoded by hand, one gate at a time
+c 1=a 2=b 3=cin 4=p 5=sum 6=g 7=t 8=cout
+p cnf 8 17
+c p = a xor b
+-4 1 2 0
+-4 -1 -2 0
+4 -1 2 0
+4 1 -2 0
+c sum = p xor cin
+-5 4 3 0
+-5 -4 -3 0
+5 -4 3 0
+5 4 -3 0
+c g = a and b
+-6 1 0
+-6 2 0
+6 -1 -2 0
+c t = p and cin
+-7 4 0
+-7 3 0
+7 -4 -3 0
+c cout = g or t
+8 -6 0
+8 -7 0
+-8 6 7 0

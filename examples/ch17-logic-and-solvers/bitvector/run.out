@@ -1,0 +1,17 @@
+1. is there a, b with a*b != b*a?
+   width  rewrite  word   bits   (bits: variables, clauses)
+       4  unsat    unsat  unsat  (75, 226)
+       5  unsat    unsat  unsat  (122, 377)
+       6  unsat    unsat  unsat  (181, 568)
+       7  unsat    unsat  unsat  (252, 799)
+       8  unsat    unsat  unsat  (335, 1070)
+   width 64, rewrite: unsat
+   simplify(a*b != b*a) = False
+2. a false identity: is there a, b with a - b != b - a? (8 bits)
+   sat: a counterexample exists; checked by evaluating it: True
+3. arithmetic is modulo 2^8: is there x with x + 255 != x - 1?
+   unsat
+4. division by zero has a value: is there x with ...
+   bvudiv(x, 0) != 255: unsat;  bvurem(x, 0) != x: unsat
+5. '<' in z3's Python interface is signed: is there a, b where
+   (a < b) differs from ULT(a, b): sat;  with both below 128: unsat

@@ -1,0 +1,17 @@
+3 inputs, 5 gates:
+  p = a ^ b, sum = p ^ cin, g = a & b, t = p & cin, cout = g | t
+a b cin | p g t | sum cout | majority
+0 0 0   | 0 0 0 | 0   0    | 0
+0 0 1   | 0 0 0 | 1   0    | 0
+0 1 0   | 1 0 0 | 1   0    | 0
+0 1 1   | 1 0 1 | 0   1    | 1
+1 0 0   | 1 0 0 | 1   0    | 0
+1 0 1   | 1 0 1 | 0   1    | 1
+1 1 0   | 0 1 0 | 0   1    | 1
+1 1 1   | 0 1 0 | 1   1    | 1
+cout and the majority of a, b, cin agree on 8 of 8 rows
+rows a truth table needs, by number of inputs:
+   3 inputs  8
+  16 inputs  65,536
+  32 inputs  4,294,967,296
+  64 inputs  18,446,744,073,709,551,616

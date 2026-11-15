@@ -1,0 +1,102 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 470" width="1000" height="470" role="img" aria-label="Two charts. Left, logarithmic: conflicts of cdcl.py on the adder miter grow from 12 to 410 between 2 and 7 bits and on the multiplier miter from 8 to 3,655, with cdcl_vsids.py on the multiplier higher still. Right: the number of satisfiable formulas out of 30 falls from 30 to 0 as the ratio of clauses to variables goes from 3.0 to 5.8, and the median conflicts peak near 4.6">
+<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#7FA3C0"/></marker><marker id="ahj" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#5B3E8E"/></marker><marker id="ahd" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#1B4F72"/></marker><marker id="ahc" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#B7791F"/></marker><marker id="ahg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#1C1C1C"/></marker><pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="6" stroke="#CBD2D9" stroke-width="2"/></pattern></defs>
+<rect width="1000" height="470" fill="white"/>
+<text x="30" y="40.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="21" font-weight="700" text-anchor="start" fill="#1B4F72">Hardness is a property of the formula</text>
+<text x="30" y="64.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="400" text-anchor="start" fill="#1C1C1C">Left: two circuits of the same width. Right: random 3-SAT with 60 variables and a growing number of clauses.</text>
+<rect x="80.0" y="120.0" width="340.0" height="270.0" rx="0" fill="white" stroke="#CBD2D9" stroke-width="1"/>
+<line x1="80.0" y1="390.0" x2="80.0" y2="395.0" stroke="#7FA3C0" stroke-width="1"/>
+<text x="80.0" y="410.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="400" text-anchor="middle" fill="#1C1C1C">2</text>
+<line x1="148.0" y1="390.0" x2="148.0" y2="395.0" stroke="#7FA3C0" stroke-width="1"/>
+<text x="148.0" y="410.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="400" text-anchor="middle" fill="#1C1C1C">3</text>
+<line x1="216.0" y1="390.0" x2="216.0" y2="395.0" stroke="#7FA3C0" stroke-width="1"/>
+<text x="216.0" y="410.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="400" text-anchor="middle" fill="#1C1C1C">4</text>
+<line x1="284.0" y1="390.0" x2="284.0" y2="395.0" stroke="#7FA3C0" stroke-width="1"/>
+<text x="284.0" y="410.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="400" text-anchor="middle" fill="#1C1C1C">5</text>
+<line x1="352.0" y1="390.0" x2="352.0" y2="395.0" stroke="#7FA3C0" stroke-width="1"/>
+<text x="352.0" y="410.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="400" text-anchor="middle" fill="#1C1C1C">6</text>
+<line x1="420.0" y1="390.0" x2="420.0" y2="395.0" stroke="#7FA3C0" stroke-width="1"/>
+<text x="420.0" y="410.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="400" text-anchor="middle" fill="#1C1C1C">7</text>
+<text x="250.0" y="430.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="400" text-anchor="middle" fill="#7FA3C0">width, bits</text>
+<line x1="80.0" y1="365.4" x2="420.0" y2="365.4" stroke="#F4F6F8" stroke-width="1"/>
+<text x="72.0" y="369.4" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="400" text-anchor="end" fill="#1C1C1C">10</text>
+<line x1="80.0" y1="283.6" x2="420.0" y2="283.6" stroke="#F4F6F8" stroke-width="1"/>
+<text x="72.0" y="287.6" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="400" text-anchor="end" fill="#1C1C1C">100</text>
+<line x1="80.0" y1="201.8" x2="420.0" y2="201.8" stroke="#F4F6F8" stroke-width="1"/>
+<text x="72.0" y="205.8" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="400" text-anchor="end" fill="#1C1C1C">1,000</text>
+<line x1="80.0" y1="120.0" x2="420.0" y2="120.0" stroke="#F4F6F8" stroke-width="1"/>
+<text x="72.0" y="124.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="400" text-anchor="end" fill="#1C1C1C">10,000</text>
+<text x="80.0" y="110.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="400" text-anchor="start" fill="#7FA3C0">conflicts</text>
+<polyline points="80.0,358.9 148.0,330.1 216.0,305.5 284.0,281.5 352.0,257.6 420.0,233.5" fill="none" stroke="#2E7D32" stroke-width="2.4"/>
+<circle cx="80.0" cy="358.9" r="3.4" fill="#2E7D32"/>
+<circle cx="148.0" cy="330.1" r="3.4" fill="#2E7D32"/>
+<circle cx="216.0" cy="305.5" r="3.4" fill="#2E7D32"/>
+<circle cx="284.0" cy="281.5" r="3.4" fill="#2E7D32"/>
+<circle cx="352.0" cy="257.6" r="3.4" fill="#2E7D32"/>
+<circle cx="420.0" cy="233.5" r="3.4" fill="#2E7D32"/>
+<text x="358.8" y="281.9" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" font-weight="600" text-anchor="start" fill="#2E7D32">adder</text>
+<polyline points="80.0,373.3 148.0,332.8 216.0,288.5 284.0,246.8 352.0,201.3 420.0,155.8" fill="none" stroke="#1B4F72" stroke-width="2.4"/>
+<circle cx="80.0" cy="373.3" r="3.4" fill="#1B4F72"/>
+<circle cx="148.0" cy="332.8" r="3.4" fill="#1B4F72"/>
+<circle cx="216.0" cy="288.5" r="3.4" fill="#1B4F72"/>
+<circle cx="284.0" cy="246.8" r="3.4" fill="#1B4F72"/>
+<circle cx="352.0" cy="201.3" r="3.4" fill="#1B4F72"/>
+<circle cx="420.0" cy="155.8" r="3.4" fill="#1B4F72"/>
+<text x="314.6" y="244.6" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" font-weight="600" text-anchor="start" fill="#1B4F72">a*b = b*a</text>
+<polyline points="80.0,373.3 148.0,330.1 216.0,273.2 284.0,231.0 352.0,181.9 420.0,128.9" fill="none" stroke="#B7791F" stroke-width="2.4" stroke-dasharray="5 4"/>
+<circle cx="80.0" cy="373.3" r="3.4" fill="#B7791F"/>
+<circle cx="148.0" cy="330.1" r="3.4" fill="#B7791F"/>
+<circle cx="216.0" cy="273.2" r="3.4" fill="#B7791F"/>
+<circle cx="284.0" cy="231.0" r="3.4" fill="#B7791F"/>
+<circle cx="352.0" cy="181.9" r="3.4" fill="#B7791F"/>
+<circle cx="420.0" cy="128.9" r="3.4" fill="#B7791F"/>
+<text x="185.4" y="167.9" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" font-weight="600" text-anchor="start" fill="#B7791F">with the heuristic</text>
+<rect x="560.0" y="120.0" width="340.0" height="270.0" rx="0" fill="white" stroke="#CBD2D9" stroke-width="1"/>
+<line x1="581.2" y1="390.0" x2="581.2" y2="395.0" stroke="#7FA3C0" stroke-width="1"/>
+<text x="581.2" y="410.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="400" text-anchor="middle" fill="#1C1C1C">3.0</text>
+<line x1="623.8" y1="390.0" x2="623.8" y2="395.0" stroke="#7FA3C0" stroke-width="1"/>
+<text x="623.8" y="410.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="400" text-anchor="middle" fill="#1C1C1C">3.4</text>
+<line x1="666.2" y1="390.0" x2="666.2" y2="395.0" stroke="#7FA3C0" stroke-width="1"/>
+<text x="666.2" y="410.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="400" text-anchor="middle" fill="#1C1C1C">3.8</text>
+<line x1="708.8" y1="390.0" x2="708.8" y2="395.0" stroke="#7FA3C0" stroke-width="1"/>
+<text x="708.8" y="410.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="400" text-anchor="middle" fill="#1C1C1C">4.2</text>
+<line x1="751.2" y1="390.0" x2="751.2" y2="395.0" stroke="#7FA3C0" stroke-width="1"/>
+<text x="751.2" y="410.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="400" text-anchor="middle" fill="#1C1C1C">4.6</text>
+<line x1="793.8" y1="390.0" x2="793.8" y2="395.0" stroke="#7FA3C0" stroke-width="1"/>
+<text x="793.8" y="410.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="400" text-anchor="middle" fill="#1C1C1C">5.0</text>
+<line x1="836.2" y1="390.0" x2="836.2" y2="395.0" stroke="#7FA3C0" stroke-width="1"/>
+<text x="836.2" y="410.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="400" text-anchor="middle" fill="#1C1C1C">5.4</text>
+<line x1="878.8" y1="390.0" x2="878.8" y2="395.0" stroke="#7FA3C0" stroke-width="1"/>
+<text x="878.8" y="410.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="400" text-anchor="middle" fill="#1C1C1C">5.8</text>
+<text x="730.0" y="430.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="400" text-anchor="middle" fill="#7FA3C0">clauses per variable</text>
+<line x1="560.0" y1="390.0" x2="900.0" y2="390.0" stroke="#F4F6F8" stroke-width="1"/>
+<text x="552.0" y="394.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="400" text-anchor="end" fill="#1C1C1C">0</text>
+<line x1="560.0" y1="300.0" x2="900.0" y2="300.0" stroke="#F4F6F8" stroke-width="1"/>
+<text x="552.0" y="304.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="400" text-anchor="end" fill="#1C1C1C">10</text>
+<line x1="560.0" y1="210.0" x2="900.0" y2="210.0" stroke="#F4F6F8" stroke-width="1"/>
+<text x="552.0" y="214.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="400" text-anchor="end" fill="#1C1C1C">20</text>
+<line x1="560.0" y1="120.0" x2="900.0" y2="120.0" stroke="#F4F6F8" stroke-width="1"/>
+<text x="552.0" y="124.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="400" text-anchor="end" fill="#1C1C1C">30</text>
+<text x="560.0" y="110.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="400" text-anchor="start" fill="#7FA3C0">satisfiable, of 30</text>
+<rect x="570.2" y="120.0" width="22.0" height="270.0" rx="0" fill="#DCE9F3" stroke="#7FA3C0" stroke-width="1"/>
+<rect x="612.8" y="120.0" width="22.0" height="270.0" rx="0" fill="#DCE9F3" stroke="#7FA3C0" stroke-width="1"/>
+<rect x="655.2" y="138.0" width="22.0" height="252.0" rx="0" fill="#DCE9F3" stroke="#7FA3C0" stroke-width="1"/>
+<rect x="697.8" y="192.0" width="22.0" height="198.0" rx="0" fill="#DCE9F3" stroke="#7FA3C0" stroke-width="1"/>
+<rect x="740.2" y="336.0" width="22.0" height="54.0" rx="0" fill="#DCE9F3" stroke="#7FA3C0" stroke-width="1"/>
+<rect x="782.8" y="363.0" width="22.0" height="27.0" rx="0" fill="#DCE9F3" stroke="#7FA3C0" stroke-width="1"/>
+<rect x="825.2" y="390.0" width="22.0" height="0.0" rx="0" fill="#DCE9F3" stroke="#7FA3C0" stroke-width="1"/>
+<rect x="867.8" y="390.0" width="22.0" height="0.0" rx="0" fill="#DCE9F3" stroke="#7FA3C0" stroke-width="1"/>
+<text x="908.0" y="394.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="400" text-anchor="start" fill="#B7791F">0</text>
+<text x="908.0" y="304.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="400" text-anchor="start" fill="#B7791F">40</text>
+<text x="908.0" y="214.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="400" text-anchor="start" fill="#B7791F">80</text>
+<text x="908.0" y="124.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="400" text-anchor="start" fill="#B7791F">120</text>
+<text x="900.0" y="110.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="400" text-anchor="end" fill="#B7791F">median conflicts</text>
+<polyline points="581.2,383.2 623.8,374.2 666.2,336.0 708.8,243.8 751.2,144.8 793.8,167.2 836.2,219.0 878.8,232.5" fill="none" stroke="#B7791F" stroke-width="2.4"/>
+<circle cx="581.2" cy="383.2" r="3.4" fill="#B7791F"/>
+<circle cx="623.8" cy="374.2" r="3.4" fill="#B7791F"/>
+<circle cx="666.2" cy="336.0" r="3.4" fill="#B7791F"/>
+<circle cx="708.8" cy="243.8" r="3.4" fill="#B7791F"/>
+<circle cx="751.2" cy="144.8" r="3.4" fill="#B7791F"/>
+<circle cx="793.8" cy="167.2" r="3.4" fill="#B7791F"/>
+<circle cx="836.2" cy="219.0" r="3.4" fill="#B7791F"/>
+<circle cx="878.8" cy="232.5" r="3.4" fill="#B7791F"/>
+</svg>

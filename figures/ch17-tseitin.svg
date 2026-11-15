@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 490" width="1000" height="490" role="img" aria-label="The full adder as five gates with every wire numbered 1 to 8, and beside it the seventeen clauses in five groups, one group per gate">
+<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#7FA3C0"/></marker><marker id="ahj" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#5B3E8E"/></marker><marker id="ahd" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#1B4F72"/></marker><marker id="ahc" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#B7791F"/></marker><marker id="ahg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#1C1C1C"/></marker><pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="6" stroke="#CBD2D9" stroke-width="2"/></pattern></defs>
+<rect width="1000" height="490" fill="white"/>
+<text x="30" y="40.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="21" font-weight="700" text-anchor="start" fill="#1B4F72">One variable for every wire</text>
+<text x="30" y="64.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="400" text-anchor="start" fill="#1C1C1C">Each gate becomes the few clauses that tie its output variable to its inputs.</text>
+<text x="40.0" y="137.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="14" font-weight="600" text-anchor="start" fill="#1C1C1C">a = 1</text>
+<text x="40.0" y="177.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="14" font-weight="600" text-anchor="start" fill="#1C1C1C">b = 2</text>
+<text x="40.0" y="267.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="14" font-weight="600" text-anchor="start" fill="#1C1C1C">cin = 3</text>
+<rect x="230.0" y="126.0" width="78.0" height="52.0" rx="8" fill="#DCE9F3" stroke="#123A56" stroke-width="2"/>
+<text x="269.0" y="150.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="700" text-anchor="middle" fill="#1C1C1C">XOR</text>
+<text x="269.0" y="168.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="600" text-anchor="middle" fill="#123A56">p = 4</text>
+<rect x="420.0" y="150.0" width="78.0" height="52.0" rx="8" fill="#DCE9F3" stroke="#123A56" stroke-width="2"/>
+<text x="459.0" y="174.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="700" text-anchor="middle" fill="#1C1C1C">XOR</text>
+<text x="459.0" y="192.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="600" text-anchor="middle" fill="#123A56">sum = 5</text>
+<rect x="230.0" y="330.0" width="78.0" height="52.0" rx="8" fill="#DCE9F3" stroke="#123A56" stroke-width="2"/>
+<text x="269.0" y="354.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="700" text-anchor="middle" fill="#1C1C1C">AND</text>
+<text x="269.0" y="372.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="600" text-anchor="middle" fill="#123A56">g = 6</text>
+<rect x="420.0" y="250.0" width="78.0" height="52.0" rx="8" fill="#DCE9F3" stroke="#123A56" stroke-width="2"/>
+<text x="459.0" y="274.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="700" text-anchor="middle" fill="#1C1C1C">AND</text>
+<text x="459.0" y="292.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="600" text-anchor="middle" fill="#123A56">t = 7</text>
+<rect x="540.0" y="320.0" width="78.0" height="52.0" rx="8" fill="#DCE9F3" stroke="#123A56" stroke-width="2"/>
+<text x="579.0" y="344.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="700" text-anchor="middle" fill="#1C1C1C">OR</text>
+<text x="579.0" y="362.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="600" text-anchor="middle" fill="#123A56">cout = 8</text>
+<path d="M112.0,132.0 L230.0,132.0" fill="none" stroke="#1B4F72" stroke-width="2.2" marker-end="url(#ahd)"/>
+<path d="M140.0,132.0 L140.0,342.0 L230.0,342.0" fill="none" stroke="#1B4F72" stroke-width="2.2" marker-end="url(#ahd)"/>
+<circle cx="140" cy="132" r="3.5" fill="#1B4F72"/>
+<path d="M112.0,172.0 L230.0,172.0" fill="none" stroke="#1B4F72" stroke-width="2.2" marker-end="url(#ahd)"/>
+<path d="M170.0,172.0 L170.0,370.0 L230.0,370.0" fill="none" stroke="#1B4F72" stroke-width="2.2" marker-end="url(#ahd)"/>
+<circle cx="170" cy="172" r="3.5" fill="#1B4F72"/>
+<path d="M308.0,152.0 L360.0,152.0 L360.0,162.0 L420.0,162.0" fill="none" stroke="#1B4F72" stroke-width="2.2" marker-end="url(#ahd)"/>
+<path d="M360.0,162.0 L360.0,262.0 L420.0,262.0" fill="none" stroke="#1B4F72" stroke-width="2.2" marker-end="url(#ahd)"/>
+<circle cx="360" cy="162" r="3.5" fill="#1B4F72"/>
+<path d="M112.0,262.0 L200.0,262.0 L200.0,300.0 L390.0,300.0 L390.0,290.0 L420.0,290.0" fill="none" stroke="#1B4F72" stroke-width="2.2" marker-end="url(#ahd)"/>
+<path d="M390.0,290.0 L390.0,190.0 L420.0,190.0" fill="none" stroke="#1B4F72" stroke-width="2.2" marker-end="url(#ahd)"/>
+<circle cx="390" cy="290" r="3.5" fill="#1B4F72"/>
+<path d="M498.0,176.0 L610.0,176.0" fill="none" stroke="#1B4F72" stroke-width="2.2" marker-end="url(#ahd)"/>
+<path d="M498.0,276.0 L520.0,276.0 L520.0,332.0 L540.0,332.0" fill="none" stroke="#1B4F72" stroke-width="2.2" marker-end="url(#ahd)"/>
+<path d="M308.0,356.0 L540.0,356.0" fill="none" stroke="#1B4F72" stroke-width="2.2" marker-end="url(#ahd)"/>
+<path d="M618.0,346.0 L650.0,346.0" fill="none" stroke="#1B4F72" stroke-width="2.2" marker-end="url(#ahd)"/>
+<text x="40.0" y="430.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="400" text-anchor="start" fill="#7FA3C0">an inverter needs no variable: negate the literal</text>
+<text x="40.0" y="450.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="400" text-anchor="start" fill="#7FA3C0">8 variables, 17 clauses; the question is added as unit clauses</text>
+<text x="690.0" y="108.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="700" text-anchor="start" fill="#1B4F72">p = a xor b</text>
+<text x="704.0" y="128.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" font-weight="400" text-anchor="start" fill="#1C1C1C">(-4 1 2)</text>
+<text x="834.0" y="128.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" font-weight="400" text-anchor="start" fill="#1C1C1C">(-4 -1 -2)</text>
+<text x="704.0" y="147.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" font-weight="400" text-anchor="start" fill="#1C1C1C">(4 -1 2)</text>
+<text x="834.0" y="147.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" font-weight="400" text-anchor="start" fill="#1C1C1C">(4 1 -2)</text>
+<text x="690.0" y="188.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="700" text-anchor="start" fill="#1B4F72">sum = p xor cin</text>
+<text x="704.0" y="208.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" font-weight="400" text-anchor="start" fill="#1C1C1C">(-5 4 3)</text>
+<text x="834.0" y="208.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" font-weight="400" text-anchor="start" fill="#1C1C1C">(-5 -4 -3)</text>
+<text x="704.0" y="227.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" font-weight="400" text-anchor="start" fill="#1C1C1C">(5 -4 3)</text>
+<text x="834.0" y="227.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" font-weight="400" text-anchor="start" fill="#1C1C1C">(5 4 -3)</text>
+<text x="690.0" y="268.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="700" text-anchor="start" fill="#1B4F72">g = a and b</text>
+<text x="704.0" y="288.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" font-weight="400" text-anchor="start" fill="#1C1C1C">(-6 1)</text>
+<text x="834.0" y="288.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" font-weight="400" text-anchor="start" fill="#1C1C1C">(-6 2)</text>
+<text x="704.0" y="307.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" font-weight="400" text-anchor="start" fill="#1C1C1C">(6 -1 -2)</text>
+<text x="690.0" y="348.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="700" text-anchor="start" fill="#1B4F72">t = p and cin</text>
+<text x="704.0" y="368.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" font-weight="400" text-anchor="start" fill="#1C1C1C">(-7 4)</text>
+<text x="834.0" y="368.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" font-weight="400" text-anchor="start" fill="#1C1C1C">(-7 3)</text>
+<text x="704.0" y="387.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" font-weight="400" text-anchor="start" fill="#1C1C1C">(7 -4 -3)</text>
+<text x="690.0" y="428.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="700" text-anchor="start" fill="#1B4F72">cout = g or t</text>
+<text x="704.0" y="448.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" font-weight="400" text-anchor="start" fill="#1C1C1C">(8 -6)</text>
+<text x="834.0" y="448.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" font-weight="400" text-anchor="start" fill="#1C1C1C">(8 -7)</text>
+<text x="704.0" y="467.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" font-weight="400" text-anchor="start" fill="#1C1C1C">(-8 6 7)</text>
+</svg>

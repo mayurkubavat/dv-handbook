@@ -1,0 +1,3 @@
+3000 random formulas of up to 25 variables:
+dpll.py, cdcl.py and cdcl_vsids.py agree with z3 on every one
+921 satisfiable, each model checked clause by clause; 2079 unsatisfiable

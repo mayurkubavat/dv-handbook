@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 500" width="1000" height="500" role="img" aria-label="Three boxes on the left, always true, the same, reachable in k steps, with arrows into one box, is the formula satisfiable, and from it to four boxes: clauses and search, decision diagrams, and-inverter graphs and word-level bit-vectors, with the book&#x27;s tools attached to two of them">
+<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#7FA3C0"/></marker><marker id="ahj" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#5B3E8E"/></marker><marker id="ahd" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#1B4F72"/></marker><marker id="ahc" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#B7791F"/></marker><marker id="ahg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#1C1C1C"/></marker><pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="6" stroke="#CBD2D9" stroke-width="2"/></pattern></defs>
+<rect width="1000" height="500" fill="white"/>
+<text x="30" y="40.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="21" font-weight="700" text-anchor="start" fill="#1B4F72">Three questions, one question</text>
+<text x="30" y="64.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="400" text-anchor="start" fill="#1C1C1C">Each becomes a formula and the question whether some assignment makes it true.</text>
+<rect x="30.0" y="110.0" width="290.0" height="76.0" rx="8" fill="#F4F6F8" stroke="#1B4F72" stroke-width="2"/>
+<text x="175.0" y="145.6" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" text-anchor="middle" fill="#1C1C1C">Is it always true?</text>
+<text x="175.0" y="164.2" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="400" text-anchor="middle" fill="#7FA3C0">validity: no input falsifies F</text>
+<rect x="30.0" y="230.0" width="290.0" height="76.0" rx="8" fill="#F4F6F8" stroke="#1B4F72" stroke-width="2"/>
+<text x="175.0" y="265.6" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" text-anchor="middle" fill="#1C1C1C">Are these two the same?</text>
+<text x="175.0" y="284.2" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="400" text-anchor="middle" fill="#7FA3C0">equivalence: no input tells them apart</text>
+<rect x="30.0" y="350.0" width="290.0" height="76.0" rx="8" fill="#F4F6F8" stroke="#1B4F72" stroke-width="2"/>
+<text x="175.0" y="385.6" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" text-anchor="middle" fill="#1C1C1C">Can it get there in k steps?</text>
+<text x="175.0" y="404.2" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="400" text-anchor="middle" fill="#7FA3C0">reachability: a trace of length k</text>
+<rect x="400.0" y="210.0" width="190.0" height="116.0" rx="8" fill="#DCE9F3" stroke="#1B4F72" stroke-width="2"/>
+<text x="495.0" y="263.6" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" text-anchor="middle" fill="#1C1C1C">Is this formula</text>
+<text x="495.0" y="283.6" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" text-anchor="middle" fill="#1C1C1C">satisfiable?</text>
+<text x="495.0" y="350.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="400" text-anchor="middle" fill="#7FA3C0">yes: an assignment,</text>
+<text x="495.0" y="367.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="400" text-anchor="middle" fill="#7FA3C0">which is the counterexample</text>
+<text x="495.0" y="384.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="400" text-anchor="middle" fill="#7FA3C0">no: there is none</text>
+<path d="M320.0,148.0 L400.0,232.0" fill="none" stroke="#1B4F72" stroke-width="2.2" marker-end="url(#ahd)"/>
+<path d="M320.0,268.0 L400.0,268.0" fill="none" stroke="#1B4F72" stroke-width="2.2" marker-end="url(#ahd)"/>
+<path d="M320.0,388.0 L400.0,304.0" fill="none" stroke="#1B4F72" stroke-width="2.2" marker-end="url(#ahd)"/>
+<rect x="680.0" y="100.0" width="290.0" height="70.0" rx="8" fill="white" stroke="#1B4F72" stroke-width="2"/>
+<text x="825.0" y="132.6" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" text-anchor="middle" fill="#1C1C1C">Clauses and search</text>
+<text x="825.0" y="151.2" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="400" text-anchor="middle" fill="#7FA3C0">CNF, a SAT solver</text>
+<path d="M590.0,228.1 L680.0,135.0" fill="none" stroke="#1B4F72" stroke-width="2.2" marker-end="url(#ahd)"/>
+<text x="970.0" y="185.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="600" text-anchor="end" fill="#B7791F">the chapter&#x27;s solvers</text>
+<rect x="680.0" y="196.0" width="290.0" height="70.0" rx="8" fill="white" stroke="#1B4F72" stroke-width="2"/>
+<text x="825.0" y="228.6" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" text-anchor="middle" fill="#1C1C1C">Decision diagrams</text>
+<text x="825.0" y="247.2" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="400" text-anchor="middle" fill="#7FA3C0">a canonical form: BDD</text>
+<path d="M590.0,256.9 L680.0,231.0" fill="none" stroke="#1B4F72" stroke-width="2.2" marker-end="url(#ahd)"/>
+<text x="970.0" y="281.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="600" text-anchor="end" fill="#B7791F">the chapter&#x27;s package</text>
+<rect x="680.0" y="292.0" width="290.0" height="70.0" rx="8" fill="white" stroke="#1B4F72" stroke-width="2"/>
+<text x="825.0" y="324.6" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" text-anchor="middle" fill="#1C1C1C">And-inverter graphs</text>
+<text x="825.0" y="343.2" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="400" text-anchor="middle" fill="#7FA3C0">the circuit itself: AIG</text>
+<path d="M590.0,285.7 L680.0,327.0" fill="none" stroke="#1B4F72" stroke-width="2.2" marker-end="url(#ahd)"/>
+<text x="970.0" y="377.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="600" text-anchor="end" fill="#B7791F">InFormal: Btor2, then AIGER</text>
+<rect x="680.0" y="388.0" width="290.0" height="70.0" rx="8" fill="#F4F6F8" stroke="#1B4F72" stroke-width="2"/>
+<text x="825.0" y="420.6" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" text-anchor="middle" fill="#1C1C1C">Words, not bits</text>
+<text x="825.0" y="439.2" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="400" text-anchor="middle" fill="#7FA3C0">bit-vector SMT</text>
+<path d="M590.0,314.5 L680.0,423.0" fill="none" stroke="#1B4F72" stroke-width="2.2" marker-end="url(#ahd)"/>
+<text x="970.0" y="473.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="600" text-anchor="end" fill="#B7791F">Verilator randomize(): z3</text>
+<text x="30.0" y="478.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="400" text-anchor="start" fill="#7FA3C0">amber: where this book&#x27;s tools use each representation, as measured in its examples</text>
+</svg>

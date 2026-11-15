@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 430" width="1000" height="430" role="img" aria-label="Bar chart over bounds 0 to 16. The bars grow from 1 conflict to 185 at bound 15, all unsatisfiable, and the last bar, bound 16, is satisfiable with 195 conflicts; the formula grows by 105 variables per bound to 1,795">
+<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#7FA3C0"/></marker><marker id="ahj" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#5B3E8E"/></marker><marker id="ahd" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#1B4F72"/></marker><marker id="ahc" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#B7791F"/></marker><marker id="ahg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#1C1C1C"/></marker><pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="6" stroke="#CBD2D9" stroke-width="2"/></pattern></defs>
+<rect width="1000" height="430" fill="white"/>
+<text x="30" y="40.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="21" font-weight="700" text-anchor="start" fill="#1B4F72">Sixteen questions with the answer no, then a yes</text>
+<text x="30" y="64.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="400" text-anchor="start" fill="#1C1C1C">The first chapter&#x27;s FIFO, unrolled: conflicts of cdcl.py at each bound, and the size of the formula it was given.</text>
+<rect x="80.0" y="120.0" width="860.0" height="230.0" rx="0" fill="white" stroke="#CBD2D9" stroke-width="1"/>
+<line x1="80.0" y1="350.0" x2="940.0" y2="350.0" stroke="#F4F6F8" stroke-width="1"/>
+<text x="72.0" y="354.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="400" text-anchor="end" fill="#1C1C1C">0</text>
+<line x1="80.0" y1="292.5" x2="940.0" y2="292.5" stroke="#F4F6F8" stroke-width="1"/>
+<text x="72.0" y="296.5" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="400" text-anchor="end" fill="#1C1C1C">50</text>
+<line x1="80.0" y1="235.0" x2="940.0" y2="235.0" stroke="#F4F6F8" stroke-width="1"/>
+<text x="72.0" y="239.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="400" text-anchor="end" fill="#1C1C1C">100</text>
+<line x1="80.0" y1="177.5" x2="940.0" y2="177.5" stroke="#F4F6F8" stroke-width="1"/>
+<text x="72.0" y="181.5" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="400" text-anchor="end" fill="#1C1C1C">150</text>
+<line x1="80.0" y1="120.0" x2="940.0" y2="120.0" stroke="#F4F6F8" stroke-width="1"/>
+<text x="72.0" y="124.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="400" text-anchor="end" fill="#1C1C1C">200</text>
+<text x="80.0" y="110.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="400" text-anchor="start" fill="#7FA3C0">conflicts</text>
+<rect x="98.6" y="348.9" width="32.0" height="1.1" rx="0" fill="#DCE9F3" stroke="#7FA3C0" stroke-width="1"/>
+<text x="114.6" y="342.9" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="600" text-anchor="middle" fill="#1C1C1C">1</text>
+<text x="114.6" y="368.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="400" text-anchor="middle" fill="#1C1C1C">0</text>
+<text x="114.6" y="388.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="10.5" font-weight="400" text-anchor="middle" fill="#7FA3C0">115</text>
+<rect x="148.0" y="348.9" width="32.0" height="1.1" rx="0" fill="#DCE9F3" stroke="#7FA3C0" stroke-width="1"/>
+<text x="164.0" y="342.9" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="600" text-anchor="middle" fill="#1C1C1C">1</text>
+<text x="164.0" y="368.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="400" text-anchor="middle" fill="#1C1C1C">1</text>
+<text x="164.0" y="388.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="10.5" font-weight="400" text-anchor="middle" fill="#7FA3C0">220</text>
+<rect x="197.4" y="348.9" width="32.0" height="1.1" rx="0" fill="#DCE9F3" stroke="#7FA3C0" stroke-width="1"/>
+<text x="213.4" y="342.9" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="600" text-anchor="middle" fill="#1C1C1C">1</text>
+<text x="213.4" y="368.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="400" text-anchor="middle" fill="#1C1C1C">2</text>
+<text x="213.4" y="388.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="10.5" font-weight="400" text-anchor="middle" fill="#7FA3C0">325</text>
+<rect x="246.9" y="348.9" width="32.0" height="1.1" rx="0" fill="#DCE9F3" stroke="#7FA3C0" stroke-width="1"/>
+<text x="262.9" y="342.9" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="600" text-anchor="middle" fill="#1C1C1C">1</text>
+<text x="262.9" y="368.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="400" text-anchor="middle" fill="#1C1C1C">3</text>
+<text x="262.9" y="388.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="10.5" font-weight="400" text-anchor="middle" fill="#7FA3C0">430</text>
+<rect x="296.3" y="347.7" width="32.0" height="2.3" rx="0" fill="#DCE9F3" stroke="#7FA3C0" stroke-width="1"/>
+<text x="312.3" y="341.7" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="600" text-anchor="middle" fill="#1C1C1C">2</text>
+<text x="312.3" y="368.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="400" text-anchor="middle" fill="#1C1C1C">4</text>
+<text x="312.3" y="388.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="10.5" font-weight="400" text-anchor="middle" fill="#7FA3C0">535</text>
+<rect x="345.7" y="344.2" width="32.0" height="5.8" rx="0" fill="#DCE9F3" stroke="#7FA3C0" stroke-width="1"/>
+<text x="361.7" y="338.2" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="600" text-anchor="middle" fill="#1C1C1C">5</text>
+<text x="361.7" y="368.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="400" text-anchor="middle" fill="#1C1C1C">5</text>
+<text x="361.7" y="388.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="10.5" font-weight="400" text-anchor="middle" fill="#7FA3C0">640</text>
+<rect x="395.1" y="335.1" width="32.0" height="14.9" rx="0" fill="#DCE9F3" stroke="#7FA3C0" stroke-width="1"/>
+<text x="411.1" y="329.1" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="600" text-anchor="middle" fill="#1C1C1C">13</text>
+<text x="411.1" y="368.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="400" text-anchor="middle" fill="#1C1C1C">6</text>
+<text x="411.1" y="388.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="10.5" font-weight="400" text-anchor="middle" fill="#7FA3C0">745</text>
+<rect x="444.6" y="323.6" width="32.0" height="26.4" rx="0" fill="#DCE9F3" stroke="#7FA3C0" stroke-width="1"/>
+<text x="460.6" y="317.6" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="600" text-anchor="middle" fill="#1C1C1C">23</text>
+<text x="460.6" y="368.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="400" text-anchor="middle" fill="#1C1C1C">7</text>
+<text x="460.6" y="388.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="10.5" font-weight="400" text-anchor="middle" fill="#7FA3C0">850</text>
+<rect x="494.0" y="312.1" width="32.0" height="37.9" rx="0" fill="#DCE9F3" stroke="#7FA3C0" stroke-width="1"/>
+<text x="510.0" y="306.1" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="600" text-anchor="middle" fill="#1C1C1C">33</text>
+<text x="510.0" y="368.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="400" text-anchor="middle" fill="#1C1C1C">8</text>
+<text x="510.0" y="388.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="10.5" font-weight="400" text-anchor="middle" fill="#7FA3C0">955</text>
+<rect x="543.4" y="299.4" width="32.0" height="50.6" rx="0" fill="#DCE9F3" stroke="#7FA3C0" stroke-width="1"/>
+<text x="559.4" y="293.4" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="600" text-anchor="middle" fill="#1C1C1C">44</text>
+<text x="559.4" y="368.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="400" text-anchor="middle" fill="#1C1C1C">9</text>
+<text x="559.4" y="388.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="10.5" font-weight="400" text-anchor="middle" fill="#7FA3C0">1,060</text>
+<rect x="592.9" y="283.3" width="32.0" height="66.7" rx="0" fill="#DCE9F3" stroke="#7FA3C0" stroke-width="1"/>
+<text x="608.9" y="277.3" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="600" text-anchor="middle" fill="#1C1C1C">58</text>
+<text x="608.9" y="368.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="400" text-anchor="middle" fill="#1C1C1C">10</text>
+<text x="608.9" y="388.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="10.5" font-weight="400" text-anchor="middle" fill="#7FA3C0">1,165</text>
+<rect x="642.3" y="262.6" width="32.0" height="87.4" rx="0" fill="#DCE9F3" stroke="#7FA3C0" stroke-width="1"/>
+<text x="658.3" y="256.6" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="600" text-anchor="middle" fill="#1C1C1C">76</text>
+<text x="658.3" y="368.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="400" text-anchor="middle" fill="#1C1C1C">11</text>
+<text x="658.3" y="388.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="10.5" font-weight="400" text-anchor="middle" fill="#7FA3C0">1,270</text>
+<rect x="691.7" y="236.2" width="32.0" height="113.8" rx="0" fill="#DCE9F3" stroke="#7FA3C0" stroke-width="1"/>
+<text x="707.7" y="230.2" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="600" text-anchor="middle" fill="#1C1C1C">99</text>
+<text x="707.7" y="368.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="400" text-anchor="middle" fill="#1C1C1C">12</text>
+<text x="707.7" y="388.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="10.5" font-weight="400" text-anchor="middle" fill="#7FA3C0">1,375</text>
+<rect x="741.1" y="207.4" width="32.0" height="142.6" rx="0" fill="#DCE9F3" stroke="#7FA3C0" stroke-width="1"/>
+<text x="757.1" y="201.4" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="600" text-anchor="middle" fill="#1C1C1C">124</text>
+<text x="757.1" y="368.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="400" text-anchor="middle" fill="#1C1C1C">13</text>
+<text x="757.1" y="388.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="10.5" font-weight="400" text-anchor="middle" fill="#7FA3C0">1,480</text>
+<rect x="790.6" y="175.2" width="32.0" height="174.8" rx="0" fill="#DCE9F3" stroke="#7FA3C0" stroke-width="1"/>
+<text x="806.6" y="169.2" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="600" text-anchor="middle" fill="#1C1C1C">152</text>
+<text x="806.6" y="368.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="400" text-anchor="middle" fill="#1C1C1C">14</text>
+<text x="806.6" y="388.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="10.5" font-weight="400" text-anchor="middle" fill="#7FA3C0">1,585</text>
+<rect x="840.0" y="137.2" width="32.0" height="212.8" rx="0" fill="#DCE9F3" stroke="#7FA3C0" stroke-width="1"/>
+<text x="856.0" y="131.2" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="600" text-anchor="middle" fill="#1C1C1C">185</text>
+<text x="856.0" y="368.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="400" text-anchor="middle" fill="#1C1C1C">15</text>
+<text x="856.0" y="388.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="10.5" font-weight="400" text-anchor="middle" fill="#7FA3C0">1,690</text>
+<rect x="889.4" y="125.8" width="32.0" height="224.2" rx="0" fill="#FBF1DC" stroke="#B7791F" stroke-width="2.2"/>
+<text x="905.4" y="119.8" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="600" text-anchor="middle" fill="#1C1C1C">195</text>
+<text x="905.4" y="368.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="400" text-anchor="middle" fill="#1C1C1C">16</text>
+<text x="905.4" y="388.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="10.5" font-weight="400" text-anchor="middle" fill="#7FA3C0">1,795</text>
+<text x="72.0" y="368.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" text-anchor="end" fill="#7FA3C0">bound</text>
+<text x="72.0" y="388.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" text-anchor="end" fill="#7FA3C0">variables</text>
+<text x="80.0" y="415.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="400" text-anchor="start" fill="#7FA3C0">blue: unsatisfiable, no trace of that length ends in a violation. Amber: satisfiable, and the assignment is the trace.</text>
+</svg>

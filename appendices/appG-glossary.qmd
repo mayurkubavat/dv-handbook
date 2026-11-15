@@ -9,6 +9,12 @@ The glossary grows with the book. It holds only terms that a written chapter def
 Agent
 : A loop that decides which tools to call and in what order, as distinct from the tools themselves, which are deterministic programs that can be tested on their own. See @sec-appI.
 
+AIGER
+: The exchange format for and-inverter graphs: a header of counts, then inputs, latches, outputs and AND gates as lines of literals, a literal being twice a variable's index plus one if inverted. See @sec-ch17-aig.
+
+And-inverter graph (AIG)
+: A circuit written with two-input AND gates only, inversion being a mark on an edge. Not canonical, but linear in the circuit and three clauses for each gate away from CNF. See @sec-ch17-aig.
+
 Antecedent
 : The left side of an implication in an assertion: the condition that says on which ticks the rule applies. The right side, the consequent, is what must then hold. See @sec-ch09-properties.
 
@@ -33,11 +39,32 @@ Beat
 Bin
 : The unit a coverpoint counts. Each bin names a value, a set of values, or a sequence of values, and the coverage percentage is computed over bins. See @sec-ch08-bins.
 
+Binary decision diagram (BDD)
+: A graph in which each node tests one variable and has a low and a high successor, ending in the terminals 0 and 1. Ordered and reduced, it is a canonical form of a function for a fixed variable order. See @sec-ch17-bdd.
+
 Bind
 : The SystemVerilog statement that instantiates one module inside another from outside the target's source, used to attach a checker to RTL without editing it. See @sec-ch09-where.
 
+Bit-blasting
+: Reducing a formula over machine words to a propositional one by replacing each word operator with a circuit for it and encoding the circuit as clauses. See @sec-ch17-smt.
+
+Bit-vector
+: A fixed-width machine word as a solver's theory defines it: arithmetic modulo a power of two, no X or Z, and signedness carried by the operator, not the value. See @sec-ch17-smt.
+
+Bound
+: The number of transitions in an unrolling; bound $k$ has $k + 1$ states. Tools differ by one in what they call zero. See @sec-ch17-example.
+
+Bounded model checking (BMC)
+: Asking, for one bound at a time, whether a trace of that length from an initial state ends in a bad state, as one satisfiability question. Finding nothing up to a bound is not a proof. See @sec-ch17-example.
+
+Btor2
+: A line-based format for word-level models of sequential designs, with `state`, `init`, `next`, `bad` and `constraint` lines; the form in which this book's formal tool holds a design. See @sec-ch17-aig.
+
 Class
 : A SystemVerilog type with data members and methods. Its instances are objects, created by `new` and reached through handles. See @sec-ch05-classes.
+
+Clause
+: An *or* of literals. It is violated in exactly one way, with every literal false. See @sec-ch17-logic.
 
 Clock
 : A periodic binary signal that marks the sampling point of the sequential elements it drives, characterized by a period, a duty cycle and a phase. See *primary clock*, *derived clock* and @sec-ch03-clocks.
@@ -56,6 +83,15 @@ Code coverage
 
 Combinational cloud
 : The logic between registers. It has no memory, and its output is a function of its inputs alone. See @sec-ch03-rtl.
+
+Conflict
+: In a SAT solver, a clause whose literals are all false under the current assignment. See @sec-ch17-dpll.
+
+Conflict-driven clause learning (CDCL)
+: Backtracking search that, at each conflict, derives a new clause from the reasons for the conflict, adds it to the formula and jumps back to the level where that clause first forces a value. See @sec-ch17-cdcl.
+
+Conjunctive normal form (CNF)
+: A formula written as an *and* of clauses; the input form of a SAT solver. See @sec-ch17-logic.
 
 Constraint block
 : A named set of expressions over a class's random variables, all of which `randomize()` must satisfy at once. See @sec-ch07-constraints.
@@ -86,8 +122,17 @@ Delta cycle
 Derived clock
 : Any signal produced from another clock by the clock network: selected, blended, gated or shaped. See @sec-ch03-clocks.
 
+DIMACS CNF
+: The text format SAT solvers read: a header `p cnf` with the numbers of variables and clauses, then one clause to a line as signed integers ended by 0. See @sec-ch17-tseitin.
+
+DPLL
+: Search for a satisfying assignment by unit propagation, a decision when propagation stops, and backtracking on a conflict. See @sec-ch17-dpll.
+
 Dynamic array
 : A SystemVerilog array with an integer index and a size decided at run time. See @sec-ch05-aggregates.
+
+Equisatisfiable
+: Of two formulas: both satisfiable or both not. Weaker than equivalent, and what an encoding with extra variables preserves. See @sec-ch17-tseitin.
 
 Equivalence checking
 : Formal comparison of two descriptions of the same design, typically RTL and the netlist synthesized from it, to show that they compute the same function. See @sec-ch01-definitions.
@@ -133,11 +178,20 @@ Interface class
 Iteration within a timestep
 : One pass of the simulator's loop at a single value of simulation time. Many passes may run before time advances. Also called a *delta cycle*. See @sec-ch04-iteration.
 
+Learned clause
+: A clause derived by resolution at a conflict and added to the formula. It is implied by the formula, so it changes no answer; it records a fact the search will not have to find again. See @sec-ch17-cdcl.
+
+Literal
+: A variable or its negation. In the AIGER format the word also names the integer that encodes a signal and its inversion. See @sec-ch17-logic.
+
 Liveness property
 : A property that says something good eventually happens. No finite prefix of a run refutes it, so a simulation cannot fail it until a bound is added. See @sec-ch09-ltl.
 
 Metastability
 : Indecision in a flip-flop about whether its output should be zero or one, caused by a data change too close to the sampling edge. The chance that it persists falls exponentially with time but never reaches zero. See @sec-ch03-metastability.
+
+Miter
+: A circuit that feeds two circuits the same inputs and ORs together the XORs of their corresponding outputs. The two are equivalent exactly when the miter's output can never be 1. See @sec-ch17-dpll.
 
 Modport
 : A view of an interface: a list of which of its signals a module connected through that view may drive and which it may only read. See @sec-ch05-interfaces.
@@ -218,11 +272,23 @@ Sample (generative model)
 Sampled-value function
 : `$past` and its relatives `$rose`, `$fell`, `$stable` and `$changed`: functions that compare a signal's value at this clock tick with its value at an earlier one. See @sec-ch09-properties.
 
+SAT solver
+: A program that decides whether a formula in conjunctive normal form is satisfiable, and returns a satisfying assignment when it is. See @sec-ch17-logic.
+
+Satisfiability modulo theories (SMT)
+: Satisfiability for formulas whose atoms are statements in a theory, such as comparisons of fixed-width words, not bare propositional variables. See @sec-ch17-smt.
+
+Satisfiable
+: Of a formula: true under at least one assignment. *Unsatisfiable* means true under none. See @sec-ch17-logic.
+
 Seed
 : The value that initializes a simulation's random number generation, so that a random test can be run again. See @sec-ch07-seeds.
 
 Sequence (assertion)
 : A regular expression over clock ticks, built from boolean expressions with delays and repetition; the left side of an implication in the concurrent-assertion language. See @sec-ch09-sequences.
+
+Structural hashing
+: Keeping a table of the AND gates of a graph, keyed on their inputs, so that a gate with the same inputs is built once. See @sec-ch17-aig.
 
 Synchronizer
 : A structure that carries a signal safely into another clock domain. The common two-flop synchronizer samples the signal and waits a clock period before sampling it again, trading metastability for an uncertainty of one cycle in latency. It synchronizes control, not data. See @sec-ch03-cdc.
@@ -242,11 +308,20 @@ Tool (agent tool layer)
 Trace
 : The value of every signal at every clock tick of one run, from reset until the run stops. See @sec-ch09-what.
 
+Transition system
+: A sequential design as a model checker sees it: its initial states, the relation between a state and the next, and the states that are bad. See @sec-ch17-example.
+
+Tseitin encoding
+: The translation of a circuit to clauses that gives every wire a variable and every gate the clauses defining its output. Linear in the circuit; equisatisfiable with it, not equivalent. See @sec-ch17-tseitin.
+
 Two-state
 : Having only the values zero and one. A two-state variable cannot hold an unknown; assigning X to it stores 0. Compare *four-state*; see @sec-ch04-fourstate and @sec-ch05-types.
 
 Undetermined
 : A formal tool's report that it neither proved nor refuted a property within its limits. It says nothing about the design. See @sec-ch09-formal.
+
+Unit propagation
+: The inference that a clause with all literals false but one, and that one unassigned, forces its last literal true; repeated until nothing is forced or a clause is violated. See @sec-ch17-dpll.
 
 Unknown (X)
 : A simulator's statement that it does not know which value a bit has. It is not a value hardware can hold. See @sec-ch04-fourstate.
@@ -254,14 +329,23 @@ Unknown (X)
 Unreachable (cover)
 : A formal tool's proof that no trace of the design, under the assumptions in force, makes a cover's condition true. See @sec-ch09-vacuity.
 
+Unrolling
+: Copying a design's combinational logic once for each cycle and connecting each copy's next-state outputs to the next copy's state inputs, so that a question about $k$ cycles is one formula. See @sec-ch17-example.
+
 Vacuous pass
 : A pass of an assertion whose antecedent was never true, so that nothing was checked; in a formal tool, a proof of that kind. Detected by a cover of the antecedent that reads zero or is unreachable. See @sec-ch09-vacuity.
+
+Valid (formula)
+: True under every assignment. A formula is valid exactly when its negation is unsatisfiable. See @sec-ch17-logic.
 
 Valid/ready handshake
 : A two-wire contract in which the sender raises `valid` to offer a beat and the receiver raises `ready` to accept one. The beat transfers only in a cycle where both are high. See @sec-ch03-pipelines.
 
 Validation
 : The question of whether the specification is the right one for the product and the world it must work in. Compare *verification* and *test*; see @sec-ch01-definitions.
+
+Variable order
+: The order in which a binary decision diagram tests its variables. It fixes the diagram's size, which for an adder's carry is linear in one order and exponential in another. See @sec-ch17-bdd.
 
 Verification
 : The question of whether the design does what the specification says, and nothing else, answered with evidence: executed tests, coverage data and proofs. See @sec-ch01-definitions.

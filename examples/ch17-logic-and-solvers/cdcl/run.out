@@ -1,0 +1,49 @@
+1. one conflict of cdcl.py on the 3-bit adder miter
+   variables: a0 a1 a2 = 1 2 3; b0 b1 b2 = 4 5 6; gates:
+     13 = or(11, 12)
+     27 = or(23, 26)
+     14 = xor(3, 6)
+     15 = xor(14, 13)
+     28 = xor(6, 27)
+     29 = xor(3, 28)
+     37 = xor(15, 29)
+   conflict 20, at decision level 2; the trail at this level:
+        5   decision
+        9   (2 -5 9)
+      -36   (2 -5 8 20 -36)   learned at conflict 16
+       21   (-5 20 21)
+       10   (8 -9 10)
+       37   (35 36 37 38 -39)
+       22   (2 -21 22)
+       -6   (3 -6 13 27 -37)   learned at conflict 11
+      -14   (3 6 -14)
+      -28   (6 27 -28)
+      -15   (13 14 -15)
+      -29   (3 28 -29)
+   falsified clause: (15 29 -37)
+   resolve on 29 with (3 28 -29): (3 15 28 -37)
+   resolve on 15 with (13 14 -15): (3 13 14 28 -37)
+   resolve on 28 with (6 27 -28): (3 6 13 14 27 -37)
+   resolve on 14 with (3 6 -14): (3 6 13 27 -37)
+   resolve on  6 with (3 -6 13 27 -37): (3 13 27 -37)
+   learned clause: (3 13 27 -37); first unique implication point: 37
+   levels of its other literals: 3 at 1, 13 at 1, 27 at 1
+   backjump to level 1, where the clause forces -37
+   check: the two circuits alone, with the learned clause negated: UNSATISFIABLE
+2. the adder miter: decisions of dpll.py, conflicts of the others
+    N  variables  clauses      dpll   cdcl  cdcl_vsids
+    2         24       71        15      12          13
+    3         39      116        63      27          35
+    4         54      161       255      54          84
+    5         69      206     1,023     106         116
+    6         84      251     4,095     208         229
+    7         99      296    16,383     410         310
+    8        114      341         -     812         673
+   10        144      431         -   3,216         585
+   12        174      521         -  12,820         819
+   16        234      701         -       -       1,254
+   32        474     1421         -       -       2,410
+   UNSATISFIABLE in every cell; - means not run at that width
+3. the miter with one gate wrong (satisfiable)
+   N =  8: dpll.py 263 decisions and 255 conflicts; cdcl.py 23 and 15
+   N = 12: dpll.py 4,107 decisions and 4,095 conflicts; cdcl.py 35 and 23

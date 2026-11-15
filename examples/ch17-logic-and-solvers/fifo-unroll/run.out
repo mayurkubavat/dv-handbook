@@ -1,0 +1,51 @@
+1. the counter: counter.aag
+model: inputs 1, latches 3, ANDs 19
+bound  variables  clauses  result  decisions  conflicts
+    0         21       59  UNSAT           0          1
+    1         41      116  UNSAT           0          1
+    2         61      173  UNSAT           0          1
+    3         81      230  UNSAT           0          1
+    4        101      287  UNSAT           2          2
+    5        121      344  UNSAT           6          6
+    6        141      401  SAT             5          0
+2. the FIFO: fifo_bmc.aag
+model: inputs 3, latches 10, ANDs 102
+bound  variables  clauses  result  decisions  conflicts
+    0        115      309  UNSAT           0          1
+    1        220      616  UNSAT           0          1
+    2        325      923  UNSAT           0          1
+    3        430     1230  UNSAT           0          1
+    4        535     1537  UNSAT          12          2
+    5        640     1844  UNSAT          28          5
+    6        745     2151  UNSAT          37         13
+    7        850     2458  UNSAT          62         23
+    8        955     2765  UNSAT          74         33
+    9       1060     3072  UNSAT          87         44
+   10       1165     3379  UNSAT         120         58
+   11       1270     3686  UNSAT         142         76
+   12       1375     3993  UNSAT         169         99
+   13       1480     4300  UNSAT         198        124
+   14       1585     4607  UNSAT         230        152
+   15       1690     4914  UNSAT         267        185
+   16       1795     5221  SAT           286        195
+each further frame adds 105 variables and 307 clauses
+3. the counterexample, read from the satisfying assignment
+frame  rst_n  count  occ
+    0      0      -    -
+    1      1      0    0
+    2      1      1    1
+    3      1      2    2
+    4      1      3    3
+    5      1      4    4
+    6      1      5    5
+    7      1      6    6
+    8      1      7    7
+    9      1      8    8
+   10      1      9    9
+   11      1     10   10
+   12      1     11   11
+   13      1     12   12
+   14      1     13   13
+   15      1     14   14
+   16      1     15   15
+frame 16: count is 15, so full is high, and occ is 15, not 16

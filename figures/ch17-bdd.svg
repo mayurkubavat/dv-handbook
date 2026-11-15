@@ -1,0 +1,116 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 560" width="1000" height="560" role="img" aria-label="Two decision diagrams of the same function. With the operand bits interleaved the diagram is a narrow ladder of 8 nodes; with all of a before all of b it fans out to four nodes at a2 and four at b0, 14 nodes in all">
+<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#7FA3C0"/></marker><marker id="ahj" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#5B3E8E"/></marker><marker id="ahd" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#1B4F72"/></marker><marker id="ahc" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#B7791F"/></marker><marker id="ahg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#1C1C1C"/></marker><pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="6" stroke="#CBD2D9" stroke-width="2"/></pattern></defs>
+<rect width="1000" height="560" fill="white"/>
+<text x="30" y="40.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="21" font-weight="700" text-anchor="start" fill="#1B4F72">One function, two variable orders</text>
+<text x="30" y="64.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="400" text-anchor="start" fill="#1C1C1C">The carry out of a 3-bit adder. Solid edge: the variable is 1; dashed: 0.</text>
+<text x="68.0" y="130.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="14" font-weight="700" text-anchor="start" fill="#1C1C1C">a0</text>
+<text x="68.0" y="192.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="14" font-weight="700" text-anchor="start" fill="#1C1C1C">b0</text>
+<text x="68.0" y="254.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="14" font-weight="700" text-anchor="start" fill="#1C1C1C">a1</text>
+<text x="68.0" y="316.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="14" font-weight="700" text-anchor="start" fill="#1C1C1C">b1</text>
+<text x="68.0" y="378.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="14" font-weight="700" text-anchor="start" fill="#1C1C1C">a2</text>
+<text x="68.0" y="440.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="14" font-weight="700" text-anchor="start" fill="#1C1C1C">b2</text>
+<line x1="275.0" y1="125.0" x2="275.0" y2="187.0" stroke="#1B4F72" stroke-width="1.7"/>
+<line x1="275.0" y1="125.0" x2="357.5" y2="249.0" stroke="#7FA3C0" stroke-width="1.7" stroke-dasharray="5 4"/>
+<line x1="275.0" y1="435.0" x2="209.0" y2="505.0" stroke="#1B4F72" stroke-width="1.7"/>
+<line x1="275.0" y1="435.0" x2="341.0" y2="505.0" stroke="#7FA3C0" stroke-width="1.7" stroke-dasharray="5 4"/>
+<line x1="357.5" y1="373.0" x2="275.0" y2="435.0" stroke="#1B4F72" stroke-width="1.7"/>
+<line x1="357.5" y1="373.0" x2="341.0" y2="505.0" stroke="#7FA3C0" stroke-width="1.7" stroke-dasharray="5 4"/>
+<line x1="192.5" y1="373.0" x2="209.0" y2="505.0" stroke="#1B4F72" stroke-width="1.7"/>
+<line x1="192.5" y1="373.0" x2="275.0" y2="435.0" stroke="#7FA3C0" stroke-width="1.7" stroke-dasharray="5 4"/>
+<line x1="275.0" y1="311.0" x2="192.5" y2="373.0" stroke="#1B4F72" stroke-width="1.7"/>
+<line x1="275.0" y1="311.0" x2="357.5" y2="373.0" stroke="#7FA3C0" stroke-width="1.7" stroke-dasharray="5 4"/>
+<line x1="357.5" y1="249.0" x2="275.0" y2="311.0" stroke="#1B4F72" stroke-width="1.7"/>
+<line x1="357.5" y1="249.0" x2="357.5" y2="373.0" stroke="#7FA3C0" stroke-width="1.7" stroke-dasharray="5 4"/>
+<line x1="192.5" y1="249.0" x2="192.5" y2="373.0" stroke="#1B4F72" stroke-width="1.7"/>
+<line x1="192.5" y1="249.0" x2="275.0" y2="311.0" stroke="#7FA3C0" stroke-width="1.7" stroke-dasharray="5 4"/>
+<line x1="275.0" y1="187.0" x2="192.5" y2="249.0" stroke="#1B4F72" stroke-width="1.7"/>
+<line x1="275.0" y1="187.0" x2="357.5" y2="249.0" stroke="#7FA3C0" stroke-width="1.7" stroke-dasharray="5 4"/>
+<circle cx="275.0" cy="125.0" r="13" fill="#DCE9F3" stroke="#123A56" stroke-width="2"/>
+<text x="275.0" y="129.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="11" font-weight="600" text-anchor="middle" fill="#1C1C1C">a0</text>
+<circle cx="275.0" cy="435.0" r="13" fill="#DCE9F3" stroke="#123A56" stroke-width="2"/>
+<text x="275.0" y="439.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="11" font-weight="600" text-anchor="middle" fill="#1C1C1C">b2</text>
+<circle cx="357.5" cy="373.0" r="13" fill="#DCE9F3" stroke="#123A56" stroke-width="2"/>
+<text x="357.5" y="377.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="11" font-weight="600" text-anchor="middle" fill="#1C1C1C">a2</text>
+<circle cx="192.5" cy="373.0" r="13" fill="#DCE9F3" stroke="#123A56" stroke-width="2"/>
+<text x="192.5" y="377.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="11" font-weight="600" text-anchor="middle" fill="#1C1C1C">a2</text>
+<circle cx="275.0" cy="311.0" r="13" fill="#DCE9F3" stroke="#123A56" stroke-width="2"/>
+<text x="275.0" y="315.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="11" font-weight="600" text-anchor="middle" fill="#1C1C1C">b1</text>
+<circle cx="357.5" cy="249.0" r="13" fill="#DCE9F3" stroke="#123A56" stroke-width="2"/>
+<text x="357.5" y="253.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="11" font-weight="600" text-anchor="middle" fill="#1C1C1C">a1</text>
+<circle cx="192.5" cy="249.0" r="13" fill="#DCE9F3" stroke="#123A56" stroke-width="2"/>
+<text x="192.5" y="253.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="11" font-weight="600" text-anchor="middle" fill="#1C1C1C">a1</text>
+<circle cx="275.0" cy="187.0" r="13" fill="#DCE9F3" stroke="#123A56" stroke-width="2"/>
+<text x="275.0" y="191.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="11" font-weight="600" text-anchor="middle" fill="#1C1C1C">b0</text>
+<rect x="326.0" y="491.0" width="30.0" height="28.0" rx="3" fill="white" stroke="#123A56" stroke-width="2"/>
+<text x="341.0" y="510.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="14" font-weight="700" text-anchor="middle" fill="#1C1C1C">0</text>
+<rect x="194.0" y="491.0" width="30.0" height="28.0" rx="3" fill="white" stroke="#123A56" stroke-width="2"/>
+<text x="209.0" y="510.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="14" font-weight="700" text-anchor="middle" fill="#1C1C1C">1</text>
+<text x="275.0" y="545.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="600" text-anchor="middle" fill="#1C1C1C">order a0 b0 a1 b1 a2 b2: 8 decision nodes</text>
+<text x="498.0" y="130.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="14" font-weight="700" text-anchor="start" fill="#1C1C1C">a0</text>
+<text x="498.0" y="192.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="14" font-weight="700" text-anchor="start" fill="#1C1C1C">a1</text>
+<text x="498.0" y="254.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="14" font-weight="700" text-anchor="start" fill="#1C1C1C">a2</text>
+<text x="498.0" y="316.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="14" font-weight="700" text-anchor="start" fill="#1C1C1C">b0</text>
+<text x="498.0" y="378.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="14" font-weight="700" text-anchor="start" fill="#1C1C1C">b1</text>
+<text x="498.0" y="440.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="14" font-weight="700" text-anchor="start" fill="#1C1C1C">b2</text>
+<line x1="665.0" y1="373.0" x2="690.0" y2="505.0" stroke="#1B4F72" stroke-width="1.7"/>
+<line x1="665.0" y1="373.0" x2="790.0" y2="435.0" stroke="#7FA3C0" stroke-width="1.7" stroke-dasharray="5 4"/>
+<line x1="852.5" y1="249.0" x2="665.0" y2="373.0" stroke="#1B4F72" stroke-width="1.7"/>
+<line x1="852.5" y1="249.0" x2="915.0" y2="373.0" stroke="#7FA3C0" stroke-width="1.7" stroke-dasharray="5 4"/>
+<line x1="915.0" y1="187.0" x2="852.5" y2="249.0" stroke="#1B4F72" stroke-width="1.7"/>
+<line x1="915.0" y1="187.0" x2="977.5" y2="249.0" stroke="#7FA3C0" stroke-width="1.7" stroke-dasharray="5 4"/>
+<line x1="852.5" y1="311.0" x2="665.0" y2="373.0" stroke="#1B4F72" stroke-width="1.7"/>
+<line x1="852.5" y1="311.0" x2="790.0" y2="435.0" stroke="#7FA3C0" stroke-width="1.7" stroke-dasharray="5 4"/>
+<line x1="727.5" y1="249.0" x2="852.5" y2="311.0" stroke="#1B4F72" stroke-width="1.7"/>
+<line x1="727.5" y1="249.0" x2="977.5" y2="311.0" stroke="#7FA3C0" stroke-width="1.7" stroke-dasharray="5 4"/>
+<line x1="602.5" y1="311.0" x2="690.0" y2="505.0" stroke="#1B4F72" stroke-width="1.7"/>
+<line x1="602.5" y1="311.0" x2="665.0" y2="373.0" stroke="#7FA3C0" stroke-width="1.7" stroke-dasharray="5 4"/>
+<line x1="602.5" y1="249.0" x2="602.5" y2="311.0" stroke="#1B4F72" stroke-width="1.7"/>
+<line x1="602.5" y1="249.0" x2="727.5" y2="311.0" stroke="#7FA3C0" stroke-width="1.7" stroke-dasharray="5 4"/>
+<line x1="665.0" y1="187.0" x2="602.5" y2="249.0" stroke="#1B4F72" stroke-width="1.7"/>
+<line x1="665.0" y1="187.0" x2="727.5" y2="249.0" stroke="#7FA3C0" stroke-width="1.7" stroke-dasharray="5 4"/>
+<line x1="790.0" y1="125.0" x2="665.0" y2="187.0" stroke="#1B4F72" stroke-width="1.7"/>
+<line x1="790.0" y1="125.0" x2="915.0" y2="187.0" stroke="#7FA3C0" stroke-width="1.7" stroke-dasharray="5 4"/>
+<line x1="790.0" y1="435.0" x2="690.0" y2="505.0" stroke="#1B4F72" stroke-width="1.7"/>
+<line x1="790.0" y1="435.0" x2="890.0" y2="505.0" stroke="#7FA3C0" stroke-width="1.7" stroke-dasharray="5 4"/>
+<line x1="977.5" y1="249.0" x2="790.0" y2="435.0" stroke="#1B4F72" stroke-width="1.7"/>
+<line x1="977.5" y1="249.0" x2="890.0" y2="505.0" stroke="#7FA3C0" stroke-width="1.7" stroke-dasharray="5 4"/>
+<line x1="915.0" y1="373.0" x2="790.0" y2="435.0" stroke="#1B4F72" stroke-width="1.7"/>
+<line x1="915.0" y1="373.0" x2="890.0" y2="505.0" stroke="#7FA3C0" stroke-width="1.7" stroke-dasharray="5 4"/>
+<line x1="977.5" y1="311.0" x2="915.0" y2="373.0" stroke="#1B4F72" stroke-width="1.7"/>
+<line x1="977.5" y1="311.0" x2="890.0" y2="505.0" stroke="#7FA3C0" stroke-width="1.7" stroke-dasharray="5 4"/>
+<line x1="727.5" y1="311.0" x2="790.0" y2="435.0" stroke="#1B4F72" stroke-width="1.7"/>
+<line x1="727.5" y1="311.0" x2="915.0" y2="373.0" stroke="#7FA3C0" stroke-width="1.7" stroke-dasharray="5 4"/>
+<circle cx="665.0" cy="373.0" r="13" fill="#DCE9F3" stroke="#123A56" stroke-width="2"/>
+<text x="665.0" y="377.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="11" font-weight="600" text-anchor="middle" fill="#1C1C1C">b1</text>
+<circle cx="852.5" cy="249.0" r="13" fill="#DCE9F3" stroke="#123A56" stroke-width="2"/>
+<text x="852.5" y="253.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="11" font-weight="600" text-anchor="middle" fill="#1C1C1C">a2</text>
+<circle cx="915.0" cy="187.0" r="13" fill="#DCE9F3" stroke="#123A56" stroke-width="2"/>
+<text x="915.0" y="191.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="11" font-weight="600" text-anchor="middle" fill="#1C1C1C">a1</text>
+<circle cx="852.5" cy="311.0" r="13" fill="#DCE9F3" stroke="#123A56" stroke-width="2"/>
+<text x="852.5" y="315.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="11" font-weight="600" text-anchor="middle" fill="#1C1C1C">b0</text>
+<circle cx="727.5" cy="249.0" r="13" fill="#DCE9F3" stroke="#123A56" stroke-width="2"/>
+<text x="727.5" y="253.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="11" font-weight="600" text-anchor="middle" fill="#1C1C1C">a2</text>
+<circle cx="602.5" cy="311.0" r="13" fill="#DCE9F3" stroke="#123A56" stroke-width="2"/>
+<text x="602.5" y="315.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="11" font-weight="600" text-anchor="middle" fill="#1C1C1C">b0</text>
+<circle cx="602.5" cy="249.0" r="13" fill="#DCE9F3" stroke="#123A56" stroke-width="2"/>
+<text x="602.5" y="253.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="11" font-weight="600" text-anchor="middle" fill="#1C1C1C">a2</text>
+<circle cx="665.0" cy="187.0" r="13" fill="#DCE9F3" stroke="#123A56" stroke-width="2"/>
+<text x="665.0" y="191.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="11" font-weight="600" text-anchor="middle" fill="#1C1C1C">a1</text>
+<circle cx="790.0" cy="125.0" r="13" fill="#DCE9F3" stroke="#123A56" stroke-width="2"/>
+<text x="790.0" y="129.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="11" font-weight="600" text-anchor="middle" fill="#1C1C1C">a0</text>
+<circle cx="790.0" cy="435.0" r="13" fill="#DCE9F3" stroke="#123A56" stroke-width="2"/>
+<text x="790.0" y="439.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="11" font-weight="600" text-anchor="middle" fill="#1C1C1C">b2</text>
+<circle cx="977.5" cy="249.0" r="13" fill="#DCE9F3" stroke="#123A56" stroke-width="2"/>
+<text x="977.5" y="253.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="11" font-weight="600" text-anchor="middle" fill="#1C1C1C">a2</text>
+<circle cx="915.0" cy="373.0" r="13" fill="#DCE9F3" stroke="#123A56" stroke-width="2"/>
+<text x="915.0" y="377.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="11" font-weight="600" text-anchor="middle" fill="#1C1C1C">b1</text>
+<circle cx="977.5" cy="311.0" r="13" fill="#DCE9F3" stroke="#123A56" stroke-width="2"/>
+<text x="977.5" y="315.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="11" font-weight="600" text-anchor="middle" fill="#1C1C1C">b0</text>
+<circle cx="727.5" cy="311.0" r="13" fill="#DCE9F3" stroke="#123A56" stroke-width="2"/>
+<text x="727.5" y="315.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="11" font-weight="600" text-anchor="middle" fill="#1C1C1C">b0</text>
+<rect x="875.0" y="491.0" width="30.0" height="28.0" rx="3" fill="white" stroke="#123A56" stroke-width="2"/>
+<text x="890.0" y="510.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="14" font-weight="700" text-anchor="middle" fill="#1C1C1C">0</text>
+<rect x="675.0" y="491.0" width="30.0" height="28.0" rx="3" fill="white" stroke="#123A56" stroke-width="2"/>
+<text x="690.0" y="510.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="14" font-weight="700" text-anchor="middle" fill="#1C1C1C">1</text>
+<text x="790.0" y="545.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="600" text-anchor="middle" fill="#1C1C1C">order a0 a1 a2 b0 b1 b2: 14 decision nodes</text>
+</svg>

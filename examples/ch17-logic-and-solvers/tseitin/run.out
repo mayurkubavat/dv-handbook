@@ -1,0 +1,10 @@
+hand encoding:    8 variables, 17 clauses
+builder encoding: 8 variables, 17 clauses, 5 gates
+numbering: 1=a 2=b 3=cin 4=p 5=sum 6=g 7=t 8=cout
+the two encodings are the same set of clauses: True
+256 assignments tried; 8 satisfy the clauses; they are the truth table: True
+units [5, 8, -1]: sum=1 cout=1 a=0: UNSATISFIABLE, 0 assignments
+units [5, 8]: sum=1 cout=1: SATISFIABLE, 1 assignments
+  a=1 b=1 cin=1 p=0 sum=1 g=1 t=0 cout=1
+with one clause removed: 2 to 4 assignments more than the circuit has rows;
+the first question turns SATISFIABLE for 5 of the 17 removals

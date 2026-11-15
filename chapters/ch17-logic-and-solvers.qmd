@@ -1,0 +1,559 @@
+# Logic and Solvers for Verifiers {#sec-ch17}
+
+> A solver answers one question: is there an assignment? Everything else is how you ask.
+
+::: {.callout-note title="Learning objectives"}
+After this chapter you will be able to:
+
+1. Turn "is this always true", "are these two circuits the same" and "can this state be reached in $k$ cycles" into one question, *is this formula satisfiable*, and say what a yes and a no mean for the design.
+2. Encode a gate-level circuit as clauses by hand, read and write the file a solver takes, and predict its size from the gate count.
+3. Trace unit propagation, a decision, a conflict and a learned clause on a small formula, and say what backtracking search, clause learning and a decision heuristic each changed in a measured table.
+4. Build a reduced ordered binary decision diagram for a small function, use its canonicity to decide equivalence, and predict from the variable order whether an adder's diagram is linear or exponential.
+5. Read an and-inverter graph in the AIGER format and a transition system in Btor2, and say which lines are state, which are the property and which are the environment.
+6. State a bit-vector question in z3's Python interface, say when the answer came from rewriting and when from search, and name the places where bit-vector arithmetic differs from SystemVerilog's.
+7. Unroll a sequential design into one satisfiability question for each bound, find the FIFO bug of @sec-ch01-example at its depth, and explain why "no counterexample up to $k$" is not a proof.
+8. Recognize the ways these engines blow up (search without learning, formulas with only long proofs, structure the solver does not see, a bad variable order) and say which is a theorem and which is an observation.
+:::
+
+## A sixteen, and eleven bits
+
+Two earlier chapters each used an engine and did not open it. In @sec-ch09 a formal tool was given the FIFO of @sec-ch01-example and a checker, and one row of its report carried a number:
+
+```{.text include="examples/ch09-temporal-properties/fifo-formal/run.out" lines="1-4"}
+```
+
+The text explained what *depth 16* means, the index of the cycle in which the property fails, and did not say how a program arrives at it without running a test. In @sec-ch07-solver the simulator's `randomize()` turned out to be a pipe: constraints written out in a standard language, a separate solver, a set of values read back. Neither chapter said what the program at the other end does. It is the same kind of program in both, and this chapter builds one small enough to read, then uses it to produce that 16.
+
+The second fact is the reason the subject needs a chapter and not a paragraph. Ask a production solver whether two 128-bit adders, built differently, compute the same sum, and it answers after three to four thousand steps of search (@tbl-ch17-adder). Ask the same solver whether an 11-bit multiplier gives the same product with its operands exchanged, a statement any engineer would accept without thought, and with the multiplier written out as shifts and additions it has not answered after two minutes (@tbl-ch17-word). The formula for the adders is the larger one. An engineer who hands properties to a formal tool, or constraints to a solver, will meet both behaviors, and the difference between them is not size.
+
+The chapter is the distance between those two facts. It starts from one gate and stays with examples small enough to run in seconds, because every effect that makes a formal tool fast or hopeless on a real design shows at this scale. @fig-ch17-map is the plan: three questions a verifier asks are one question about a formula; the formula can be held as clauses, as a decision diagram, as a graph of AND gates, or as words; and the book's own tools use these forms in places the examples can show.
+
+![The chapter in one picture. A question about a design becomes the question whether a formula has a satisfying assignment, and the formula has four common representations. The amber notes say where this book's tools use each, as the examples of this chapter and of @sec-ch07-solver and @sec-ch09-formal measure it.](../figures/ch17-map.svg){#fig-ch17-map fig-alt="Three boxes on the left: is it always true, are these two the same, can it get there in k steps. Arrows lead to one box: is this formula satisfiable. From it arrows lead to four boxes: clauses and search, decision diagrams, and-inverter graphs, and words not bits."}
+
+Everything the chapter measures is printed by a program in the book's repository. The solvers are the chapter's own, at most a hundred and fifty lines of Python each, so their counts do not change with a tool release; where a production solver's numbers are shown, they are in a table whose caption names the version and the day.
+
+## Propositional logic in the amount a verifier needs {#sec-ch17-logic}
+
+A *variable* takes one of two values, 0 or 1, false or true. A *formula* is built from variables with *and* ($\land$), *or* ($\lor$), *not* ($\lnot$) and whatever else is convenient: exclusive or ($\oplus$), implication ($\to$), equality. An *assignment* gives every variable a value, and under an assignment a formula has a value. That is all of propositional logic's machinery, and a hardware engineer has used it since the first `assign`: a SystemVerilog expression over one-bit signals is a formula, a continuous assignment is a definition of one variable by a formula, and a combinational circuit is a set of such definitions. The symbolic analysis of switching circuits is the title, nearly, of a 1938 paper by Shannon [@shannon1938symbolic].
+
+Three properties of a formula carry the chapter.
+
+::: {.callout-note title="Definition"}
+A formula is **satisfiable** if at least one assignment makes it true, and **unsatisfiable** if none does. It is **valid** if every assignment makes it true. Two formulas are **equivalent** if they have the same value under every assignment. A satisfying assignment is also called a **model** of the formula.
+:::
+
+The three are one. A formula $F$ is valid exactly when $\lnot F$ is unsatisfiable: "always true" means "never false". Two formulas $F$ and $G$ are equivalent exactly when $F \oplus G$ is unsatisfiable: "the same everywhere" means "nowhere different". So a program that decides satisfiability decides all three, and it does more than decide. When the answer is *satisfiable* it has an assignment in hand, and that assignment is the thing the engineer wanted: for a validity question, an input on which the property fails, a *counterexample*; for an equivalence question, an input on which the two circuits differ. When the answer is *unsatisfiable*, there is no such input, which is a statement about all of them at once. This is why verification tools are built on a satisfiability solver, a *SAT solver*, and why they ask every question in the negative: not "does the property hold?" but "can it fail?"
+
+The running example is one column of an adder, as five gates.
+
+```{.systemverilog include="examples/ch17-logic-and-solvers/truth-table/full_adder.sv"}
+```
+
+The most direct way to answer any question about a formula is to try every assignment. The script below reads the five gates from that file, evaluates them on all eight input rows, and settles an equivalence question on the way: is the carry `g | t` the same function as "at least two of `a`, `b`, `cin` are 1", the majority form in which a carry is often written?
+
+```{.python include="examples/ch17-logic-and-solvers/truth-table/truth.py"}
+```
+
+```{.text include="examples/ch17-logic-and-solvers/truth-table/run.out"}
+```
+
+Eight of eight rows agree, and for a circuit with three inputs the question is closed: a truth table is a complete proof. The last four lines of the output are the reason nobody verifies with one. Each input doubles the table. Sixteen inputs are sixty-five thousand rows; thirty-two are four billion; sixty-four, two 32-bit operands, are $1.8 \times 10^{19}$, out of reach of any machine. @sec-ch01-hard made the same count for state bits. The rest of this chapter is about methods that answer without visiting the rows, and about the formulas on which they fall back to it.
+
+Those methods want the formula in a fixed shape.
+
+::: {.callout-note title="Definition"}
+A **literal** is a variable or its negation. A **clause** is an *or* of literals. A formula is in **conjunctive normal form (CNF)** when it is an *and* of clauses. A clause with one literal is a **unit clause**; the clause with no literals, which no assignment can satisfy, is the **empty clause**.
+:::
+
+The shape suits a program for one reason. A clause is a constraint that can be violated in exactly one way: every one of its literals false. So a clause over three variables rules out one of their eight combinations and says nothing else, a formula in CNF is a list of forbidden combinations, and a satisfying assignment is one that avoids them all. The whole of a SAT solver is bookkeeping about which combinations are still open.
+
+## From gates to clauses {#sec-ch17-tseitin}
+
+A circuit is not in conjunctive normal form, and the textbook way to put a formula there, pushing negations inward and distributing *or* over *and*, can double the formula at each step. The fix is the one a designer applies to a long expression: name the intermediate values. Give every wire its own variable, the inputs and every gate's output alike, and write for each gate the few clauses that say *this output equals this function of these inputs*. The formula that results is the *and* of all those small groups.
+
+Take the AND gate `g = a & b`. "Equals" is two implications. If `g` is 1 then `a` is 1, and if `g` is 1 then `b` is 1: as clauses, $(\lnot g \lor a)$ and $(\lnot g \lor b)$, since an implication $x \to y$ is the clause $(\lnot x \lor y)$. In the other direction, if `a` and `b` are both 1 then `g` is 1: $(\lnot a \lor \lnot b \lor g)$. Three clauses, each forbidding the combinations in which the gate's output is wrong, and together forbidding all of them. An OR gate is the mirror image, also three clauses. An XOR gate has four, one for each of the four input combinations: $p = a \oplus b$ forbids $p$ high with both inputs low, $p$ high with both high, and $p$ low with exactly one input high. An inverter needs neither a variable nor a clause, because the negation of a variable is already a literal.
+
+The chapter's encoder is those three paragraphs as a class.
+
+```{.python include="examples/ch17-logic-and-solvers/common/tseitin.py" lines="10-49"}
+```
+
+A literal in the program is an integer: variable 4 is `4`, its negation is `-4`. The same convention is the file format SAT solvers read, known as DIMACS CNF. Here is the full adder in that format, written by hand before the encoder existed, one gate at a time:
+
+```{.text include="examples/ch17-logic-and-solvers/tseitin/full_adder.cnf"}
+```
+
+A line starting with `c` is a comment. The line `p cnf 8 17` is the header: eight variables, seventeen clauses. Every other line is one clause, its literals separated by spaces and ended by a `0`. That is the whole format. @fig-ch17-tseitin draws the circuit with each wire's number on it and each gate's clauses beside it.
+
+![The full adder of the listing with the variable number of every wire, and the seventeen clauses of `full_adder.cnf` in the five groups its comments name. Two XOR gates give four clauses each and two ANDs and an OR three each.](../figures/ch17-tseitin.svg){#fig-ch17-tseitin fig-alt="Gate diagram: inputs a, b and cin numbered 1 to 3; an XOR producing p, 4; an XOR producing sum, 5; an AND producing g, 6; an AND producing t, 7; an OR producing cout, 8. To the right, five groups of clauses, one per gate."}
+
+::: {.callout-note title="Definition"}
+The **Tseitin encoding** of a circuit introduces one variable for each input and for each gate output, and for each gate the clauses stating that its output variable equals the gate's function of its input variables. The result is in conjunctive normal form and its size is linear in the size of the circuit: at most a constant number of clauses for each gate. Two formulas are **equisatisfiable** if either both are satisfiable or neither is. The encoding of a circuit, with a question about its outputs added, is equisatisfiable with that question asked of the circuit directly.
+:::
+
+The construction is named for G. S. Tseitin, whose paper on the complexity of derivations in propositional calculus was first published in Russian in 1968 and is reprinted in English [@tseitin1983complexity]. *Equisatisfiable* is weaker than *equivalent*, and has to be: the encoded formula talks about eight variables where the circuit's function has three, so the two cannot have the same truth table. What the encoding promises is narrower and is what a verifier needs. Every assignment of the inputs extends to exactly one satisfying assignment of all eight variables, the one in which each gate variable holds the value the gate computes; and no other assignment satisfies the clauses.
+
+That promise can be tested here, because eight variables are only 256 assignments. The next script reads the hand-written file, builds the same circuit with the encoder from the SystemVerilog source, compares the two, and then tries all 256.
+
+```{.text include="examples/ch17-logic-and-solvers/tseitin/run.out"}
+```
+
+The encoder's output is the hand file, clause for clause. Of the 256 assignments exactly eight satisfy the seventeen clauses, and they are the eight rows of the truth table with the internal wires filled in. A question is then asked by adding unit clauses. "Can `sum` and `cout` both be 1 while `a` is 0?" is the three units `5`, `8` and `-1`, and no assignment survives them: the answer is *unsatisfiable*, and for the circuit that means two high outputs imply `a`. Without the unit on `a` one assignment survives, all three inputs high, which is the only way a full adder outputs binary 11.
+
+::: {.callout-warning title="Pitfall"}
+An encoding with one clause missing still parses, still has a satisfying assignment for every input, and gives wrong answers. The last two lines of the output remove each of the seventeen clauses in turn. Every removal leaves between two and four assignments that satisfy the file and match no row of the circuit, and for five of the seventeen the question that was *unsatisfiable* becomes *satisfiable*: a counterexample to a property that holds, produced by the encoding and not by the design. Dropping one direction of a gate's definition is the usual way to get there. When a counterexample from a hand-built encoding looks impossible, replay it on the circuit in simulation before believing either.
+:::
+
+A tool makes the same translation with its own conventions, and the next example sends the same file through three of them.
+
+```{.text include="examples/ch17-logic-and-solvers/tseitin-tools/run.out"}
+```
+
+Yosys maps the adder to a graph of nine AND gates and writes it in a format @sec-ch17-aig reads line by line. ABC, the program Yosys runs for logic optimization, reduces the nine to seven and writes eight variables and seventeen clauses: the same counts as the hand encoding and different clauses. Yosys's own SAT pass, asked the question about `sum`, `cout` and `a`, writes forty variables and a hundred clauses. Three encodings of five gates, a factor of six apart in size. The size rule that matters survives in every one of them: clauses grow in proportion to gates. Once a circuit is in two-input ANDs and inverters the rule is exact, three clauses for each AND, and that is the form in which the worked example of @sec-ch17-example will count a FIFO.
+
+## Search: assign, propagate, backtrack {#sec-ch17-dpll}
+
+With the formula as a list of clauses, one inference does most of the work. Suppose an assignment so far has made every literal of a clause false except one, and that one has no value yet. The clause can now be satisfied in a single way, so its last literal must be true.
+
+::: {.callout-note title="Definition"}
+A clause is **unit under a partial assignment** when all of its literals but one are false and that one is unassigned. **Unit propagation** assigns the remaining literal true, and repeats on every clause that this makes unit, until no clause is unit or some clause has every literal false. A clause with every literal false is a **conflict**.
+:::
+
+Unit propagation is what a hardware engineer does when reading a schematic with some values pencilled in: an AND gate with a 0 on one input has a 0 on its output; an OR gate with a 0 on its output has 0 on both inputs. The clauses of @sec-ch17-tseitin are those rules in both directions, so propagation runs through gates forwards and backwards alike. On the first question of the last section it is enough by itself:
+
+```{.text include="examples/ch17-logic-and-solvers/dpll/run.out" lines="1-11"}
+```
+
+Read it against @fig-ch17-tseitin. The three unit clauses set `sum`, `cout` and `a`. With `a` low the AND gate's output `g` is low. `cout` is high and `g` is not, so the OR gate's other input `t` is high. `t` is an AND, so both of its inputs, `p` and `cin`, are high. `p` is `a ^ b` and `a` is low, so `b` is high. Eight assignments, each forced. Then the clause $(\lnot \mathit{sum} \lor \lnot p \lor \lnot \mathit{cin})$, which says that `sum` cannot be high when `p` and `cin` both are, has no true literal left. The formula is unsatisfiable, and the program made no choice anywhere: the line reads *0 decisions*.
+
+Most questions are not that kind. When propagation stops with variables still unassigned and no conflict, the solver has to guess: pick a variable, give it a value, propagate, and if a conflict follows, take the guess back and try the other value. If both values lead to conflict, the trouble is further up, and the guess before it is taken back in turn. That is the procedure of Davis, Logemann and Loveland [@davis1962machine], built on an earlier procedure of Davis and Putnam [@davis1960computing] and called DPLL after the four of them. Here it is whole.
+
+```{.python include="examples/ch17-logic-and-solvers/dpll/dpll.py" lines="34-86"}
+```
+
+`propagate` scans every clause until nothing changes, which is the slowest correct way to do it and the easiest to read. `solve` keeps a stack of decisions, each with the size of the trail at the time and the value not yet tried. The variable it picks is always the lowest-numbered one without a value, and it tries 1 first. Nothing is recorded about why a branch failed.
+
+Now a question that needs it: are two adders the same? The first is a chain of the full adder above, with the carry as `g | t`. The second writes each carry as a majority of three and associates the sum's XORs the other way. To ask whether they differ on any input, give both the same inputs, XOR each pair of corresponding outputs, OR the XORs together, and assert that the OR is 1.
+
+::: {.callout-note title="Definition"}
+A **miter** of two combinational circuits with the same inputs is the circuit that feeds both from one set of inputs and computes the OR of the XORs of their corresponding outputs. Its output is 1 exactly on the inputs for which the two circuits differ, so the circuits are equivalent exactly when the miter, with its output asserted, is unsatisfiable.
+:::
+
+```{.text include="examples/ch17-logic-and-solvers/dpll/run.out" lines="12-25"}
+```
+
+The verdict is right at every width, and the cost is exact: $4^N - 1$ decisions for two $N$-bit adders, and $4^N$ conflicts. The cause is in how the formula was numbered. The generator gives the $2N$ operand bits the first $2N$ variable numbers and the solver branches in numeric order, so it decides every input bit before anything else; once all inputs have values, propagation computes both adders, finds the outputs equal, and conflicts with the assertion that they differ. Then it takes back the last input bit and does it again. The $4^N$ conflicts are the $4^N$ pairs of operands. @fig-ch17-search draws the search for two bits.
+
+![The search of `dpll.py` on the miter of two 2-bit adders, reconstructed from the solver's own log. Every node is a decision on one input bit; every leaf is a conflict, reached after propagation has evaluated both adders on one pair of operands. Fifteen decisions and sixteen conflicts, as the table's first row says.](../figures/ch17-search.svg){#fig-ch17-search fig-alt="A complete binary tree four levels deep. The levels are labeled a0, a1, b0 and b1. The sixteen leaves are amber boxes numbered 1 to 16 from left to right."}
+
+Search in this order is exhaustive simulation: the solver has rediscovered the truth table, one row to a conflict, and it pays for it at the same rate. Seven bits take sixteen thousand decisions; thirty-two would take $1.8 \times 10^{19}$. Two things are worth holding on to. The count belongs to this numbering, and a reader who encodes the same adders with the outputs numbered first will measure something else; exercise 3 does. And the last three lines of the output show the other half of the method's character: with one gate wrong in the second adder the formula is satisfiable, the search stops at the first input pair on which the adders differ, and at eight bits that takes 263 decisions and not sixty-five thousand. A bug is one row; a proof is all of them.
+
+## Learning from conflicts {#sec-ch17-cdcl}
+
+Look at what the search of @fig-ch17-search does at its second leaf. It has just found that with $a_0 = a_1 = b_0 = 1$ and $b_1 = 1$ the two adders agree. It flips $b_1$ and finds that they agree again. The reason they agree has nothing to do with $b_1$'s value in particular: it is a fact about how two carry circuits relate, and the same fact will be rediscovered under every one of the sixteen leaves. DPLL throws away the reason for each conflict and keeps only the consequence, "not this branch".
+
+Keeping the reason takes three additions to the data structure. Every assigned literal goes on a *trail*, in order. Every decision opens a new *decision level*; a literal's level is the number of decisions made before it was assigned. And every literal that was propagated, not decided, remembers its *reason*: the clause that was unit when it was forced. From the reasons, the cause of any assignment can be traced back.
+
+```{.python include="examples/ch17-logic-and-solvers/cdcl/cdcl.py" lines="52-82"}
+```
+
+`propagate` also changes how units are found, because scanning every clause after every assignment is what made `dpll.py` slow. A clause can become unit only when its second-to-last unassigned literal becomes false, so each clause *watches* two of its literals that are not false, and is visited only when one of the two becomes false; it then looks for another literal to watch, and if there is none it is unit or a conflict. The authors of the solver Chaff, who introduced the scheme under the name "two literal watching", reported that in most cases more than nine tenths of a solver's time goes into propagation [@moskewicz2001chaff], which is why this loop is the part of a production solver that is engineered hardest.
+
+### One conflict, step by step
+
+The example prints one conflict of this solver on the miter of two 3-bit adders in full. Variables 1 to 6 are the operand bits; the others are gate outputs, and the ones that matter are named in the first lines.
+
+```{.text include="examples/ch17-logic-and-solvers/cdcl/run.out" lines="1-32"}
+```
+
+The solver is at decision level 2. Its decision at this level was $b_1 = 1$ (literal `5`), and eleven more literals followed by propagation, each with its reason. The sixth is `37`: the miter's last clause says that some output bit differs, the other three difference bits are already false, so bit 2 must be the one. Two of the reasons are not among the formula's original clauses at all. They were learned at earlier conflicts, and here they propagate like any other clause. The last four literals compute the two sum bits, and the clause $(15 \lor 29 \lor \lnot 37)$, part of the XOR that compares them, is left with nothing true.
+
+@fig-ch17-implication draws the trail as a graph: an arrow from each literal in a reason to the literal the reason forced.
+
+![The conflict of the listing as an implication graph, generated from the example's printed trail. Assignments made at decision level 2 are white; the three gray ones were made at level 1. Every path from the decision to the conflict passes through `x37 = 1`, the first unique implication point. Cut the graph just after it: the assignments that enter the right-hand side are the negation of the learned clause.](../figures/ch17-implication.svg){#fig-ch17-implication fig-alt="A graph whose leftmost node is the decision b1 = 1. Arrows lead through x36 = 0 to x37 = 1, marked first UIP, and from there through b2 = 0, x14 = 0, x28 = 0, x15 = 0 and x29 = 0 to a box labeled conflict. Three nodes at the top, a2 = 0, x13 = 0 and x27 = 0, are labeled from level 1 and feed the nodes right of a dashed vertical line, the cut."}
+
+::: {.callout-note title="Definition"}
+The **implication graph** of a trail has a node for each assigned literal and an edge to each propagated literal from the negation of every other literal of its reason clause. At a conflict, a **unique implication point (UIP)** is a literal of the current decision level through which every path from that level's decision to the conflict passes. The **first UIP** is the one closest to the conflict.
+:::
+
+The analysis walks backwards from the conflict. Start with the falsified clause. It contains three literals assigned at the current level. Take the most recently assigned one and replace it by the rest of its reason: that is one step of *resolution*, the rule that from $(x \lor A)$ and $(\lnot x \lor B)$ concludes $(A \lor B)$. The printed steps resolve on variables 29, 15, 28, 14 and 6 in turn, the reverse of the order in which they were assigned. After the fifth step the clause is $(3 \lor 13 \lor 27 \lor \lnot 37)$, and only one of its literals, $\lnot 37$, belongs to the current level. That is where the analysis stops: variable 37 is the first unique implication point.
+
+```{.python include="examples/ch17-logic-and-solvers/cdcl/cdcl.py" lines="84-109"}
+```
+
+::: {.callout-note title="Definition"}
+A **learned clause** is a clause derived by resolution from the clause falsified at a conflict and the reason clauses of the literals involved, and added to the formula. Because it is derived from clauses of the formula it is implied by them, so adding it changes no answer. Under the first-UIP scheme it contains exactly one literal of the conflict's decision level.
+:::
+
+Read the learned clause as hardware. Variable 3 is $a_2$; 13 and 27 are the carries into column 2 of the two adders; 37 says that the two adders' bit 2 differ. The clause says: if $a_2$ is 0 and neither adder has a carry into column 2, bit 2 of the two sums is the same. It does not mention $b_2$, although the conflict arose with $b_2 = 0$, and it does not mention $b_1$, the decision. The solver has proved a small lemma about the two circuits that holds for every value of those inputs, and the example checks that claim separately: the two circuits alone, without the miter's assertion, are contradicted by the clause's negation. A learned clause is a fact about the design that the search will not have to find again.
+
+The clause also says where to go. All of its literals but $\lnot 37$ were assigned at level 1, so had the clause been there at level 1 it would have been unit and would have forced $\lnot 37$ at once. The solver therefore undoes everything above level 1 and asserts $\lnot 37$ there, with the learned clause as its reason. This is a *backjump*: the search returns to the level where the new clause first has something to say, not to the most recent decision. Here that is one level down; when a conflict's causes all lie far down the trail, the jump skips every decision in between.
+
+```{.python include="examples/ch17-logic-and-solvers/cdcl/cdcl.py" lines="123-149"}
+```
+
+The whole procedure is called *conflict-driven clause learning*, CDCL; the *Handbook of Satisfiability* gives it a chapter [@marquessilva2021cdcl].
+
+### What each idea bought
+
+`cdcl.py` picks variables in the same order as `dpll.py`, lowest number first and true first, so that the table below isolates learning. The third solver is a subclass that changes one method.
+
+```{.python include="examples/ch17-logic-and-solvers/cdcl/cdcl_vsids.py" lines="15-30"}
+```
+
+Each variable has an *activity*, raised whenever the variable appears in a learned clause, with later conflicts counting for more than earlier ones; the solver branches on the most active unassigned variable. It is a heuristic in the style of the one Chaff introduced as VSIDS, "Variable State Independent Decaying Sum" [@moskewicz2001chaff], and not a reimplementation of it.
+
+```{.text include="examples/ch17-logic-and-solvers/cdcl/run.out" lines="33-49"}
+```
+
+![The table as curves, read from the example's output. The vertical axis is logarithmic, so a straight line is exponential growth and its slope is the base. Backtracking search multiplies its work by four for each added bit, the same search with learning by two, and learning with an activity heuristic grows roughly in proportion to the width.](../figures/ch17-learning.svg){#fig-ch17-learning fig-alt="Line chart, logarithmic vertical axis from 10 to 100,000, horizontal axis from 2 to 32 bits. The curve for dpll.py rises steeply and stops at 7 bits. The curve for cdcl.py rises half as steeply and stops at 12 bits. The curve for cdcl_vsids.py flattens and reaches 32 bits near 2,400."}
+
+Three ideas, three curves (@fig-ch17-learning). Search alone needs $4^N - 1$ decisions. The same search with learning needs 12, 27, 54, 106, 208, 410, 812 conflicts from two to eight bits: it doubles for each bit where DPLL quadrupled. Learning halved the exponent and did not remove it, because the decision order still walks the operand bits. With the activity heuristic the count at 32 bits is 2,410, where the fixed order was stopped at 12 bits with 12,820: the heuristic moves the search to the carry chain, where the lemmas are short, and the cost grows about as the adder does. Learning also pays on the satisfiable miters of the last three lines: the bug at eight bits is found after 15 conflicts, where DPLL had 255.
+
+The three solvers are small enough to be wrong in ways a reader would not see, so a separate example checks them against a production solver on three thousand random formulas, including every model they return:
+
+```{.text include="examples/ch17-logic-and-solvers/solver-selftest/run.out"}
+```
+
+::: {.callout-tip title="In Practice"}
+A production solver adds to these hundred and fifty lines without changing their plan. It simplifies the formula before and during the search, for example by eliminating variables and subsumed clauses [@een2005preprocessing]; it *restarts*, abandoning the current trail while keeping what it has learned; and it deletes learned clauses that have stopped being useful, since propagation slows as the clause list grows. The authors of Chaff claimed for their engineering "one to two orders of magnitude performance improvement on difficult SAT benchmarks" over the solvers before it [@moskewicz2001chaff], which is their measurement on their benchmarks. @tbl-ch17-adder gives the adder miter to z3 [@demoura2008z3] and CaDiCaL [@biere2024cadical], out to 128 bits: a few thousand conflicts for a formula of nearly six thousand clauses. When a formal tool prints a line of solver statistics, *conflicts* is the number to read first. It is the count of lemmas the proof needed.
+:::
+
+{{< include /examples/ch17-logic-and-solvers/production/tbl-adder.md >}}
+
+One more property of the method matters to a verifier more than its speed. Every learned clause was derived by resolution from clauses already present, and a run that ends in *unsatisfiable* ends with a conflict that no decision can be blamed for: resolved all the way back, it leaves the empty clause. The sequence of learned clauses, in order, is therefore a derivation of a contradiction from the formula, and it can be written to a file and checked by a second, much smaller program that knows nothing about search. Beame, Kautz and Sabharwal made the correspondence between clause learning and resolution precise, showing that clause learning with unlimited restarts is as strong as general resolution [@beame2004towards], and checkers for solver-written proofs exist as tools [@wetzler2014drattrim]. So a solver's "no bug" need not be taken on trust. A counterexample is checked by replaying it in simulation, and a proof by checking its file.
+
+## Why it is sometimes hard {#sec-ch17-hard}
+
+The adder went from hopeless to trivial with two ideas. This section is about formulas that no idea in this chapter helps, and the first discipline it asks for is to keep four different reasons apart, because they call for different responses.
+
+### The worst case
+
+In 1971 Stephen Cook proved, of a problem that is satisfiability seen from the other side, that it is as hard as any problem whose solutions can be checked quickly. His theorem as printed reads: "If a set S of strings is accepted by some nondeterministic Turing machine within polynomial time, then S is P-reducible to {DNF tautologies}" [@cook1971complexity]. A formula in disjunctive normal form is a tautology exactly when its negation, which is in conjunctive normal form, is unsatisfiable; in today's terms the theorem says that CNF satisfiability is NP-complete. Nobody knows a method that is fast on every formula.
+
+That is a statement about the worst formula of each size. It does not say that the formula from *your* design is hard, and many are not: the FIFO of the worked example gives one with 1,795 variables that the chapter's own solver settles in 195 conflicts. NP-completeness explains why a formal tool has a timeout. It does not predict when the timeout is reached.
+
+### Formulas with only long proofs
+
+Put $N + 1$ pigeons into $N$ holes, no two in one hole. As clauses: a variable for each pigeon and hole, a clause for each pigeon saying it sits somewhere, a clause for each hole and pair of pigeons saying they are not both there. It is unsatisfiable for a reason a child can give, and here is what it costs.
+
+```{.text include="examples/ch17-logic-and-solvers/hard/run.out" lines="1-7"}
+```
+
+Seven holes are 56 variables. Every column multiplies for each added hole: backtracking by seven to ten, the two learning solvers by three to five. The heuristic that flattened the adder buys almost nothing here. Production solvers show the same shape:
+
+{{< include /examples/ch17-logic-and-solvers/production/tbl-php.md >}}
+
+This one has a theorem behind it. Armin Haken proved in 1985 that any refutation of the pigeonhole formulas by resolution has a length exponential in the number of holes [@haken1985intractability]. The last section showed that a clause-learning run ending in *unsatisfiable* writes a resolution refutation. So no decision heuristic, no restart policy and no amount of engineering inside that plan can make these formulas easy: the proof the solver is looking for is itself long. The measured growth is not the theorem's bound, which is a statement about the shortest possible proof and names no constant here, and the two production solvers differ from each other by a factor of nearly forty at ten holes. What the theorem rules out is that either column stays small.
+
+The hardware reading is direct. Pigeonhole is a counting argument, and counting arguments are everywhere in a design's correctness: a FIFO cannot hold more entries than it has, an arbiter grants at most one requester, a credit counter never exceeds what was issued. A solver that reasons clause by clause does not count. This is one reason a formal engineer hands the tool a helper invariant, as @sec-ch09-example did.
+
+### Structure the solver does not see
+
+The third reason is the one the chapter opened with. Build two $N$-bit multipliers by shift and add, give one the operands in the other order, and miter them. Beside the adder miter of the same width:
+
+```{.text include="examples/ch17-logic-and-solvers/hard/run.out" lines="8-17"}
+```
+
+The multiplier's formula is larger, but not by much at these widths, 799 clauses against 296 at seven bits, and its cost is in another class: `cdcl.py` multiplies its conflicts by between three and four for each added bit where the adder doubled. And here the activity heuristic *loses*. At every width from three bits up it needs more conflicts than the fixed order, 7,786 against 3,655 at seven bits. A heuristic is a bet about where the next conflict will be, and this formula is one on which the bet is wrong. Production solvers do not escape either:
+
+{{< include /examples/ch17-logic-and-solvers/production/tbl-mul.md >}}
+
+About four times the conflicts for each bit, for both solvers, to more than half a million at ten bits. At that rate sixteen bits is beyond patience.
+
+What may be said about this needs care. It is *not* a theorem that these formulas are hard for resolution. Beame and Liew showed the opposite: for the commutativity of several standard multiplier designs there are resolution refutations of polynomial size, and in their words "such short proofs were conjectured not to exist" [@beame2017towards]. Short proofs exist. Solvers, as measured here and as those authors also report, do not find them. The difference from the pigeonhole case is the difference between a limit of the method and a limit of today's heuristics, and it decides what an engineer should hope for: no SAT solver will ever do pigeonhole well by search alone, while multipliers are an open engineering problem that is currently handled by other means (@sec-ch17-smt shows one, and the closing section names another).
+
+For a verifier the practical statement is the plain one. A property whose truth depends on arithmetic identities, with multiplication the worst of them, is at risk in any tool built on bit-level search, however small the design looks.
+
+### Density
+
+The fourth effect is not about hardware and is included because it corrects an intuition. Take 60 variables and draw clauses at random, three distinct variables each with random signs. With few clauses almost any assignment works; with many, a contradiction turns up at once. In between:
+
+```{.text include="examples/ch17-logic-and-solvers/hard/run.out" lines="18-28"}
+```
+
+![Two pictures of where the cost is, from the example's output. Left: the adder miter and the multiplier miter at the same widths, with a logarithmic axis; the dashed line is the multiplier under the activity heuristic, which does worse than the fixed order. Right: random 3-SAT at 60 variables. The bars are the number of satisfiable formulas out of thirty and the line is the median number of conflicts; the cost peaks where the bars fall.](../figures/ch17-hard.svg){#fig-ch17-hard fig-alt="Left chart: three rising lines over widths 2 to 7; the adder ends at 410 conflicts, the multiplier at 3,655 and the multiplier with the heuristic at 7,786. Right chart: bars falling from 30 at a ratio of 3.0 to 0 at 5.4, and a line that rises to a peak of 109 at a ratio of 4.6 and falls again."}
+
+The formulas go from all satisfiable to none as the ratio of clauses to variables passes from 3.4 to 5.4, and the median cost peaks at 4.6, in the row where a fifth of them are satisfiable (@fig-ch17-hard). Mitchell, Selman and Levesque reported the pattern in 1992: random 3-SAT formulas are hardest near the ratio at which half of them are satisfiable, which they measured at about 4.3 clauses for each variable [@mitchell1992hard]. Sixty variables and thirty samples locate the peak only roughly.
+
+Verification formulas are not random, and no design sits at a "ratio". The point is the shape of the dependence: at a fixed number of variables the cost rose by a factor of more than thirty and fell again, with nothing changing but which clauses were present.
+
+::: {.callout-warning title="Pitfall"}
+"It timed out, so the design is too big" and "it is small, so it will be easy" are both wrong, and the chapter's tables hold a counterexample to each. Ten pigeonholes are 110 variables and cost one production solver more than three million conflicts (@tbl-ch17-php). The FIFO at bound 16 is 1,795 variables and costs a 150-line solver 195. Before shrinking a design to help a formal tool, ask which kind of reasoning the property needs: counting, arithmetic, or neither.
+:::
+
+## A canonical form: binary decision diagrams {#sec-ch17-bdd}
+
+A SAT solver does as little as it can to answer one question. The older bargain is the opposite: spend the effort once to build a representation of the function in which every question is then trivial.
+
+Start from a decision tree: test a variable, branch on its value, test the next. Any function of $n$ variables has such a tree with $2^n$ leaves, which is the truth table again. Two rules shrink it. *Fix the order* in which variables are tested, the same along every path. Then *reduce*: wherever two subgraphs are identical keep one and share it, and wherever a test's two branches lead to the same place remove the test.
+
+::: {.callout-note title="Definition"}
+A **binary decision diagram (BDD)** is a directed acyclic graph with two terminal nodes, 0 and 1, in which every other node tests one variable and has a *low* and a *high* successor for its two values. It is **ordered** when the variables appear in the same order along every path, and **reduced** when no two nodes have the same variable and the same two successors and no node has two equal successors. For a fixed **variable order**, the reduced ordered BDD of a function is unique: it is a **canonical form**.
+:::
+
+The reference for the data structure and its algorithms is Bryant's 1986 paper [@bryant1986graph]. Canonicity is what the effort buys. If each distinct node is stored once, two functions are equal exactly when they are the same node, so equivalence is a comparison of two integers. A function is satisfiable exactly when it is not the 0 node. And the number of satisfying assignments falls out of one walk over the graph. The package below is the definition turned into a class: `mk` applies the two reduction rules as every node is created, and `apply` combines two diagrams by descending both at once, with a table of the pairs it has already combined so that no pair is done twice.
+
+```{.python include="examples/ch17-logic-and-solvers/bdd/robdd.py" lines="12-67"}
+```
+
+```{.text include="examples/ch17-logic-and-solvers/bdd/run.out" lines="1-3"}
+```
+
+The two carry circuits of @sec-ch17-dpll, built gate by gate from different gates, arrive at the same node. No search happened: the equivalence that cost `dpll.py` 255 decisions at four bits is here the observation that 72 equals 72. With one gate wrong the node is another one, and the XOR of the two diagrams is a diagram of exactly the inputs on which they differ, 72 of the 256, which is a second, independent use of the same number.
+
+::: {.callout-tip title="In Practice"}
+A SAT solver returns one satisfying assignment. A BDD holds all of them and can count them, which is the operation that sampling needs: to pick uniformly among the legal values of a constrained random object, a solver has to know how many lie on each side of every choice. That is the link between this data structure and the distribution question of @sec-ch07-solver, where a solver built for *one* answer was being asked for a fair draw among many.
+:::
+
+### The price is the order
+
+The second part of the example builds the carry out of an $N$-bit adder under two variable orders.
+
+```{.text include="examples/ch17-logic-and-solvers/bdd/run.out" lines="4-15"}
+```
+
+With the operands interleaved, $a_0, b_0, a_1, b_1$ and so on, the diagram has $3N - 1$ decision nodes: three per column. With all of $a$ before all of $b$ it has $2^{N+1} - 2$. Both closed forms match every row. @fig-ch17-bdd shows why, at three bits.
+
+![The carry out of a 3-bit adder as a reduced ordered BDD under two variable orders, drawn from the node table of `robdd.py`. On the left, each pair of levels handles one column and passes on a single fact, carry or no carry. On the right, the diagram has read all of `a` before it meets any bit of `b`, and must keep the paths for different values of `a` apart.](../figures/ch17-bdd.svg){#fig-ch17-bdd fig-alt="Two decision diagrams side by side. The left one, for the order a0 b0 a1 b1 a2 b2, is a narrow ladder with eight nodes. The right one, for the order a0 a1 a2 b0 b1 b2, widens to four nodes at the a2 level and four at the b0 level and has fourteen nodes."}
+
+A BDD's width at any level is the number of different things the function could still do, given the variables above. In the interleaved order, once column $i$ has been read all that matters below is one bit, the carry. In the separated order, by the time the diagram has read $a$ it has seen nothing it can combine anything with, and must remember $a$'s value in the shape of the graph: up to one path for each value. The hardware analogy is exact. The good order is a bit-serial adder, which needs one flip-flop of state. The bad order is a machine that must store one operand before the other arrives. A variable order is a choice of what the diagram has to remember, and a good one keeps related signals together.
+
+Finding a good order is itself hard in general (that even improving a given order is NP-complete is the title of a paper by Bollig and Wegener [@bollig1996improving]), and for some functions there is no good order to find. The third part of the example is the middle bit of a product.
+
+```{.text include="examples/ch17-logic-and-solvers/bdd/run.out" lines="16-26"}
+```
+
+Under all three orders the size more than doubles for each added bit over the last few rows. Here the measurement has a theorem above it: Bryant showed that an ordered BDD for the middle bit of an $n$-bit multiplication needs a number of nodes exponential in $n$ under *every* variable order [@bryant1991complexity], a result stated in the abstract of the paper by Woelfel that sharpens the bound [@woelfel2005bounds]. The run is consistent with the theorem and is not evidence for it, since three orders are not all orders and ten bits are not a limit. But the conclusion for practice is the theorem's: a multiplier has no small BDD.
+
+::: {.callout-warning title="Pitfall"}
+A node count means nothing without the package's conventions. This chapter counts decision nodes and leaves out the two terminals. A package that counts its terminals reports two more for the same diagram, and a package with *complement edges*, which shares a function and its negation in one node, reports different numbers again. The shape of the growth carries between packages; the constants do not. Say which count a number is before comparing it with anyone else's.
+:::
+
+BDDs are the engine of symbolic model checking, which holds sets of states as diagrams and does not list them [@burch1992symbolic], and they are the right tool where *all* solutions are wanted. The method of this chapter's worked example was introduced under the title *Symbolic Model Checking without BDDs* [@biere1999symbolic], and this section measured a reason to want that. A SAT solver gives up canonicity, answers one question at a time, and in exchange is not obliged to build a complete picture of a function whose complete picture is enormous.
+
+## And-inverter graphs, and the files tools exchange {#sec-ch17-aig}
+
+Between RTL and clauses most tools keep a third form, and it is the simplest of all: the circuit, rewritten with one kind of gate.
+
+::: {.callout-note title="Definition"}
+An **and-inverter graph (AIG)** represents a circuit using only two-input AND gates and inverters, the inverters being marks on edges, not nodes. **Structural hashing** keeps a table of the AND gates built so far, keyed on their two inputs, and reuses an existing gate whenever one with the same inputs is asked for, so that structurally identical logic is built once.
+:::
+
+Any gate can be written this way: an OR is an AND with all three connections inverted, and an XOR is three ANDs. An AIG is not canonical. The same function has many graphs, and deciding whether two graphs are the same function is the equivalence question again. What it offers is that it is cheap: linear in the circuit, uniform enough that a tool can simplify it with a handful of local rules, and one step from CNF, three clauses for each AND as @sec-ch17-tseitin counted.
+
+Its exchange format is AIGER [@biere2007aiger]. This is the file Yosys wrote for the full adder in the tools example:
+
+```{.text include="examples/ch17-logic-and-solvers/aig/fa.aag"}
+```
+
+The header `aag 12 3 0 2 9` gives the largest variable index, then the numbers of inputs, latches, outputs and AND gates. A *literal* is twice a variable's index, plus one if the signal is inverted: variable 4 is literal 8 and its inversion is 9, and the literals 0 and 1 are the constants false and true. Three lines name the input literals, two the outputs, and each remaining line is one AND: its own literal, then its two inputs. The lines at the end attach names. The example decodes it.
+
+```{.text include="examples/ch17-logic-and-solvers/aig/run.out"}
+```
+
+Line `12 11 9` is `v6 = !v5 & !v4`: neither "both low" nor "both high", which is `a ^ b` in three ANDs. The output `cout` is literal 25, the inversion of AND 12: an OR, made from an AND by inverting everything. The script checks that the graph is the full adder on all eight rows, and then does what its definition callout describes, in a dozen lines:
+
+```{.python include="examples/ch17-logic-and-solvers/aig/aig.py" lines="51-65"}
+```
+
+Yosys built `a & b` twice, once inside the XOR and once for the carry, and `p & cin` twice likewise; hashing finds both and nine ANDs become seven, the number ABC reported in @sec-ch17-tseitin. @fig-ch17-aig marks the two.
+
+![The full adder as the and-inverter graph of `fa.aag`. Each node is an AND and carries its literal from the file. Dotted edges ending in a ring are inverted. The two nodes outlined in amber have the same pair of inputs as an earlier node, and structural hashing removes them.](../figures/ch17-aig.svg){#fig-ch17-aig fig-alt="Nine circles numbered 8 to 24 in steps of two, connected from the inputs a, b and cin to the outputs sum and cout. Nodes 20 and 22 are outlined in amber and labeled same inputs as 8 and same inputs as 14."}
+
+### State, and the word level
+
+A sequential circuit needs one more kind of line. In AIGER a *latch* line gives a state bit's literal and the literal of its next value. The later revision of the format adds what a model checker needs: a count of *bad-state* literals and of *constraint* literals in the header, and an optional third field on a latch line for its reset value, 0, 1 or the latch's own literal to mean "not initialized" [@biere2011aiger19].
+
+One level up is the same idea with words in place of bits. Btor2 is a format for word-level models; its authors describe it as building on the design of AIGER and taking its operators' meaning from the bit-vector theory of the next section [@niemetz2018btor2]. It is the form in which the book's formal tool holds a design [@informal-tool], and for a small design it can be read whole. Here is a counter with a bug, and the model the tool's `lower` command makes of it.
+
+```{.systemverilog include="examples/ch17-logic-and-solvers/counter-model/counter.sv"}
+```
+
+```{.text include="examples/ch17-logic-and-solvers/counter-model/counter.btor2"}
+```
+
+Every line has a number, and later lines refer to earlier ones by it. A `sort` line declares a type: line 1 is one bit, line 4 is three. `input` lines are the environment: they take any value in every cycle. A `state` line is a register, here the 3-bit `count`. Lines 6 to 11 are the next-state logic, one operator to a line: `count != 6`, ANDed with `en`, selects between `count + 1` and `count`. Line 16, `init`, gives the state its first value, from the declaration's initializer. Line 20, `next`, ties the state to the value it takes at the next step. Line 19, `bad`, is the property, in the negative as always: the state the assertion forbids. So the three kinds of line a verifier looks for are `state` with its `init` and `next` (the design's memory), `bad` (the property), and `input` together with any `constraint` (the environment and what is assumed about it).
+
+The example runs the commands and prints sizes.
+
+```{.text include="examples/ch17-logic-and-solvers/counter-model/run.out"}
+```
+
+`simp` loads the model at the bit level: three latches and 23 ANDs, and after its preprocessing 19. One of the two inputs is gone, and the Btor2 file shows which, since no line refers to line 2, the clock. The AIGER header `aag 23 1 3 0 19 1 0` now has seven numbers, the sixth being one bad-state literal. The last command runs the tool's bounded model checker, which finds the bug at depth 6, and the last section of this chapter does the same thing by hand.
+
+::: {.callout-warning title="Pitfall"}
+`informal lower` is not the tool's shell. It reads immediate assertions and nothing else, and it sets up no clock and no reset: a register starts with an arbitrary value unless its declaration initializes it. The shell of @sec-ch09-formal does the reverse on both counts, collecting concurrent assertions and adding a reset cycle of its own. A design that proves in one and fails in the other has usually met this difference, not a bug. The counter above carries its own initial value for that reason, and the FIFO of the worked example needs a wrapper.
+:::
+
+## Words, not bits: bit-vector SMT {#sec-ch17-smt}
+
+@sec-ch07-solver met z3 as a black box behind `randomize()`: constraints went out in the SMT-LIB language and a model came back. There the hoped-for answer was *satisfiable*. A verifier asks the same solver the other kind of question, where the hoped-for answer is *unsatisfiable*: no counterexample.
+
+::: {.callout-note title="Definition"}
+**Satisfiability modulo theories (SMT)** is the satisfiability problem for formulas whose atoms are not bare propositional variables but statements in some *theory*, such as equalities and comparisons between fixed-width machine words. In the **theory of fixed-size bit-vectors** every term has a width $m$, arithmetic is modulo $2^m$, and signed and unsigned comparison, division and right shift are different operators. **Bit-blasting** reduces a bit-vector formula to a propositional one by replacing every word operator with a circuit for it and encoding the circuit as clauses.
+:::
+
+SMT-LIB defines the language [@barrett2017smtlib26] and the bit-vector theory, including the meaning of every operator: addition and multiplication are defined on the numbers the bit patterns denote, with the result taken modulo $2^m$ [@smtlib-bitvectors]. That is the arithmetic of a SystemVerilog `logic [m-1:0]` when no bit is X, which is why the theory fits hardware so directly.
+
+Bit-blasting is not new to the reader: it is @sec-ch17-tseitin applied to an adder or a multiplier for each `+` or `*` in the formula, and the chapter's generator did exactly that by hand when it built the miters. The question is what a solver gains by being given the words. The example asks one theorem, the commutativity of multiplication, three ways.
+
+```{.python include="examples/ch17-logic-and-solvers/bitvector/word_vs_bits.py" lines="33-54"}
+```
+
+In the first form both sides use the solver's own multiplication. In the second, multiplication is written out as a sum of shifted copies, so the two sides are different terms that happen to be equal. In the third the chapter's own encoder has already reduced the multiplier to clauses.
+
+```{.text include="examples/ch17-logic-and-solvers/bitvector/run.out" lines="1-9"}
+```
+
+All three are *unsat* at every width, as they must be, and the output prints no times, because times belong to one machine. They are in the table below, measured once.
+
+{{< include /examples/ch17-logic-and-solvers/production/tbl-word.md >}}
+
+The first form is answered at once at 64 bits. The reason is on the last line of the output: z3's simplifier rewrites `a*b != b*a` to `False` before any search begins. The second form has no such rewrite, and its time multiplies by five or more for each bit, to no answer in two minutes at eleven: growth of the kind the bit-level multiplier miter showed in @tbl-ch17-mul. The measurement says where the word level helps. It helps when the solver knows an algebraic law that makes the question disappear, and it helps by exactly that much. When no law applies, a bit-vector formula is decided on its bits, and everything @sec-ch17-hard said about those bits applies. The measurement does not say that either level is the faster in general; it is one family of formulas and one solver release.
+
+The rest of the example is four facts about the arithmetic, each as a question with its verdict.
+
+```{.text include="examples/ch17-logic-and-solvers/bitvector/run.out" lines="10-17"}
+```
+
+A false identity gets a counterexample, which the script checks by evaluating it. Arithmetic wraps: adding 255 to an 8-bit value is subtracting 1. And the last two are traps.
+
+::: {.callout-warning title="Pitfall"}
+Bit-vector arithmetic is SystemVerilog's two-state arithmetic except where it is not. *Division by zero has a value.* The theory defines unsigned division by zero to return all ones and the remainder to return the dividend [@smtlib-bitvectors], where a SystemVerilog `/` or `%` by zero gives X [@ieee1800-2023]. A property that divides will be proved or refuted using a value the simulator never showed. *There is no X or Z at all.* The model is two-valued, the boundary @sec-ch05-types drew for testbench types and @sec-ch04-fourstate for simulation: nothing a solver proves says anything about unknowns. *Signedness is in the operator, not the type.* A bit-vector has no sign; in z3's Python interface `a < b` is the signed comparison and `ULT(a, b)` the unsigned one, and the example's last line shows them differing as soon as a top bit is set. A model of an unsigned comparator written with `<` is a model of another circuit.
+:::
+
+::: {.callout-tip title="In Practice"}
+Which engine is under which of this book's tools, as its examples measure it. Verilator's `randomize()` writes SMT-LIB and runs z3 as a separate process (@sec-ch07-solver). InFormal's `lower` produces Btor2, a word-level model; its `simp` command, by its own description, loads a model "at bit level", bit-blasting the Btor2, and the bounded model checker of the last section works on the result. So in this book constraint solving is word-level and property checking is bit-level, which is one arrangement and not a law.
+:::
+
+## Worked example: adding a clock {#sec-ch17-example}
+
+Everything so far was combinational. A design with registers adds one idea, and the idea is to remove the clock.
+
+A sequential design, seen by a model checker, is three formulas over its state bits. One says which states the design can start in. One relates a state and an input to the next state: the *transition relation*, which is the design's combinational logic with the register inputs read as "next". One says which states are bad. A set of states with those three is a *transition system*. A trace of length $k$ is a sequence of states $s_0, \dots, s_k$ with $s_0$ initial and each pair $s_i, s_{i+1}$ one transition, and the property fails within $k$ steps exactly when some such trace ends in a bad state. Written with a separate copy of every variable for each of the $k + 1$ states, that sentence is one propositional formula:
+
+$$I(s_0) \;\land\; T(s_0, s_1) \;\land\; \dots \;\land\; T(s_{k-1}, s_k) \;\land\; \mathit{Bad}(s_k)$$
+
+A satisfying assignment gives a value to every state bit and every input in every cycle. It is a waveform, and it ends in a violation. This is *bounded model checking*. Its authors introduced it as a procedure that "reduces model checking to propositional satisfiability" [@biere1999symbolic], and the conjunction of the initial condition with $k$ copies of the transition relation is that paper's definition of a path. In circuit terms it is as plain as @fig-ch17-unroll: copy the combinational logic once for each cycle and connect each copy's next-state outputs to the next copy's state inputs. The registers disappear. Each becomes a wire between two copies.
+
+![Unrolling. The design's combinational logic is copied once for each cycle, each copy with its own inputs; the wires that fed the registers in one cycle are the state the next copy reads. The first copy reads the initial state, and the question is whether the bad signal of the last copy can be 1 while every copy's constraints hold.](../figures/ch17-unroll.svg){#fig-ch17-unroll fig-alt="Three boxes labeled logic, frame 0, frame 1 and frame k, left to right. Each has an arrow in from above labeled inputs. An initial-state box feeds the first; arrows labeled state 1 and state 2 connect each to the next; each has a dashed arrow labeled constraint = 1; the last has an arrow to a box labeled bad = 1 with a question mark."}
+
+::: {.callout-note title="Definition"}
+**Unrolling** a transition system to **bound** $k$ makes $k + 1$ copies of its state variables and inputs, called *frames* 0 to $k$, constrains frame 0 to be initial and each consecutive pair of frames to be one transition, and asks whether frame $k$ can be bad. In this book bound $k$ means $k$ transitions and $k + 1$ states, and frame 0 is the first cycle of the model.
+:::
+
+The unroller is short because the and-inverter graph has already done the work.
+
+```{.python include="examples/ch17-logic-and-solvers/fifo-unroll/bmc_aag.py" lines="23-61"}
+```
+
+`add_frame` gives every input and every AND gate of the model a fresh CNF variable and writes the AND's three clauses. A latch gets no variable and no clause. In frame 0 it is its reset value, or a fresh variable if the file says it is uninitialized; in every later frame its literal *is* the literal that its next-state function had in the frame before. Constraints are asserted as unit clauses in every frame. The rest of the file loops over bounds, adds the unit clause that says "bad in the last frame", and hands each formula to `cdcl.py` from scratch.
+
+On the counter of @sec-ch17-aig:
+
+```{.text include="examples/ch17-logic-and-solvers/fifo-unroll/run.out" lines="1-10"}
+```
+
+Unsatisfiable for bounds 0 to 5, satisfiable at 6 with 141 variables: the counter needs six enabled steps to reach the value its assertion forbids, and the bound is the depth the tool reported for the same model.
+
+### The FIFO
+
+The FIFO of @sec-ch01-example needs two things before it is a model, and @sec-ch09-formal had the tool's shell supply both. A formula has no reset unless one is written, and a property needs its reference state to exist as hardware. The wrapper below writes both: a one-bit register that is 0 in the first cycle only, an assumption that ties `rst_n` to it, the occupancy counter built from the interface contract, and the assertion that `full` is high only with sixteen entries.
+
+```{.systemverilog include="examples/ch17-logic-and-solvers/fifo-model/fifo_bmc.sv"}
+```
+
+```{.text include="examples/ch17-logic-and-solvers/fifo-model/run.out"}
+```
+
+The model has 146 state bits: sixteen 8-bit memory entries, two pointers, `count`, `occ` and the reset bit. At the bit level that is 146 latches and 992 ANDs. After preprocessing it is 10 latches and 102 ANDs. The property is about `full` and `occ`, `full` is decoded from `count`, and nothing on the way to either reads the memory, the pointers or the data input; what is left is `count`, `occ` and the reset bit, ten bits in all, and three one-bit inputs. Which reductions the tool applied is not something its size line says, and this chapter does not claim to know. The effect is the thing to remember: a property about control often has a model far smaller than the design, and the eight-bit data path of this FIFO costs this proof nothing.
+
+The simplified model, written out as AIGER, is the unroller's input.
+
+```{.text include="examples/ch17-logic-and-solvers/fifo-unroll/run.out" lines="11-51"}
+```
+
+Sixteen questions with the answer no, and then a yes. Each frame adds 105 variables, the three inputs and the 102 ANDs, and 307 clauses, three for each AND and the one constraint. At bound 16 the formula has 1,795 variables and 5,221 clauses, and the chapter's solver finds a satisfying assignment after 195 conflicts. Read back frame by frame, the assignment is the table of @sec-ch09: reset in frame 0, then a push in every cycle, `count` and `occ` rising together to 15, at which point `full` is high and `occ` is not 16. Those values are not one solver's choice. Fifteen pushes are the only way from empty to fifteen in fifteen steps, and the script asserts each of them. @fig-ch17-bound shows the cost of each bound.
+
+![The FIFO's unrolling, bound by bound, from the example's output. Each bar is one call of `cdcl.py` on a formula built from nothing; the numbers under the axis are the variables in that formula. Bounds 0 to 15 are unsatisfiable and bound 16 is satisfiable.](../figures/ch17-bound.svg){#fig-ch17-bound fig-alt="Bar chart with seventeen bars for bounds 0 to 16. The bars rise from 1 conflict at bound 0 to 185 at bound 15, all in blue; the bar at bound 16, 195 conflicts, is amber. Under the bars the variable counts run from 115 to 1,795."}
+
+The 16 of @sec-ch09 is now accounted for. It is the first bound at which a formula of this shape is satisfiable, and the tool's "depth" and this section's "bound" are the same number because both count the reset cycle as frame 0.
+
+The same unrolling can be written at the word level by hand, with no tool in between. The state is `count` and `occ`, one step is a function transcribed from the RTL's `case`, and z3 is asked about the chain.
+
+```{.python include="examples/ch17-logic-and-solvers/fifo-unroll-z3/unroll_z3.py" lines="21-50"}
+```
+
+```{.text include="examples/ch17-logic-and-solvers/fifo-unroll-z3/run.out"}
+```
+
+The bug appears at bound 15, not 16. Nothing is wrong: this model's state 0 is the state *after* reset, where the AIGER model's frame 0 is the reset cycle itself. Fifteen pushes either way.
+
+::: {.callout-warning title="Pitfall"}
+"Depth", "bound", "step" and "cycle" differ by one between tools, and between a model that contains its reset cycle and one that starts after it. The same trace is depth 16 in the formal tool's report, bound 16 in the AIGER unrolling and bound 15 in the hand model. Before comparing two tools' numbers, or setting a bound from a specification's "within $N$ cycles", find out what each calls zero.
+:::
+
+The second half of that output is the repaired design, with a 5-bit `count` and `full` at sixteen. Twenty-one bounds, all unsatisfiable. That is twenty-one true statements, each of the form "no trace of exactly this length ends in a violation", and it is not the statement an engineer wants, which has no length in it. A bounded check that finds nothing has shown that the bug, if there is one, is deeper than the bound. The counter is the warning: widen it and move its limit, and the first counterexample moves out with it (exercise 9), while every shallower bound stays clean.
+
+How a tool turns "no counterexample at any bound it tried" into "no counterexample" is the subject of the chapter on formal property verification. This one stops where a bound stops.
+
+::: {.callout-note title="Worked Example"}
+The five steps, as a recipe for another design. (1) Write the reset and any reference state the property needs as hardware, in a wrapper, with the property as an immediate assertion and the environment's rules as immediate assumptions. (2) Lower the wrapper and read the size line: state bits, bad states, constraints. If there is no bad state, the tool did not see the assertion. (3) Simplify and read the size line again. What remains is what the property depends on; if a register you expected is missing, the property does not constrain it. (4) Unroll bound by bound. The first satisfiable bound is the length of the shortest counterexample, and its assignment, read frame by frame, is the waveform. (5) If every bound is unsatisfiable, say so in exactly those words, with the bound.
+:::
+
+## Future directions
+
+::: {.callout-important title="Future Directions"}
+Three things are open or recent, and the chapter claims no result for any of them. The first is the gap this chapter measured and did not close: short resolution proofs of multiplier identities are known to exist [@beame2017towards] and solvers do not find them. Whether a search strategy can is a research question; in the meantime multipliers are verified by other reasoning, and one line of work combines SAT solving with computer algebra for the purpose [@kaufmann2019verifying]. The second is proof production as the normal case and not the exception: a solver that writes a checkable proof with every *unsatisfiable* [@wetzler2014drattrim] changes what a formal sign-off can be asked to show, and how far up the tool chain such certificates can be carried, through the encoding and the unrolling and not only the last solver call, is not settled. The third is model checking that stays at the word level, on formats such as Btor2 [@niemetz2018btor2], without reducing to bits first; this chapter's one measurement on the question shows the word level helping only where a rewrite applies.
+:::
+
+## Summary
+
+- Validity, equivalence and bounded reachability are one question, whether a formula is satisfiable. A satisfying assignment is the counterexample; *unsatisfiable* is a statement about every input.
+- A circuit becomes clauses by giving every wire a variable and every gate the clauses that define its output: 17 clauses for a full adder by hand, three for each AND in general. The result is equisatisfiable with the circuit's question, not equivalent to it.
+- Unit propagation is the inference; decisions and backtracking make it complete. On the adder miter with inputs numbered first, plain search makes $4^N - 1$ decisions, which is exhaustive simulation.
+- A conflict has a reason. Resolving it back to the first unique implication point gives a learned clause, a lemma about the design, and a level to jump back to. Learning took the adder miter from $4^N$ to about $2^N$; an activity heuristic took it to roughly linear, 2,410 conflicts at 32 bits.
+- An *unsatisfiable* from a clause-learning solver is a resolution proof and can be checked by another program.
+- Hardness is a property of the formula, not of its size. Pigeonhole formulas have only long resolution proofs: a theorem. Multiplier miters cost about four times more for each bit: an observation, with short proofs known to exist. Random 3-SAT peaks near the ratio where half the formulas are satisfiable.
+- A reduced ordered BDD is canonical for a fixed variable order, so equivalence is "same node" and solutions can be counted. An adder's carry is $3N - 1$ nodes in one order and $2^{N+1} - 2$ in another; a multiplier's middle bit is exponential in every order, by theorem.
+- An and-inverter graph is the circuit in two-input ANDs with inverted edges, shared by structural hashing: 9 ANDs to 7 for the full adder. AIGER holds it bit by bit; Btor2 holds the same kind of model in words, with `state`, `init`, `next`, `bad` and `constraint` lines.
+- Bit-vector SMT decides by rewriting where an algebraic law applies and by bit-blasting where none does. Division by zero is defined, nothing is X, and signedness is in the operator.
+- Unrolling copies the logic once for each cycle. The FIFO's bug is the first satisfiable bound, 16 with the reset cycle counted, in a formula of 1,795 variables. Every bound below it is a true statement about traces of that length and nothing more.
+
+| Representation | Canonical? | Cheap | Blows up on | In this book's tools |
+|---|---|---|---|---|
+| CNF and clause-learning search | no | one answer, with a counterexample or a checkable proof | counting arguments (theorem); arithmetic identities (observed) | the chapter's solvers; z3 on Boolean problems |
+| Reduced ordered BDD | yes, for a fixed order | equivalence, counting, all solutions | a bad variable order; multipliers under every order (theorem) | the chapter's package only |
+| And-inverter graph | no | building, sharing, conversion to clauses | nothing by itself: it is a carrier for the other engines | InFormal's bit-level model; Yosys and ABC |
+| Bit-vector formula (SMT) | no | identities the solver's rewriter knows | whatever its bit-blasted form blows up on | z3 behind Verilator's `randomize()`; Btor2 in InFormal |
+
+: The four representations of this chapter. "In this book's tools" records what the book's examples run, not what each tool can do. {#tbl-ch17-engines}
+
+## Exercises
+
+::: {.callout-note title="Exercise"}
+1. Write the DIMACS file for a 2-to-1 multiplexer `y = s ? a : b` built from two ANDs, one OR and one inverter, with one variable for each wire. How many variables and clauses does it have if the inverter's output gets its own variable, and how many if the inverter is folded into a negated literal, as the chapter's encoder does?
+2. On `full_adder.cnf` with the unit clauses `5`, `8` and `1`, carry out unit propagation by hand, listing each literal with the clause that forced it. Where does propagation stop, and what must a solver do next? Check your answer by changing one line of `run_dpll.py`.
+3. Without running it, say how many decisions `dpll.py` makes on the 8-bit adder miter. Run it. Then change `gen.py` so that the operand bits are numbered last instead of first, run the 5-bit miter under both numberings, and explain the difference.
+4. In the conflict printed in @sec-ch17-cdcl, the trail's second reason marked as learned came from conflict 11. Using only the printed trail, say at which decision levels the literals of that clause other than $\lnot 6$ were assigned, and why the clause was unit when it forced $\lnot 6$.
+5. From the multiplier table of @sec-ch17-hard, at which width does `cdcl_vsids.py` first need more conflicts than `cdcl.py`, and by what factor does it lose at seven bits?
+6. Draw the reduced ordered BDD of the majority of `a`, `b`, `c` under the order `a`, `b`, `c`. How many decision nodes does it have? Is there an order with fewer, and why or why not?
+7. Using `robdd.py`, find the size of the 6-bit adder's carry out under the order `a0 a1 a2 b0 b1 b2 a3 a4 a5 b3 b4 b5`. Place it between the two extremes of @sec-ch17-bdd and explain it with the "what must be remembered" argument.
+8. Show that `(a & b) | (c & (a ^ b))` and `(a & b) | (a & c) | (b & c)` are equal in three ways: by truth table, by a miter given to `cdcl.py`, and by building both in `robdd.py`. Which of the three methods would still work for two 64-input functions, and on what would that depend?
+9. Change `counter.sv` to stop at 5 as its comment says, regenerate its model, and show that the unrolling is unsatisfiable to bound 20. Then widen the counter to six bits with the assertion at 50 and the stop at 51. At which bound is the first counterexample? What does that say about choosing a bound from a design's size?
+10. In the FIFO model's output, 146 state bits become 10 latches. Which ten? Name a property of the FIFO that would keep the memory in the model, and predict what happens to the size line.
+11. In z3's Python interface, check the claim "an 8-bit `x` is a power of two exactly when `x & (x - 1) == 0`". It is false; find the counterexample and repair the statement.
+12. For each sentence say whether it is a theorem or an observation, and name the source or the output that supports it: (a) pigeonhole formulas have no short resolution proofs; (b) multiplier commutativity has no short resolution proofs; (c) the middle bit of a multiplier has no small BDD under any variable order; (d) random 3-SAT is hardest near 4.3 clauses for each variable.
+:::
+
+## Further reading
+
+- Armin Biere, Marijn Heule, Hans van Maaren and Toby Walsh (editors), *Handbook of Satisfiability*, second edition, IOS Press, 2021: the chapters on conflict-driven clause learning, CNF encodings, proof complexity, bounded model checking and satisfiability modulo theories [@biere2021handbook].
+- Daniel Kroening and Ofer Strichman, *Decision Procedures: An Algorithmic Point of View*, second edition, Springer, 2016: the chapters on propositional logic and on bit-vectors [@kroening2016decision].
+- Niklas Eén and Niklas Sörensson, *An Extensible SAT-solver*, SAT 2003: the next solver to read after this chapter's [@een2004extensible].
+- Matthew W. Moskewicz, Conor F. Madigan, Ying Zhao, Lintao Zhang and Sharad Malik, *Chaff: Engineering an Efficient SAT Solver*, DAC 2001 [@moskewicz2001chaff].
+- Randal E. Bryant, *Graph-Based Algorithms for Boolean Function Manipulation*, IEEE Transactions on Computers C-35(8), 1986 [@bryant1986graph].
+- Armin Biere, Alessandro Cimatti, Edmund Clarke and Yunshan Zhu, *Symbolic Model Checking without BDDs*, TACAS 1999 [@biere1999symbolic].
+- Paul Beame and Vincent Liew, *Towards Verifying Nonlinear Integer Arithmetic*, 2017, for what is and is not known about multipliers and resolution [@beame2017towards].
+- The AIGER and Btor2 format descriptions, short enough to read in full [@biere2007aiger; @biere2011aiger19; @niemetz2018btor2].

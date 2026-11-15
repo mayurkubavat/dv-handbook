@@ -1,0 +1,7 @@
+tool: Yosys 0.68
+yosys aigmap:     aag 12 3 0 2 9
+the regenerated graph equals ../aig/fa.aag: True
+abc strash:       and = 7
+abc write_cnf:    Vars = 8. Clauses = 17.
+yosys sat:        p cnf 40 100
+one circuit: 17 clauses by hand, 17 others from abc, 100 from yosys

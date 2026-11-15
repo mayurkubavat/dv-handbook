@@ -1,0 +1,7 @@
+1. the FIFO as shipped: full decoded from count == 15
+   bounds 0 to 14: unsat
+   bound 15: sat
+   full with occ != 16 is reachable 15 steps after reset
+2. the FIFO repaired: a 5-bit count, full at 16
+   bounds 0 to 20: unsat
+   no counterexample within 20 steps of reset

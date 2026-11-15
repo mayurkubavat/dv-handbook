@@ -28,6 +28,9 @@ book:
         - chapters/ch08-functional-coverage.qmd
         - chapters/ch09-temporal-properties.qmd
         - chapters/ch11-architecture-to-verification.qmd
+    - part: "Part IV · Proof and Probability"
+      chapters:
+        - chapters/ch17-logic-and-solvers.qmd
     - part: "Part VII · The Future of Verification"
       chapters:
         - chapters/ch34-generative-ai-agentic-dv.qmd
