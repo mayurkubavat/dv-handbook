@@ -116,7 +116,7 @@ Netlist
 : What synthesis produces: the design's behavior expressed as instances of library cells and the wires between them. See @sec-ch03-rtl.
 
 Non-blocking assignment
-: An assignment (`<=`) whose right side is evaluated in the Active region and whose target is updated later, in the NBA region of the same timestep. See @sec-ch04-regions.
+: An assignment (`<=`) whose right side is evaluated when the statement executes and whose target is updated later in the same timestep: in the NBA region for design code, in Re-NBA for code that runs in the Reactive set. See @sec-ch04-regions.
 
 ## O–R {#sec-appG-o}
 
@@ -142,7 +142,7 @@ Pure virtual method
 : A method declared without a body in an abstract (`virtual`) class. Every concrete subclass must implement it, and the abstract class cannot itself be constructed. See @sec-ch06-abstract.
 
 Queue
-: A SystemVerilog dynamic array that grows and shrinks at either end and can be inserted into in the middle. See @sec-ch05-aggregates.
+: A SystemVerilog variable-size ordered collection, its own kind of unpacked array, that grows and shrinks at either end and can be inserted into in the middle. See @sec-ch05-aggregates.
 
 Race condition
 : Two or more statements scheduled in the same timestep whose result depends on the order they run in, where the language does not fix that order. See @sec-ch04-races.
@@ -157,7 +157,7 @@ Random stability
 : The built-in class method that solves the class's constraints, assigns its random members, and returns 1, or returns 0 and assigns nothing when the constraints cannot be satisfied. See @sec-ch07-methods.
 
 Region
-: One of the ordered stages a SystemVerilog timestep is divided into, such as Preponed, Active, NBA, Observed, Reactive and Postponed. Only the order between regions may be relied on, never the order within one. See @sec-ch04-regions.
+: One of the ordered stages a SystemVerilog timestep is divided into, such as Preponed, Active, NBA, Observed, Reactive and Postponed. The order between regions may be relied on; the order between processes within one region may not. See @sec-ch04-regions.
 
 Register
 : A state element that holds a value between clock edges. See @sec-ch03-rtl.
