@@ -1,0 +1,88 @@
+=== the first chapter's FIFO: full is raised at fifteen
+--- informal-bmc, limit 3s for each property
+property                     type    status        engine     detail
+fifo.u_sva.NoOverflow_A      assert  unprocessed
+fifo.u_sva.FullForward_A     assert  unprocessed
+fifo.u_sva.FullBackward_A    assert  unprocessed
+fifo.u_sva.EmptyExact_A      assert  unprocessed
+fifo.u_sva.PushFull_A        assert  unprocessed
+fifo.u_sva.PopEmpty_A        assert  unprocessed
+fifo.u_sva.Sync_A            assert  unprocessed
+fifo.u_sva.FullReached_C     cover   undetermined             no engine reached a verdict
+fifo.u_sva.PushFull_C        cover   unprocessed
+fifo.u_sva.PopEmpty_C        cover   unprocessed
+fifo.u_sva.Drained_C         cover   unprocessed
+--- informal-kind, limit 20s for each property
+property                     type    status        engine     detail
+fifo.u_sva.NoOverflow_A      assert  unprocessed
+fifo.u_sva.FullForward_A     assert  unprocessed
+fifo.u_sva.FullBackward_A    assert  unprocessed
+fifo.u_sva.EmptyExact_A      assert  unprocessed
+fifo.u_sva.PushFull_A        assert  unprocessed
+fifo.u_sva.PopEmpty_A        assert  unprocessed
+fifo.u_sva.Sync_A            assert  unprocessed
+fifo.u_sva.FullReached_C     cover   unreachable   informal-kind
+fifo.u_sva.PushFull_C        cover   unprocessed
+fifo.u_sva.PopEmpty_C        cover   unprocessed
+fifo.u_sva.Drained_C         cover   unprocessed
+--- informal-ic3, limit 20s for each property
+property                     type    status        engine     detail
+fifo.u_sva.NoOverflow_A      assert  unprocessed
+fifo.u_sva.FullForward_A     assert  unprocessed
+fifo.u_sva.FullBackward_A    assert  unprocessed
+fifo.u_sva.EmptyExact_A      assert  unprocessed
+fifo.u_sva.PushFull_A        assert  unprocessed
+fifo.u_sva.PopEmpty_A        assert  unprocessed
+fifo.u_sva.Sync_A            assert  unprocessed
+fifo.u_sva.FullReached_C     cover   unreachable   informal-ic3
+fifo.u_sva.PushFull_C        cover   unprocessed
+fifo.u_sva.PopEmpty_C        cover   unprocessed
+fifo.u_sva.Drained_C         cover   unprocessed
+=== the repaired FIFO
+--- informal-bmc, limit 20s for each property
+property                     type    status        engine     detail
+fifo.u_sva.NoOverflow_A      assert  unprocessed
+fifo.u_sva.FullForward_A     assert  unprocessed
+fifo.u_sva.FullBackward_A    assert  unprocessed
+fifo.u_sva.EmptyExact_A      assert  unprocessed
+fifo.u_sva.PushFull_A        assert  unprocessed
+fifo.u_sva.PopEmpty_A        assert  unprocessed
+fifo.u_sva.Sync_A            assert  unprocessed
+fifo.u_sva.FullReached_C     cover   covered       informal-bmc depth 17
+fifo.u_sva.PushFull_C        cover   unprocessed
+fifo.u_sva.PopEmpty_C        cover   unprocessed
+fifo.u_sva.Drained_C         cover   unprocessed
+--- informal-kind, limit 20s for each property
+property                     type    status        engine     detail
+fifo.u_sva.NoOverflow_A      assert  unprocessed
+fifo.u_sva.FullForward_A     assert  unprocessed
+fifo.u_sva.FullBackward_A    assert  unprocessed
+fifo.u_sva.EmptyExact_A      assert  unprocessed
+fifo.u_sva.PushFull_A        assert  unprocessed
+fifo.u_sva.PopEmpty_A        assert  unprocessed
+fifo.u_sva.Sync_A            assert  unprocessed
+fifo.u_sva.FullReached_C     cover   covered       informal-kind depth 17
+fifo.u_sva.PushFull_C        cover   unprocessed
+fifo.u_sva.PopEmpty_C        cover   unprocessed
+fifo.u_sva.Drained_C         cover   unprocessed
+--- informal-ic3, limit 20s for each property
+property                     type    status        engine     detail
+fifo.u_sva.NoOverflow_A      assert  unprocessed
+fifo.u_sva.FullForward_A     assert  unprocessed
+fifo.u_sva.FullBackward_A    assert  unprocessed
+fifo.u_sva.EmptyExact_A      assert  unprocessed
+fifo.u_sva.PushFull_A        assert  unprocessed
+fifo.u_sva.PopEmpty_A        assert  unprocessed
+fifo.u_sva.Sync_A            assert  unprocessed
+fifo.u_sva.FullReached_C     cover   covered       informal-ic3 depth 17
+fifo.u_sva.PushFull_C        cover   unprocessed
+fifo.u_sva.PopEmpty_C        cover   unprocessed
+fifo.u_sva.Drained_C         cover   unprocessed
+=== FullReached_C: the FIFO, the engine, its limit, the answer
+  first chapter  informal-bmc   3s     undetermined
+  first chapter  informal-kind  20s    unreachable
+  first chapter  informal-ic3   20s    unreachable
+  repaired       informal-bmc   20s    covered, depth 17
+  repaired       informal-kind  20s    covered, depth 17
+  repaired       informal-ic3   20s    covered, depth 17
+verdict: covered is a trace and every engine finds it; unreachable is a proof and bounded search cannot give one

@@ -1,0 +1,50 @@
+tool: informal 0.1.0, rIC3 1.5.2; limit 4 s for each cell
+a bug 16 steps from reset (counter, cnt != 16)
+    informal-bmc   cex, depth 17
+    informal-kind  cex, depth 17
+    informal-ic3   cex, depth 17
+    ric3-ic3       cex
+    first choice   informal-bmc
+a bug 64 steps from reset (counter, cnt != 64)
+    informal-bmc   cex, depth 65
+    informal-kind  cex, depth 65
+    informal-ic3   cex, depth 65
+    ric3-ic3       cex
+    first choice   informal-bmc
+a fact one step shows (FIFO of 8, CountPtrs_A)
+    informal-bmc   no verdict in 4 s
+    informal-kind  proven
+    informal-ic3   proven
+    ric3-ic3       proven
+    first choice   informal-kind
+a fact about which states are reachable (FIFO of 8, EmptyPtrs_A)
+    informal-bmc   no verdict in 4 s
+    informal-kind  no verdict in 4 s
+    informal-ic3   proven
+    ric3-ic3       proven
+    first choice   informal-ic3
+a cover that is reachable (repaired FIFO of 16, FullReached_C)
+    informal-bmc   covered, depth 17
+    informal-kind  covered, depth 17
+    informal-ic3   covered, depth 17
+    ric3-ic3       covered
+    first choice   informal-bmc
+a cover that is not (first chapter's FIFO, FullReached_C)
+    informal-bmc   no verdict in 4 s
+    informal-kind  unreachable
+    informal-ic3   unreachable
+    ric3-ic3       unreachable
+    first choice   informal-ic3
+liveness under a fairness assumption (requester, s_eventually gnt)
+    informal-bmc   no verdict in 4 s
+    informal-kind  proven
+    informal-ic3   proven
+    ric3-ic3       no verdict in 4 s
+    first choice   informal-ic3
+a rule of a larger design (DMA, ArStable_A)
+    informal-bmc   no verdict in 4 s
+    informal-kind  no verdict in 4 s
+    informal-ic3   proven
+    ric3-ic3       proven
+    first choice   informal-ic3
+wrote tbl-engines.md

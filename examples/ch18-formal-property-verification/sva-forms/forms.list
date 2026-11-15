@@ -1,0 +1,176 @@
+# forms.list -- the probes of the property-forms table, read by
+# forms.tcl. One probe is a group heading or five fields:
+#
+#   key  kind  label  good  bad
+#
+# kind says how good and bad are used.
+#   assert   two assertions on probe.sv: good must be proven, bad
+#            must have a counterexample
+#   live     the same for a liveness form, under informal-ic3
+#   cover    two covers: good must be covered, bad unreachable
+#   refuse   good is an assertion the tool is expected to turn away,
+#            at the command or at `prove`; bad is not used
+#   assume   good is an assumption, bad an assertion that it makes
+#            true: proven with it, a counterexample without
+#   fair     the same for a fairness assumption and a liveness form
+#   rtl      good and bad are top modules of where.sv with the
+#            property written in the source
+#   dropped  good is a top module of where.sv whose one assertion is
+#            false and in a form the tool is expected not to read
+#
+# The label is the table's first cell, in Markdown.
+
+group "Booleans and sampled-value functions"
+p key bool kind assert label {a boolean `e`} \
+  good {q <= 4'd9} bad {q <= 4'd8}
+p key param kind assert label {a parameter by name, `q <= LIM`} \
+  good {q <= LIM} bad {q < LIM}
+p key below kind assert label {a signal of an instance below, `u_leaf.hid`} \
+  good {u_leaf.hid == d1} bad {u_leaf.hid != d1}
+p key past kind assert label {`$past(x)`} \
+  good {d1 == $past(a)} bad {d1 == $past(b)}
+p key past2 kind assert label {`$past(x, 2)`} \
+  good {d2 == $past(a, 2)} bad {d2 == $past(a)}
+p key rose kind assert label {`$rose(x)`} \
+  good {$rose(d1) |-> !d2} bad {$rose(d1) |-> d2}
+p key fell kind assert label {`$fell(x)`} \
+  good {$fell(d1) |-> d2} bad {$fell(d1) |-> !d2}
+p key stable kind assert label {`$stable(x)`} \
+  good {$stable(d1) |-> d1 == d2} bad {$stable(d1) |-> d1 != d2}
+p key changed kind assert label {`$changed(x)`} \
+  good {$changed(d1) |-> d1 != d2} bad {$changed(d1) |-> d1 == d2}
+p key onehot kind assert label {`$onehot(x)`, `$onehot0(x)`} \
+  good {$onehot({d1, !d1}) && $onehot0({a && !a, b})} \
+  bad {$onehot0({a, b})}
+p key countones kind assert label {`$countones(x)`} \
+  good {$countones(q) <= 3} bad {$countones(q) <= 2}
+p key bits kind assert label {`$bits(x)`} \
+  good {$bits(q) == 4} bad {$bits(q) == 5}
+p key inside kind assert label {`x inside {[lo:hi]}`} \
+  good {q inside {[0:9]}} bad {q inside {[0:8]}}
+p key isunknown kind refuse label {`$isunknown(x)`} \
+  good {$isunknown(q) == 0} bad {}
+
+group "Clock, reset, implication and delay"
+p key clock kind assert label {`@(posedge clk) e`} \
+  good {@(posedge clk) q <= 4'd9} bad {@(posedge clk) q <= 4'd8}
+p key disable kind assert label {`disable iff (rst)`} \
+  good {@(posedge clk) disable iff (rst) q <= 4'd9} \
+  bad {@(posedge clk) disable iff (rst) q <= 4'd8}
+p key negedge kind assert label {`@(negedge clk) e`} \
+  good {@(negedge clk) q <= 4'd9} bad {@(negedge clk) q <= 4'd8}
+p key overlap kind assert label {`a |-> b`} \
+  good {q == 4'd9 |-> done} bad {q == 4'd8 |-> done}
+p key nonoverlap kind assert label {`a |=> b`} \
+  good {a |=> d1} bad {a |=> !d1}
+p key delay kind assert label {fixed delay `a ##1 b`} \
+  good {a ##1 b |-> ##1 d2} bad {a ##1 b |-> ##1 !d2}
+p key delay0 kind assert label {`a ##0 b`} \
+  good {a ##0 b |=> d1} bad {a ##0 b |=> !d1}
+p key range kind assert label {ranged delay `##[1:2] b`} \
+  good {a |-> ##[1:2] d2} bad {a |-> ##[1:2] !d1}
+p key unbounded kind refuse label {unbounded delay `##[1:$] b`} \
+  good {a |-> ##[1:$] b} bad {}
+
+group "Repetition and the sequence operators"
+p key rep kind assert label {`a[*3]`} \
+  good {a[*3] |=> d3} bad {a[*3] |=> !d3}
+p key reprange kind assert label {`a[*1:3]`} \
+  good {a[*1:3] |=> d1} bad {a[*1:3] |=> !d1}
+p key goto kind refuse label {goto repetition `a[->2]`} \
+  good {a [->2] |-> b} bad {}
+p key noncons kind refuse label {nonconsecutive repetition `a[=2]`} \
+  good {a [=2] |-> b} bad {}
+p key seqand kind assert label {sequence `and`} \
+  good {(a ##1 a) and (b ##1 b) |=> d1} \
+  bad {(a ##1 a) and (b ##1 b) |=> !d1}
+p key seqor kind assert label {sequence `or`} \
+  good {(a ##1 a) or (a ##1 b) |-> d1} \
+  bad {(a ##1 a) or (a ##1 b) |-> !d1}
+p key intersect kind assert label {`intersect`} \
+  good {(a ##1 a) intersect (b ##1 b) |-> d1} \
+  bad {(a ##1 a) intersect (b ##1 b) |-> !d1}
+p key within kind assert label {`within`} \
+  good {a within (b ##2 b) |-> a || d1 || d2} \
+  bad {a within (b ##2 b) |-> a}
+p key throughout kind assert label {`throughout`} \
+  good {a throughout (b ##2 b) |-> d1 && d2} \
+  bad {a throughout (b ##2 b) |-> !d1}
+p key first kind assert label {`first_match`} \
+  good {first_match(a ##[1:2] b) |-> d1 || d2} \
+  bad {first_match(a ##[1:2] b) |-> d1}
+
+group "Property operators with a bound"
+p key nexttime kind assert label {`nexttime p`} \
+  good {a |-> nexttime d1} bad {a |-> nexttime !d1}
+p key nexttime2 kind assert label {`nexttime [2] p`} \
+  good {a |-> nexttime [2] d2} bad {a |-> nexttime [2] !d2}
+p key always kind assert label {`always [0:2] p`} \
+  good {q == 4'd9 |-> always [0:2] done} \
+  bad {q == 4'd8 |-> always [0:2] !done}
+p key eventually kind assert label {`s_eventually [0:7] p`} \
+  good {s_eventually [0:7] (c == 3'd7)} \
+  bad {s_eventually [0:6] (c == 3'd7)}
+p key until kind assert label {`p until q`} \
+  good {(q < 4'd9) until done} bad {(q < 4'd5) until done}
+p key untilwith kind assert label {`p until_with q`} \
+  good {(q <= 4'd9) until_with done} bad {(q < 4'd9) until_with done}
+p key strong kind assert label {`strong(s)` of a bounded sequence} \
+  good {a |-> strong(##[1:2] d2)} bad {a |-> strong(##[1:2] !d1)}
+p key alwaysun kind refuse label {`always p` under an implication} \
+  good {a |-> always b} bad {}
+p key not kind refuse label {`not p`} good {not (a ##1 b)} bad {}
+p key iff kind refuse label {property `iff`} good {a iff b} bad {}
+p key implies kind refuse label {property `implies`} \
+  good {a implies b} bad {}
+p key if kind refuse label {property `if ... else`} \
+  good {if (a) b else !b} bad {}
+p key accept kind refuse label {`accept_on`} \
+  good {accept_on (b) a |=> d1} bad {}
+p key followed kind refuse label {followed-by `a #-# b`, `a #=# b`} \
+  good {a #-# b} bad {}
+
+group "Liveness"
+p key event kind live label {`s_eventually p`} \
+  good {s_eventually (c == 3'd7)} bad {s_eventually done}
+p key suntil kind live label {`p s_until q`} \
+  good {(c != 3'd7) s_until (c == 3'd7)} \
+  bad {(c != 3'd6) s_until (c == 3'd7)}
+p key suntilwith kind live label {`p s_until_with q`} \
+  good {(c <= 3'd7) s_until_with (c == 3'd7)} \
+  bad {(c < 3'd7) s_until_with (c == 3'd7)}
+p key fair kind fair label {fairness, `assume {s_eventually p}`} \
+  good {s_eventually en} bad {s_eventually done}
+
+group "Assume and cover"
+p key assume kind assume label {`assume` of a boolean} \
+  good {!en} bad {q == 4'd0}
+p key assumeseq kind assume label {`assume` of an implication} \
+  good {a |=> !a} bad {a |=> !a}
+p key cover kind cover label {`cover` of a boolean} \
+  good {q == 4'd9} bad {q == 4'd10}
+p key coverseq kind cover label {`cover` of a sequence} \
+  good {a ##1 b ##1 a} bad {a ##1 !d1}
+
+group "Where a property is written"
+p key tcl kind assert label {a shell command, `assert -name N {...}`} \
+  good {done |-> q == LIM} bad {done |-> q != LIM}
+p key module kind rtl label {`assert property`, labelled, in a module} \
+  good in_module_t bad in_module_f
+p key nolabel kind rtl label {the same with no label} \
+  good no_label_t bad no_label_f
+p key bind kind rtl label {in a checker attached with `bind`} \
+  good bound_t bad bound_f
+p key defaults kind rtl \
+  label {under `default clocking` and `default disable iff`} \
+  good defaults_t bad defaults_f
+p key underif kind rtl label {under `if` in a clocked block} \
+  good under_if_t bad under_if_f
+p key imm kind dropped label {immediate `assert (e)` in a clocked block} \
+  good immediate_f bad {}
+p key immcomb kind dropped label {immediate `assert (e)` in `always_comb`} \
+  good immediate_comb_f bad {}
+p key deferred kind dropped label {deferred `assert #0 (e)`} \
+  good deferred_f bad {}
+p key final kind dropped label {deferred `assert final (e)`} \
+  good final_f bad {}

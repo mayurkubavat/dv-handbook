@@ -1,0 +1,27 @@
+tool: informal 0.1.0
+$ informal lower ... > build/fifo_ptrs2.btor2
+  loaded    inputs 6 latches 7 ands 58 bads 1 constraints 1
+  simplified inputs 3 latches 5 ands 40 bads 1 constraints 1
+  aag 48 3 5 0 40 1 1
+  equal to common/fifo_ptrs2.aag: True
+$ informal lower ... -D COUNT > build/count_ptrs2.btor2
+  loaded    inputs 6 latches 7 ands 55 bads 1 constraints 1
+  simplified inputs 3 latches 5 ands 42 bads 1 constraints 1
+  aag 50 3 5 0 42 1 1
+  equal to common/count_ptrs2.aag: True
+$ informal lower ... -D HELPER > build/fifo_ptrs2_h.btor2
+  loaded    inputs 6 latches 7 ands 59 bads 1 constraints 2
+  simplified inputs 3 latches 5 ands 47 bads 1 constraints 2
+  aag 55 3 5 0 47 1 2
+  equal to common/fifo_ptrs2_h.aag: True
+$ informal lower ... -D DEPTH=4 > build/fifo_ptrs4.btor2
+  loaded    inputs 6 latches 12 ands 118 bads 1 constraints 1
+  simplified inputs 3 latches 8 ands 72 bads 1 constraints 1
+  aag 83 3 8 0 72 1 1
+  equal to common/fifo_ptrs4.aag: True
+$ informal lower ... -D DEPTH=4 -D HELPER > build/fifo_ptrs4_h.btor2
+  loaded    inputs 6 latches 12 ands 119 bads 1 constraints 2
+  simplified inputs 3 latches 8 ands 90 bads 1 constraints 2
+  aag 101 3 8 0 90 1 2
+  equal to common/fifo_ptrs4_h.aag: True
+all 5 regenerated models equal the checked-in files

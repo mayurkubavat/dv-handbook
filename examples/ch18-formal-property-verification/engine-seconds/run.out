@@ -1,0 +1,22 @@
+limit: 10 s for each run; the seconds are in tbl-seconds.md and not here
+  counter, a bug 16 steps from reset           informal-bmc   cex
+  counter, a bug 64 steps from reset           informal-bmc   cex
+  counter, a bug 256 steps from reset          informal-bmc   cex
+  counter, a bug 1024 steps from reset         informal-bmc   no verdict
+  counter, a bug 1024 steps from reset         ric3-ic3       cex
+  FIFO of 2, EmptyPtrs_A                       informal-kind  proven
+  FIFO of 2, EmptyPtrs_A                       informal-ic3   proven
+  FIFO of 2, EmptyPtrs_A                       ric3-ic3       proven
+  FIFO of 4, EmptyPtrs_A                       informal-kind  no verdict
+  FIFO of 4, EmptyPtrs_A                       informal-ic3   proven
+  FIFO of 4, EmptyPtrs_A                       ric3-ic3       proven
+  FIFO of 8, EmptyPtrs_A                       informal-ic3   proven
+  FIFO of 8, EmptyPtrs_A                       ric3-ic3       proven
+  FIFO of 16, EmptyPtrs_A                      informal-ic3   proven
+  FIFO of 16, EmptyPtrs_A                      ric3-ic3       proven
+  FIFO of 64, EmptyPtrs_A                      informal-ic3   no verdict
+  FIFO of 64, EmptyPtrs_A                      ric3-ic3       proven
+  FIFO of 64, EmptyPtrs_A, helper assumed      informal-kind  proven
+  FIFO of 64, EmptyPtrs_A, helper assumed      informal-ic3   proven
+  FIFO of 64, EmptyPtrs_A, helper assumed      ric3-ic3       proven
+verdict: every run ended as the chapter states

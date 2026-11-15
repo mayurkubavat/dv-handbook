@@ -1,0 +1,54 @@
+# commands.list -- one shell command to a line, then ` ## ` and what
+# the command is for. commands.py runs the lines in this order in one
+# session, on the counter of ../bmc-depth (its own assertion,
+# a_never, fails 17 cycles after reset when BUG is 16), and writes
+# what the tool did with each as the last column of the table.
+== Reading a design
+clear -all ## forget the design, the properties and the results
+analyze -sv12 $here/../bmc-depth/deep.sv ## read SystemVerilog source
+elaborate -top deep -parameter BUG 16 ## build one top, overriding a parameter
+get_design_info ## summary of what was elaborated
+== Clock and reset
+clock clk ## name the clock that every property samples on
+reset -expression {rst} ## the condition held in the reset cycle
+== Properties from the script
+assert -name a_step {!en |=> $stable(cnt)} ## add an assertion
+assume -name m_slow {en |=> !en} ## add an assumption
+cover -name c_three {cnt == 16'd3} ## add a cover
+include $here/extra.tcl ## read another script
+get_property_list ## names of all properties, the RTL ones under their path
+get_property_list -include {type cover} ## names filtered by type
+== Proving
+set_prove_time_limit 5s ## limit for each property; units s, m, h
+set_prove_time_limit 500ms ## a unit the tool does not read
+informal::set_engines informal-kind ## select engines by name (tool extension)
+set_engine_mode {Ht} ## a vendor engine code
+prove -all ## prove every enabled property
+prove -property deep.a_never ## prove one property, by its full name
+prove -property a_never ## a short name for a property of the RTL
+prove -bg -all ## a vendor option that has no meaning here
+== Results
+get_status a_step ## one status word
+get_status deep.a_never ## the same for a failing property
+get_property_list -include {status covered} ## names filtered by status
+report ## the property table again
+informal::session ## the whole session as JSON (tool extension)
+visualize -violation -property deep.a_never ## open a trace in a viewer
+== Changing the problem
+assume -disable m_slow ## switch an assumption off, results kept
+assume -enable m_slow ## and on again
+assert -disable deep.a_never ## switch an assertion of the RTL off
+assert -enable deep.a_never ## and on again
+assume -remove m_slow ## delete a property
+assert -env {en} ## an assumption written in the other vendor style
+stopat cnt ## cut a signal free of its driver
+stopat -list ## the signals cut free
+stopat -clear ## undo every cut
+set_lowering ## the tool's switches for reading properties
+task -create t1 ## a second set of properties
+get_version ## a command the tool does not have
+== A design with a black box
+clear -all ## start again
+analyze -sv12 $here/../over-constraint/handshake.sv ## the second design
+elaborate -top handshake -bbox_m {timer} ## replace a module by free outputs
+get_property_list ## the properties that survive

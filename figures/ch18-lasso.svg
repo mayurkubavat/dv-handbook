@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 480" width="1000" height="480" role="img" aria-label="A table of five cycles, 0 to 4, with rows rst, req, stall, n and gnt. gnt is 0 in every cycle. Cycles 0 to 2 are marked stem. An arrow leads from cycle 4 back to cycle 3 and is marked loop">
+<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#7FA3C0"/></marker><marker id="ahj" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#5B3E8E"/></marker><marker id="ahd" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#1B4F72"/></marker><marker id="ahc" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#B7791F"/></marker><marker id="ahg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#1C1C1C"/></marker><pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="6" stroke="#CBD2D9" stroke-width="2"/></pattern></defs>
+<rect width="1000" height="480" fill="white"/>
+<text x="30" y="40.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="21" font-weight="700" text-anchor="start" fill="#1B4F72">A liveness counterexample is a stem and a loop</text>
+<text x="30" y="64.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="400" text-anchor="start" fill="#1C1C1C">The trace the tool printed for a grant that never comes: five cycles, the last back in the state of the one before.</text>
+<text x="275.0" y="136.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="14" font-weight="600" text-anchor="middle" fill="#1C1C1C">cycle 0</text>
+<text x="194.0" y="175.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="14" font-weight="600" text-anchor="end" fill="#1C1C1C">rst</text>
+<rect x="214.0" y="154.0" width="122.0" height="32.0" rx="5" fill="white" stroke="#CBD2D9" stroke-width="1.4"/>
+<text x="275.0" y="175.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="15" font-weight="600" text-anchor="middle" fill="#1C1C1C">1</text>
+<text x="194.0" y="215.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="14" font-weight="600" text-anchor="end" fill="#1C1C1C">req</text>
+<rect x="214.0" y="194.0" width="122.0" height="32.0" rx="5" fill="white" stroke="#CBD2D9" stroke-width="1.4"/>
+<text x="275.0" y="215.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="15" font-weight="600" text-anchor="middle" fill="#1C1C1C">0</text>
+<text x="194.0" y="255.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="14" font-weight="600" text-anchor="end" fill="#1C1C1C">stall</text>
+<rect x="214.0" y="234.0" width="122.0" height="32.0" rx="5" fill="white" stroke="#CBD2D9" stroke-width="1.4"/>
+<text x="275.0" y="255.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="15" font-weight="600" text-anchor="middle" fill="#1C1C1C">0</text>
+<text x="194.0" y="295.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="14" font-weight="600" text-anchor="end" fill="#1C1C1C">n</text>
+<rect x="214.0" y="274.0" width="122.0" height="32.0" rx="5" fill="white" stroke="#CBD2D9" stroke-width="1.4"/>
+<text x="275.0" y="295.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="15" font-weight="600" text-anchor="middle" fill="#1C1C1C">0</text>
+<text x="194.0" y="335.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="14" font-weight="600" text-anchor="end" fill="#1C1C1C">gnt</text>
+<rect x="214.0" y="314.0" width="122.0" height="32.0" rx="5" fill="white" stroke="#CBD2D9" stroke-width="1.4"/>
+<text x="275.0" y="335.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="15" font-weight="600" text-anchor="middle" fill="#1C1C1C">0</text>
+<text x="405.0" y="136.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="14" font-weight="600" text-anchor="middle" fill="#1C1C1C">cycle 1</text>
+<rect x="344.0" y="154.0" width="122.0" height="32.0" rx="5" fill="white" stroke="#CBD2D9" stroke-width="1.4"/>
+<text x="405.0" y="175.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="15" font-weight="600" text-anchor="middle" fill="#1C1C1C">0</text>
+<rect x="344.0" y="194.0" width="122.0" height="32.0" rx="5" fill="white" stroke="#CBD2D9" stroke-width="1.4"/>
+<text x="405.0" y="215.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="15" font-weight="600" text-anchor="middle" fill="#1C1C1C">1</text>
+<rect x="344.0" y="234.0" width="122.0" height="32.0" rx="5" fill="white" stroke="#CBD2D9" stroke-width="1.4"/>
+<text x="405.0" y="255.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="15" font-weight="600" text-anchor="middle" fill="#1C1C1C">0</text>
+<rect x="344.0" y="274.0" width="122.0" height="32.0" rx="5" fill="white" stroke="#CBD2D9" stroke-width="1.4"/>
+<text x="405.0" y="295.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="15" font-weight="600" text-anchor="middle" fill="#1C1C1C">0</text>
+<rect x="344.0" y="314.0" width="122.0" height="32.0" rx="5" fill="white" stroke="#CBD2D9" stroke-width="1.4"/>
+<text x="405.0" y="335.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="15" font-weight="600" text-anchor="middle" fill="#1C1C1C">0</text>
+<text x="535.0" y="136.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="14" font-weight="600" text-anchor="middle" fill="#1C1C1C">cycle 2</text>
+<rect x="474.0" y="154.0" width="122.0" height="32.0" rx="5" fill="white" stroke="#CBD2D9" stroke-width="1.4"/>
+<text x="535.0" y="175.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="15" font-weight="600" text-anchor="middle" fill="#1C1C1C">0</text>
+<rect x="474.0" y="194.0" width="122.0" height="32.0" rx="5" fill="white" stroke="#CBD2D9" stroke-width="1.4"/>
+<text x="535.0" y="215.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="15" font-weight="600" text-anchor="middle" fill="#1C1C1C">0</text>
+<rect x="474.0" y="234.0" width="122.0" height="32.0" rx="5" fill="white" stroke="#CBD2D9" stroke-width="1.4"/>
+<text x="535.0" y="255.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="15" font-weight="600" text-anchor="middle" fill="#1C1C1C">0</text>
+<rect x="474.0" y="274.0" width="122.0" height="32.0" rx="5" fill="white" stroke="#CBD2D9" stroke-width="1.4"/>
+<text x="535.0" y="295.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="15" font-weight="600" text-anchor="middle" fill="#1C1C1C">1</text>
+<rect x="474.0" y="314.0" width="122.0" height="32.0" rx="5" fill="white" stroke="#CBD2D9" stroke-width="1.4"/>
+<text x="535.0" y="335.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="15" font-weight="600" text-anchor="middle" fill="#1C1C1C">0</text>
+<text x="665.0" y="136.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="14" font-weight="600" text-anchor="middle" fill="#1C1C1C">cycle 3</text>
+<rect x="604.0" y="154.0" width="122.0" height="32.0" rx="5" fill="white" stroke="#CBD2D9" stroke-width="1.4"/>
+<text x="665.0" y="175.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="15" font-weight="600" text-anchor="middle" fill="#1C1C1C">0</text>
+<rect x="604.0" y="194.0" width="122.0" height="32.0" rx="5" fill="white" stroke="#CBD2D9" stroke-width="1.4"/>
+<text x="665.0" y="215.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="15" font-weight="600" text-anchor="middle" fill="#1C1C1C">0</text>
+<rect x="604.0" y="234.0" width="122.0" height="32.0" rx="5" fill="white" stroke="#CBD2D9" stroke-width="1.4"/>
+<text x="665.0" y="255.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="15" font-weight="600" text-anchor="middle" fill="#1C1C1C">1</text>
+<rect x="604.0" y="274.0" width="122.0" height="32.0" rx="5" fill="#FBF1DC" stroke="#B7791F" stroke-width="1.4"/>
+<text x="665.0" y="295.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="15" font-weight="600" text-anchor="middle" fill="#1C1C1C">2</text>
+<rect x="604.0" y="314.0" width="122.0" height="32.0" rx="5" fill="#FBF1DC" stroke="#B7791F" stroke-width="1.4"/>
+<text x="665.0" y="335.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="15" font-weight="600" text-anchor="middle" fill="#1C1C1C">0</text>
+<text x="795.0" y="136.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="14" font-weight="600" text-anchor="middle" fill="#1C1C1C">cycle 4</text>
+<rect x="734.0" y="154.0" width="122.0" height="32.0" rx="5" fill="white" stroke="#CBD2D9" stroke-width="1.4"/>
+<text x="795.0" y="175.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="15" font-weight="600" text-anchor="middle" fill="#1C1C1C">0</text>
+<rect x="734.0" y="194.0" width="122.0" height="32.0" rx="5" fill="white" stroke="#CBD2D9" stroke-width="1.4"/>
+<text x="795.0" y="215.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="15" font-weight="600" text-anchor="middle" fill="#1C1C1C">0</text>
+<rect x="734.0" y="234.0" width="122.0" height="32.0" rx="5" fill="white" stroke="#CBD2D9" stroke-width="1.4"/>
+<text x="795.0" y="255.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="15" font-weight="600" text-anchor="middle" fill="#1C1C1C">0</text>
+<rect x="734.0" y="274.0" width="122.0" height="32.0" rx="5" fill="#FBF1DC" stroke="#B7791F" stroke-width="1.4"/>
+<text x="795.0" y="295.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="15" font-weight="600" text-anchor="middle" fill="#1C1C1C">2</text>
+<rect x="734.0" y="314.0" width="122.0" height="32.0" rx="5" fill="#FBF1DC" stroke="#B7791F" stroke-width="1.4"/>
+<text x="795.0" y="335.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="15" font-weight="600" text-anchor="middle" fill="#1C1C1C">0</text>
+<line x1="216.0" y1="368.0" x2="594.0" y2="368.0" stroke="#1B4F72" stroke-width="2.2"/>
+<text x="405.0" y="388.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13.5" font-weight="600" text-anchor="middle" fill="#1B4F72">stem: cycles 0 to 2</text>
+<path d="M795,368 L795,398 L665,398 L665,372" fill="none" stroke="#B7791F" stroke-width="2.2" marker-end="url(#ahc)"/>
+<text x="730.0" y="418.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13.5" font-weight="600" text-anchor="middle" fill="#B7791F">loop: the register n in cycle 4 equals n in cycle 3</text>
+<text x="30.0" y="462.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13.5" font-weight="400" text-anchor="start" fill="#1C1C1C">From the loop on, the inputs can repeat for ever and gnt stays 0. A finite trace with a loop stands for an infinite one.</text>
+</svg>

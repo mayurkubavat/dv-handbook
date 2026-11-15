@@ -1,0 +1,36 @@
+model: fifo_ptrs2.aag, 3 inputs, 5 latches, 40 ANDs
+latches: started wr_ptr rd_ptr count[0] count[1]
+check of the names: from the empty state the only move is to wr_ptr=1 rd_ptr=0 count=1
+states: 32; reachable: 22; bad: 2
+  reset cycle (started=0): 16 states, 16 reachable, 0 bad
+  after reset (started=1): 16 states, 6 reachable, 2 bad, 8 neither
+the reachable states after reset, by the step that first reaches them:
+  step 1  wr_ptr=0 rd_ptr=0 count=0
+  step 2  wr_ptr=1 rd_ptr=0 count=1
+  step 3  wr_ptr=1 rd_ptr=1 count=0
+  step 3  wr_ptr=0 rd_ptr=1 count=1
+  step 3  wr_ptr=0 rd_ptr=0 count=2
+  step 4  wr_ptr=1 rd_ptr=1 count=2
+the bad states:
+          wr_ptr=1 rd_ptr=0 count=0
+          wr_ptr=0 rd_ptr=1 count=0
+allowed by the property and never reached:
+          wr_ptr=0 rd_ptr=0 count=1
+          wr_ptr=1 rd_ptr=1 count=1
+          wr_ptr=1 rd_ptr=0 count=2
+          wr_ptr=0 rd_ptr=1 count=2
+          wr_ptr=0 rd_ptr=0 count=3
+          wr_ptr=1 rd_ptr=0 count=3
+          wr_ptr=0 rd_ptr=1 count=3
+          wr_ptr=1 rd_ptr=1 count=3
+deepest reachable state: step 4 (the reset cycle is step 0)
+longest shortest path between two of the 6: 3 steps
+candidate invariants:
+the property (empty implies equal pointers): 14 states after reset
+  contains the reset states: yes;  closed under a step: NO;  excludes bad: yes
+  a step that leaves it: wr_ptr=0 rd_ptr=0 count=1  ->  wr_ptr=0 rd_ptr=1 count=0
+the helper (count[0] == wr_ptr ^ rd_ptr): 8 states after reset
+  contains the reset states: yes;  closed under a step: yes;  excludes bad: yes
+the reachable states: 6 states after reset
+  contains the reset states: yes;  closed under a step: yes;  excludes bad: yes
+verdict: the property is true, and it is not inductive

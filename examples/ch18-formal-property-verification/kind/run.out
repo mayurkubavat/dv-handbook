@@ -1,0 +1,38 @@
+=== induction on fifo_ptrs2.aag, k = 0 to 8
+  k=0: base case UNSAT, step case SAT, starting in wr_ptr=1 rd_ptr=0 count=0
+  k=1: base case UNSAT, step case SAT, starting in wr_ptr=1 rd_ptr=1 count=3
+  k=2: base case UNSAT, step case SAT, starting in wr_ptr=1 rd_ptr=1 count=3
+  k=3: base case UNSAT, step case SAT, starting in wr_ptr=1 rd_ptr=1 count=3
+  k=4: base case UNSAT, step case SAT, starting in wr_ptr=1 rd_ptr=1 count=3
+  k=5: base case UNSAT, step case SAT, starting in wr_ptr=1 rd_ptr=1 count=3
+  k=6: base case UNSAT, step case SAT, starting in wr_ptr=1 rd_ptr=1 count=3
+  k=7: base case UNSAT, step case SAT, starting in wr_ptr=1 rd_ptr=1 count=3
+  k=8: base case UNSAT, step case SAT, starting in wr_ptr=1 rd_ptr=1 count=3
+  undetermined at k = 8, 18 queries
+=== the step case at k = 3, decoded
+a counterexample to induction: three good states, then a bad one
+  state 0  wr_ptr=1 rd_ptr=1 count=3   not reachable
+  state 1  wr_ptr=0 rd_ptr=0 count=3   not reachable
+  state 2  wr_ptr=1 rd_ptr=1 count=3   not reachable
+  state 3  wr_ptr=0 rd_ptr=1 count=0   not reachable   BAD: empty, pointers apart
+  repeated states: 0 and 2
+=== the same with pairwise different states
+  k=0: base case UNSAT, step case SAT, starting in wr_ptr=1 rd_ptr=0 count=0
+  k=1: base case UNSAT, step case SAT, starting in wr_ptr=1 rd_ptr=1 count=3
+  k=2: base case UNSAT, step case SAT, starting in wr_ptr=1 rd_ptr=1 count=3
+  k=3: base case UNSAT, step case SAT, starting in wr_ptr=1 rd_ptr=0 count=2
+  k=4: base case UNSAT, step case SAT, starting in wr_ptr=1 rd_ptr=1 count=3
+  k=5: base case UNSAT, step case SAT, starting in wr_ptr=1 rd_ptr=1 count=3
+  k=6: base case UNSAT, step case SAT, starting in wr_ptr=1 rd_ptr=1 count=3
+  k=7: base case UNSAT, step case UNSAT: proven
+  proven at k = 7, 16 queries
+=== the step case at k = 3 with different states, decoded
+three good states, all different, then a bad one
+  state 0  wr_ptr=1 rd_ptr=0 count=2   not reachable
+  state 1  wr_ptr=1 rd_ptr=1 count=1   not reachable
+  state 2  wr_ptr=0 rd_ptr=0 count=1   not reachable
+  state 3  wr_ptr=0 rd_ptr=1 count=0   not reachable   BAD: empty, pointers apart
+  repeated states: none
+=== a design with a bug: the first chapter's FIFO
+  cex: the base case is satisfiable at k = 16, 33 queries
+verdict: not inductive at any k tried; proven at k = 7 with unique states

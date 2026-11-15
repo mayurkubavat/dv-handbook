@@ -1,6 +1,6 @@
 {
-  "checked": "2026-11-15T21:56:49Z",
-  "pass": 97,
+  "checked": "2026-11-15T23:53:42Z",
+  "pass": 115,
   "fail": 0,
   "skipped_run": 3,
   "examples": [
@@ -681,6 +681,132 @@
       "lint": "pass",
       "run": "pass",
       "requires": "yosys",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch18-formal-property-verification/bmc-depth",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "informal",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch18-formal-property-verification/cover-engines",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "informal",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch18-formal-property-verification/engine-guide",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "ric3",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch18-formal-property-verification/engine-seconds",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "ric3",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch18-formal-property-verification/engine-view",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "informal",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch18-formal-property-verification/fairness",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "informal",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch18-formal-property-verification/fifo-64",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "ric3",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch18-formal-property-verification/helper",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch18-formal-property-verification/ic3",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch18-formal-property-verification/ic3-fuzz",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch18-formal-property-verification/kind",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch18-formal-property-verification/lasso",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "informal",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch18-formal-property-verification/models",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "informal",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch18-formal-property-verification/over-constraint",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "informal",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch18-formal-property-verification/reach",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch18-formal-property-verification/scaling",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "ric3",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch18-formal-property-verification/shell-commands",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "informal",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch18-formal-property-verification/sva-forms",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "informal",
       "expect": "pass"
     }
   ]

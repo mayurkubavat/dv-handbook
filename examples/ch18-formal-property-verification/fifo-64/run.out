@@ -1,0 +1,90 @@
+=== step 1: the covers, by bounded search
+--- informal-bmc, limit 20s for each property
+informal: svlang: the design has no assertions
+property                     type    status        engine     detail
+EmptyPtrs_A                  assert  disabled
+CountPtrs_A                  assert  disabled
+Full_C                       cover   covered       informal-bmc depth 65
+EmptyAgain_C                 cover   covered       informal-bmc depth 3
+Drain_C                      cover   covered       informal-bmc depth 129
+=== step 2: a bounded search for a counterexample
+--- informal-bmc, limit 3s for each property
+property                     type    status        engine     detail
+EmptyPtrs_A                  assert  undetermined             no engine reached a verdict
+CountPtrs_A                  assert  disabled
+Full_C                       cover   disabled      informal-bmc depth 65
+EmptyAgain_C                 cover   disabled      informal-bmc depth 3
+Drain_C                      cover   disabled      informal-bmc depth 129
+=== step 3: induction
+--- informal-kind, limit 5s for each property
+property                     type    status        engine     detail
+EmptyPtrs_A                  assert  undetermined             no engine reached a verdict
+CountPtrs_A                  assert  disabled
+Full_C                       cover   disabled      informal-bmc depth 65
+EmptyAgain_C                 cover   disabled      informal-bmc depth 3
+Drain_C                      cover   disabled      informal-bmc depth 129
+=== step 4: IC3, in-house and external
+--- informal-ic3, limit 5s for each property
+property                     type    status        engine     detail
+EmptyPtrs_A                  assert  undetermined             no engine reached a verdict
+CountPtrs_A                  assert  disabled
+Full_C                       cover   disabled      informal-bmc depth 65
+EmptyAgain_C                 cover   disabled      informal-bmc depth 3
+Drain_C                      cover   disabled      informal-bmc depth 129
+--- ric3-ic3, limit 20s for each property
+property                     type    status        engine     detail
+EmptyPtrs_A                  assert  proven        ric3-ic3
+CountPtrs_A                  assert  disabled
+Full_C                       cover   disabled      informal-bmc depth 65
+EmptyAgain_C                 cover   disabled      informal-bmc depth 3
+Drain_C                      cover   disabled      informal-bmc depth 129
+=== step 5: the helper alone, by induction
+--- informal-kind, limit 5s for each property
+property                     type    status        engine     detail
+EmptyPtrs_A                  assert  disabled      ric3-ic3
+CountPtrs_A                  assert  proven        informal-kind
+Full_C                       cover   disabled      informal-bmc depth 65
+EmptyAgain_C                 cover   disabled      informal-bmc depth 3
+Drain_C                      cover   disabled      informal-bmc depth 129
+=== step 6: the property with the helper assumed
+--- informal-kind, limit 5s for each property
+property                     type    status        engine     detail
+EmptyPtrs_A                  assert  proven        informal-kind
+CountPtrs_A                  assert  disabled      informal-kind
+Full_C                       cover   disabled      informal-bmc depth 65
+EmptyAgain_C                 cover   disabled      informal-bmc depth 3
+Drain_C                      cover   disabled      informal-bmc depth 129
+CountPtrs_M                  assume  unprocessed
+--- informal-ic3, limit 5s for each property
+property                     type    status        engine     detail
+EmptyPtrs_A                  assert  proven        informal-ic3
+CountPtrs_A                  assert  disabled      informal-kind
+Full_C                       cover   disabled      informal-bmc depth 65
+EmptyAgain_C                 cover   disabled      informal-bmc depth 3
+Drain_C                      cover   disabled      informal-bmc depth 129
+CountPtrs_M                  assume  unprocessed
+=== step 7: the covers again, under the assumption
+--- informal-bmc, limit 20s for each property
+informal: svlang: the design has no assertions
+property                     type    status        engine     detail
+EmptyPtrs_A                  assert  disabled      informal-ic3
+CountPtrs_A                  assert  disabled      informal-kind
+Full_C                       cover   covered       informal-bmc depth 65
+EmptyAgain_C                 cover   covered       informal-bmc depth 3
+Drain_C                      cover   covered       informal-bmc depth 129
+CountPtrs_M                  assume  unprocessed
+=== summary: step, engine, limit, property, answer
+  1    informal-bmc  20s  Full_C        covered, depth 65
+  1    informal-bmc  20s  EmptyAgain_C  covered, depth 3
+  1    informal-bmc  20s  Drain_C       covered, depth 129
+  2    informal-bmc  3s   EmptyPtrs_A   undetermined
+  3    informal-kind 5s   EmptyPtrs_A   undetermined
+  4    informal-ic3  5s   EmptyPtrs_A   undetermined
+  4    ric3-ic3      20s  EmptyPtrs_A   proven
+  5    informal-kind 5s   CountPtrs_A   proven
+  6    informal-kind 5s   EmptyPtrs_A   proven
+  6    informal-ic3  5s   EmptyPtrs_A   proven
+  7    informal-bmc  20s  Full_C        covered, depth 65
+  7    informal-bmc  20s  EmptyAgain_C  covered, depth 3
+  7    informal-bmc  20s  Drain_C       covered, depth 129
+verdict: proven with one helper, itself proven; three witness covers reached with and without it

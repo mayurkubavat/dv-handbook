@@ -12,7 +12,9 @@
 #  InFormal is an optional tool. An example sets REQUIRES := informal,
 #  and when the program is not on the PATH `make run` prints one line
 #  beginning "skipped" and succeeds, so a machine without it records a
-#  skip and not a failure.
+#  skip and not a failure. An example that selects an external engine
+#  names that program instead (REQUIRES := ric3): the checker then
+#  looks for it, and the wrapper looks for it and for the tool.
 #
 #  The script chooses the verdicts it expects and its own exit status
 #  (see informal.tcl): the tool itself exits with status 0 whatever it
@@ -34,4 +36,5 @@ lint:
 endif
 
 run:
-	@$(INFORMAL_RUN) $(TOP) $(BUILD_DIR)/informal
+	@INFORMAL_REQUIRES="$(REQUIRES)" $(INFORMAL_RUN) $(TOP) \
+	    $(BUILD_DIR)/informal

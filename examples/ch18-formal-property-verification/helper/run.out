@@ -1,0 +1,17 @@
+=== the helper alone: CountPtrs_A asserted, nothing assumed
+two entries
+  count_ptrs2.aag: proven at k = 1, 4 queries
+=== the pointer property with the helper as a constraint
+two entries
+  fifo_ptrs2_h.aag: proven at k = 0, 2 queries
+four entries
+  fifo_ptrs4_h.aag: proven at k = 0, 2 queries
+  k = 0: no state that satisfies the helper is bad, so the proof needs no step
+=== the helper's states among the property's, two entries
+  allowed by the property: 14; by the helper: 8; reachable: 6
+  reachable within helper within property: True
+  a step from a helper state stays in the helper: True
+  helper states that are never reached:
+    wr_ptr=1 rd_ptr=0 count=3
+    wr_ptr=0 rd_ptr=1 count=3
+verdict: the helper is inductive, and with it the property needs no induction

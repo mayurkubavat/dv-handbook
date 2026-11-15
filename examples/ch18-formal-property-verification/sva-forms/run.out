@@ -1,0 +1,91 @@
+tool: informal 0.1.0; 3 s for each property; informal-kind, and informal-ic3 on the liveness rows
+== Booleans and sampled-value functions
+  a boolean e                                      yes                                    proven   cex, depth 10
+  a parameter by name, q <= LIM                    yes                                    proven   cex, depth 10
+  a signal of an instance below, u_leaf.hid        yes                                    proven   cex, depth 1
+  $past(x)                                         yes                                    proven   cex, depth 1
+  $past(x, 2)                                      yes                                    proven   cex, depth 1
+  $rose(x)                                         yes                                    proven   cex, depth 1
+  $fell(x)                                         yes                                    proven   cex, depth 1
+  $stable(x)                                       yes                                    proven   cex, depth 1
+  $changed(x)                                      yes                                    proven   cex, depth 1
+  $onehot(x), $onehot0(x)                          yes                                    proven   cex, depth 1
+  $countones(x)                                    yes                                    proven   cex, depth 8
+  $bits(x)                                         yes                                    proven   cex, depth 1
+  x inside {[lo:hi]}                               yes                                    proven   cex, depth 10
+  $isunknown(x)                                    no: error at prove                     —        —
+      not supported yet: $isunknown requires allow_four_state_ops
+== Clock, reset, implication and delay
+  @(posedge clk) e                                 yes                                    proven   cex, depth 10
+  disable iff (rst)                                yes                                    proven   cex, depth 10
+  @(negedge clk) e                                 yes                                    proven   cex, depth 19
+  a |-> b                                          yes                                    proven   cex, depth 9
+  a |=> b                                          yes                                    proven   cex, depth 2
+  fixed delay a ##1 b                              yes                                    proven   cex, depth 3
+  a ##0 b                                          yes                                    proven   cex, depth 2
+  ranged delay ##[1:2] b                           yes                                    proven   cex, depth 3
+  unbounded delay ##[1:$] b                        no: error at prove                     —        —
+      not supported yet: the delay range [1:$]
+== Repetition and the sequence operators
+  a[*3]                                            yes                                    proven   cex, depth 4
+  a[*1:3]                                          yes                                    proven   cex, depth 4
+  goto repetition a[->2]                           no: refused at the command             —        —
+      `[->` is not supported yet in a property
+  nonconsecutive repetition a[=2]                  no: refused at the command             —        —
+      `[=` is not supported yet in a property
+  sequence and                                     yes                                    proven   cex, depth 3
+  sequence or                                      yes                                    proven   cex, depth 2
+  intersect                                        yes                                    proven   cex, depth 2
+  within                                           yes                                    proven   cex, depth 3
+  throughout                                       yes                                    proven   cex, depth 3
+  first_match                                      yes                                    proven   cex, depth 3
+== Property operators with a bound
+  nexttime p                                       yes                                    proven   cex, depth 2
+  nexttime [2] p                                   yes                                    proven   cex, depth 3
+  always [0:2] p                                   yes                                    proven   cex, depth 11
+  s_eventually [0:7] p                             yes                                    proven   cex, depth 7
+  p until q                                        yes                                    proven   cex, depth 6
+  p until_with q                                   yes                                    proven   cex, depth 10
+  strong(s) of a bounded sequence                  yes                                    proven   cex, depth 3
+  always p under an implication                    no: error at prove                     —        —
+      not supported yet: `always` with no upper bound
+  not p                                            no: refused at the command             —        —
+      `not` is not supported yet in a property
+  property iff                                     no: error at prove                     —        —
+      not supported yet: property `iff`
+  property implies                                 no: refused at the command             —        —
+      unknown name(s) in module probe: implies
+  property if ... else                             no: error at prove                     —        —
+      not supported yet: property `if`
+  accept_on                                        no: refused at the command             —        —
+      `accept_on` is not supported yet in a property
+  followed-by a #-# b, a #=# b                     no: refused at the command             —        —
+      `#-#` is not supported yet in a property
+== Liveness
+  s_eventually p                                   yes                                    proven   cex, depth 26
+  p s_until q                                      yes                                    proven   cex, depth 7
+  p s_until_with q                                 yes                                    proven   cex, depth 8
+  fairness, assume {s_eventually p}                yes                                    proven   cex, depth 26
+== Assume and cover
+  assume of a boolean                              yes                                    proven   cex, depth 2
+  assume of an implication                         yes                                    proven   cex, depth 2
+  cover of a boolean                               yes                                    covered  unreachable
+  cover of a sequence                              yes                                    covered  unreachable
+== Where a property is written
+  a shell command, assert -name N {...}            yes                                    proven   cex, depth 10
+  assert property, labelled, in a module           yes                                    proven   cex, depth 10
+  the same with no label                           yes                                    proven   cex, depth 10
+  in a checker attached with bind                  yes                                    proven   cex, depth 10
+  under default clocking and default disable iff   yes                                    proven   cex, depth 10
+  under if in a clocked block                      yes                                    proven   cex, depth 10
+  immediate assert (e) in a clocked block          no: not in the report, and no message  —        —
+      the one assertion in the file is false
+  immediate assert (e) in always_comb              no: not in the report, and no message  —        —
+      the one assertion in the file is false
+  deferred assert #0 (e)                           no: not in the report, and no message  —        —
+      the one assertion in the file is false
+  deferred assert final (e)                        no: not in the report, and no message  —        —
+      the one assertion in the file is false
+forms: 50 yes, 6 refused, 5 error, 4 dropped
+compared with the temporal-properties chapter's table: 29 forms in both, 0 differences
+wrote tbl-sva.md

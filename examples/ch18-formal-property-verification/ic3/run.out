@@ -1,0 +1,83 @@
+=== IC3 on fifo_ptrs2.aag
+  bad state in F1: wr_ptr=1 rd_ptr=0 count=0
+    (wr_ptr=1 rd_ptr=0 count=0) has no predecessor in F0; lemma at level 1:
+        never wr_ptr=1
+  bad state in F1: wr_ptr=0 rd_ptr=1 count=0
+    (wr_ptr=0 rd_ptr=1 count=0) has no predecessor in F0; lemma at level 1:
+        never rd_ptr=1
+frontier 1 is clear.  lemmas by level: 1:2 2:0
+         after propagation:    1:2 2:0
+  bad state in F2: wr_ptr=1 rd_ptr=0 count=0
+    predecessor of (wr_ptr=1 rd_ptr=0 count=0) in F1: wr_ptr=0 rd_ptr=0 count=3
+    (wr_ptr=0 rd_ptr=0 count=3) has no predecessor in F0; lemma at level 1:
+        never count[1]=1
+    (wr_ptr=1 rd_ptr=0 count=0) has no predecessor in F1; lemma at level 2:
+        never wr_ptr=1 count[0]=0 count[1]=0
+  bad state in F2: wr_ptr=0 rd_ptr=1 count=0
+    predecessor of (wr_ptr=0 rd_ptr=1 count=0) in F1: wr_ptr=0 rd_ptr=0 count=1
+    (wr_ptr=0 rd_ptr=0 count=1) has no predecessor in F0; lemma at level 1:
+        never count[0]=1
+    (wr_ptr=0 rd_ptr=1 count=0) has no predecessor in F1; lemma at level 2:
+        never rd_ptr=1
+frontier 2 is clear.  lemmas by level: 1:3 2:2 3:0
+         after propagation:    1:2 2:3 3:0
+  bad state in F3: wr_ptr=1 rd_ptr=0 count=0
+    (wr_ptr=1 rd_ptr=0 count=0) has no predecessor in F2; lemma at level 3:
+        never wr_ptr=1 rd_ptr=0 count[0]=0 count[1]=0
+  bad state in F3: wr_ptr=0 rd_ptr=1 count=0
+    predecessor of (wr_ptr=0 rd_ptr=1 count=0) in F2: wr_ptr=0 rd_ptr=0 count=1
+    (wr_ptr=0 rd_ptr=0 count=1) has no predecessor in F1; lemma at level 2:
+        never wr_ptr=0 count[0]=1
+    (wr_ptr=0 rd_ptr=1 count=0) has no predecessor in F2; lemma at level 3:
+        never wr_ptr=0 rd_ptr=1 count[0]=0
+frontier 3 is clear.  lemmas by level: 1:2 2:4 3:2 4:0
+         after propagation:    1:2 2:4 3:2 4:0
+  bad state in F4: wr_ptr=1 rd_ptr=0 count=0
+    predecessor of (wr_ptr=1 rd_ptr=0 count=0) in F3: wr_ptr=0 rd_ptr=0 count=3
+    (wr_ptr=0 rd_ptr=0 count=3) has no predecessor in F2; lemma at level 3:
+        never count[0]=1 count[1]=1
+    predecessor of (wr_ptr=1 rd_ptr=0 count=0) in F3: wr_ptr=1 rd_ptr=1 count=1
+    (wr_ptr=1 rd_ptr=1 count=1) has no predecessor in F2; lemma at level 3:
+        never wr_ptr=1 rd_ptr=1 count[0]=1
+    (wr_ptr=1 rd_ptr=0 count=0) has no predecessor in F3; lemma at level 4:
+        never wr_ptr=1 rd_ptr=0 count[0]=0 count[1]=0
+  bad state in F4: wr_ptr=0 rd_ptr=1 count=0
+    predecessor of (wr_ptr=0 rd_ptr=1 count=0) in F3: wr_ptr=0 rd_ptr=0 count=1
+    (wr_ptr=0 rd_ptr=0 count=1) has no predecessor in F2; lemma at level 3:
+        never wr_ptr=0 rd_ptr=0 count[0]=1
+    (wr_ptr=0 rd_ptr=1 count=0) has no predecessor in F3; lemma at level 4:
+        never wr_ptr=0 rd_ptr=1 count[0]=0
+frontier 4 is clear.  lemmas by level: 1:2 2:4 3:3 4:2 5:0
+         after propagation:    1:2 2:4 3:1 4:3 5:1
+  bad state in F5: wr_ptr=1 rd_ptr=0 count=0
+    predecessor of (wr_ptr=1 rd_ptr=0 count=0) in F4: wr_ptr=1 rd_ptr=1 count=1
+    predecessor of (wr_ptr=1 rd_ptr=1 count=1) in F3: wr_ptr=1 rd_ptr=0 count=2
+    (wr_ptr=1 rd_ptr=0 count=2) has no predecessor in F2; lemma at level 3:
+        never wr_ptr=1 count[1]=1
+    (wr_ptr=1 rd_ptr=1 count=1) has no predecessor in F3; lemma at level 4:
+        never wr_ptr=1 rd_ptr=1 count[0]=1
+    (wr_ptr=1 rd_ptr=0 count=0) has no predecessor in F4; lemma at level 5:
+        never wr_ptr=1 rd_ptr=0 count[0]=0
+  bad state in F5: wr_ptr=0 rd_ptr=1 count=0
+    (wr_ptr=0 rd_ptr=1 count=0) has no predecessor in F4; lemma at level 5:
+        never wr_ptr=0 rd_ptr=1 count[0]=0
+frontier 5 is clear.  lemmas by level: 1:2 2:4 3:1 4:3 5:3 6:0
+         after propagation:    1:2 2:4 3:1 4:0 5:6 6:0
+level 4 is empty: F4 = F5, a fixed point
+proven: an invariant of 6 lemmas, frontier 5
+queries: 153 in the search, 7 in the three checks
+=== the invariant, decoded
+  1. never count[0]=1 count[1]=1
+  2. never wr_ptr=1 rd_ptr=0 count[0]=0
+  3. never wr_ptr=0 rd_ptr=1 count[0]=0
+  4. never wr_ptr=1 rd_ptr=0 count[0]=0 count[1]=0   (follows from lemma 2)
+  5. never wr_ptr=0 rd_ptr=0 count[0]=1
+  6. never wr_ptr=1 rd_ptr=1 count[0]=1
+states the lemmas allow: 22;  reachable states: 22;  the same set: True
+the three checks: reset inside True, closed under a step True, no bad state True
+=== other models, one line each
+  counter.aag (3 latches): cex, 6 steps; 92 queries
+  fifo_bmc.aag (10 latches): cex, 16 steps; 1462 queries
+  count_ptrs2.aag (5 latches): proven, 5 lemmas, frontier 4; 125 queries
+  fifo_ptrs4.aag (8 latches): proven, 32 lemmas, frontier 11; 1531 queries
+verdict: the invariant IC3 built allows exactly the reachable states

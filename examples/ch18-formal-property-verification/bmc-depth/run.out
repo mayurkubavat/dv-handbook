@@ -1,0 +1,27 @@
+=== the forbidden value is 16 enabled steps from reset
+--- informal-bmc, limit 20s for each property
+property                     type    status        engine     detail
+deep.a_never                 assert  cex           informal-bmc depth 17
+=== the forbidden value is 64 enabled steps from reset
+--- informal-bmc, limit 20s for each property
+property                     type    status        engine     detail
+deep.a_never                 assert  cex           informal-bmc depth 65
+=== the forbidden value is 128 enabled steps from reset
+--- informal-bmc, limit 20s for each property
+property                     type    status        engine     detail
+deep.a_never                 assert  cex           informal-bmc depth 129
+=== 64 again, by the engine that deepens ten frames at a time
+--- informal-bmc-10, limit 20s for each property
+property                     type    status        engine     detail
+deep.a_never                 assert  cex           informal-bmc-10 depth 66
+its depth is not below 65: 1
+=== a true property: the counter never moves while en is low
+--- informal-bmc, limit 3s for each property
+property                     type    status        engine     detail
+deep.a_never                 assert  undetermined             no engine reached a verdict
+m_idle                       assume  unprocessed
+=== a false one, 1024 steps away
+--- informal-bmc, limit 3s for each property
+property                     type    status        engine     detail
+deep.a_never                 assert  undetermined             no engine reached a verdict
+verdict: a bug at depth 17, 65 and 129; no verdict, in the same words, for a true property and for a bug 1024 steps away

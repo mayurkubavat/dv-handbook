@@ -1,0 +1,129 @@
+=== 2 entries
+--- informal-kind, limit 5s for each property
+property                     type    status        engine     detail
+EmptyPtrs_A                  assert  proven        informal-kind
+CountPtrs_A                  assert  proven        informal-kind
+--- informal-ic3, limit 5s for each property
+property                     type    status        engine     detail
+EmptyPtrs_A                  assert  proven        informal-ic3
+CountPtrs_A                  assert  proven        informal-ic3
+--- ric3-ic3, limit 20s for each property
+property                     type    status        engine     detail
+EmptyPtrs_A                  assert  proven        ric3-ic3
+CountPtrs_A                  assert  proven        ric3-ic3
+=== 2 entries, CountPtrs_A assumed
+--- informal-kind, limit 5s for each property
+property                     type    status        engine     detail
+EmptyPtrs_A                  assert  proven        informal-kind
+CountPtrs_A                  assert  disabled      ric3-ic3
+CountPtrs_M                  assume  unprocessed
+--- informal-ic3, limit 5s for each property
+property                     type    status        engine     detail
+EmptyPtrs_A                  assert  proven        informal-ic3
+CountPtrs_A                  assert  disabled      ric3-ic3
+CountPtrs_M                  assume  unprocessed
+--- ric3-ic3, limit 20s for each property
+property                     type    status        engine     detail
+EmptyPtrs_A                  assert  proven        ric3-ic3
+CountPtrs_A                  assert  disabled      ric3-ic3
+CountPtrs_M                  assume  unprocessed
+=== 4 entries
+--- informal-kind, limit 5s for each property
+property                     type    status        engine     detail
+EmptyPtrs_A                  assert  undetermined             no engine reached a verdict
+CountPtrs_A                  assert  proven        informal-kind
+--- informal-ic3, limit 5s for each property
+property                     type    status        engine     detail
+EmptyPtrs_A                  assert  proven        informal-ic3
+CountPtrs_A                  assert  proven        informal-ic3
+--- ric3-ic3, limit 20s for each property
+property                     type    status        engine     detail
+EmptyPtrs_A                  assert  proven        ric3-ic3
+CountPtrs_A                  assert  proven        ric3-ic3
+=== 4 entries, CountPtrs_A assumed
+--- informal-kind, limit 5s for each property
+property                     type    status        engine     detail
+EmptyPtrs_A                  assert  proven        informal-kind
+CountPtrs_A                  assert  disabled      ric3-ic3
+CountPtrs_M                  assume  unprocessed
+--- informal-ic3, limit 5s for each property
+property                     type    status        engine     detail
+EmptyPtrs_A                  assert  proven        informal-ic3
+CountPtrs_A                  assert  disabled      ric3-ic3
+CountPtrs_M                  assume  unprocessed
+--- ric3-ic3, limit 20s for each property
+property                     type    status        engine     detail
+EmptyPtrs_A                  assert  proven        ric3-ic3
+CountPtrs_A                  assert  disabled      ric3-ic3
+CountPtrs_M                  assume  unprocessed
+=== 8 entries
+--- informal-kind, limit 5s for each property
+property                     type    status        engine     detail
+EmptyPtrs_A                  assert  undetermined             no engine reached a verdict
+CountPtrs_A                  assert  proven        informal-kind
+--- informal-ic3, limit 5s for each property
+property                     type    status        engine     detail
+EmptyPtrs_A                  assert  proven        informal-ic3
+CountPtrs_A                  assert  proven        informal-ic3
+--- ric3-ic3, limit 20s for each property
+property                     type    status        engine     detail
+EmptyPtrs_A                  assert  proven        ric3-ic3
+CountPtrs_A                  assert  proven        ric3-ic3
+=== 8 entries, CountPtrs_A assumed
+--- informal-kind, limit 5s for each property
+property                     type    status        engine     detail
+EmptyPtrs_A                  assert  proven        informal-kind
+CountPtrs_A                  assert  disabled      ric3-ic3
+CountPtrs_M                  assume  unprocessed
+--- informal-ic3, limit 5s for each property
+property                     type    status        engine     detail
+EmptyPtrs_A                  assert  proven        informal-ic3
+CountPtrs_A                  assert  disabled      ric3-ic3
+CountPtrs_M                  assume  unprocessed
+--- ric3-ic3, limit 20s for each property
+property                     type    status        engine     detail
+EmptyPtrs_A                  assert  proven        ric3-ic3
+CountPtrs_A                  assert  disabled      ric3-ic3
+CountPtrs_M                  assume  unprocessed
+=== 64 entries
+--- informal-kind, limit 5s for each property
+property                     type    status        engine     detail
+EmptyPtrs_A                  assert  undetermined             no engine reached a verdict
+CountPtrs_A                  assert  proven        informal-kind
+--- informal-ic3, limit 5s for each property
+property                     type    status        engine     detail
+EmptyPtrs_A                  assert  undetermined             no engine reached a verdict
+CountPtrs_A                  assert  undetermined             no engine reached a verdict
+--- ric3-ic3, limit 20s for each property
+property                     type    status        engine     detail
+EmptyPtrs_A                  assert  proven        ric3-ic3
+CountPtrs_A                  assert  proven        ric3-ic3
+=== 64 entries, CountPtrs_A assumed
+--- informal-kind, limit 5s for each property
+property                     type    status        engine     detail
+EmptyPtrs_A                  assert  proven        informal-kind
+CountPtrs_A                  assert  disabled      ric3-ic3
+CountPtrs_M                  assume  unprocessed
+--- informal-ic3, limit 5s for each property
+property                     type    status        engine     detail
+EmptyPtrs_A                  assert  proven        informal-ic3
+CountPtrs_A                  assert  disabled      ric3-ic3
+CountPtrs_M                  assume  unprocessed
+--- ric3-ic3, limit 20s for each property
+property                     type    status        engine     detail
+EmptyPtrs_A                  assert  proven        ric3-ic3
+CountPtrs_A                  assert  disabled      ric3-ic3
+CountPtrs_M                  assume  unprocessed
+=== verdicts by number of entries
+limits: informal-kind 5 s, informal-ic3 5 s, ric3-ic3 20 s; `-` is no verdict within it
+property                     engine              2       4       8      64
+EmptyPtrs_A                  informal-kind  proven       -       -       -
+EmptyPtrs_A                  informal-ic3   proven  proven  proven       -
+EmptyPtrs_A                  ric3-ic3       proven  proven  proven  proven
+CountPtrs_A                  informal-kind  proven  proven  proven  proven
+CountPtrs_A                  informal-ic3   proven  proven  proven       -
+CountPtrs_A                  ric3-ic3       proven  proven  proven  proven
+EmptyPtrs_A, helper assumed  informal-kind  proven  proven  proven  proven
+EmptyPtrs_A, helper assumed  informal-ic3   proven  proven  proven  proven
+EmptyPtrs_A, helper assumed  ric3-ic3       proven  proven  proven  proven
+verdict: with the helper assumed, every engine proves the property at every size

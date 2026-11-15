@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 470" width="1000" height="470" role="img" aria-label="Three rows. Bounded model checking unrolls k steps from reset and returns a trace or nothing up to depth k. k-induction adds a step case and returns a proof, a trace or a counterexample to induction. IC3 builds an inductive invariant one clause at a time and returns a proof with its invariant or a trace">
+<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#7FA3C0"/></marker><marker id="ahj" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#5B3E8E"/></marker><marker id="ahd" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#1B4F72"/></marker><marker id="ahc" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#B7791F"/></marker><marker id="ahg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#1C1C1C"/></marker><pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="6" stroke="#CBD2D9" stroke-width="2"/></pattern></defs>
+<rect width="1000" height="470" fill="white"/>
+<text x="30" y="40.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="21" font-weight="700" text-anchor="start" fill="#1B4F72">One question, three ways to answer it</text>
+<text x="30" y="64.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="400" text-anchor="start" fill="#1C1C1C">Does the property hold in every reachable state? What each method asks a solver, and what it hands back.</text>
+<rect x="30.0" y="100.0" width="220.0" height="84.0" rx="8" fill="#F4F6F8" stroke="#1B4F72" stroke-width="2"/>
+<text x="140.0" y="147.6" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" text-anchor="middle" fill="#1C1C1C">Bounded model checking</text>
+<rect x="290.0" y="100.0" width="330.0" height="84.0" rx="8" fill="white" stroke="#1B4F72" stroke-width="2"/>
+<text x="455.0" y="139.6" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" text-anchor="middle" fill="#1C1C1C">asks a SAT solver about</text>
+<text x="455.0" y="158.2" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="400" text-anchor="middle" fill="#7FA3C0">k steps from reset, then a bad state</text>
+<path d="M250.0,142.0 L290.0,142.0" fill="none" stroke="#1B4F72" stroke-width="2.2" marker-end="url(#ahd)"/>
+<path d="M620.0,142.0 L660.0,142.0" fill="none" stroke="#1B4F72" stroke-width="2.2" marker-end="url(#ahd)"/>
+<text x="672.0" y="130.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13.5" font-weight="600" text-anchor="start" fill="#1C1C1C">a trace, k steps long</text>
+<text x="672.0" y="150.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13.5" font-weight="400" text-anchor="start" fill="#1C1C1C">or: no bug up to depth k</text>
+<text x="672.0" y="176.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="500" text-anchor="start" fill="#B7791F">finds bugs; proves nothing beyond k</text>
+<rect x="30.0" y="218.0" width="220.0" height="84.0" rx="8" fill="#F4F6F8" stroke="#1B4F72" stroke-width="2"/>
+<text x="140.0" y="265.6" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" text-anchor="middle" fill="#1C1C1C">k-induction</text>
+<rect x="290.0" y="218.0" width="330.0" height="84.0" rx="8" fill="white" stroke="#1B4F72" stroke-width="2"/>
+<text x="455.0" y="257.6" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" text-anchor="middle" fill="#1C1C1C">asks a SAT solver about</text>
+<text x="455.0" y="276.2" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="400" text-anchor="middle" fill="#7FA3C0">also: k good steps, then a bad one</text>
+<path d="M250.0,260.0 L290.0,260.0" fill="none" stroke="#1B4F72" stroke-width="2.2" marker-end="url(#ahd)"/>
+<path d="M620.0,260.0 L660.0,260.0" fill="none" stroke="#1B4F72" stroke-width="2.2" marker-end="url(#ahd)"/>
+<text x="672.0" y="248.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13.5" font-weight="600" text-anchor="start" fill="#1C1C1C">a proof, when the step case is unsatisfiable</text>
+<text x="672.0" y="268.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13.5" font-weight="400" text-anchor="start" fill="#1C1C1C">or: a counterexample to induction</text>
+<text x="672.0" y="294.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="500" text-anchor="start" fill="#B7791F">proves what k steps show; may need a helper</text>
+<rect x="30.0" y="336.0" width="220.0" height="84.0" rx="8" fill="#F4F6F8" stroke="#1B4F72" stroke-width="2"/>
+<text x="140.0" y="383.6" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" text-anchor="middle" fill="#1C1C1C">IC3</text>
+<rect x="290.0" y="336.0" width="330.0" height="84.0" rx="8" fill="white" stroke="#1B4F72" stroke-width="2"/>
+<text x="455.0" y="375.6" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" text-anchor="middle" fill="#1C1C1C">asks a SAT solver about</text>
+<text x="455.0" y="394.2" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="400" text-anchor="middle" fill="#7FA3C0">one step, relative to what is known</text>
+<path d="M250.0,378.0 L290.0,378.0" fill="none" stroke="#1B4F72" stroke-width="2.2" marker-end="url(#ahd)"/>
+<path d="M620.0,378.0 L660.0,378.0" fill="none" stroke="#1B4F72" stroke-width="2.2" marker-end="url(#ahd)"/>
+<text x="672.0" y="366.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13.5" font-weight="600" text-anchor="start" fill="#1C1C1C">a proof, with an inductive invariant</text>
+<text x="672.0" y="386.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13.5" font-weight="400" text-anchor="start" fill="#1C1C1C">or: a trace from reset</text>
+<text x="672.0" y="412.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="500" text-anchor="start" fill="#B7791F">builds the helper itself, clause by clause</text>
+<text x="30.0" y="452.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="400" text-anchor="start" fill="#7FA3C0">Every query is one of the previous chapter&#x27;s: a circuit copied per cycle, turned into clauses, given to a solver.</text>
+</svg>

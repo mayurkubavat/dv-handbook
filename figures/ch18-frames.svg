@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 500" width="1000" height="500" role="img" aria-label="A table with five rows, frontier 1 to 5, and six columns, level 1 to 6. Each cell holds the number of lemmas stored at that level. In the last row level 4 holds zero lemmas and level 5 holds six; the zero is circled as the fixed point">
+<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#7FA3C0"/></marker><marker id="ahj" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#5B3E8E"/></marker><marker id="ahd" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#1B4F72"/></marker><marker id="ahc" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#B7791F"/></marker><marker id="ahg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#1C1C1C"/></marker><pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="6" stroke="#CBD2D9" stroke-width="2"/></pattern></defs>
+<rect width="1000" height="500" fill="white"/>
+<text x="30" y="40.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="21" font-weight="700" text-anchor="start" fill="#1B4F72">Lemmas move outward until one level is empty</text>
+<text x="30" y="64.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="400" text-anchor="start" fill="#1C1C1C">IC3 on the two-entry FIFO. Each row is the state of the engine after one frontier is cleared and its lemmas are propagated.</text>
+<text x="305.0" y="118.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="14" font-weight="600" text-anchor="middle" fill="#1C1C1C">level 1</text>
+<text x="415.0" y="118.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="14" font-weight="600" text-anchor="middle" fill="#1C1C1C">level 2</text>
+<text x="525.0" y="118.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="14" font-weight="600" text-anchor="middle" fill="#1C1C1C">level 3</text>
+<text x="635.0" y="118.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="14" font-weight="600" text-anchor="middle" fill="#1C1C1C">level 4</text>
+<text x="745.0" y="118.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="14" font-weight="600" text-anchor="middle" fill="#1C1C1C">level 5</text>
+<text x="855.0" y="118.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="14" font-weight="600" text-anchor="middle" fill="#1C1C1C">level 6</text>
+<text x="234.0" y="165.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="600" text-anchor="end" fill="#1C1C1C">frontier 1 cleared</text>
+<rect x="256.0" y="138.0" width="98.0" height="44.0" rx="6" fill="#E6F2E7" stroke="#2E7D32" stroke-width="1.4"/>
+<text x="305.0" y="166.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="17" font-weight="700" text-anchor="middle" fill="#1C1C1C">2</text>
+<rect x="366.0" y="138.0" width="98.0" height="44.0" rx="6" fill="white" stroke="#CBD2D9" stroke-width="1.4"/>
+<text x="415.0" y="166.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="17" font-weight="700" text-anchor="middle" fill="#1C1C1C">0</text>
+<text x="234.0" y="221.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="600" text-anchor="end" fill="#1C1C1C">frontier 2 cleared</text>
+<rect x="256.0" y="194.0" width="98.0" height="44.0" rx="6" fill="#E6F2E7" stroke="#2E7D32" stroke-width="1.4"/>
+<text x="305.0" y="222.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="17" font-weight="700" text-anchor="middle" fill="#1C1C1C">2</text>
+<text x="346.0" y="210.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="10.5" font-weight="400" text-anchor="end" fill="#7FA3C0">was 3</text>
+<rect x="366.0" y="194.0" width="98.0" height="44.0" rx="6" fill="#E6F2E7" stroke="#2E7D32" stroke-width="1.4"/>
+<text x="415.0" y="222.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="17" font-weight="700" text-anchor="middle" fill="#1C1C1C">3</text>
+<text x="456.0" y="210.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="10.5" font-weight="400" text-anchor="end" fill="#7FA3C0">was 2</text>
+<rect x="476.0" y="194.0" width="98.0" height="44.0" rx="6" fill="white" stroke="#CBD2D9" stroke-width="1.4"/>
+<text x="525.0" y="222.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="17" font-weight="700" text-anchor="middle" fill="#1C1C1C">0</text>
+<text x="234.0" y="277.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="600" text-anchor="end" fill="#1C1C1C">frontier 3 cleared</text>
+<rect x="256.0" y="250.0" width="98.0" height="44.0" rx="6" fill="#E6F2E7" stroke="#2E7D32" stroke-width="1.4"/>
+<text x="305.0" y="278.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="17" font-weight="700" text-anchor="middle" fill="#1C1C1C">2</text>
+<rect x="366.0" y="250.0" width="98.0" height="44.0" rx="6" fill="#E6F2E7" stroke="#2E7D32" stroke-width="1.4"/>
+<text x="415.0" y="278.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="17" font-weight="700" text-anchor="middle" fill="#1C1C1C">4</text>
+<rect x="476.0" y="250.0" width="98.0" height="44.0" rx="6" fill="#E6F2E7" stroke="#2E7D32" stroke-width="1.4"/>
+<text x="525.0" y="278.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="17" font-weight="700" text-anchor="middle" fill="#1C1C1C">2</text>
+<rect x="586.0" y="250.0" width="98.0" height="44.0" rx="6" fill="white" stroke="#CBD2D9" stroke-width="1.4"/>
+<text x="635.0" y="278.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="17" font-weight="700" text-anchor="middle" fill="#1C1C1C">0</text>
+<text x="234.0" y="333.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="600" text-anchor="end" fill="#1C1C1C">frontier 4 cleared</text>
+<rect x="256.0" y="306.0" width="98.0" height="44.0" rx="6" fill="#E6F2E7" stroke="#2E7D32" stroke-width="1.4"/>
+<text x="305.0" y="334.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="17" font-weight="700" text-anchor="middle" fill="#1C1C1C">2</text>
+<rect x="366.0" y="306.0" width="98.0" height="44.0" rx="6" fill="#E6F2E7" stroke="#2E7D32" stroke-width="1.4"/>
+<text x="415.0" y="334.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="17" font-weight="700" text-anchor="middle" fill="#1C1C1C">4</text>
+<rect x="476.0" y="306.0" width="98.0" height="44.0" rx="6" fill="#E6F2E7" stroke="#2E7D32" stroke-width="1.4"/>
+<text x="525.0" y="334.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="17" font-weight="700" text-anchor="middle" fill="#1C1C1C">1</text>
+<text x="566.0" y="322.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="10.5" font-weight="400" text-anchor="end" fill="#7FA3C0">was 3</text>
+<rect x="586.0" y="306.0" width="98.0" height="44.0" rx="6" fill="#E6F2E7" stroke="#2E7D32" stroke-width="1.4"/>
+<text x="635.0" y="334.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="17" font-weight="700" text-anchor="middle" fill="#1C1C1C">3</text>
+<text x="676.0" y="322.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="10.5" font-weight="400" text-anchor="end" fill="#7FA3C0">was 2</text>
+<rect x="696.0" y="306.0" width="98.0" height="44.0" rx="6" fill="#E6F2E7" stroke="#2E7D32" stroke-width="1.4"/>
+<text x="745.0" y="334.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="17" font-weight="700" text-anchor="middle" fill="#1C1C1C">1</text>
+<text x="786.0" y="322.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="10.5" font-weight="400" text-anchor="end" fill="#7FA3C0">was 0</text>
+<text x="234.0" y="389.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="600" text-anchor="end" fill="#1C1C1C">frontier 5 cleared</text>
+<rect x="256.0" y="362.0" width="98.0" height="44.0" rx="6" fill="#E6F2E7" stroke="#2E7D32" stroke-width="1.4"/>
+<text x="305.0" y="390.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="17" font-weight="700" text-anchor="middle" fill="#1C1C1C">2</text>
+<rect x="366.0" y="362.0" width="98.0" height="44.0" rx="6" fill="#E6F2E7" stroke="#2E7D32" stroke-width="1.4"/>
+<text x="415.0" y="390.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="17" font-weight="700" text-anchor="middle" fill="#1C1C1C">4</text>
+<rect x="476.0" y="362.0" width="98.0" height="44.0" rx="6" fill="#E6F2E7" stroke="#2E7D32" stroke-width="1.4"/>
+<text x="525.0" y="390.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="17" font-weight="700" text-anchor="middle" fill="#1C1C1C">1</text>
+<rect x="586.0" y="362.0" width="98.0" height="44.0" rx="6" fill="#FBF1DC" stroke="#B7791F" stroke-width="2.4"/>
+<text x="635.0" y="390.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="17" font-weight="700" text-anchor="middle" fill="#1C1C1C">0</text>
+<text x="676.0" y="378.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="10.5" font-weight="400" text-anchor="end" fill="#7FA3C0">was 3</text>
+<rect x="696.0" y="362.0" width="98.0" height="44.0" rx="6" fill="#E6F2E7" stroke="#2E7D32" stroke-width="1.4"/>
+<text x="745.0" y="390.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="17" font-weight="700" text-anchor="middle" fill="#1C1C1C">6</text>
+<text x="786.0" y="378.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="10.5" font-weight="400" text-anchor="end" fill="#7FA3C0">was 3</text>
+<rect x="806.0" y="362.0" width="98.0" height="44.0" rx="6" fill="white" stroke="#CBD2D9" stroke-width="1.4"/>
+<text x="855.0" y="390.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="17" font-weight="700" text-anchor="middle" fill="#1C1C1C">0</text>
+<text x="30.0" y="442.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13.5" font-weight="400" text-anchor="start" fill="#1C1C1C">A lemma stored at level i holds in frames 1 to i. Level 4 is empty after the last propagation, so F4 = F5:</text>
+<text x="30.0" y="464.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13.5" font-weight="400" text-anchor="start" fill="#1C1C1C">the 6 lemmas at level 5 are closed under a step, and they are the invariant. &quot;was n&quot;: the count before propagation.</text>
+</svg>

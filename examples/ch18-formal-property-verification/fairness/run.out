@@ -1,0 +1,29 @@
+=== eventually granted; no assumption
+--- informal-ic3, limit 20s for each property
+property                     type    status        engine     detail
+a_grant                      assert  cex           informal-ic3 depth 4
+=== eventually granted; fairness: assume {s_eventually !stall}
+--- informal-ic3, limit 20s for each property
+property                     type    status        engine     detail
+a_grant                      assert  proven        informal-ic3
+m_env                        assume  unprocessed
+=== eventually granted; a bound: assume {stall |=> !stall}
+--- informal-ic3, limit 20s for each property
+property                     type    status        engine     detail
+a_grant                      assert  proven        informal-ic3
+m_env                        assume  unprocessed
+=== granted within four cycles; no assumption
+--- informal-kind, limit 20s for each property
+property                     type    status        engine     detail
+a_grant                      assert  cex           informal-kind depth 5
+=== granted within four cycles; fairness
+--- informal-kind, limit 20s for each property
+property                     type    status        engine     detail
+a_grant                      assert  cex           informal-kind depth 5
+m_env                        assume  unprocessed
+=== granted within four cycles; the bound
+--- informal-kind, limit 20s for each property
+property                     type    status        engine     detail
+a_grant                      assert  proven        informal-kind
+m_env                        assume  unprocessed
+verdict: fairness proves the eventual form only; the bounded environment proves both

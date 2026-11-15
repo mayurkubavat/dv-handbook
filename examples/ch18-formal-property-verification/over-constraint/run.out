@@ -1,0 +1,48 @@
+=== no assumption
+--- informal-ic3, limit 20s for each property
+property                     type    status        engine     detail
+a_gnt_after_busy             assert  proven        informal-ic3
+a_false                      assert  cex           informal-ic3 depth 202
+c_gnt                        cover   covered       informal-ic3 depth 202
+c_busy                       cover   covered       informal-ic3 depth 2
+c_true                       cover   covered       informal-ic3 depth 1
+=== an over-constraint: assume {!req}
+--- informal-ic3, limit 20s for each property
+property                     type    status        engine     detail
+a_gnt_after_busy             assert  proven        informal-ic3
+a_false                      assert  proven        informal-ic3
+c_gnt                        cover   unreachable   informal-ic3
+c_busy                       cover   unreachable   informal-ic3
+c_true                       cover   covered       informal-ic3 depth 1
+m_noreq                      assume  unprocessed
+=== a contradiction: assume {d < 4'd8} and {d > 4'd9}
+--- informal-ic3, limit 20s for each property
+property                     type    status        engine     detail
+a_gnt_after_busy             assert  proven        informal-ic3
+a_false                      assert  proven        informal-ic3
+c_gnt                        cover   unreachable   informal-ic3
+c_busy                       cover   unreachable   informal-ic3
+c_true                       cover   unreachable   informal-ic3
+m_lo                         assume  unprocessed
+m_hi                         assume  unprocessed
+=== a contradiction that needs a cycle: assume {req} and {busy |-> !req}
+--- informal-ic3, limit 20s for each property
+property                     type    status        engine     detail
+a_gnt_after_busy             assert  proven        informal-ic3
+a_false                      assert  proven        informal-ic3
+c_gnt                        cover   unreachable   informal-ic3
+c_busy                       cover   unreachable   informal-ic3
+c_true                       cover   covered       informal-ic3 depth 1
+m_req                        assume  unprocessed
+m_idle                       assume  unprocessed
+=== the same assumptions under bounded search alone
+--- informal-bmc, limit 2s for each property
+property                     type    status        engine     detail
+a_gnt_after_busy             assert  undetermined             no engine reached a verdict
+a_false                      assert  undetermined             no engine reached a verdict
+c_gnt                        cover   undetermined             no engine reached a verdict
+c_busy                       cover   undetermined             no engine reached a verdict
+c_true                       cover   covered       informal-bmc depth 1
+m_req                        assume  unprocessed
+m_idle                       assume  unprocessed
+verdict: a false assertion proven under each of three assumption sets, and nothing in a report says so

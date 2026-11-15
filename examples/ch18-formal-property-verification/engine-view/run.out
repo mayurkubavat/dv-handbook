@@ -1,0 +1,25 @@
+=== 2 entries
+--- informal-kind, limit 3s for each property
+property                     type    status        engine     detail
+EmptyPtrs_A                  assert  proven        informal-kind
+--- informal-ic3, limit 3s for each property
+property                     type    status        engine     detail
+EmptyPtrs_A                  assert  proven        informal-ic3
+=== 4 entries
+--- informal-kind, limit 3s for each property
+property                     type    status        engine     detail
+EmptyPtrs_A                  assert  undetermined             no engine reached a verdict
+--- informal-ic3, limit 3s for each property
+property                     type    status        engine     detail
+EmptyPtrs_A                  assert  proven        informal-ic3
+=== 2 entries, informal-ic3 with INFORMAL_IC3_STATS=1
+certificate: Ok
+informal-ic3: frames 5 lemmas 15 queries 146
+=== 4 entries, informal-ic3 with INFORMAL_IC3_STATS=1
+certificate: Ok
+informal-ic3: frames 9 lemmas 66 queries 1226
+=== 2 entries, the induction engine as a child process
+$ informal engine informal-kind build/stats2/prop_0.btor2
+last bound reported before the verdict: 6
+{"result":{"verdict":"safe"}}
+verdict: a count of frames and lemmas, a checked certificate, and a bound; no lemma and no failing step

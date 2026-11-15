@@ -10,14 +10,21 @@
 # script selects a single engine for each `prove`. The exit status is
 # the script's own, except that a report with an "unexpected:" line
 # always fails, so a script that leaves out `finish` cannot pass.
+#
+# INFORMAL_REQUIRES names programs the script needs besides the tool
+# itself (an external engine such as ric3). When one is missing the
+# run prints one line beginning "skipped" and succeeds, as it does
+# when the tool is missing.
 set -uo pipefail
 here="$(cd "$(dirname "$0")" && pwd)"
 script="$1"
 work="${2:-build/informal}"
-if ! command -v informal >/dev/null 2>&1; then
-  echo "skipped: informal is not on the PATH"
-  exit 0
-fi
+for tool in informal ${INFORMAL_REQUIRES:-}; do
+  if ! command -v "$tool" >/dev/null 2>&1; then
+    echo "skipped: $tool is not on the PATH"
+    exit 0
+  fi
+done
 mkdir -p "$work"
 informal shell --engines "$here/informal-engines.toml" \
     --workdir "$work" -c "set ::workdir $work" \

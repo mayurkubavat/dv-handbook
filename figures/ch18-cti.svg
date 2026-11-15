@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 470" width="1000" height="470" role="img" aria-label="Two rows of four state boxes joined by arrows. In the first row the first and third states are the same state. In the second row all four differ. The last state of each row is amber and marked bad">
+<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#7FA3C0"/></marker><marker id="ahj" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#5B3E8E"/></marker><marker id="ahd" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#1B4F72"/></marker><marker id="ahc" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#B7791F"/></marker><marker id="ahg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#1C1C1C"/></marker><pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="6" stroke="#CBD2D9" stroke-width="2"/></pattern></defs>
+<rect width="1000" height="470" fill="white"/>
+<text x="30" y="40.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="21" font-weight="700" text-anchor="start" fill="#1B4F72">Two counterexamples to induction at k = 3</text>
+<text x="30" y="64.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="400" text-anchor="start" fill="#1C1C1C">Three states that satisfy the property, then one that does not. No state on either path is reachable.</text>
+<text x="30.0" y="114.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="700" text-anchor="start" fill="#1B4F72">plain induction: the solver may revisit a state</text>
+<rect x="30.0" y="130.0" width="190.0" height="84.0" rx="8" fill="white" stroke="#1B4F72" stroke-width="2.6"/>
+<text x="125.0" y="156.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="400" text-anchor="middle" fill="#7FA3C0">state 0</text>
+<text x="125.0" y="178.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="14" font-weight="600" text-anchor="middle" fill="#1C1C1C">wr=1 rd=1 count=3</text>
+<text x="125.0" y="200.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="400" text-anchor="middle" fill="#7FA3C0">good, not reachable</text>
+<path d="M224.0,172.0 L271.0,172.0" fill="none" stroke="#1C1C1C" stroke-width="1.8" marker-end="url(#ahg)"/>
+<rect x="275.0" y="130.0" width="190.0" height="84.0" rx="8" fill="white" stroke="#1B4F72" stroke-width="1.8"/>
+<text x="370.0" y="156.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="400" text-anchor="middle" fill="#7FA3C0">state 1</text>
+<text x="370.0" y="178.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="14" font-weight="600" text-anchor="middle" fill="#1C1C1C">wr=0 rd=0 count=3</text>
+<text x="370.0" y="200.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="400" text-anchor="middle" fill="#7FA3C0">good, not reachable</text>
+<path d="M469.0,172.0 L516.0,172.0" fill="none" stroke="#1C1C1C" stroke-width="1.8" marker-end="url(#ahg)"/>
+<rect x="520.0" y="130.0" width="190.0" height="84.0" rx="8" fill="white" stroke="#1B4F72" stroke-width="2.6"/>
+<text x="615.0" y="156.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="400" text-anchor="middle" fill="#7FA3C0">state 2</text>
+<text x="615.0" y="178.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="14" font-weight="600" text-anchor="middle" fill="#1C1C1C">wr=1 rd=1 count=3</text>
+<text x="615.0" y="200.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="400" text-anchor="middle" fill="#7FA3C0">good, not reachable</text>
+<path d="M714.0,172.0 L761.0,172.0" fill="none" stroke="#1C1C1C" stroke-width="1.8" marker-end="url(#ahg)"/>
+<rect x="765.0" y="130.0" width="190.0" height="84.0" rx="8" fill="#FBF1DC" stroke="#B7791F" stroke-width="1.8"/>
+<text x="860.0" y="156.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="400" text-anchor="middle" fill="#7FA3C0">state 3</text>
+<text x="860.0" y="178.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="14" font-weight="600" text-anchor="middle" fill="#1C1C1C">wr=0 rd=1 count=0</text>
+<text x="860.0" y="200.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="700" text-anchor="middle" fill="#B7791F">bad</text>
+<text x="275.0" y="234.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="500" text-anchor="start" fill="#B7791F">states 0 and 2 are one state: the path walks a cycle among unreachable states</text>
+<text x="30.0" y="274.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="700" text-anchor="start" fill="#1B4F72">with unique states: every state on the path differs</text>
+<rect x="30.0" y="290.0" width="190.0" height="84.0" rx="8" fill="white" stroke="#1B4F72" stroke-width="1.8"/>
+<text x="125.0" y="316.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="400" text-anchor="middle" fill="#7FA3C0">state 0</text>
+<text x="125.0" y="338.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="14" font-weight="600" text-anchor="middle" fill="#1C1C1C">wr=1 rd=0 count=2</text>
+<text x="125.0" y="360.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="400" text-anchor="middle" fill="#7FA3C0">good, not reachable</text>
+<path d="M224.0,332.0 L271.0,332.0" fill="none" stroke="#1C1C1C" stroke-width="1.8" marker-end="url(#ahg)"/>
+<rect x="275.0" y="290.0" width="190.0" height="84.0" rx="8" fill="white" stroke="#1B4F72" stroke-width="1.8"/>
+<text x="370.0" y="316.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="400" text-anchor="middle" fill="#7FA3C0">state 1</text>
+<text x="370.0" y="338.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="14" font-weight="600" text-anchor="middle" fill="#1C1C1C">wr=1 rd=1 count=1</text>
+<text x="370.0" y="360.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="400" text-anchor="middle" fill="#7FA3C0">good, not reachable</text>
+<path d="M469.0,332.0 L516.0,332.0" fill="none" stroke="#1C1C1C" stroke-width="1.8" marker-end="url(#ahg)"/>
+<rect x="520.0" y="290.0" width="190.0" height="84.0" rx="8" fill="white" stroke="#1B4F72" stroke-width="1.8"/>
+<text x="615.0" y="316.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="400" text-anchor="middle" fill="#7FA3C0">state 2</text>
+<text x="615.0" y="338.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="14" font-weight="600" text-anchor="middle" fill="#1C1C1C">wr=0 rd=0 count=1</text>
+<text x="615.0" y="360.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="400" text-anchor="middle" fill="#7FA3C0">good, not reachable</text>
+<path d="M714.0,332.0 L761.0,332.0" fill="none" stroke="#1C1C1C" stroke-width="1.8" marker-end="url(#ahg)"/>
+<rect x="765.0" y="290.0" width="190.0" height="84.0" rx="8" fill="#FBF1DC" stroke="#B7791F" stroke-width="1.8"/>
+<text x="860.0" y="316.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="400" text-anchor="middle" fill="#7FA3C0">state 3</text>
+<text x="860.0" y="338.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="14" font-weight="600" text-anchor="middle" fill="#1C1C1C">wr=0 rd=1 count=0</text>
+<text x="860.0" y="360.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="700" text-anchor="middle" fill="#B7791F">bad</text>
+<text x="30.0" y="440.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13.5" font-weight="400" text-anchor="start" fill="#1C1C1C">Plain induction finds such a path at every k tried. With unique states the paths run out: proven at k = 7.</text>
+</svg>

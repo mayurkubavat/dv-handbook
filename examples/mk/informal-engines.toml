@@ -2,8 +2,33 @@
 # hand to `informal shell --engines`.
 #
 # The file names external model checkers that join InFormal's
-# portfolio. The examples select one in-house engine by name for each
-# `prove` (informal-bmc, informal-kind or informal-ic3), and those
-# need no entry here, so the list is empty. Without --engines the tool
-# looks for config/engines.toml under the current directory and stops
-# when it is not there.
+# portfolio. The examples select one engine by name for each `prove`.
+# The in-house engines (informal-bmc, informal-kind, informal-ic3)
+# need no entry here. Without --engines the tool looks for
+# config/engines.toml under the current directory and stops when it
+# is not there.
+#
+# One external engine is listed: rIC3, run as `ric3 ... ic3`. An entry
+# changes nothing for a `prove` that selects another engine, and
+# nothing is run until a script selects `ric3-ic3` by name. A script
+# that does so belongs to an example with REQUIRES := ric3, which is
+# skipped where the program is not installed. The tool does not run
+# external engines on liveness properties.
+#
+# `{model}` is replaced with the model's path. rIC3 exits with status
+# 0 whatever it found, so the verdict is read from its output: a line
+# UNSAT is a proof, a line SAT a counterexample, and with --cex the
+# counterexample follows as a witness that InFormal turns into the
+# trace.
+
+[[engine]]
+name = "ric3-ic3"
+program = "ric3"
+args = ["check", "--ui", "false", "--cex", "{model}", "ic3"]
+cex_witness = true
+formats = ["aiger", "btor2"]
+proves = true
+finds_bugs = true
+[engine.patterns]
+safe = '(?m)^UNSAT$'
+unsafe = '(?m)^SAT$'

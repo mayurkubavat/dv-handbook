@@ -1,0 +1,11 @@
+random systems, seed 18: 300 systems; the referee finds 95 safe and 205 unsafe
+  deepest counterexample 18 steps; largest invariant 4 lemmas
+  induction: 83 proven, 203 counterexamples, 14 undetermined
+  simple-path induction: 95 proven, 205 counterexamples, 0 undetermined
+  wrong verdicts, traces or invariants: 0
+single-edge mutants of fifo_ptrs2.aag: 86 systems; the referee finds 34 safe and 52 unsafe
+  deepest counterexample 4 steps; largest invariant 8 lemmas
+  induction: 4 proven, 52 counterexamples, 30 undetermined
+  simple-path induction: 34 proven, 52 counterexamples, 0 undetermined
+  wrong verdicts, traces or invariants: 0
+self-test passed: no disagreement with explicit-state search
