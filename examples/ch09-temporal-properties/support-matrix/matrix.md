@@ -29,7 +29,7 @@
 | named `property` with arguments, used twice | runs | runs | no build — syntax error | runs |
 | property-local variable carrying data | runs | runs | no build — syntax error | wrong — no assert in the report, and no message |
 | `not (a ##1 b)` | runs | runs | no build — syntax error | no build — not supported yet: property `not` |
-| `$past(x)` | runs — on the first tick $past reads 0000 | runs — on the first tick $past reads 0000 | no build — concurrent_assertion_item not supported. Try -gno-assert | runs |
+| `$past(x)` | runs — first-tick $past: net 0, initial-block 0, initializer 5 | runs — first-tick $past: net 0, initial-block 0, initializer 5 | no build — concurrent_assertion_item not supported. Try -gno-assert | runs |
 | `$past(x, 3)` | runs | runs | no build — concurrent_assertion_item not supported. Try -gno-assert | runs |
 | gated `$past(x, 1, en)` | no build — Unsupported: $past expr2 and/or clock arguments | no build — Unsupported: $past expr2 and/or clock arguments | no build — concurrent_assertion_item not supported. Try -gno-assert | runs |
 | `$rose`, `$fell`, on one bit and on a vector | runs | runs | no build — concurrent_assertion_item not supported. Try -gno-assert | runs |
@@ -51,7 +51,7 @@
 | `cover property (a ##1 b)` | runs | runs | no build — syntax error | runs |
 | `cover property (a \|-> b)`, antecedent never true | runs | runs | no build — syntax error | runs |
 | `cover sequence` | runs | runs | no build — syntax error | runs |
-| antecedent that can never match | runs | runs | no build — syntax error | no build — not supported yet: an antecedent that has no match |
+| antecedent that can never match | runs — warns NEVERMATCH | runs — warns NEVERMATCH | no build — syntax error | no build — not supported yet: an antecedent that has no match |
 | pass action block on a vacuous success | runs — pass statement ran 14 times on 14 vacuous successes | runs — pass statement ran 14 times on 14 vacuous successes | no build — syntax error | n/a — action blocks are simulation code |
 | `restrict property` | runs | runs | no build — concurrent_assertion_item not supported. Try -gno-assert | runs |
 | `bind` to a module, named port connections | runs | runs | no build — concurrent_assertion_item not supported. Try -gno-assert | runs |
@@ -65,7 +65,7 @@
 | `checker ... endchecker` | runs | runs | no build — syntax error | no build — SystemVerilog errors |
 | `let` declaration used in a property | runs | runs | no build — let declarations (imp) are not currently supported. | runs |
 
-: What each tool does with the assertion constructs this chapter names, measured by running one probe per row: under the simulators with the flags the book's build uses plus `--assert` and `-Wno-fatal` (Icarus with `-g2012`), and under InFormal with the engine `informal-kind` (`informal-ic3` on the two liveness rows), a limit of 20 s for each property, no reset, and the probe's tick counter assumed to stay below 14. Each probe holds a design that satisfies its assertion and one that violates it, and a row runs only if both verdicts are right. Verilator 5.052: 47 runs, 6 wrong, 9 no build, 2 n/a; Verilator 5.054: 47 runs, 6 wrong, 9 no build, 2 n/a; Icarus 13.0: 3 runs, 58 no build, 3 n/a; InFormal 0.1.0: 39 runs, 7 wrong, 12 no build, 6 n/a. Regenerated from the probes on every run. {#tbl-ch09-support}
+: What each tool does with the assertion constructs this chapter names, measured by running one probe per row: under the simulators with the flags the book's build uses plus `--assert` and `-Wno-fatal` (Icarus with `-g2012`), and under InFormal with the engine `informal-kind` (`informal-ic3` on the two liveness rows), a limit of 20 s for each property, no reset, and the probe's tick counter assumed to stay below 14. Each probe holds a design that satisfies its assertion and one that violates it, and a row runs only if both verdicts are right. Verilator 5.052: 47 runs, 6 wrong, 9 no build, 2 n/a; Verilator 5.054: 47 runs, 6 wrong, 9 no build, 2 n/a; Icarus 13.0: 3 runs, 58 no build, 3 n/a; InFormal 0.1.0: 39 runs, 7 wrong, 12 no build, 6 n/a. With `-gsupported-assertions`, tried on its 58 no-build rows, Icarus builds 13, and 10 of those give a wrong verdict. Regenerated from the probes on every run. {#tbl-ch09-support}
 
 | Construct | Verilator 5.052 | Verilator 5.054 | Icarus 13.0 | InFormal 0.1.0 |
 |---|---|---|---|---|
@@ -85,5 +85,7 @@
 | `$isunknown` in a clocked immediate assert | runs | runs | runs | wrong — no assert in the report, and no message |
 | sequence `or` of two operands that both fail | wrong — failures good=0 bad=0, want 0 and 1 | wrong — failures good=0 bad=0, want 0 and 1 | no build — syntax error | runs |
 | `cover property (a ##1 b)`, built without `--coverage` | wrong — hits good=0 bad=0, want 1 and 0 | wrong — hits good=0 bad=0, want 1 and 0 | n/a — as p49 | n/a — as p49 |
+| failed immediate assertion with no action block: exit status | runs — failure printed, run stops, exit status 1 | runs — failure printed, run stops, exit status 1 | runs — failure printed, run goes on, exit status 0 | n/a — a simulator's exit status |
+| concurrent assertion inside an `interface` | runs | runs | no build — concurrent_assertion_item not supported. Try -gno-assert | runs |
 
-: What each tool does with the second set of assertion probes: the clocked immediate forms, and discriminating probes, measured by running one probe per row: under the simulators with the flags the book's build uses plus `--assert` and `-Wno-fatal` (Icarus with `-g2012`), and under InFormal with the engine `informal-kind` (`informal-ic3` on the two liveness rows), a limit of 20 s for each property, no reset, and the probe's tick counter assumed to stay below 14. Each probe holds a design that satisfies its assertion and one that violates it, and a row runs only if both verdicts are right. Verilator 5.052: 10 runs, 4 wrong, 2 no build; Verilator 5.054: 11 runs, 3 wrong, 2 no build; Icarus 13.0: 3 runs, 1 wrong, 3 no run, 8 no build, 1 n/a; InFormal 0.1.0: 5 runs, 8 wrong, 1 no build, 2 n/a. Regenerated from the probes on every run. {#tbl-ch09-support-x}
+: What each tool does with the second set of assertion probes: the clocked immediate forms, and discriminating probes, measured by running one probe per row: under the simulators with the flags the book's build uses plus `--assert` and `-Wno-fatal` (Icarus with `-g2012`), and under InFormal with the engine `informal-kind` (`informal-ic3` on the two liveness rows), a limit of 20 s for each property, no reset, and the probe's tick counter assumed to stay below 14. Each probe holds a design that satisfies its assertion and one that violates it, and a row runs only if both verdicts are right. Verilator 5.052: 12 runs, 4 wrong, 2 no build; Verilator 5.054: 13 runs, 3 wrong, 2 no build; Icarus 13.0: 4 runs, 1 wrong, 3 no run, 9 no build, 1 n/a; InFormal 0.1.0: 6 runs, 8 wrong, 1 no build, 3 n/a. With `-gsupported-assertions`, tried on its 9 no-build rows, Icarus builds 2, and 2 of those give a wrong verdict. Regenerated from the probes on every run. {#tbl-ch09-support-x}

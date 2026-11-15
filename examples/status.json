@@ -1,5 +1,5 @@
 {
-  "checked": "2026-11-15T15:45:28Z",
+  "checked": "2026-11-15T17:24:15Z",
   "pass": 82,
   "fail": 0,
   "skipped_run": 2,
@@ -491,7 +491,7 @@
       "dir": "examples/ch09-temporal-properties/support-matrix",
       "lint": "pass",
       "run": "pass",
-      "requires": "",
+      "requires": "informal",
       "expect": "pass"
     },
     {

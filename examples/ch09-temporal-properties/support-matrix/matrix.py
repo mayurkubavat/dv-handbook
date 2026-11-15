@@ -15,12 +15,12 @@ In simulation both designs are instantiated side by side and the probe
 counts failures in action blocks and prints a PROBE line. Under
 InFormal the probe's `dut` is the top module and the same file is read
 twice with FORMAL defined (which compiles out the simulation top and
-the failure counters), with BAD 0 and with BAD 1: every assertion must be proven in the
-first and at least one refuted in the second (for a cover row: every
-cover reached in the first, one unreachable in the second). The tool
-has no depth bound, so where a probe has the tick counter `t` the
-script assumes `t < 14`, which ends every trace where the simulation's
-fourteen ticks end.
+the failure counters), with BAD 0 and with BAD 1: every assertion
+must be proven in the first and at least one refuted in the second
+(for a cover row: every cover reached in the first, one unreachable in
+the second). The tool has no depth bound, so where a probe has the
+tick counter `t` the script assumes `t < 14`, which ends every trace
+where the simulation's fourteen ticks end.
 
   runs     the right verdict on both designs
   wrong    built and ran, but a verdict was wrong (what the probe or
@@ -35,6 +35,8 @@ Each row of probes.txt is `label | file | options`; the options are
 
   sim=n/a: why        no simulation columns
   sim=errlimit        count default failure messages over two runs
+  sim=status          one failure with no action block: was it printed,
+                      did the run go on, and what was the exit status
   iv=n/a: why         no Icarus column
   formal=n/a: why     no InFormal column
   vflags=FLAGS        more Verilator flags, where a row needs them
@@ -60,13 +62,13 @@ VFLAGS = ["--binary", "--timing", "--timescale", "1ns/1ps",
           "-Wall", "-Wno-DECLFILENAME", "-Wno-UNUSEDSIGNAL", "-Wno-fatal",
           "--assert", "--top-module", "top"]
 VERILATOR = "verilator"
-# The release after the book's pin. Its column is left out when the
-# binary is not there.
+# The release after the book's pin. The tables need every column, so
+# the run stops, and leaves matrix.md alone, when a tool is missing.
 VNEXT = os.environ.get("VERILATOR_NEXT",
                        "/opt/verilator-5.054/bin/verilator")
 # InFormal: one engine for each run and a time limit, so that two runs
 # give the same cells. The engine list is the book's (it names no
-# external engine); the column is left out when the program is missing.
+# external engine).
 INFORMAL = shutil.which("informal")
 ENGINES = HERE.parents[1] / "mk" / "informal-engines.toml"
 ENGINE = "informal-kind"
@@ -104,18 +106,23 @@ def classify(out, build_ok):
     return ("runs" if m.group(1) == "PASS" else "wrong"), m.group(2)[:NOTE]
 
 
-def icarus(probe, flag=None):
+def icarus(probe, flag=None, mode="run"):
     vvp = BUILD / (probe.stem + (flag or "") + ".vvp")
     cmd = ["iverilog", "-g2012"] + ([flag] if flag else [])
     rc, out = run(cmd + ["-o", str(vvp), str(probe)])
     if rc != 0:
         return classify(out, False)
+    if mode == "status":
+        return exit_status(["vvp", str(vvp)], BUILD)
     rc, out = run(["vvp", str(vvp)], cwd=BUILD)
     return classify(out, True)
 
 
 def verilator(probe, binary, tag, mode, extra):
     mdir = BUILD / (tag + "_" + probe.stem + "".join(extra))
+    # Built from nothing every time: Verilator skips an unchanged input
+    # and then prints no warnings, and a warning is part of the cell.
+    shutil.rmtree(mdir, ignore_errors=True)
     rc, out = run([binary] + VFLAGS + extra
                   + ["--Mdir", str(mdir), str(probe)])
     if rc != 0:
@@ -124,6 +131,8 @@ def verilator(probe, binary, tag, mode, extra):
     exe = str(mdir / "Vtop")
     if mode == "errlimit":
         return error_limit(exe, mdir)
+    if mode == "status":
+        return exit_status([exe], mdir)
     rc, out = run([exe], cwd=mdir)
     verdict, why = classify(out, True)
     return verdict, (why + warned).lstrip("; ")
@@ -143,6 +152,16 @@ def error_limit(exe, mdir):
            f"{'stops' if not seen[1][1] else 'runs on'}")
     ok = seen[0][:2] == (1, False) and seen[1][:2] == (2, True)
     return ("runs" if ok else "wrong"), why
+
+
+def exit_status(cmd, cwd):
+    """One assertion with no action block fails: was the failure
+    printed, did the run reach its end, and what was the exit status?"""
+    rc, out = run(cmd, cwd=cwd)
+    told = re.search(r"Assertion failed|^ERROR:", out, re.M) is not None
+    why = (f"failure {'printed' if told else 'not printed'}, run "
+           f"{'goes on' if 'PROBE' in out else 'stops'}, exit status {rc}")
+    return ("runs" if told else "wrong"), why
 
 
 def informal_run(probe, opts, bad):
@@ -226,7 +245,7 @@ def probe_row(label, file, opts, vnext):
         if "iv" in opts:
             cells["iv"], cells["ivs"] = na(opts["iv"]), ("", "")
         else:
-            cells["iv"] = icarus(probe)
+            cells["iv"] = icarus(probe, mode=sim)
             # What the flag Icarus's own message suggests then does.
             cells["ivs"] = (icarus(probe, "-gsupported-assertions")
                             if cells["iv"][0] == "no build" else ("", ""))
@@ -273,14 +292,21 @@ def count(rows, col):
     return ", ".join(f"{n[k]} {k}" for k in order if k in n)
 
 
+def flag_counts(rows):
+    """What Icarus's -gsupported-assertions does with the rows it
+    refused: how many were tried, how many build, how many are wrong."""
+    tried = [c["ivs"] for _, _, c in rows if c["ivs"][0]]
+    n = sum(1 for s in tried if s[0] != "no build")
+    w = sum(1 for s in tried if s[0] == "wrong")
+    return len(tried), n, w
+
+
 def summary(rows, vnext):
     for col, name in columns(vnext):
         print(f"  {name}: {count(rows, col)}")
-    skipped = [c["ivs"] for _, _, c in rows if c["ivs"][0]]
-    if skipped:
-        n = sum(1 for s in skipped if s[0] != "no build")
-        w = sum(1 for s in skipped if s[0] == "wrong")
-        print(f"  Icarus with -gsupported-assertions, on its {len(skipped)}"
+    tried, n, w = flag_counts(rows)
+    if tried:
+        print(f"  Icarus with -gsupported-assertions, on its {tried}"
               f" no-build rows: {n} build, {w} of them wrong")
 
 
@@ -304,6 +330,11 @@ def table(rows, vers, vnext, what, label):
                   + " | ".join(cell(c[k]) for k in cols) + " |")
     counts = "; ".join(f"{h}: {count(rows, k)}"
                        for h, k in zip(head, cols))
+    tried, n, w = flag_counts(rows)
+    if tried:
+        counts += (f". With `-gsupported-assertions`, tried on its {tried}"
+                   f" no-build rows, Icarus builds {n}, and {w} of those"
+                   " give a wrong verdict")
     md.append("")
     md.append(f": What each tool does with {what}, measured by "
               "running one probe per row: under the simulators with the "
@@ -330,9 +361,19 @@ def versions(vnext):
     return vers
 
 
+def missing(vnext):
+    gone = [t for t in (VERILATOR, "iverilog", "vvp") if not shutil.which(t)]
+    return gone + ([] if vnext else [VNEXT]) + ([] if INFORMAL
+                                                else ["informal"])
+
+
 def main():
     BUILD.mkdir(exist_ok=True)
     vnext = VNEXT if pathlib.Path(VNEXT).exists() else ""
+    if missing(vnext):
+        print("matrix.py: not measured, and matrix.md left as it is: "
+              "missing " + ", ".join(missing(vnext)), file=sys.stderr)
+        return 1
     vers = versions(vnext)
     print("verilator " + vers["v"] + ", icarus " + vers["iv"]
           + (", verilator " + vers["vn"] if vnext else "")

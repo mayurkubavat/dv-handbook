@@ -8,7 +8,8 @@
 # any directory. The wall-clock time at the end of each report row is
 # removed: it is the one column that differs between two runs once a
 # script selects a single engine for each `prove`. The exit status is
-# the script's own.
+# the script's own, except that a report with an "unexpected:" line
+# always fails, so a script that leaves out `finish` cannot pass.
 set -uo pipefail
 here="$(cd "$(dirname "$0")" && pwd)"
 script="$1"
@@ -23,6 +24,9 @@ informal shell --engines "$here/informal-engines.toml" \
     -c "source $here/informal.tcl" "$script" \
     >"$work/report.txt" 2>&1
 rc=$?
+if [[ $rc -eq 0 ]] && grep -q '^unexpected:' "$work/report.txt"; then
+  rc=1
+fi
 sed -E 's/ in [0-9]+\.[0-9]+ s$//; s/ +[0-9]+\.[0-9]+ s$//; s/ +$//' \
     "$work/report.txt"
 exit $rc

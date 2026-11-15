@@ -15,3 +15,5 @@ sequence antecedent with a fixed delay `(a ##2 b) |-> c` | x13_seq_ante_fixed.sv
 `$isunknown` in a clocked immediate assert | x14_isunknown_clocked.sv
 sequence `or` of two operands that both fail | x15_seq_or_equal.sv
 `cover property (a ##1 b)`, built without `--coverage` | p49_cover_prop.sv | iv=n/a: as p49; formal=n/a: as p49
+failed immediate assertion with no action block: exit status | x16_imm_status.sv | sim=status; formal=n/a: a simulator's exit status
+concurrent assertion inside an `interface` | x17_interface.sv

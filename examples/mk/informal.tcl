@@ -9,18 +9,25 @@ set ::unexpected 0
 
 # expect STATUS NAME ... -- each named property must have this status
 # (proven, cex, covered, unreachable, undetermined, error). A property
-# written in the RTL is listed under its hierarchical name, and a name
-# given here matches it by its last component.
+# written in the RTL is listed under its hierarchical name. A name given
+# here matches every property whose name ends in it, so two instances
+# of one checker are both held to the status; a full hierarchical name
+# selects one. A name that matches nothing is unexpected too.
 proc expect {status args} {
   foreach want $args {
-    set got missing
+    set found 0
     foreach full [get_property_list] {
       if {$full eq $want || [string match "*.$want" $full]} {
+        incr found
         set got [get_status $full]
+        if {$got ne $status} {
+          puts "unexpected: $full is $got, expected $status"
+          incr ::unexpected
+        }
       }
     }
-    if {$got ne $status} {
-      puts "unexpected: $want is $got, expected $status"
+    if {$found == 0} {
+      puts "unexpected: $want is missing, expected $status"
       incr ::unexpected
     }
   }

@@ -148,3 +148,146 @@ on p39, p40), 20 s.
   (PSL) properties"). The bib note says so. All three vendor pages
   were read through a fetch tool that summarizes; the chapter
   paraphrases and quotes none of them.
+
+## 7. Round 1 fixes (gate-2 reviews of 2026-11-15)
+
+Inputs: `docs/reviews/ch09-gate2a-2026-11-15.md` (text, "A") and
+`docs/reviews/ch09-gate2b-2026-11-15.md` (code, "B"). One line per
+finding, appended as each is done.
+
+- code B5: `informal.tcl` `expect` now checks every property whose name
+  ends in the label and reports each mismatch by its full name; a label
+  that matches nothing is reported "missing". Verified on the review's
+  two-instance design (`u_bad`/`u_good` `Same_A`, `expect proven
+  Same_A`): before, rc 0; now `unexpected: two.u_bad.Same_A is cex`,
+  rc 1. A full name (`two.u_good.Same_A`) still selects one (rc 0); a
+  wrong name gives "missing", rc 1.
+- code B5 hardening (non-blocking): `informal.sh` exits 1 when the report
+  has an `unexpected:` line, whatever the script's last command. Same
+  design with `finish` deleted: rc 1 (before: 0).
+- code B2: `run_checker.sh`, `run_vacuity.sh` and `run_axi.sh` now test
+  what their verdict lines say, through a `need` helper added to
+  `common/sim.sh`, and exit 1 otherwise. `run_checker.sh`: every cover
+  of the repaired FIFO non-zero, the original's default run stops on
+  `FullBackward_A` alone, its long run names no other label, and
+  `FullReached_C=0`. `run_vacuity.sh`: the count is of `Ack_A` failures
+  only; the quiet run must be 0 failures with `Req_C=0`, the traffic
+  run more than 0 with `Req_C` above 0. `run_axi.sh`: the as-is run
+  must print `result: PASS` with all six covers non-zero; each mutant
+  is given its label, and the first failure of the bound checker must
+  be that label (`failures` reads only `%Error ... Assertion failed in
+  <hier>.<label>:`, so the testbench's own `$fatal` cannot count).
+  Outputs unchanged (diffed against the committed `run.out`). Neutered
+  in a scratch copy (`cp -r` of `examples/`, repository untouched):
+  `FullBackward_A` -> `full |-> 1'b1`: `make run` rc 2, "the original
+  did not stop on FullBackward_A alone"; `Ack_A` -> `req |=> 1'b1`:
+  rc 2, "Ack_A did not fail"; `ArHeld_A` antecedent `&& 1'b0`: rc 2,
+  "mutant drop did not fail ArHeld_A"; `ArStable_A` consequent `1'b1`:
+  rc 2, "mutant wander did not fail ArStable_A"; FIFO bind file
+  emptied: rc 2, "FullReached_C read zero on the repaired FIFO".
+- text B1: L43 rewritten as a forward pointer: @sec-ch11 builds the DMA;
+  AXI VALID/READY and the two source rules introduced in place and cited
+  to Arm IHI 0022C, not to @sec-ch11-waves. @sec-ch09-axi opens with what
+  the section needs of the DMA (APB-programmed, AXI4-Lite master, drives
+  AR/AW/W, receives R/B, a random test against a memory model with four
+  READY styles picked per round; read off `tb_v2.sv:186` and
+  `dma_tb_pkg.sv`). "case study" removed throughout; exercise 7 names the
+  testbench of @sec-ch09-axi.
+- text B2: splice `lines="199-209"` (the function through `endfunction`,
+  same as ch11 line 142).
+- text B3 (a)-(e) / code B4: caption "four times it passed"; "the first
+  row"; "the last line of that run's report"; "two from the plan ... and
+  a third the plan does not have"; "No verdict changes; the only new row
+  is the second assumption's".
+- text B4: Definition box, the paragraph after it and the Summary bullet
+  now say: a finite run never refutes liveness, settles F p for the run
+  once p is seen, and decides nothing for G F p. Bauer et al.'s sentence
+  checked against TUM-I0724 (fetched 2026-11-15): verbatim, Section
+  III.A, said of GFp; the text now names G F p beside it.
+- text B5: until now reflexive: q here or later, p from here to the one
+  before.
+- text B6: NOT CHANGED. `clause 20.12` kept: slang's
+  `docs/language-support.dox` (local copy, "complete support for ... IEEE
+  1800-2023") lists 20.11 Assertion control tasks and 20.12 Sampled value
+  system functions. The reviewer's numbering (20.12 = assertion control)
+  is the 1800-2017 one. The PDF itself was not readable.
+- text B7: "three verbs that this chapter uses ..., and a fourth,
+  `restrict`, that constrains a formal tool's inputs like an assumption
+  and is not checked in simulation".
+- text B8: the four suffixes the formal README gives (`_A`, `_M`, `_P`,
+  `_S`), and `_C` attributed to the TL-UL checker.
+- text B9: sentence now says the command names are the ones InFormal's
+  README describes as JasperGold / VC Formal style, and that the book has
+  not run them on either tool.
+- text B10: L454 states the rule's form ("for every offer there is a
+  run ...") and that the cover witnesses the first offer only; L466 says
+  the master is able to offer first, not that it always does; Summary
+  bullet reworded. No new assertion added.
+- text B11: (1) `matrix.py` now writes the Icarus `-gsupported-assertions`
+  counts into each caption (main: tried 58, 13 build, 10 wrong; extra:
+  tried 9, 2 build, 2 wrong); the prose cites the captions. (2) new probe
+  `x16_imm_status.sv` (mode `sim=status`): failed immediate assertion, no
+  action block: Verilator "failure printed, run stops, exit status 1",
+  Icarus "failure printed, run goes on, exit status 0". (3) new probe
+  `x17_interface.sv`: concurrent assertion in an interface: Verilator
+  runs (both), InFormal runs. (4) portfolio sentence now rests on the
+  README ("The first definitive verdict wins, and contradicting engines
+  are flagged"); "where two engines could be compared they agreed",
+  "its depth is not always the shortest", the IC3 timing comparison and
+  the k-induction-on-AXI minutes all removed.
+- text B12: refs.bib `pnueli1977temporal` -> @inproceedings, FOCS 1977,
+  pp. 46-57, DOI 10.1109/SFCS.1977.32 (record at
+  people.irisa.fr/Nicolas.Markey/biblio/focs1977-Pnu, and the research
+  note's copy showing pp. 46-57); `beer2001vacuity` + number 2, DOI
+  10.1023/A:1008779610539 (scilit record); `kantrowitznoack1996done` +
+  pp. 325-330, DOI 10.1145/240518.240580, publisher ACM (bibtex.github.io
+  DAC-1996-KantrowitzN, DBLP-derived). The paper itself (UCI compendium
+  23_5.pdf) was read again: title "I'm Done Simulating; Now What?",
+  Figure 2 Assertion Checkers 34%, Self-Checking Test 11%; it prints no
+  page numbers. `cocotb-docs` citation removed: the sentence now says
+  only what the monitor does (appends failures, the test asserts at its
+  end). Further-reading lines carry venue / volume.
+- text B13: "a large open-source user".
+- code B3: `p30_past1.sv` now prints first-tick `$past` of a net, of a
+  variable set in an `initial` block and of one with a declaration
+  initializer: "net 0, initial-block 0, initializer 5" on 5.052 and
+  5.054 alike (matrix.md row). Chapter L135, L297 and the Pitfall say
+  exactly that.
+- code B6: the falling-edge sentence is restricted to the
+  bounded-response, vacuity and FIFO testbenches; the handshake and goto
+  listings are described as counter-driven through a nonblocking
+  assignment, and why that is race-free.
+- non-blocking done: text N3 (disable iff acts on current values), N5/
+  code N10 (exit-status wording), N6 (`load` and `clear -all`), N9
+  ("explicit"), N10 (depth and engine column defined at first use), N11
+  (quotation as written in fifo.sv), N14 (labels for "the first
+  chapter"), N17 (forward pointer to the zero); code N3 (contradiction
+  Pitfall), N4 (constant `initial` register), N6 (5.054 "not always in
+  the same way"), N7 (glitch count depends on source order).
+- non-blocking not done: text N2 (`$rose` on a vector: no probe measures
+  bit 0), N4, N8 (upstream reporting is the author's call), N12, N13
+  (cocotb log width: the filter is shared with ch01), N15 (length), N16;
+  code N5, N11, N12.
+- code N8 (non-blocking, done): `check-examples.sh` tests REQUIRES with
+  `type -P`, and a skipped example's `run.out` is no longer rewritten
+  from a stale `run.log`.
+- code B1: `matrix.py` removes each probe's Verilator `Mdir` before
+  building it, so the NEVERMATCH note no longer depends on whether
+  Verilator re-ran. Verified: `make clean`, `make run` (5 min 33 s),
+  copy of `matrix.md`; then `make run` again over the kept `build/`:
+  `cmp` of the two `matrix.md` files reports identical. The clean-run
+  table now carries "warns NEVERMATCH" on the never-matching antecedent
+  row (the committed table, a re-run variant, did not).
+- code N1 (non-blocking): the example's own `clean::` rule is gone;
+  `make clean` left `matrix.md` in place (git status clean for it).
+- code N2 (non-blocking): `matrix.py` stops with status 1 and leaves
+  `matrix.md` untouched when verilator, iverilog, vvp, the next
+  Verilator or informal is missing; the Makefile declares REQUIRES :=
+  informal so a machine without it records a skip (as CI does).
+  Verified with VERILATOR_NEXT=/nonexistent: rc 1, matrix.md unchanged.
+- Final check (2026-11-15): `make clean` in all fourteen examples, then
+  `scripts/check-examples.sh ch09`: 14 of 14 lint=pass run=pass. Every
+  `run.out` except `support-matrix/run.out` is byte-identical to the
+  committed one; `matrix.md` identical to the earlier clean run.
+  `scripts/check-structure.sh` and `scripts/check-citations.sh` pass.
+  Build directories removed.

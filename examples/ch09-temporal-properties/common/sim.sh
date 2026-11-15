@@ -22,3 +22,11 @@ failures() {
   sed -nE "s/$pat/\1 \2/p" \
     | awk '{ printf "  tick %2d: %s failed\n", ($1 - 5000) / 10000, $2 }'
 }
+
+# need TEXT ERE WHY -- a run script's check of its own verdict: exit 1,
+# printing WHY, unless TEXT, its lines joined by spaces, matches the
+# extended regular expression ERE.
+need() {
+  grep -Eq -- "$2" <<<"$(tr '\n' ' ' <<<"$1")" \
+    || { echo "unexpected: $3"; exit 1; }
+}

@@ -76,7 +76,8 @@ for d in $DIRS; do
   # is the name of a program on the PATH (an optional tool such as
   # `informal`) the need is met and the example runs; anything else, a
   # commercial simulator or a library, is skipped as before.
-  if [[ -n "$requires" ]] && ! command -v "$requires" >/dev/null 2>&1; then
+  # `type -P` looks for a file, so a builtin such as `time` cannot pass.
+  if [[ -n "$requires" ]] && ! type -P "$requires" >/dev/null 2>&1; then
     run="skipped ($requires)"; ((skip++))
   else
     (cd "$d" && $RUN make -s run >"$d/run.log" 2>&1); rc=$?
@@ -99,7 +100,9 @@ for d in $DIRS; do
   printf '%-38s lint=%-7s run=%s\n' "$rel" "$lint" "$run"
   # A trimmed copy of the run output for the book to include verbatim:
   # simulator banners, make chatter and abort traces removed.
-  [[ -f "$d/run.log" ]] && grep -vE '^- |^%Fatal|^%Error|^Aborting|^make:|^\[[0-9]+\] %Fatal|^V e r i l a t i o n|Verilated|Abort trap|conda\.cli|^/bin/sh|Seeding Python random|^$' "$d/run.log" \
+  # A skipped run leaves its run.out alone: a run.log lying in the
+  # directory is from some earlier run, not this one.
+  [[ "$run" != skipped* && -f "$d/run.log" ]] && grep -vE '^- |^%Fatal|^%Error|^Aborting|^make:|^\[[0-9]+\] %Fatal|^V e r i l a t i o n|Verilated|Abort trap|conda\.cli|^/bin/sh|Seeding Python random|^$' "$d/run.log" \
     | sed -E 's/(\*\* .*[0-9]+\.[0-9]{2}) +[0-9]+\.[0-9]{2} +[0-9]+\.[0-9]{2} +\*\*$/\1  **/;
               s/^([0-9]+ (passed|failed).*) in [0-9.]+s$/\1/' > "$d/run.out"
   # Show why, so a failure is readable in CI without downloading logs.
