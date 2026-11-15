@@ -8,7 +8,8 @@ this script prints holds the verdicts only, so that two runs print
 the same text; with MEASURE=1 in the environment the seconds go to
 tbl-seconds.md, with the date and the versions of the tools, and that
 file then differs from run to run by design. The verdicts are
-checked against the ones the chapter states; the seconds are not checked against anything.
+checked against the ones the chapter states; the seconds are not
+checked against anything.
 """
 import datetime
 import os
