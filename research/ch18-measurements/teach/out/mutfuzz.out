@@ -1,0 +1,3 @@
+models/fifo_ptrs.aag {'cex': 116, 'WRONG': 0, 'cex depth max': 5, 'lemmas max': 74, 'frames max': 15, 'proven': 37}
+examples/ch17-logic-and-solvers/fifo-unroll/counter.aag {'lemmas max': 4, 'frames max': 5, 'proven': 9, 'WRONG': 0, 'cex depth max': 6, 'cex': 33}
+models/fifo_ptrs_h.aag {'cex': 21, 'WRONG': 0, 'cex depth max': 4, 'lemmas max': 32, 'frames max': 12, 'proven': 168}

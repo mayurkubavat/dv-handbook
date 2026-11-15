@@ -1,0 +1,209 @@
+=== BUG=16
+--- engine informal-bmc, limit 20s
+property                     type    status        engine     detail
+a_never                      assert  cex           informal-bmc depth 17 in 0.02 s
+wall 22 ms
+--- engine informal-bmc-10, limit 20s
+property                     type    status        engine     detail
+a_never                      assert  cex           informal-bmc-10 depth 17 in 0.02 s
+wall 22 ms
+--- engine informal-bmc-65, limit 20s
+property                     type    status        engine     detail
+a_never                      assert  cex           informal-bmc-65 depth 17 in 0.02 s
+wall 22 ms
+--- engine ric3-bmc, limit 20s
+property                     type    status        engine     detail
+a_never                      assert  cex           ric3-bmc   depth 17 in 0.04 s
+wall 43 ms
+--- engine informal-kind, limit 20s
+property                     type    status        engine     detail
+a_never                      assert  cex           informal-kind depth 17 in 0.02 s
+wall 35 ms
+--- engine informal-ic3, limit 20s
+property                     type    status        engine     detail
+a_never                      assert  cex           informal-ic3 depth 17 in 0.02 s
+wall 35 ms
+--- engine informal-ic3-cadical, limit 20s
+property                     type    status        engine     detail
+a_never                      assert  cex           informal-ic3-cadical depth 17 in 0.02 s
+wall 33 ms
+--- engine informal-kind-ic3, limit 20s
+property                     type    status        engine     detail
+a_never                      assert  cex           informal-kind-ic3 depth 17 in 0.02 s
+wall 34 ms
+--- engine informal-ic3-mt, limit 20s
+property                     type    status        engine     detail
+a_never                      assert  cex           informal-ic3-mt depth 17 in 0.04 s
+wall 55 ms
+--- engine ric3-ic3, limit 20s
+property                     type    status        engine     detail
+a_never                      assert  cex           ric3-ic3   depth 17 in 0.04 s
+wall 44 ms
+=== BUG=64
+--- engine informal-bmc, limit 20s
+property                     type    status        engine     detail
+a_never                      assert  cex           informal-bmc depth 65 in 0.18 s
+wall 186 ms
+--- engine informal-bmc-10, limit 20s
+property                     type    status        engine     detail
+a_never                      assert  cex           informal-bmc-10 depth 66 in 0.12 s
+wall 124 ms
+--- engine informal-bmc-65, limit 20s
+property                     type    status        engine     detail
+a_never                      assert  cex           informal-bmc-65 depth 77 in 0.26 s
+wall 265 ms
+--- engine ric3-bmc, limit 20s
+property                     type    status        engine     detail
+a_never                      assert  cex           ric3-bmc   depth 65 in 0.10 s
+wall 104 ms
+--- engine informal-kind, limit 20s
+property                     type    status        engine     detail
+a_never                      assert  cex           informal-kind depth 65 in 0.22 s
+wall 402 ms
+--- engine informal-ic3, limit 20s
+property                     type    status        engine     detail
+a_never                      assert  cex           informal-ic3 depth 65 in 0.08 s
+wall 259 ms
+--- engine informal-ic3-cadical, limit 20s
+property                     type    status        engine     detail
+a_never                      assert  cex           informal-ic3-cadical depth 65 in 0.16 s
+wall 337 ms
+--- engine informal-kind-ic3, limit 20s
+property                     type    status        engine     detail
+a_never                      assert  cex           informal-kind-ic3 depth 65 in 0.16 s
+wall 335 ms
+--- engine informal-ic3-mt, limit 20s
+property                     type    status        engine     detail
+a_never                      assert  cex           informal-ic3-mt depth 65 in 0.08 s
+wall 260 ms
+--- engine ric3-ic3, limit 20s
+property                     type    status        engine     detail
+a_never                      assert  cex           ric3-ic3   depth 65 in 0.06 s
+wall 64 ms
+=== BUG=256
+--- engine informal-bmc, limit 20s
+property                     type    status        engine     detail
+a_never                      assert  cex           informal-bmc depth 257 in 3.56 s
+wall 3562 ms
+--- engine informal-bmc-10, limit 20s
+property                     type    status        engine     detail
+a_never                      assert  cex           informal-bmc-10 depth 259 in 1.53 s
+wall 1530 ms
+--- engine informal-bmc-65, limit 20s
+property                     type    status        engine     detail
+a_never                      assert  cex           informal-bmc-65 depth 258 in 1.51 s
+wall 1510 ms
+--- engine ric3-bmc, limit 20s
+property                     type    status        engine     detail
+a_never                      assert  cex           ric3-bmc   depth 257 in 1.95 s
+wall 1955 ms
+--- engine informal-kind, limit 20s
+property                     type    status        engine     detail
+a_never                      assert  cex           informal-kind depth 257 in 4.50 s
+wall 7904 ms
+--- engine informal-ic3, limit 20s
+property                     type    status        engine     detail
+a_never                      assert  cex           informal-ic3 depth 257 in 0.84 s
+wall 4460 ms
+--- engine informal-ic3-cadical, limit 20s
+property                     type    status        engine     detail
+a_never                      assert  cex           informal-ic3-cadical depth 257 in 6.95 s
+wall 10758 ms
+--- engine informal-kind-ic3, limit 20s
+property                     type    status        engine     detail
+a_never                      assert  cex           informal-kind-ic3 depth 257 in 5.89 s
+wall 9391 ms
+--- engine informal-ic3-mt, limit 20s
+property                     type    status        engine     detail
+a_never                      assert  cex           informal-ic3-mt depth 257 in 1.92 s
+wall 5490 ms
+--- engine ric3-ic3, limit 20s
+property                     type    status        engine     detail
+a_never                      assert  cex           ric3-ic3   depth 257 in 0.10 s
+wall 103 ms
+=== BUG=1024
+--- engine informal-bmc, limit 20s
+property                     type    status        engine     detail
+a_never                      assert  undetermined             no engine reached a verdict
+wall 20014 ms
+--- engine informal-bmc-10, limit 20s
+property                     type    status        engine     detail
+a_never                      assert  undetermined             no engine reached a verdict
+wall 20028 ms
+--- engine informal-bmc-65, limit 20s
+property                     type    status        engine     detail
+a_never                      assert  undetermined             no engine reached a verdict
+wall 20009 ms
+--- engine ric3-bmc, limit 20s
+property                     type    status        engine     detail
+a_never                      assert  undetermined             no engine reached a verdict
+wall 20021 ms
+--- engine informal-kind, limit 20s
+property                     type    status        engine     detail
+a_never                      assert  undetermined             no engine reached a verdict
+wall 20021 ms
+--- engine informal-ic3, limit 20s
+property                     type    status        engine     detail
+a_never                      assert  undetermined             no engine reached a verdict
+wall 20009 ms
+--- engine informal-ic3-cadical, limit 20s
+property                     type    status        engine     detail
+a_never                      assert  undetermined             no engine reached a verdict
+wall 20019 ms
+--- engine informal-kind-ic3, limit 20s
+property                     type    status        engine     detail
+a_never                      assert  undetermined             no engine reached a verdict
+wall 20012 ms
+--- engine informal-ic3-mt, limit 20s
+property                     type    status        engine     detail
+a_never                      assert  undetermined             no engine reached a verdict
+wall 20032 ms
+--- engine ric3-ic3, limit 20s
+property                     type    status        engine     detail
+a_never                      assert  cex           ric3-ic3   depth 1025 in 0.38 s
+wall 388 ms
+=== BUG=4096
+--- engine informal-bmc, limit 20s
+property                     type    status        engine     detail
+a_never                      assert  undetermined             no engine reached a verdict
+wall 20018 ms
+--- engine informal-bmc-10, limit 20s
+property                     type    status        engine     detail
+a_never                      assert  undetermined             no engine reached a verdict
+wall 20041 ms
+--- engine informal-bmc-65, limit 20s
+property                     type    status        engine     detail
+a_never                      assert  undetermined             no engine reached a verdict
+wall 20039 ms
+--- engine ric3-bmc, limit 20s
+property                     type    status        engine     detail
+a_never                      assert  undetermined             no engine reached a verdict
+wall 20016 ms
+--- engine informal-kind, limit 20s
+property                     type    status        engine     detail
+a_never                      assert  undetermined             no engine reached a verdict
+wall 20023 ms
+--- engine informal-ic3, limit 20s
+property                     type    status        engine     detail
+a_never                      assert  undetermined             no engine reached a verdict
+wall 20016 ms
+--- engine informal-ic3-cadical, limit 20s
+property                     type    status        engine     detail
+a_never                      assert  undetermined             no engine reached a verdict
+wall 20026 ms
+--- engine informal-kind-ic3, limit 20s
+property                     type    status        engine     detail
+a_never                      assert  undetermined             no engine reached a verdict
+wall 20020 ms
+--- engine informal-ic3-mt, limit 20s
+property                     type    status        engine     detail
+a_never                      assert  undetermined             no engine reached a verdict
+wall 20029 ms
+--- engine ric3-ic3, limit 20s
+property                     type    status        engine     detail
+a_never                      assert  cex           ric3-ic3   depth 4097 in 1.25 s
+wall 1257 ms
+
+real	6m51.431s
+user	8m39.097s
+sys	0m3.299s

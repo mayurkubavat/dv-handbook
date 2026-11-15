@@ -1,0 +1,88 @@
+=== no fairness
+--- engine informal-bmc, limit 30s
+property                     type    status        engine     detail
+a_live                       assert  cex           informal-bmc depth 7 in 0.02 s
+a_step                       assert  undetermined             no engine reached a verdict
+a_bound4                     assert  cex           informal-bmc depth 5 in 0.02 s
+wall 30052 ms
+--- engine informal-kind, limit 30s
+property                     type    status        engine     detail
+a_live                       assert  cex           informal-kind depth 7 in 0.02 s
+a_step                       assert  undetermined             no engine reached a verdict
+a_bound4                     assert  cex           informal-kind depth 5 in 0.02 s
+wall 30063 ms
+--- engine informal-ic3, limit 30s
+property                     type    status        engine     detail
+a_live                       assert  cex           informal-ic3 depth 7 in 0.02 s
+a_step                       assert  proven        informal-ic3 0.04 s
+a_bound4                     assert  cex           informal-ic3 depth 5 in 0.01 s
+wall 106 ms
+--- engine informal-kind-ic3, limit 30s
+property                     type    status        engine     detail
+a_live                       assert  cex           informal-kind-ic3 depth 7 in 0.09 s
+a_step                       assert  proven        informal-kind-ic3 0.12 s
+a_bound4                     assert  cex           informal-kind-ic3 depth 5 in 0.04 s
+wall 285 ms
+--- engine informal-ic3-mt, limit 30s
+property                     type    status        engine     detail
+a_live                       assert  cex           informal-ic3-mt depth 7 in 0.04 s
+a_step                       assert  proven        informal-ic3-mt 0.05 s
+a_bound4                     assert  cex           informal-ic3-mt depth 5 in 0.04 s
+wall 156 ms
+--- engine ric3-ic3, limit 30s
+property                     type    status        engine     detail
+a_live                       assert  undetermined             no engine reached a verdict
+a_step                       assert  undetermined             no engine reached a verdict
+a_bound4                     assert  cex           ric3-ic3   depth 5 in 0.02 s
+wall 45 ms
+=== fairness: assume {s_eventually !stall}
+--- engine informal-bmc, limit 30s
+property                     type    status        engine     detail
+a_live                       assert  undetermined             no engine reached a verdict
+a_step                       assert  undetermined             no engine reached a verdict
+a_bound4                     assert  cex           informal-bmc depth 5 in 0.02 s
+m_fair                       assume  unprocessed              
+wall 60074 ms
+--- engine informal-kind, limit 30s
+property                     type    status        engine     detail
+a_live                       assert  undetermined             no engine reached a verdict
+a_step                       assert  undetermined             no engine reached a verdict
+a_bound4                     assert  cex           informal-kind depth 5 in 0.02 s
+m_fair                       assume  unprocessed              
+wall 60078 ms
+--- engine informal-ic3, limit 30s
+property                     type    status        engine     detail
+a_live                       assert  proven        informal-ic3 0.08 s
+a_step                       assert  proven        informal-ic3 0.04 s
+a_bound4                     assert  cex           informal-ic3 depth 5 in 0.02 s
+m_fair                       assume  unprocessed              
+wall 151 ms
+=== a bounded environment instead: assume {stall |=> !stall}
+--- engine informal-bmc, limit 30s
+property                     type    status        engine     detail
+a_live                       assert  undetermined             no engine reached a verdict
+a_step                       assert  undetermined             no engine reached a verdict
+a_bound4                     assert  undetermined             no engine reached a verdict
+m_once                       assume  unprocessed              
+a_bound5                     assert  undetermined             no engine reached a verdict
+wall 120103 ms
+--- engine informal-kind, limit 30s
+property                     type    status        engine     detail
+a_live                       assert  undetermined             no engine reached a verdict
+a_step                       assert  undetermined             no engine reached a verdict
+a_bound4                     assert  proven        informal-kind 0.02 s
+m_once                       assume  unprocessed              
+a_bound5                     assert  proven        informal-kind 0.02 s
+wall 60097 ms
+--- engine informal-ic3, limit 30s
+property                     type    status        engine     detail
+a_live                       assert  proven        informal-ic3 0.10 s
+a_step                       assert  proven        informal-ic3 0.06 s
+a_bound4                     assert  proven        informal-ic3 0.02 s
+m_once                       assume  unprocessed              
+a_bound5                     assert  proven        informal-ic3 0.02 s
+wall 206 ms
+
+real	6m1.439s
+user	5m58.588s
+sys	0m1.766s

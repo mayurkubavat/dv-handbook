@@ -1,0 +1,73 @@
+=== DEPTH=64
+--- engine informal-bmc, limit 20s
+property                     type    status        engine     detail
+EmptyPtrs_A                  assert  undetermined             no engine reached a verdict
+CountPtrs_A                  assert  undetermined             no engine reached a verdict
+wall 40025 ms
+--- engine informal-kind, limit 20s
+property                     type    status        engine     detail
+EmptyPtrs_A                  assert  undetermined             no engine reached a verdict
+CountPtrs_A                  assert  proven        informal-kind 0.06 s
+wall 20076 ms
+--- engine informal-ic3, limit 20s
+property                     type    status        engine     detail
+EmptyPtrs_A                  assert  undetermined             no engine reached a verdict
+CountPtrs_A                  assert  undetermined             no engine reached a verdict
+wall 40025 ms
+--- engine informal-ic3-cadical, limit 20s
+property                     type    status        engine     detail
+EmptyPtrs_A                  assert  undetermined             no engine reached a verdict
+CountPtrs_A                  assert  undetermined             no engine reached a verdict
+wall 40029 ms
+--- engine informal-kind-ic3, limit 20s
+property                     type    status        engine     detail
+EmptyPtrs_A                  assert  undetermined             no engine reached a verdict
+CountPtrs_A                  assert  proven        informal-kind-ic3 11.09 s
+wall 31115 ms
+--- engine informal-ic3-mt, limit 20s
+property                     type    status        engine     detail
+EmptyPtrs_A                  assert  undetermined             no engine reached a verdict
+CountPtrs_A                  assert  undetermined             no engine reached a verdict
+wall 40088 ms
+--- engine ric3-ic3, limit 20s
+property                     type    status        engine     detail
+EmptyPtrs_A                  assert  proven        ric3-ic3   2.03 s
+CountPtrs_A                  assert  proven        ric3-ic3   0.44 s
+wall 2479 ms
+=== DEPTH=64, the helper assumed
+--- engine informal-kind, limit 20s
+property                     type    status        engine     detail
+EmptyPtrs_A                  assert  proven        informal-kind 0.02 s
+CountPtrs_A                  assert  disabled      ric3-ic3   0.44 s
+CountPtrs_M                  assume  unprocessed              
+wall 24 ms
+--- engine informal-ic3, limit 20s
+property                     type    status        engine     detail
+EmptyPtrs_A                  assert  proven        informal-ic3 0.02 s
+CountPtrs_A                  assert  disabled      ric3-ic3   0.44 s
+CountPtrs_M                  assume  unprocessed              
+wall 24 ms
+--- engine informal-ic3-cadical, limit 20s
+property                     type    status        engine     detail
+EmptyPtrs_A                  assert  proven        informal-ic3-cadical 0.02 s
+CountPtrs_A                  assert  disabled      ric3-ic3   0.44 s
+CountPtrs_M                  assume  unprocessed              
+wall 25 ms
+--- engine informal-kind-ic3, limit 20s
+property                     type    status        engine     detail
+EmptyPtrs_A                  assert  proven        informal-kind-ic3 0.02 s
+CountPtrs_A                  assert  disabled      ric3-ic3   0.44 s
+CountPtrs_M                  assume  unprocessed              
+wall 25 ms
+--- engine informal-ic3-mt, limit 20s
+property                     type    status        engine     detail
+EmptyPtrs_A                  assert  proven        informal-ic3-mt 0.04 s
+CountPtrs_A                  assert  disabled      ric3-ic3   0.44 s
+CountPtrs_M                  assume  unprocessed              
+wall 44 ms
+--- engine ric3-ic3, limit 20s
+property                     type    status        engine     detail
+EmptyPtrs_A                  assert  proven        ric3-ic3   0.04 s
+CountPtrs_A                  assert  disabled      ric3-ic3   0.44 s
+CountPtrs_M                  assume  unprocessed              
+wall 46 ms

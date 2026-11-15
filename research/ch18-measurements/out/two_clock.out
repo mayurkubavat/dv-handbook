@@ -1,0 +1,54 @@
+informal: clock: several clocks; when the design uses more than one, the model drives them with one step per half period of a -factor 1 clock
+--- engine informal-bmc, limit 20s
+informal: svlang: the design has 2 clocks: one model step is 1/2 of the fastest clock's cycle
+property                     type    status        engine     detail
+c_crossed                    cover   covered       informal-bmc depth 22 in 0.02 s
+a_gated                      assert  cex           informal-bmc depth 38 in 0.02 s
+a_never3                     assert  cex           informal-bmc depth 40 in 0.02 s
+wall 65 ms
+--- engine informal-kind, limit 20s
+informal: svlang: the design has 2 clocks: one model step is 1/2 of the fastest clock's cycle
+property                     type    status        engine     detail
+c_crossed                    cover   covered       informal-kind depth 22 in 0.02 s
+a_gated                      assert  cex           informal-kind depth 38 in 0.04 s
+a_never3                     assert  cex           informal-kind depth 40 in 0.04 s
+wall 118 ms
+--- engine informal-ic3, limit 20s
+informal: svlang: the design has 2 clocks: one model step is 1/2 of the fastest clock's cycle
+property                     type    status        engine     detail
+c_crossed                    cover   covered       informal-ic3 depth 22 in 0.04 s
+a_gated                      assert  cex           informal-ic3 depth 38 in 0.12 s
+a_never3                     assert  cex           informal-ic3 depth 40 in 0.18 s
+wall 367 ms
+--- engine informal-ic3-cadical, limit 20s
+informal: svlang: the design has 2 clocks: one model step is 1/2 of the fastest clock's cycle
+property                     type    status        engine     detail
+c_crossed                    cover   covered       informal-ic3-cadical depth 22 in 0.10 s
+a_gated                      assert  cex           informal-ic3-cadical depth 38 in 0.26 s
+a_never3                     assert  cex           informal-ic3-cadical depth 40 in 0.44 s
+wall 826 ms
+--- engine informal-kind-ic3, limit 20s
+informal: svlang: the design has 2 clocks: one model step is 1/2 of the fastest clock's cycle
+property                     type    status        engine     detail
+c_crossed                    cover   covered       informal-kind-ic3 depth 22 in 0.08 s
+a_gated                      assert  cex           informal-kind-ic3 depth 38 in 0.27 s
+a_never3                     assert  cex           informal-kind-ic3 depth 40 in 0.34 s
+wall 712 ms
+--- engine informal-ic3-mt, limit 20s
+informal: svlang: the design has 2 clocks: one model step is 1/2 of the fastest clock's cycle
+property                     type    status        engine     detail
+c_crossed                    cover   covered       informal-ic3-mt depth 22 in 0.08 s
+a_gated                      assert  cex           informal-ic3-mt depth 38 in 0.12 s
+a_never3                     assert  cex           informal-ic3-mt depth 40 in 0.20 s
+wall 426 ms
+--- engine ric3-ic3, limit 20s
+informal: svlang: the design has 2 clocks: one model step is 1/2 of the fastest clock's cycle
+property                     type    status        engine     detail
+c_crossed                    cover   covered       ric3-ic3   depth 22 in 0.04 s
+a_gated                      assert  cex           ric3-ic3   depth 38 in 0.06 s
+a_never3                     assert  cex           ric3-ic3   depth 46 in 0.06 s
+wall 168 ms
+
+real	0m2.701s
+user	0m3.104s
+sys	0m0.229s

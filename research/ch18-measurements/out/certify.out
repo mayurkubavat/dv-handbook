@@ -1,0 +1,103 @@
+=== DEPTH=2: the shell's model of EmptyPtrs_A
+scorr: 1 candidate classes, 1 members
+scorr: merged 1 latches (6 -> 5), 0 refinements, T s
+template: 5 latches 3 inputs 40 ands, 20 live vars, 53 clauses, 182 lits
+ic3 houdini at frame 4: 0 lemmas inductive (0 moved), T s
+certificate: Ok(()) in T s WORK/p2/prop_0.btor2
+informal-ic3: frames 5 lemmas 15 ctps 0 queries 146 (0.00 s) lift 0.00 s (0 fallbacks)
+frames: [0, 2, 4, 0, 5, 0]
+derived predicates: 0 defined, 0 lemmas merged into them, 0 of 0 lemmas widened
+promotions: 0 of 0 tried
+ctg lemmas: 1 in drops that succeeded, 1 in drops that failed
+mic: 13 calls (0 parent hits), cube 3.5 -> lemma 3.2 literals, drops ok 3 fail 47 (6.0%), 0 failed after 20 failures in a row, 0 skipped
+mini: solves 273 decisions/solve 6.0 domain/solve 14 trail-at-end/solve 14 conflicts 0
+domain: latches+inputs 0, live (not eliminated) 0 per query
+mini: SAT answers 138 (0.0 s, 7 decisions each); all solves 0.0 s; max vars 64
+property                     type    status        engine     detail
+EmptyPtrs_A                  assert  proven        informal-ic3 T s
+trace events: 80
+     22 {"e":"X","fr
+     22 {"e":"P","fr
+     16 {"e":"O","lv
+     15 {"e":"L","sr
+      4 {"e":"F","q"
+      1 {"e":"H","q"
+{"progress":{"bound":6,"note":""}} {"result":{"verdict":"safe"}}  <- informal-kind run 1
+{"progress":{"bound":6,"note":""}} {"result":{"verdict":"safe"}}  <- informal-kind run 2
+{"progress":{"bound":6,"note":""}} {"result":{"verdict":"safe"}}  <- informal-kind run 3
+{"progress":{"bound":911,"note":""}} {"result":{"verdict":"unknown","reason":"timeout"}}  <- informal-bmc run 1
+{"progress":{"bound":909,"note":""}} {"result":{"verdict":"unknown","reason":"timeout"}}  <- informal-bmc run 2
+{"progress":{"bound":920,"note":""}} {"result":{"verdict":"unknown","reason":"timeout"}}  <- informal-bmc run 3
+=== DEPTH=4: the shell's model of EmptyPtrs_A
+scorr: 1 candidate classes, 1 members
+scorr: merged 1 latches (9 -> 8), 0 refinements, T s
+template: 8 latches 3 inputs 72 ands, 27 live vars, 87 clauses, 330 lits
+ic3 houdini at frame 4: 0 lemmas inductive (0 moved), T s
+ic3 houdini at frame 8: 6 lemmas inductive (6 moved), T s
+certificate: Ok(()) in T s WORK/p4/prop_0.btor2
+informal-ic3: frames 9 lemmas 66 ctps 0 queries 1226 (0.01 s) lift 0.00 s (0 fallbacks)
+frames: [0, 2, 5, 6, 10, 6, 4, 0, 12, 0]
+derived predicates: 0 defined, 0 lemmas merged into them, 0 of 0 lemmas widened
+promotions: 0 of 0 tried
+ctg lemmas: 8 in drops that succeeded, 7 in drops that failed
+mic: 51 calls (0 parent hits), cube 4.7 -> lemma 4.1 literals, drops ok 33 fail 264 (11.1%), 48 failed after 20 failures in a row, 0 skipped
+mini: solves 2129 decisions/solve 7.9 domain/solve 18 trail-at-end/solve 19 conflicts 0
+domain: latches+inputs 0, live (not eliminated) 0 per query
+mini: SAT answers 1125 (0.0 s, 9 decisions each); all solves 0.0 s; max vars 172
+property                     type    status        engine     detail
+EmptyPtrs_A                  assert  proven        informal-ic3 T s
+trace events: 535
+    217 {"e":"P","fr
+    173 {"e":"X","fr
+     69 {"e":"O","lv
+     66 {"e":"L","sr
+      8 {"e":"F","q"
+      2 {"e":"H","q"
+{"progress":{"bound":28,"note":""}} {"result":{"verdict":"unknown","reason":"timeout"}}  <- informal-kind run 1
+{"progress":{"bound":28,"note":""}} {"result":{"verdict":"unknown","reason":"timeout"}}  <- informal-kind run 2
+{"progress":{"bound":28,"note":""}} {"result":{"verdict":"unknown","reason":"timeout"}}  <- informal-kind run 3
+{"progress":{"bound":321,"note":""}} {"result":{"verdict":"unknown","reason":"timeout"}}  <- informal-bmc run 1
+{"progress":{"bound":316,"note":""}} {"result":{"verdict":"unknown","reason":"timeout"}}  <- informal-bmc run 2
+{"progress":{"bound":310,"note":""}} {"result":{"verdict":"unknown","reason":"timeout"}}  <- informal-bmc run 3
+=== files the shell leaves for a refuted property
+property                     type    status        engine     detail
+a_never                      assert  cex           informal-bmc depth 4 in T s
+a_never.vcd
+design.hierarchy.json
+prop_0.btor2
+prop_0.trace.btor2
+1 sort bitvec 1
+2 input 1 deep.clk
+3 input 1 deep.rst
+4 input 1 deep.en
+5 sort bitvec 16
+6 state 5 deep.cnt
+7 state 1 deep._sva_tick
+8 const 5 0000000000000000
+9 const 5 0000000000000001
+10 add 5 6 9
+11 ite 5 4 10 6
+12 ite 5 3 8 11
+13 const 1 1
+14 ult 1 7 13
+15 add 1 7 14
+16 ulte 1 13 7
+17 const 5 0000000000000011
+18 neq 1 6 17
+19 const 1 0
+20 init 1 7 19
+21 not 1 18
+22 and 1 16 21
+23 bad 22 a_never
+24 not 1 3
+25 state 1 informal_step
+26 init 1 25 19
+27 ult 1 25 13
+28 add 1 25 13
+29 ite 1 27 28 25
+30 ite 1 27 3 24
+31 constraint 30
+32 next 5 6 12
+33 next 1 7 15
+34 next 1 25 29
+; informal-trace-

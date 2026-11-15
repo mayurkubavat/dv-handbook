@@ -1,0 +1,16 @@
+property                     type    status        engine     detail
+a_live                       assert  cex           informal-bmc depth 4 in 0.02 s
+vcd: $comment liveness: frame 4 has the state of frame 3 again; the frames from 3 on repeat for ever $end
+vcd: $comment informal trace of a_live: 5 cycles $end
+vcd: $timescale 1ns $end
+vcd: $scope module live_small $end
+cycle    rst    req  stall      n    gnt
+    0      1      0      0      0      0
+    1      0      1      0      0      0
+    2      0      0      0      1      0
+    3      0      0      1      2      0
+    4      0      0      0      2      0
+
+real	0m0.052s
+user	0m0.022s
+sys	0m0.012s

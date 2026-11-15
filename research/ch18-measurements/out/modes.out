@@ -1,0 +1,79 @@
+--- set_engine_mode {Ht}
+property                     type    status        engine     detail
+a_never                      assert  cex           informal-kind-ic3 depth 17 in 0.04 s
+a_true                       assert  proven        informal-kind-ic3 0.04 s
+c_no                         cover   unreachable   informal-kind-ic3 0.04 s
+--- set_engine_mode {Hp}
+property                     type    status        engine     detail
+a_never                      assert  cex           informal-kind-ic3 depth 17 in 0.04 s
+a_true                       assert  proven        informal-kind-ic3 0.04 s
+c_no                         cover   unreachable   informal-kind-ic3 0.04 s
+--- set_engine_mode {B}
+property                     type    status        engine     detail
+a_never                      assert  cex           informal-bmc depth 17 in 0.02 s
+a_true                       assert  undetermined             no engine reached a verdict
+c_no                         cover   undetermined             no engine reached a verdict
+--- set_engine_mode {N}
+property                     type    status        engine     detail
+a_never                      assert  cex           informal-kind depth 17 in 0.04 s
+a_true                       assert  proven        informal-kind 0.02 s
+c_no                         cover   unreachable   informal-kind 0.02 s
+--- set_engine_mode {Ht B}
+property                     type    status        engine     detail
+a_never                      assert  cex           ric3-bmc   depth 17 in 0.04 s
+a_true                       assert  proven        informal-kind-ic3 0.04 s
+c_no                         cover   unreachable   informal-kind-ic3 0.04 s
+--- set_engine_mode {Tri}
+property                     type    status        engine     detail
+a_never                      assert  cex           informal-bmc depth 17 in 0.02 s
+a_true                       assert  undetermined             no engine reached a verdict
+c_no                         cover   undetermined             no engine reached a verdict
+--- set_engine_mode {K}
+property                     type    status        engine     detail
+a_never                      assert  cex           informal-bmc depth 17 in 0.02 s
+a_true                       assert  undetermined             no engine reached a verdict
+c_no                         cover   undetermined             no engine reached a verdict
+--- set_engine_mode {I}
+property                     type    status        engine     detail
+a_never                      assert  cex           informal-bmc depth 17 in 0.02 s
+a_true                       assert  undetermined             no engine reached a verdict
+c_no                         cover   undetermined             no engine reached a verdict
+--- set_engine_mode {AM}
+property                     type    status        engine     detail
+a_never                      assert  cex           informal-kind-ic3 depth 17 in 0.04 s
+a_true                       assert  proven        informal-kind-ic3 0.04 s
+c_no                         cover   unreachable   informal-kind-ic3 0.04 s
+--- set_prove_time_limit 5
+property                     type    status        engine     detail
+a_never                      assert  cex           informal-kind-ic3 depth 17 in 0.04 s
+a_true                       assert  undetermined             no engine reached a verdict
+c_no                         cover   unreachable   informal-kind-ic3 0.04 s
+wall 5191 ms
+--- set_prove_time_limit 5s
+--- set_prove_time_limit 0.5s
+property                     type    status        engine     detail
+a_never                      assert  cex           informal-kind-ic3 depth 17 in 0.04 s
+a_true                       assert  undetermined             no engine reached a verdict
+c_no                         cover   unreachable   informal-kind-ic3 0.04 s
+wall 525 ms
+--- set_prove_time_limit 2m
+--- set_prove_time_limit 1h
+--- set_prove_time_limit 500ms
+ERROR: bad time unit in `500ms`
+--- set_prove_time_limit 0
+property                     type    status        engine     detail
+a_never                      assert  cex           informal-kind-ic3 depth 17 in 0.04 s
+a_true                       assert  undetermined             no engine reached a verdict
+c_no                         cover   unreachable   informal-kind-ic3 0.04 s
+wall 23 ms
+--- set_prove_time_limit -1
+ERROR: bad time `-1`
+--- set_prove_time_limit abc
+ERROR: bad time `abc`
+--- default limit (fresh session value)
+1
+invalid command name "get_prove_time_limit"
+
+real	0m31.719s
+user	0m32.712s
+sys	0m30.041s

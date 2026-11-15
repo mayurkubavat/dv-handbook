@@ -1,0 +1,18 @@
+cex depth >= 3           80
+cex depth >= 8           25
+ic3 cex                  466
+ic3 cex shortest         466
+ic3 frames max           95
+ic3 lemmas total         10849
+ic3 proven               234
+inv >= 5 lemmas          11
+inv lemmas max           24
+inv nonempty             83
+latches 2                98
+latches 3                111
+latches 4                84
+latches 5                92
+latches 6                104
+latches 7                107
+latches 8                104
+reach depth max          95

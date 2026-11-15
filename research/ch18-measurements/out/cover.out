@@ -1,0 +1,202 @@
+=== original FIFO, the cover of sixteen entries
+--- engine informal-bmc, limit 20s
+property                     type    status        engine     detail
+fifo.u_sva.NoOverflow_A      assert  unprocessed              
+fifo.u_sva.FullForward_A     assert  unprocessed              
+fifo.u_sva.FullBackward_A    assert  unprocessed              
+fifo.u_sva.EmptyExact_A      assert  unprocessed              
+fifo.u_sva.PushFull_A        assert  unprocessed              
+fifo.u_sva.PopEmpty_A        assert  unprocessed              
+fifo.u_sva.Sync_A            assert  unprocessed              
+fifo.u_sva.FullReached_C     cover   undetermined             no engine reached a verdict
+fifo.u_sva.PushFull_C        cover   unprocessed              
+fifo.u_sva.PopEmpty_C        cover   unprocessed              
+fifo.u_sva.Drained_C         cover   unprocessed              
+wall 20022 ms
+--- engine informal-kind, limit 20s
+property                     type    status        engine     detail
+fifo.u_sva.NoOverflow_A      assert  unprocessed              
+fifo.u_sva.FullForward_A     assert  unprocessed              
+fifo.u_sva.FullBackward_A    assert  unprocessed              
+fifo.u_sva.EmptyExact_A      assert  unprocessed              
+fifo.u_sva.PushFull_A        assert  unprocessed              
+fifo.u_sva.PopEmpty_A        assert  unprocessed              
+fifo.u_sva.Sync_A            assert  unprocessed              
+fifo.u_sva.FullReached_C     cover   unreachable   informal-kind 0.40 s
+fifo.u_sva.PushFull_C        cover   unprocessed              
+fifo.u_sva.PopEmpty_C        cover   unprocessed              
+fifo.u_sva.Drained_C         cover   unprocessed              
+wall 408 ms
+--- engine informal-ic3, limit 20s
+property                     type    status        engine     detail
+fifo.u_sva.NoOverflow_A      assert  unprocessed              
+fifo.u_sva.FullForward_A     assert  unprocessed              
+fifo.u_sva.FullBackward_A    assert  unprocessed              
+fifo.u_sva.EmptyExact_A      assert  unprocessed              
+fifo.u_sva.PushFull_A        assert  unprocessed              
+fifo.u_sva.PopEmpty_A        assert  unprocessed              
+fifo.u_sva.Sync_A            assert  unprocessed              
+fifo.u_sva.FullReached_C     cover   unreachable   informal-ic3 0.23 s
+fifo.u_sva.PushFull_C        cover   unprocessed              
+fifo.u_sva.PopEmpty_C        cover   unprocessed              
+fifo.u_sva.Drained_C         cover   unprocessed              
+wall 229 ms
+--- engine informal-ic3-cadical, limit 20s
+property                     type    status        engine     detail
+fifo.u_sva.NoOverflow_A      assert  unprocessed              
+fifo.u_sva.FullForward_A     assert  unprocessed              
+fifo.u_sva.FullBackward_A    assert  unprocessed              
+fifo.u_sva.EmptyExact_A      assert  unprocessed              
+fifo.u_sva.PushFull_A        assert  unprocessed              
+fifo.u_sva.PopEmpty_A        assert  unprocessed              
+fifo.u_sva.Sync_A            assert  unprocessed              
+fifo.u_sva.FullReached_C     cover   unreachable   informal-ic3-cadical 0.40 s
+fifo.u_sva.PushFull_C        cover   unprocessed              
+fifo.u_sva.PopEmpty_C        cover   unprocessed              
+fifo.u_sva.Drained_C         cover   unprocessed              
+wall 407 ms
+--- engine informal-kind-ic3, limit 20s
+property                     type    status        engine     detail
+fifo.u_sva.NoOverflow_A      assert  unprocessed              
+fifo.u_sva.FullForward_A     assert  unprocessed              
+fifo.u_sva.FullBackward_A    assert  unprocessed              
+fifo.u_sva.EmptyExact_A      assert  unprocessed              
+fifo.u_sva.PushFull_A        assert  unprocessed              
+fifo.u_sva.PopEmpty_A        assert  unprocessed              
+fifo.u_sva.Sync_A            assert  unprocessed              
+fifo.u_sva.FullReached_C     cover   unreachable   informal-kind-ic3 0.34 s
+fifo.u_sva.PushFull_C        cover   unprocessed              
+fifo.u_sva.PopEmpty_C        cover   unprocessed              
+fifo.u_sva.Drained_C         cover   unprocessed              
+wall 348 ms
+--- engine informal-ic3-mt, limit 20s
+property                     type    status        engine     detail
+fifo.u_sva.NoOverflow_A      assert  unprocessed              
+fifo.u_sva.FullForward_A     assert  unprocessed              
+fifo.u_sva.FullBackward_A    assert  unprocessed              
+fifo.u_sva.EmptyExact_A      assert  unprocessed              
+fifo.u_sva.PushFull_A        assert  unprocessed              
+fifo.u_sva.PopEmpty_A        assert  unprocessed              
+fifo.u_sva.Sync_A            assert  unprocessed              
+fifo.u_sva.FullReached_C     cover   unreachable   informal-ic3-mt 0.08 s
+fifo.u_sva.PushFull_C        cover   unprocessed              
+fifo.u_sva.PopEmpty_C        cover   unprocessed              
+fifo.u_sva.Drained_C         cover   unprocessed              
+wall 85 ms
+--- engine ric3-ic3, limit 20s
+property                     type    status        engine     detail
+fifo.u_sva.NoOverflow_A      assert  unprocessed              
+fifo.u_sva.FullForward_A     assert  unprocessed              
+fifo.u_sva.FullBackward_A    assert  unprocessed              
+fifo.u_sva.EmptyExact_A      assert  unprocessed              
+fifo.u_sva.PushFull_A        assert  unprocessed              
+fifo.u_sva.PopEmpty_A        assert  unprocessed              
+fifo.u_sva.Sync_A            assert  unprocessed              
+fifo.u_sva.FullReached_C     cover   unreachable   ric3-ic3   0.04 s
+fifo.u_sva.PushFull_C        cover   unprocessed              
+fifo.u_sva.PopEmpty_C        cover   unprocessed              
+fifo.u_sva.Drained_C         cover   unprocessed              
+wall 44 ms
+=== repaired FIFO, the cover of sixteen entries
+--- engine informal-bmc, limit 20s
+property                     type    status        engine     detail
+fifo.u_sva.NoOverflow_A      assert  unprocessed              
+fifo.u_sva.FullForward_A     assert  unprocessed              
+fifo.u_sva.FullBackward_A    assert  unprocessed              
+fifo.u_sva.EmptyExact_A      assert  unprocessed              
+fifo.u_sva.PushFull_A        assert  unprocessed              
+fifo.u_sva.PopEmpty_A        assert  unprocessed              
+fifo.u_sva.Sync_A            assert  unprocessed              
+fifo.u_sva.FullReached_C     cover   covered       informal-bmc depth 17 in 0.02 s
+fifo.u_sva.PushFull_C        cover   unprocessed              
+fifo.u_sva.PopEmpty_C        cover   unprocessed              
+fifo.u_sva.Drained_C         cover   unprocessed              
+wall 25 ms
+--- engine informal-kind, limit 20s
+property                     type    status        engine     detail
+fifo.u_sva.NoOverflow_A      assert  unprocessed              
+fifo.u_sva.FullForward_A     assert  unprocessed              
+fifo.u_sva.FullBackward_A    assert  unprocessed              
+fifo.u_sva.EmptyExact_A      assert  unprocessed              
+fifo.u_sva.PushFull_A        assert  unprocessed              
+fifo.u_sva.PopEmpty_A        assert  unprocessed              
+fifo.u_sva.Sync_A            assert  unprocessed              
+fifo.u_sva.FullReached_C     cover   covered       informal-kind depth 17 in 0.08 s
+fifo.u_sva.PushFull_C        cover   unprocessed              
+fifo.u_sva.PopEmpty_C        cover   unprocessed              
+fifo.u_sva.Drained_C         cover   unprocessed              
+wall 104 ms
+--- engine informal-ic3, limit 20s
+property                     type    status        engine     detail
+fifo.u_sva.NoOverflow_A      assert  unprocessed              
+fifo.u_sva.FullForward_A     assert  unprocessed              
+fifo.u_sva.FullBackward_A    assert  unprocessed              
+fifo.u_sva.EmptyExact_A      assert  unprocessed              
+fifo.u_sva.PushFull_A        assert  unprocessed              
+fifo.u_sva.PopEmpty_A        assert  unprocessed              
+fifo.u_sva.Sync_A            assert  unprocessed              
+fifo.u_sva.FullReached_C     cover   covered       informal-ic3 depth 17 in 0.22 s
+fifo.u_sva.PushFull_C        cover   unprocessed              
+fifo.u_sva.PopEmpty_C        cover   unprocessed              
+fifo.u_sva.Drained_C         cover   unprocessed              
+wall 241 ms
+--- engine informal-ic3-cadical, limit 20s
+property                     type    status        engine     detail
+fifo.u_sva.NoOverflow_A      assert  unprocessed              
+fifo.u_sva.FullForward_A     assert  unprocessed              
+fifo.u_sva.FullBackward_A    assert  unprocessed              
+fifo.u_sva.EmptyExact_A      assert  unprocessed              
+fifo.u_sva.PushFull_A        assert  unprocessed              
+fifo.u_sva.PopEmpty_A        assert  unprocessed              
+fifo.u_sva.Sync_A            assert  unprocessed              
+fifo.u_sva.FullReached_C     cover   covered       informal-ic3-cadical depth 17 in 0.26 s
+fifo.u_sva.PushFull_C        cover   unprocessed              
+fifo.u_sva.PopEmpty_C        cover   unprocessed              
+fifo.u_sva.Drained_C         cover   unprocessed              
+wall 285 ms
+--- engine informal-kind-ic3, limit 20s
+property                     type    status        engine     detail
+fifo.u_sva.NoOverflow_A      assert  unprocessed              
+fifo.u_sva.FullForward_A     assert  unprocessed              
+fifo.u_sva.FullBackward_A    assert  unprocessed              
+fifo.u_sva.EmptyExact_A      assert  unprocessed              
+fifo.u_sva.PushFull_A        assert  unprocessed              
+fifo.u_sva.PopEmpty_A        assert  unprocessed              
+fifo.u_sva.Sync_A            assert  unprocessed              
+fifo.u_sva.FullReached_C     cover   covered       informal-kind-ic3 depth 17 in 0.16 s
+fifo.u_sva.PushFull_C        cover   unprocessed              
+fifo.u_sva.PopEmpty_C        cover   unprocessed              
+fifo.u_sva.Drained_C         cover   unprocessed              
+wall 183 ms
+--- engine informal-ic3-mt, limit 20s
+property                     type    status        engine     detail
+fifo.u_sva.NoOverflow_A      assert  unprocessed              
+fifo.u_sva.FullForward_A     assert  unprocessed              
+fifo.u_sva.FullBackward_A    assert  unprocessed              
+fifo.u_sva.EmptyExact_A      assert  unprocessed              
+fifo.u_sva.PushFull_A        assert  unprocessed              
+fifo.u_sva.PopEmpty_A        assert  unprocessed              
+fifo.u_sva.Sync_A            assert  unprocessed              
+fifo.u_sva.FullReached_C     cover   covered       informal-ic3-mt depth 17 in 0.04 s
+fifo.u_sva.PushFull_C        cover   unprocessed              
+fifo.u_sva.PopEmpty_C        cover   unprocessed              
+fifo.u_sva.Drained_C         cover   unprocessed              
+wall 59 ms
+--- engine ric3-ic3, limit 20s
+property                     type    status        engine     detail
+fifo.u_sva.NoOverflow_A      assert  unprocessed              
+fifo.u_sva.FullForward_A     assert  unprocessed              
+fifo.u_sva.FullBackward_A    assert  unprocessed              
+fifo.u_sva.EmptyExact_A      assert  unprocessed              
+fifo.u_sva.PushFull_A        assert  unprocessed              
+fifo.u_sva.PopEmpty_A        assert  unprocessed              
+fifo.u_sva.Sync_A            assert  unprocessed              
+fifo.u_sva.FullReached_C     cover   covered       ric3-ic3   depth 17 in 0.04 s
+fifo.u_sva.PushFull_C        cover   unprocessed              
+fifo.u_sva.PopEmpty_C        cover   unprocessed              
+fifo.u_sva.Drained_C         cover   unprocessed              
+wall 45 ms
+
+real	0m22.516s
+user	0m22.262s
+sys	0m0.257s

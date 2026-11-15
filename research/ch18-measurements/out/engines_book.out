@@ -1,0 +1,209 @@
+=== repaired FIFO, 16 x 8, seven assertions and four covers
+--- engine informal-bmc, limit 20s
+property                     type    status        engine     detail
+fifo.u_sva.NoOverflow_A      assert  undetermined             no engine reached a verdict
+fifo.u_sva.FullForward_A     assert  undetermined             no engine reached a verdict
+fifo.u_sva.FullBackward_A    assert  undetermined             no engine reached a verdict
+fifo.u_sva.EmptyExact_A      assert  undetermined             no engine reached a verdict
+fifo.u_sva.PushFull_A        assert  undetermined             no engine reached a verdict
+fifo.u_sva.PopEmpty_A        assert  undetermined             no engine reached a verdict
+fifo.u_sva.Sync_A            assert  undetermined             no engine reached a verdict
+fifo.u_sva.FullReached_C     cover   covered       informal-bmc depth 17 in 0.02 s
+fifo.u_sva.PushFull_C        cover   covered       informal-bmc depth 18 in 0.02 s
+fifo.u_sva.PopEmpty_C        cover   covered       informal-bmc depth 2 in 0.02 s
+fifo.u_sva.Drained_C         cover   covered       informal-bmc depth 33 in 0.10 s
+wall 141210 ms
+--- engine informal-kind, limit 20s
+property                     type    status        engine     detail
+fifo.u_sva.NoOverflow_A      assert  proven        informal-kind 0.66 s
+fifo.u_sva.FullForward_A     assert  proven        informal-kind 2.98 s
+fifo.u_sva.FullBackward_A    assert  proven        informal-kind 2.54 s
+fifo.u_sva.EmptyExact_A      assert  proven        informal-kind 3.52 s
+fifo.u_sva.PushFull_A        assert  proven        informal-kind 0.02 s
+fifo.u_sva.PopEmpty_A        assert  proven        informal-kind 0.02 s
+fifo.u_sva.Sync_A            assert  proven        informal-kind 0.02 s
+fifo.u_sva.FullReached_C     cover   covered       informal-kind depth 17 in 0.08 s
+fifo.u_sva.PushFull_C        cover   covered       informal-kind depth 18 in 0.02 s
+fifo.u_sva.PopEmpty_C        cover   covered       informal-kind depth 2 in 0.02 s
+fifo.u_sva.Drained_C         cover   covered       informal-kind depth 33 in 0.24 s
+wall 10284 ms
+--- engine informal-ic3, limit 20s
+property                     type    status        engine     detail
+fifo.u_sva.NoOverflow_A      assert  proven        informal-ic3 0.24 s
+fifo.u_sva.FullForward_A     assert  proven        informal-ic3 0.34 s
+fifo.u_sva.FullBackward_A    assert  proven        informal-ic3 0.12 s
+fifo.u_sva.EmptyExact_A      assert  proven        informal-ic3 0.02 s
+fifo.u_sva.PushFull_A        assert  proven        informal-ic3 0.02 s
+fifo.u_sva.PopEmpty_A        assert  proven        informal-ic3 0.02 s
+fifo.u_sva.Sync_A            assert  proven        informal-ic3 0.02 s
+fifo.u_sva.FullReached_C     cover   covered       informal-ic3 depth 17 in 0.18 s
+fifo.u_sva.PushFull_C        cover   covered       informal-ic3 depth 18 in 0.02 s
+fifo.u_sva.PopEmpty_C        cover   covered       informal-ic3 depth 2 in 0.02 s
+fifo.u_sva.Drained_C         cover   covered       informal-ic3 depth 33 in 0.12 s
+wall 1275 ms
+--- engine informal-ic3-cadical, limit 20s
+property                     type    status        engine     detail
+fifo.u_sva.NoOverflow_A      assert  proven        informal-ic3-cadical 0.22 s
+fifo.u_sva.FullForward_A     assert  proven        informal-ic3-cadical 0.60 s
+fifo.u_sva.FullBackward_A    assert  proven        informal-ic3-cadical 0.10 s
+fifo.u_sva.EmptyExact_A      assert  proven        informal-ic3-cadical 0.04 s
+fifo.u_sva.PushFull_A        assert  proven        informal-ic3-cadical 0.02 s
+fifo.u_sva.PopEmpty_A        assert  proven        informal-ic3-cadical 0.02 s
+fifo.u_sva.Sync_A            assert  proven        informal-ic3-cadical 0.06 s
+fifo.u_sva.FullReached_C     cover   covered       informal-ic3-cadical depth 17 in 0.24 s
+fifo.u_sva.PushFull_C        cover   covered       informal-ic3-cadical depth 18 in 0.04 s
+fifo.u_sva.PopEmpty_C        cover   covered       informal-ic3-cadical depth 2 in 0.02 s
+fifo.u_sva.Drained_C         cover   covered       informal-ic3-cadical depth 33 in 0.12 s
+wall 1613 ms
+--- engine informal-kind-ic3, limit 20s
+property                     type    status        engine     detail
+fifo.u_sva.NoOverflow_A      assert  proven        informal-kind-ic3 0.16 s
+fifo.u_sva.FullForward_A     assert  proven        informal-kind-ic3 0.42 s
+fifo.u_sva.FullBackward_A    assert  proven        informal-kind-ic3 0.10 s
+fifo.u_sva.EmptyExact_A      assert  proven        informal-kind-ic3 0.04 s
+fifo.u_sva.PushFull_A        assert  proven        informal-kind-ic3 0.02 s
+fifo.u_sva.PopEmpty_A        assert  proven        informal-kind-ic3 0.02 s
+fifo.u_sva.Sync_A            assert  proven        informal-kind-ic3 0.04 s
+fifo.u_sva.FullReached_C     cover   covered       informal-kind-ic3 depth 17 in 0.16 s
+fifo.u_sva.PushFull_C        cover   covered       informal-kind-ic3 depth 18 in 0.02 s
+fifo.u_sva.PopEmpty_C        cover   covered       informal-kind-ic3 depth 2 in 0.02 s
+fifo.u_sva.Drained_C         cover   covered       informal-kind-ic3 depth 33 in 0.12 s
+wall 1273 ms
+--- engine informal-ic3-mt, limit 20s
+property                     type    status        engine     detail
+fifo.u_sva.NoOverflow_A      assert  proven        informal-ic3-mt 0.08 s
+fifo.u_sva.FullForward_A     assert  proven        informal-ic3-mt 0.06 s
+fifo.u_sva.FullBackward_A    assert  proven        informal-ic3-mt 0.06 s
+fifo.u_sva.EmptyExact_A      assert  proven        informal-ic3-mt 0.04 s
+fifo.u_sva.PushFull_A        assert  proven        informal-ic3-mt 0.04 s
+fifo.u_sva.PopEmpty_A        assert  proven        informal-ic3-mt 0.04 s
+fifo.u_sva.Sync_A            assert  proven        informal-ic3-mt 0.04 s
+fifo.u_sva.FullReached_C     cover   covered       informal-ic3-mt depth 17 in 0.06 s
+fifo.u_sva.PushFull_C        cover   covered       informal-ic3-mt depth 18 in 0.04 s
+fifo.u_sva.PopEmpty_C        cover   covered       informal-ic3-mt depth 2 in 0.04 s
+fifo.u_sva.Drained_C         cover   covered       informal-ic3-mt depth 33 in 0.12 s
+wall 757 ms
+--- engine ric3-ic3, limit 20s
+property                     type    status        engine     detail
+fifo.u_sva.NoOverflow_A      assert  proven        ric3-ic3   0.06 s
+fifo.u_sva.FullForward_A     assert  proven        ric3-ic3   0.04 s
+fifo.u_sva.FullBackward_A    assert  proven        ric3-ic3   0.04 s
+fifo.u_sva.EmptyExact_A      assert  proven        ric3-ic3   0.04 s
+fifo.u_sva.PushFull_A        assert  proven        ric3-ic3   0.02 s
+fifo.u_sva.PopEmpty_A        assert  proven        ric3-ic3   0.02 s
+fifo.u_sva.Sync_A            assert  proven        ric3-ic3   0.04 s
+fifo.u_sva.FullReached_C     cover   covered       ric3-ic3   depth 17 in 0.04 s
+fifo.u_sva.PushFull_C        cover   covered       ric3-ic3   depth 18 in 0.02 s
+fifo.u_sva.PopEmpty_C        cover   covered       ric3-ic3   depth 2 in 0.02 s
+fifo.u_sva.Drained_C         cover   covered       ric3-ic3   depth 33 in 0.04 s
+wall 402 ms
+=== DMA version 2, six AXI rules and six covers
+--- engine informal-bmc, limit 20s
+property                     type    status        engine     detail
+dma_v2.u_axi_sva.ArHeld_A    assert  undetermined             no engine reached a verdict
+dma_v2.u_axi_sva.ArStable_A  assert  undetermined             no engine reached a verdict
+dma_v2.u_axi_sva.AwHeld_A    assert  undetermined             no engine reached a verdict
+dma_v2.u_axi_sva.AwStable_A  assert  undetermined             no engine reached a verdict
+dma_v2.u_axi_sva.WHeld_A     assert  undetermined             no engine reached a verdict
+dma_v2.u_axi_sva.WStable_A   assert  undetermined             no engine reached a verdict
+dma_v2.u_axi_sva.ArWait_C    cover   covered       informal-bmc depth 5 in 0.02 s
+dma_v2.u_axi_sva.AwWait_C    cover   covered       informal-bmc depth 8 in 0.04 s
+dma_v2.u_axi_sva.WWait_C     cover   covered       informal-bmc depth 8 in 0.06 s
+dma_v2.u_axi_sva.ArFirst_C   cover   covered       informal-bmc depth 4 in 0.02 s
+dma_v2.u_axi_sva.AwFirst_C   cover   covered       informal-bmc depth 7 in 0.04 s
+dma_v2.u_axi_sva.WFirst_C    cover   covered       informal-bmc depth 7 in 0.04 s
+wall 126570 ms
+--- engine informal-kind, limit 20s
+property                     type    status        engine     detail
+dma_v2.u_axi_sva.ArHeld_A    assert  proven        informal-kind 0.06 s
+dma_v2.u_axi_sva.ArStable_A  assert  undetermined             no engine reached a verdict
+dma_v2.u_axi_sva.AwHeld_A    assert  proven        informal-kind 0.04 s
+dma_v2.u_axi_sva.AwStable_A  assert  undetermined             no engine reached a verdict
+dma_v2.u_axi_sva.WHeld_A     assert  proven        informal-kind 0.04 s
+dma_v2.u_axi_sva.WStable_A   assert  undetermined             no engine reached a verdict
+dma_v2.u_axi_sva.ArWait_C    cover   covered       informal-kind depth 5 in 0.04 s
+dma_v2.u_axi_sva.AwWait_C    cover   covered       informal-kind depth 8 in 0.04 s
+dma_v2.u_axi_sva.WWait_C     cover   covered       informal-kind depth 8 in 0.04 s
+dma_v2.u_axi_sva.ArFirst_C   cover   covered       informal-kind depth 4 in 0.04 s
+dma_v2.u_axi_sva.AwFirst_C   cover   covered       informal-kind depth 7 in 0.06 s
+dma_v2.u_axi_sva.WFirst_C    cover   covered       informal-kind depth 7 in 0.06 s
+wall 60739 ms
+--- engine informal-ic3, limit 20s
+property                     type    status        engine     detail
+dma_v2.u_axi_sva.ArHeld_A    assert  proven        informal-ic3 0.04 s
+dma_v2.u_axi_sva.ArStable_A  assert  proven        informal-ic3 0.16 s
+dma_v2.u_axi_sva.AwHeld_A    assert  proven        informal-ic3 0.04 s
+dma_v2.u_axi_sva.AwStable_A  assert  proven        informal-ic3 0.16 s
+dma_v2.u_axi_sva.WHeld_A     assert  proven        informal-ic3 0.04 s
+dma_v2.u_axi_sva.WStable_A   assert  proven        informal-ic3 0.12 s
+dma_v2.u_axi_sva.ArWait_C    cover   covered       informal-ic3 depth 5 in 0.04 s
+dma_v2.u_axi_sva.AwWait_C    cover   covered       informal-ic3 depth 8 in 0.06 s
+dma_v2.u_axi_sva.WWait_C     cover   covered       informal-ic3 depth 8 in 0.04 s
+dma_v2.u_axi_sva.ArFirst_C   cover   covered       informal-ic3 depth 4 in 0.04 s
+dma_v2.u_axi_sva.AwFirst_C   cover   covered       informal-ic3 depth 7 in 0.04 s
+dma_v2.u_axi_sva.WFirst_C    cover   covered       informal-ic3 depth 7 in 0.04 s
+wall 1052 ms
+--- engine informal-ic3-cadical, limit 20s
+property                     type    status        engine     detail
+dma_v2.u_axi_sva.ArHeld_A    assert  proven        informal-ic3-cadical 0.04 s
+dma_v2.u_axi_sva.ArStable_A  assert  proven        informal-ic3-cadical 1.23 s
+dma_v2.u_axi_sva.AwHeld_A    assert  proven        informal-ic3-cadical 0.04 s
+dma_v2.u_axi_sva.AwStable_A  assert  proven        informal-ic3-cadical 1.39 s
+dma_v2.u_axi_sva.WHeld_A     assert  proven        informal-ic3-cadical 0.04 s
+dma_v2.u_axi_sva.WStable_A   assert  proven        informal-ic3-cadical 0.91 s
+dma_v2.u_axi_sva.ArWait_C    cover   covered       informal-ic3-cadical depth 5 in 0.06 s
+dma_v2.u_axi_sva.AwWait_C    cover   covered       informal-ic3-cadical depth 8 in 0.12 s
+dma_v2.u_axi_sva.WWait_C     cover   covered       informal-ic3-cadical depth 8 in 0.10 s
+dma_v2.u_axi_sva.ArFirst_C   cover   covered       informal-ic3-cadical depth 4 in 0.08 s
+dma_v2.u_axi_sva.AwFirst_C   cover   covered       informal-ic3-cadical depth 7 in 0.08 s
+dma_v2.u_axi_sva.WFirst_C    cover   covered       informal-ic3-cadical depth 7 in 0.08 s
+wall 4375 ms
+--- engine informal-kind-ic3, limit 20s
+property                     type    status        engine     detail
+dma_v2.u_axi_sva.ArHeld_A    assert  proven        informal-kind-ic3 0.04 s
+dma_v2.u_axi_sva.ArStable_A  assert  proven        informal-kind-ic3 1.15 s
+dma_v2.u_axi_sva.AwHeld_A    assert  proven        informal-kind-ic3 0.04 s
+dma_v2.u_axi_sva.AwStable_A  assert  proven        informal-kind-ic3 1.25 s
+dma_v2.u_axi_sva.WHeld_A     assert  proven        informal-kind-ic3 0.04 s
+dma_v2.u_axi_sva.WStable_A   assert  proven        informal-kind-ic3 0.81 s
+dma_v2.u_axi_sva.ArWait_C    cover   covered       informal-kind-ic3 depth 5 in 0.08 s
+dma_v2.u_axi_sva.AwWait_C    cover   covered       informal-kind-ic3 depth 8 in 0.08 s
+dma_v2.u_axi_sva.WWait_C     cover   covered       informal-kind-ic3 depth 8 in 0.10 s
+dma_v2.u_axi_sva.ArFirst_C   cover   covered       informal-kind-ic3 depth 4 in 0.08 s
+dma_v2.u_axi_sva.AwFirst_C   cover   covered       informal-kind-ic3 depth 7 in 0.06 s
+dma_v2.u_axi_sva.WFirst_C    cover   covered       informal-kind-ic3 depth 7 in 0.06 s
+wall 3983 ms
+--- engine informal-ic3-mt, limit 20s
+property                     type    status        engine     detail
+dma_v2.u_axi_sva.ArHeld_A    assert  proven        informal-ic3-mt 0.04 s
+dma_v2.u_axi_sva.ArStable_A  assert  proven        informal-ic3-mt 0.18 s
+dma_v2.u_axi_sva.AwHeld_A    assert  proven        informal-ic3-mt 0.04 s
+dma_v2.u_axi_sva.AwStable_A  assert  proven        informal-ic3-mt 0.16 s
+dma_v2.u_axi_sva.WHeld_A     assert  proven        informal-ic3-mt 0.04 s
+dma_v2.u_axi_sva.WStable_A   assert  proven        informal-ic3-mt 0.10 s
+dma_v2.u_axi_sva.ArWait_C    cover   covered       informal-ic3-mt depth 5 in 0.06 s
+dma_v2.u_axi_sva.AwWait_C    cover   covered       informal-ic3-mt depth 8 in 0.06 s
+dma_v2.u_axi_sva.WWait_C     cover   covered       informal-ic3-mt depth 8 in 0.06 s
+dma_v2.u_axi_sva.ArFirst_C   cover   covered       informal-ic3-mt depth 4 in 0.06 s
+dma_v2.u_axi_sva.AwFirst_C   cover   covered       informal-ic3-mt depth 7 in 0.06 s
+dma_v2.u_axi_sva.WFirst_C    cover   covered       informal-ic3-mt depth 7 in 0.06 s
+wall 1133 ms
+--- engine ric3-ic3, limit 20s
+property                     type    status        engine     detail
+dma_v2.u_axi_sva.ArHeld_A    assert  proven        ric3-ic3   0.06 s
+dma_v2.u_axi_sva.ArStable_A  assert  proven        ric3-ic3   0.12 s
+dma_v2.u_axi_sva.AwHeld_A    assert  proven        ric3-ic3   0.08 s
+dma_v2.u_axi_sva.AwStable_A  assert  proven        ric3-ic3   0.14 s
+dma_v2.u_axi_sva.WHeld_A     assert  proven        ric3-ic3   0.06 s
+dma_v2.u_axi_sva.WStable_A   assert  proven        ric3-ic3   0.08 s
+dma_v2.u_axi_sva.ArWait_C    cover   covered       ric3-ic3   depth 5 in 0.08 s
+dma_v2.u_axi_sva.AwWait_C    cover   covered       ric3-ic3   depth 8 in 0.08 s
+dma_v2.u_axi_sva.WWait_C     cover   covered       ric3-ic3   depth 8 in 0.08 s
+dma_v2.u_axi_sva.ArFirst_C   cover   covered       ric3-ic3   depth 4 in 0.08 s
+dma_v2.u_axi_sva.AwFirst_C   cover   covered       ric3-ic3   depth 7 in 0.08 s
+dma_v2.u_axi_sva.WFirst_C    cover   covered       ric3-ic3   depth 7 in 0.08 s
+wall 1097 ms
+
+real	5m55.829s
+user	5m45.252s
+sys	0m10.805s

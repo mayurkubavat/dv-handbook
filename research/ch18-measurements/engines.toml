@@ -1,0 +1,142 @@
+# External engines for the informal portfolio (phase 0).
+#
+# Each [[engine]] says how to run one model checker and how to read its
+# verdict. `{model}` is replaced with the model path. Exit codes are checked
+# first, then the `unsafe` pattern, then the `safe` pattern.
+#
+# rIC3 (1.5.2) and ABC entries were checked on macOS arm64 (2026-11-02)
+# against tests/models, rIC3's examples/counter/counter.aig and a sample of
+# HWMCC'24 models with published answers. Neither tool sets a verdict exit
+# code (both exit 0), so verdicts come from the output. Pono and BtorMC
+# entries are still unchecked guesses.
+
+[[engine]]
+name = "ric3-ic3"
+program = "ric3"
+args = ["check", "--ui", "false", "--cex", "{model}", "ic3"]
+# --cex prints the counterexample (Btor2 or AIGER witness, by model format);
+# informal turns it into the trace, so no BMC re-run is needed.
+cex_witness = true
+formats = ["aiger", "btor2"]
+proves = true
+finds_bugs = true
+[engine.patterns]
+safe = '(?m)^UNSAT$'
+unsafe = '(?m)^SAT$'
+
+[[engine]]
+name = "ric3-bmc"
+program = "ric3"
+args = ["check", "--ui", "false", "--cex", "{model}", "bmc"]
+# --cex prints the counterexample (Btor2 or AIGER witness, by model format);
+# informal turns it into the trace, so no BMC re-run is needed.
+cex_witness = true
+formats = ["aiger", "btor2"]
+finds_bugs = true
+[engine.patterns]
+unsafe = '(?m)^SAT$'
+depth = 'found a counterexample at depth (\d+)'
+
+# rIC3's 16-way portfolio (the HWMCC'24 configuration). Linux only: it forks
+# its workers and reports back over ipc-channel, which uses Mach ports on
+# macOS, and those do not survive fork(). On macOS every run hangs until
+# the timeout, so comment this entry out there.
+[[engine]]
+name = "ric3"
+program = "ric3"
+args = ["check", "--ui", "false", "--cex", "{model}", "portfolio"]
+# --cex prints the counterexample (Btor2 or AIGER witness, by model format);
+# informal turns it into the trace, so no BMC re-run is needed.
+cex_witness = true
+# Its 16 workers can reach 18 GB together on some HWMCC models, which on a
+# 26 GB machine makes the kernel kill unrelated processes. Capped as a group.
+mem_limit_mb = 14000
+formats = ["aiger", "btor2"]
+proves = true
+finds_bugs = true
+[engine.patterns]
+safe = '(?m)^UNSAT$'
+unsafe = '(?m)^SAT$'
+
+[[engine]]
+name = "pono-ind"
+program = "pono"
+args = ["-e", "ind", "-k", "1000", "{model}"]
+formats = ["btor2"]
+proves = true
+finds_bugs = true
+witness_on_stdout = true
+[engine.patterns]
+safe = '(?m)^unsat$'
+unsafe = '(?m)^sat$'
+
+[[engine]]
+name = "pono-ic3ia"
+program = "pono"
+args = ["-e", "ic3ia", "{model}"]
+formats = ["btor2"]
+proves = true
+finds_bugs = true
+witness_on_stdout = true
+[engine.patterns]
+safe = '(?m)^unsat$'
+unsafe = '(?m)^sat$'
+
+# ABC (build from github.com/berkeley-abc/abc; `yosys-abc` takes the same
+# commands). The prefix is needed for HWMCC AIGER 1.9 files: `fold` turns
+# invariant constraints into the property (without it ABC checks constraint
+# outputs as properties and reports false bugs), and `logic; undc; strash;
+# zero` makes don't-care latch inits nondeterministic instead of 0. ABC's
+# ASCII reader rejects .aag files with a bad-state section; that reads as
+# unknown, not a wrong verdict.
+[[engine]]
+name = "abc-pdr"
+program = "abc"
+args = ["-c", "read_aiger {model}; logic; undc; strash; zero; fold; pdr; write_cex -a -t /dev/stdout"]
+# write_cex prints the CEX as an AIGER witness. It is for ABC's own network:
+# when undc/zero/fold changed the inputs or latches it does not fit the
+# model, informal says so in the engine log and falls back to a BMC re-run.
+cex_witness = true
+formats = ["aiger"]
+proves = true
+finds_bugs = true
+[engine.patterns]
+safe = 'Property proved\.'
+unsafe = 'was asserted in frame \d+'
+depth = 'was asserted in frame (\d+)'
+
+# The same, on informal's preprocessed model (cone of influence, constant
+# latches, strash), handed over in memory through memfd.
+[[engine]]
+name = "abc-pdr-pp"
+program = "abc"
+args = ["-c", "read_aiger {model}; logic; undc; strash; zero; fold; pdr"]
+formats = ["aiger"]
+proves = true
+finds_bugs = true
+preprocess = true
+[engine.patterns]
+safe = 'Property proved\.'
+unsafe = 'was asserted in frame \d+'
+depth = 'was asserted in frame (\d+)'
+
+[[engine]]
+name = "abc-bmc3"
+program = "abc"
+args = ["-c", "read_aiger {model}; logic; undc; strash; zero; fold; bmc3 -T 3600; write_cex -a -t /dev/stdout"]
+cex_witness = true
+formats = ["aiger"]
+finds_bugs = true
+[engine.patterns]
+unsafe = 'was asserted in frame \d+'
+depth = 'was asserted in frame (\d+)'
+
+[[engine]]
+name = "btormc"
+program = "btormc"
+args = ["-kmax", "1000", "{model}"]
+formats = ["btor2"]
+finds_bugs = true
+witness_on_stdout = true
+[engine.patterns]
+unsafe = '(?m)^sat$'
