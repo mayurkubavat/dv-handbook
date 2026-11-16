@@ -9,7 +9,7 @@ a_once1                      assert  undetermined             no engine reached 
 a_once2                      assert  undetermined             no engine reached a verdict
 c_both                       cover   covered       ric3-ic3   depth 3
 === B: the position form
---- ric3-ic3, limit 10s for each property
+--- ric3-ic3, limit 30s for each property
 property                     type    status        engine     detail
 m_d                          assume  unprocessed
 m_one1                       assume  unprocessed
@@ -17,5 +17,6 @@ m_one2                       assume  unprocessed
 p_head1                      assert  proven        ric3-ic3
 p_head2                      assert  proven        ric3-ic3
 p_ahead                      assert  undetermined             no engine reached a verdict
-c_both                       cover   covered       ric3-ic3   depth 3
+c_head1                      cover   covered       ric3-ic3   depth 2
+c_head2                      cover   covered       ric3-ic3   depth 4
 verdict: without the slot helpers rIC3 proves neither ordering property

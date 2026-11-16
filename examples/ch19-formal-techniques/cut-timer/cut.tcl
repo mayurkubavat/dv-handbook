@@ -2,9 +2,9 @@
 # handshake (a request, a 200-cycle timer, a grant): the timer
 # black-boxed, its `expired` output made a cut point, and the cut
 # with a gap assumption that is then proved on the real timer. Then
-# a gap assumption over a window of several cycles, which this tool
-# judges only once the whole window lies inside a trace, and the
-# bounded response that only the real timer can prove.
+# a gap over a window of several cycles, which this tool judges, in
+# an assumption as in a cover, only once the whole window lies inside
+# a trace; and the bounded response only the real timer can prove.
 set here [file dirname [info script]]
 source $here/../common/ch19.tcl
 set hs  $ch18/over-constraint/handshake.sv
@@ -88,21 +88,31 @@ expect proven  a_gap
 expect covered c_rose
 
 puts "=== F: a gap over a window of N cycles, assumed under the cut"
-# Both windows are true of the real timer, and stronger than D's gap.
-# The depth-3 trace raises expired in cycle 2, inside both windows.
-# InFormal judges a multi-cycle implication only once its whole window
-# lies inside the trace: the window of 2 does, and removes the trace;
-# the window of 199 does not, and the trace survives it.
+# Both windows are stronger than D's gap, and both are first proved
+# on the real timer. The depth-3 trace raises expired in cycle 2,
+# inside both windows. InFormal judges a multi-cycle implication only
+# once its whole window lies inside the trace: the window of 2 does,
+# and removes the trace; the window of 199 does not, and the trace
+# survives it. The same holds for a cover, so the witness cover runs
+# to the end of the window: `req && !busy ##N 1`.
+set win {req && !busy |=> !u_timer.expired [*%d]}
+puts "--- both windows, on the real timer (no cut)"
+bare
+foreach n {2 199} {assert -name a_gap$n [format $win $n]}
+cover  -name c_req {req && !busy}
+one informal-kind 20s -all
+expect proven  a_gap2 a_gap199
+expect covered c_req
 foreach n {2 199} {
-  puts "--- window $n"
+  puts "--- window $n, under the cut"
   bare
   stopat u_timer.expired
-  assume -name m_gap$n \
-      [format {req && !busy |=> !u_timer.expired [*%d]} $n]
+  assume -name m_gap$n [format $win $n]
   assert -name a_no_early {$rose(busy) |=> !gnt}
-  cover  -name c_rose {$rose(busy)}
+  cover  -name c_win [format {req && !busy ##%d 1} $n]
   one informal-kind 10s -all
-  expect covered c_rose
+  expect covered c_win
+  expect_depth [expr {$n + 1}] c_win
   if {$n == 2} {
     expect proven  a_no_early
   } else {
@@ -112,6 +122,21 @@ foreach n {2 199} {
         [trace a_no_early] rst req busy u_timer.expired gnt]
   }
 }
+puts "--- a window no request can satisfy, under the cut"
+# The window ends in 1'b0, so it excludes every trace that runs two
+# cycles past a request, and no shorter one: a false response
+# assertion is proven, a cover of the request alone is still reached,
+# and only the cover that runs to the window's end is unreachable.
+bare
+stopat u_timer.expired
+assume -name m_never {req && !busy |=> !u_timer.expired ##1 1'b0}
+assert -name a_resp  {req && !busy |-> ##[1:3] gnt}
+cover  -name c_rose  {$rose(busy)}
+cover  -name c_win   {req && !busy ##2 1}
+one informal-kind 10s -all
+expect proven      a_resp
+expect covered     c_rose
+expect unreachable c_win
 
 puts "=== G: the delay itself, with the real timer and under the cut"
 foreach cut {0 1} {

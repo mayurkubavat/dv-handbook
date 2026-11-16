@@ -54,15 +54,14 @@ proc covers {deep} {
 }
 
 puts "=== step 1: witness covers, on the boxed pipe"
-# P2's antecedent, the pipe full, is 513 cycles from reset.
+# P2's antecedent, the pipe full, is 513 cycles from reset and takes
+# most of a minute; it is run once, under the final assumptions.
 parent
 covers 1
-cover -name Full_C {full}
-one informal-bmc 10s -all
+one informal-bmc 30s -all
 expect covered      Drain_C Both1_C U1Full_C
-expect undetermined Full_C
 expect_depth 258    U1Full_C
-note 1 Drain_C Both1_C U1Full_C Full_C
+note 1 Drain_C Both1_C U1Full_C
 
 puts "=== step 2: the child's contract, with its ghost helper"
 child $fifo
@@ -103,6 +102,14 @@ one informal-kind 5s -all
 expect proven  P1_A P2_A
 expect covered Drain_C Both1_C
 note 6 P1_A P2_A Drain_C Both1_C
+puts "--- P2's own antecedent, the pipe full, by bounded search"
+parent
+assume -name HP_M $HP
+cover  -name Full_C {full}
+one informal-bmc 120s -all
+expect covered   Full_C
+expect_depth 513 Full_C
+note 6 Full_C
 
 puts "=== step 7: the mutant child (count wraps one push short of full)"
 child $wrap

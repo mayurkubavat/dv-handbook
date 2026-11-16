@@ -14,9 +14,10 @@ expect cex     Held_A Stable_A
 expect covered Wait_C
 puts "=== B: wire stage, the input's rules assumed"
 design $f vr_top -parameter PASS 1 -parameter ENV 1
+cover  -name c_ready {i_ready}
 one informal-kind 5s -all
 expect proven  Held_A Stable_A Answer_A
-expect covered Wait_C
+expect covered Wait_C c_ready
 puts "=== C: register stage, input free"
 design $f vr_top -parameter PASS 0
 one informal-kind 5s -all
@@ -25,10 +26,12 @@ expect covered Wait_C
 puts "=== D: wire stage, the output's checker in the receiver's role"
 design $f vr_top -parameter PASS 1 -parameter WRONG 1
 assert -name a_in_held {i_valid && !i_ready |=> i_valid}
+cover  -name c_in_wait {i_valid && !i_ready}
 cover  -name c_in_drop {i_valid && !i_ready ##1 !i_valid}
 one informal-kind 5s -all
 expect cex         Answer_A
 expect proven      a_in_held
+expect covered     c_in_wait
 expect unreachable c_in_drop
 puts "verdict: the role decides which rules bind; the wrong role\
  proves a rule about the input that nothing enforces"

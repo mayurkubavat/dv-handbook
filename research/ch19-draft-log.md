@@ -377,3 +377,97 @@ Non-blocking, left:
   exercised by mutant E.
 - Appendix-F sentence on limits tied to the machine (B-N1 suggestion):
   other file; the chapter's mutation Pitfall already says it.
+
+## Round 2 fixes (2026-11-16)
+
+Fixes for `docs/reviews/ch19-gate2c-2026-11-16.md` (C, text) and
+`docs/reviews/ch19-gate2d-2026-11-16.md` (D, code). One line per
+finding. Changed examples: `ag`, `cut-timer`, `pipe-256`, `contract`,
+`param-width`, `two-word-ric3`, `protocol`. Each was run twice with
+InFormal `5114330` and rIC3 on the PATH (identical `run.out`), and
+once each on scratch copies whose `one` sets half and twice the
+printed limit (printed limit, and so `run.out`, unchanged).
+
+Blocking:
+- C-B1 (circular proof graph): the assume-guarantee entry's "What it
+  preserves" now requires each block to be proved on its own, with
+  its neighbor removed, so the assumption reaches only its inputs and
+  nothing is assumed about its reset state. The decomposition
+  Pitfall drops the "through a register" exemption and gives the
+  reviewer's ring as the warning. The ring is now measured: `ag` block
+  E (`ag_top` takes `RST1`, both resets at 1): `x == 0` alone cex at
+  depth 1; with `y == 0` assumed proven, and `y == 0` with `x == 0`
+  assumed proven; witness cover `C_run` unreachable in both. The `ag`
+  prose describes block E. Glossary needs no change (C-N9).
+- D-B1 (cover through an open window): block F's cover `c_rose`
+  replaced by `c_win = req && !busy ##N 1` (expect covered, depth N+1:
+  3 and 200). A last run of block F ships the vacuous case: assumption
+  `req && !busy |=> !u_timer.expired ##1 1'b0`, a false response
+  assertion `a_resp` proven, `$rose(busy)` covered at depth 2, `c_win`
+  (`##2 1`) unreachable; spliced and explained in a new paragraph
+  after the window paragraph (the sentence the reviewer asked for).
+  The general claims (opening of the entries, witness-cover entry) now
+  say: the antecedent or a scenario whose trace passes through it;
+  under a multi-cycle assumption the cover runs to the end of the
+  window; vacuity demonstrations leave the cover unreachable on
+  purpose. "Every entry plants a bug" replaced by "the entries that
+  plant a bug show ...; the others owe the same check". The P2_A
+  exception (C-N3) no longer exists: `pipe-256` step 6 now covers
+  `Full_C` under the final assumptions (below), so the claim is exact
+  without it.
+- D-B2 (headroom): `contract` A 5 s to 15 s; `param-width` B 5 s to
+  15 s; `two-word-ric3` B 10 s to 30 s (text "in ten" to "in
+  thirty"); `pipe-256` split: step 1 runs the three shallow covers
+  with 30 s (`U1Full_C` 8.6 s), `Full_C` leaves step 1 and runs once,
+  by `informal-bmc` with 120 s under the final assumptions in step 6,
+  covered at depth 513 (about 45 s). No run now expects `Full_C`
+  undetermined. Example about seventy seconds (Makefile comment).
+  `cut-timer` F's real-timer run uses 20 s (`a_gap199` 3.6 s).
+  Worked example text (D-N1, C-N4): step 1 says the deep witness is
+  run once for budget, step 6 shows the run, the record and the
+  closing sentence name `Full_C` at 513, the Worked Example box says
+  "deep" not "out of reach", the 16-entry `Both_C` at 33 is given as
+  the prediction of 513; figure alt text updated, figure regenerated.
+
+Non-blocking, taken:
+- C-N1: block F's first run proves both windows on the real timer
+  (`a_gap2`, `a_gap199`, with `c_req`); text says so.
+- C-N2: `[@informal-tool]` dropped from the window clause; "as block F
+  measures".
+- C-N3: see D-B1 (claims exact; `protocol` B gets `c_ready`, the
+  antecedent of `Answer_A`, covered at depth 1).
+- C-N4: 513 is now measured (step 6).
+- C-N5: one sentence: side conditions run at 256; at 16 they hold by
+  the same argument, are not run, and are a record line of their own.
+- C-N6: the window paragraph split; the prophecy contrast and block G
+  are paragraphs of their own.
+- C-N7: the "lemmas that imply the goal are the aim" sentence moved
+  to the end of the paragraph before the In Practice box.
+- D-N2: `ag` C adds `G_none = s_eventually 1'b0`, expected cex (depth
+  4, a fair lasso); fairness entry says a fairness assumption is
+  checked by refuting a false liveness assertion, not by a cover.
+  `C_out` kept.
+- D-N3: `protocol` D adds `c_in_wait = i_valid && !i_ready`, covered
+  at depth 1; prose says the antecedent happens and the assumption
+  forces the consequent. Splices 1-25 and 26-34.
+- D-N4: `two-word-ric3` B covers the literal antecedents, `c_head1`
+  and `c_head2` (depths 2 and 4 under rIC3), in place of `c_both`.
+
+Non-blocking, left:
+- C-N8: the three Cadence entries keep title, publisher and
+  `howpublished`; no URL (the vendor URL read was a staging host).
+- C-N9: no change needed (reviewer's own conclusion).
+- D-N5 (trivially reached covers in `symmetry`, `symconst`): optional,
+  the covers meet the claim; not changed.
+- D-N6: carried-over B-N5 and B-N6, as recorded in round 1.
+- `two-word` C keeps `c_both` (its trace passes through each
+  antecedent, which the reworded claim covers).
+- Figures: `gen_ch19_figures.py` reads `ag` block D up to the next
+  block (block E now follows it); `ch19-ag.svg` unchanged,
+  `ch19-pipe.svg` regenerated (step 1 has no hatched cell; step 6
+  shows `Full_C` at 513).
+- Checks: all seven changed examples pass twice with identical
+  `run.out`, and pass with identical `run.out` at half and at twice
+  the limits; `check-structure.sh`, `check-citations.sh` pass; the
+  chapter with includes expanded converts with pandoc 3.1.3 to HTML,
+  LaTeX and plain text with only cross-reference warnings.

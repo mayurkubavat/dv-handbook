@@ -8,11 +8,11 @@ property                     type    status        engine     detail
 Full_A                       assert  cex           informal-kind depth 16
 Full_C                       cover   unreachable   informal-kind
 === B: the repaired FIFO, against a five-bit count
---- informal-kind, limit 5s for each property
+--- informal-kind, limit 15s for each property
 property                     type    status        engine     detail
 NoOverflow_A                 assert  proven        informal-kind
 Full_A                       assert  proven        informal-kind
---- informal-kind, limit 5s for each property
+--- informal-kind, limit 15s for each property
 property                     type    status        engine     detail
 NoOverflow_A                 assert  cex           informal-kind depth 2
 Full_A                       assert  cex           informal-kind depth 1

@@ -2,7 +2,7 @@
 # properties induction cannot prove whole, proved through black
 # boxes, the children's contracts with a ghost helper, and one parent
 # helper; with witness covers first, a mutant child caught, and the
-# record printed last. In-house engines only. About forty seconds.
+# record printed last. In-house engines only. About seventy seconds.
 EXAMPLE_LANG  := informal
 REQUIRES      := informal
 TOP           := pipe.tcl

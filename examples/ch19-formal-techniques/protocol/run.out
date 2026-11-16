@@ -15,6 +15,7 @@ vr_top.u_out.g_snd.g_ans.Answer_M assume  unprocessed
 vr_top.g_env.u_in.g_rcv.Held_M assume  unprocessed
 vr_top.g_env.u_in.g_rcv.Stable_M assume  unprocessed
 vr_top.g_env.u_in.g_rcv.g_ans.Answer_A assert  proven        informal-kind
+c_ready                      cover   covered       informal-kind depth 1
 === C: register stage, input free
 --- informal-kind, limit 5s for each property
 property                     type    status        engine     detail
@@ -29,5 +30,6 @@ vr_top.u_out.g_rcv.Held_M    assume  unprocessed
 vr_top.u_out.g_rcv.Stable_M  assume  unprocessed
 vr_top.u_out.g_rcv.g_ans.Answer_A assert  cex           informal-kind depth 1
 a_in_held                    assert  proven        informal-kind
+c_in_wait                    cover   covered       informal-kind depth 1
 c_in_drop                    cover   unreachable   informal-kind
 verdict: the role decides which rules bind; the wrong role proves a rule about the input that nothing enforces

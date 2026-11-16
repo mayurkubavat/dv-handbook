@@ -53,25 +53,39 @@ property                     type    status        engine     detail
 a_gap                        assert  proven        informal-kind
 c_rose                       cover   covered       informal-kind depth 2
 === F: a gap over a window of N cycles, assumed under the cut
---- window 2
+--- both windows, on the real timer (no cut)
+--- informal-kind, limit 20s for each property
+property                     type    status        engine     detail
+a_gap2                       assert  proven        informal-kind
+a_gap199                     assert  proven        informal-kind
+c_req                        cover   covered       informal-kind depth 1
+--- window 2, under the cut
 --- informal-kind, limit 10s for each property
 informal: 1 cut point(s) (stopat) are free in this model: u_timer.expired. A proof holds for the design; a counterexample may use values the design cannot produce there
 property                     type    status        engine     detail
 m_gap2                       assume  unprocessed
 a_no_early                   assert  proven        informal-kind
-c_rose                       cover   covered       informal-kind depth 2
---- window 199
+c_win                        cover   covered       informal-kind depth 3
+--- window 199, under the cut
 --- informal-kind, limit 10s for each property
 informal: 1 cut point(s) (stopat) are free in this model: u_timer.expired. A proof holds for the design; a counterexample may use values the design cannot produce there
 property                     type    status        engine     detail
 m_gap199                     assume  unprocessed
 a_no_early                   assert  cex           informal-kind depth 3
-c_rose                       cover   covered       informal-kind depth 2
+c_win                        cover   covered       informal-kind depth 200
 cycle    rst    req   busy  expired    gnt
     0      1      0      0        0      0
     1      0      1      0        0      0
     2      0      0      1        1      0
     3      0      0      0        0      1
+--- a window no request can satisfy, under the cut
+--- informal-kind, limit 10s for each property
+informal: 1 cut point(s) (stopat) are free in this model: u_timer.expired. A proof holds for the design; a counterexample may use values the design cannot produce there
+property                     type    status        engine     detail
+m_never                      assume  unprocessed
+a_resp                       assert  proven        informal-kind
+c_rose                       cover   covered       informal-kind depth 2
+c_win                        cover   unreachable   informal-kind
 === G: the delay itself, with the real timer and under the cut
 --- informal-kind, limit 10s for each property
 property                     type    status        engine     detail

@@ -2,7 +2,8 @@
 # output on one cycle later: each proved under the other's guarantee,
 # a reset-value mutant refuted, the safety ring proven; each live
 # under the other's "eventually", the liveness ring refuted with a
-# lasso. Under a second.
+# lasso; and the ring with both resets at 1, whose two false lemmas
+# are each "proven" with the other assumed. Under a second.
 EXAMPLE_LANG  := informal
 REQUIRES      := informal
 TOP           := ag.tcl

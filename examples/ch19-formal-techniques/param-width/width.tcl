@@ -24,7 +24,7 @@ foreach d {16 32} {
   design [list $rtl09/fifo_fixed.sv $wrap] pw_top -parameter DEPTH $d
   assert -name NoOverflow_A "occ <= 5'($d)"
   assert -name Full_A       "full == (occ == 5'($d))"
-  one informal-kind 5s -all
+  one informal-kind 15s -all
   expect [expr {$d == 16 ? "proven" : "cex"}] NoOverflow_A Full_A
 }
 

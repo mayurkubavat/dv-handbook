@@ -25,11 +25,12 @@ words
 assert -name p_head1 {in1 && !out1 && a1 == '0 |-> rd_data == d1}
 assert -name p_head2 {in2 && !out2 && a2 == '0 |-> rd_data == d2}
 assert -name p_ahead {in1 && !out1 && in2 && !out2 |-> a1 < a2}
-cover  -name c_both  {pop2 && out1}
-one ric3-ic3 10s -all
+cover  -name c_head1 {in1 && !out1 && a1 == '0}
+cover  -name c_head2 {in2 && !out2 && a2 == '0}
+one ric3-ic3 30s -all
 expect proven       p_head1 p_head2
 expect undetermined p_ahead
-expect covered      c_both
+expect covered      c_head1 c_head2
 puts "verdict: without the slot helpers rIC3 proves neither ordering\
  property"
 finish

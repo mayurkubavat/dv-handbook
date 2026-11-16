@@ -414,7 +414,7 @@ def fig_ag():
     a = block(t, "--- RST1 = 0", "--- RST1 = 1")
     b = block(t, "=== B", "===")
     c = block(t, "=== C", "===")
-    dd = block(t, "=== D", "verdict")
+    dd = block(t, "=== D", "===")
     assert row(a, "G_out")[0] == "proven"
     assert row(b, "G_x")[0] == row(b, "G_y")[0] == "proven"
     assert row(c, "G_out")[0] == "proven"

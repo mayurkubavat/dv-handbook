@@ -21,9 +21,28 @@ G_y                          assert  proven        informal-kind
 property                     type    status        engine     detail
 M_in                         assume  unprocessed
 G_out                        assert  proven        informal-ic3
+G_none                       assert  cex           informal-ic3 depth 4
 C_out                        cover   covered       informal-ic3 depth 2
 === D: liveness, the ring
 --- informal-ic3, limit 5s for each property
 property                     type    status        engine     detail
 G_x                          assert  cex           informal-ic3 depth 3
-verdict: the circular argument holds for safety and fails for liveness, where the ring never starts
+=== E: safety, the ring with both resets at 1, lemma for lemma
+--- assert x == 0, alone
+--- informal-kind, limit 5s for each property
+property                     type    status        engine     detail
+L_A                          assert  cex           informal-kind depth 1
+C_run                        cover   covered       informal-kind depth 2
+--- assert x == 0, assume y == 0
+--- informal-kind, limit 5s for each property
+property                     type    status        engine     detail
+L_M                          assume  unprocessed
+L_A                          assert  proven        informal-kind
+C_run                        cover   unreachable   informal-kind
+--- assert y == 0, assume x == 0
+--- informal-kind, limit 5s for each property
+property                     type    status        engine     detail
+L_M                          assume  unprocessed
+L_A                          assert  proven        informal-kind
+C_run                        cover   unreachable   informal-kind
+verdict: the circular argument holds for safety, block by block, and fails for liveness, where the ring never starts, and for lemmas proved on one design

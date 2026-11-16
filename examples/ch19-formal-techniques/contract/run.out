@@ -1,5 +1,5 @@
 === A: DEPTH 16
---- informal-kind, limit 5s for each property
+--- informal-kind, limit 15s for each property
 property                     type    status        engine     detail
 CE_A                         assert  proven        informal-kind
 CF_A                         assert  proven        informal-kind

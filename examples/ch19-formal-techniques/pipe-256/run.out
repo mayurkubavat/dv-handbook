@@ -1,5 +1,5 @@
 === step 1: witness covers, on the boxed pipe
---- informal-bmc, limit 10s for each property
+--- informal-bmc, limit 30s for each property
 informal: black boxes in this model (outputs free, contents not modelled): fifo. A proof holds for the design; a counterexample may use output values the boxed logic cannot produce
 informal: svlang: the design has no assertions
 property                     type    status        engine     detail
@@ -10,7 +10,6 @@ u1_CF                        assume  unprocessed
 Drain_C                      cover   covered       informal-bmc depth 4
 Both1_C                      cover   covered       informal-bmc depth 3
 U1Full_C                     cover   covered       informal-bmc depth 258
-Full_C                       cover   undetermined             no engine reached a verdict
 === step 2: the child's contract, with its ghost helper
 --- informal-kind, limit 5s for each property
 property                     type    status        engine     detail
@@ -52,15 +51,25 @@ P1_A                         assert  proven        informal-kind
 P2_A                         assert  proven        informal-kind
 Drain_C                      cover   covered       informal-kind depth 4
 Both1_C                      cover   covered       informal-kind depth 3
+--- P2's own antecedent, the pipe full, by bounded search
+--- informal-bmc, limit 120s for each property
+informal: black boxes in this model (outputs free, contents not modelled): fifo. A proof holds for the design; a counterexample may use output values the boxed logic cannot produce
+informal: svlang: the design has no assertions
+property                     type    status        engine     detail
+u0_CE                        assume  unprocessed
+u0_CF                        assume  unprocessed
+u1_CE                        assume  unprocessed
+u1_CF                        assume  unprocessed
+HP_M                         assume  unprocessed
+Full_C                       cover   covered       informal-bmc depth 513
 === step 7: the mutant child (count wraps one push short of full)
 --- informal-bmc, limit 20s for each property
 property                     type    status        engine     detail
 H_A                          assert  cex           informal-bmc depth 256
 === step 8: the record: step, engine, limit, property, answer
-  1  informal-bmc  10s  Drain_C   covered, depth 4
-  1  informal-bmc  10s  Both1_C   covered, depth 3
-  1  informal-bmc  10s  U1Full_C  covered, depth 258
-  1  informal-bmc  10s  Full_C    undetermined
+  1  informal-bmc  30s  Drain_C   covered, depth 4
+  1  informal-bmc  30s  Both1_C   covered, depth 3
+  1  informal-bmc  30s  U1Full_C  covered, depth 258
   2  informal-kind 5s   H_A       proven
   2  informal-kind 5s   CE_A      proven
   2  informal-kind 5s   CF_A      proven
@@ -71,6 +80,7 @@ H_A                          assert  cex           informal-bmc depth 256
   6  informal-kind 5s   P2_A      proven
   6  informal-kind 5s   Drain_C   covered, depth 4
   6  informal-kind 5s   Both1_C   covered, depth 3
+  6  informal-bmc  120s Full_C    covered, depth 513
   7  informal-bmc  20s  H_A       cex, depth 256
   assumed: u0_CE u0_CF u1_CE u1_CF, proven as CE_A CF_A (step 2)
   assumed: HP_M, proven as HP_A (step 5)

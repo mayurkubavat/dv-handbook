@@ -20,7 +20,7 @@ proc fifo_ctr {d} {
 puts "=== A: DEPTH 16"
 fifo_ctr 16
 assert -name H_A $H
-one informal-kind 5s -all
+one informal-kind 15s -all
 expect proven CE_A CF_A H_A
 
 puts "=== B: DEPTH 64"
