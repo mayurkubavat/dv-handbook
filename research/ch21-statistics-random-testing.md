@@ -905,9 +905,13 @@ or access date (house rule); `note` says what was actually read.
   pages   = {207--229},
   year    = {1992},
   doi     = {10.1016/0166-218X(92)90177-C},
-  note    = {Not opened; the unequal-probability expectation integral as
-             reproduced and attributed in du Boisberranger, Gardy and Ponty
-             (arXiv:1202.0920). DOI from memory: verify}
+  note    = {Not opened (HAL blocks automated fetches); the
+             unequal-probability expectation integral as reproduced and
+             attributed, with this journal reference, in du Boisberranger,
+             Gardy and Ponty (arXiv:1202.0920, eq. 1.1). An earlier version
+             is INRIA Research Report RR-0720 (1987, authors in the order
+             Flajolet, Thimonier, Gardy; HAL inria-00075832; cover page
+             read). DOI from memory: verify}
 }
 
 @article{clopper1934binomial,
@@ -948,7 +952,8 @@ or access date (house rule); `note` says what was actually read.
   number  = {1},
   year    = {1992},
   doi     = {10.1109/32.120314},
-  note    = {NASA NTRS record and abstract read; issue number and pages
+  note    = {NASA NTRS record and abstract read (all seven authors as
+             above confirmed there, 2026-11-16); issue number and pages
              not confirmed}
 }
 
@@ -993,8 +998,9 @@ or access date (house rule); `note` says what was actually read.
   pages   = {157--175},
   year    = {1900},
   doi     = {10.1080/14786440009463897},
-  note    = {Metadata from the Scilit record (title truncated there; the
-             tail is the well-known one); DOI not shown there: verify}
+  note    = {Read (scan at jhanley.biostat.mcgill.ca): title, Philosophical
+             Magazine Series 5, 50(302):157--175, July 1900, as printed;
+             DOI confirmed on Zenodo record 1430618 (2026-11-16)}
 }
 
 @article{marsaglia2003kolmogorov,
@@ -1049,8 +1055,9 @@ or access date (house rule); `note` says what was actually read.
   pages   = {437--444},
   year    = {1997},
   doi     = {10.1109/32.605761},
-  note    = {Researchr record read (abstract missing there); DOI from
-             memory: verify}
+  note    = {Scilit record read 2026-11-16: authors (initials D. M., S. R.,
+             M. L., G. C.), 23(7):437--444, July 1997 and DOI confirmed;
+             given names not shown there; no abstract; text not opened}
 }
 
 @inproceedings{lei2007ipog,
@@ -1086,8 +1093,12 @@ or access date (house rule); `note` says what was actually read.
   howpublished = {arXiv:2510.17596},
   year         = {2025},
   url          = {https://arxiv.org/abs/2510.17596},
-  note         = {Read: CAN(2,k,2) formula, CAN(2,13,3) = 15, CAN(3,k,2)
-                  <= 17 for k <= 16. Preprint. Accessed 2026-11-16}
+  note         = {Read (HTML v1): CAN(2,k,2) formula attributed to Katona
+                  and to Kleitman and Spencer; CAN(2,13,3) = 15 as a
+                  computational result of Izquierdo-Marquez and
+                  Torres-Jimenez; CAN(3,k,2) <= 17 for 3 <= k <= 16
+                  (Sloane, after Kreher and Tonchev). Preprint. Accessed
+                  2026-11-16}
 }
 
 @misc{nist-covering-arrays,
@@ -1296,7 +1307,10 @@ or access date (house rule); `note` says what was actually read.
   pages   = {379--423, 623--656},
   year    = {1948},
   doi     = {10.1002/j.1538-7305.1948.tb01338.x},
-  note    = {Read (reprint copy); DOI is Part I's, from memory: verify}
+  note    = {Read (reprint copy, people.csail.mit.edu; section 6,
+             property 2). The paper is in two parts (July and October
+             1948); the DOI is Part I's (pages 379--423), from memory:
+             verify, and cite Part II separately if its pages are cited}
 }
 
 @misc{boisberranger2012weighted,
@@ -1309,6 +1323,78 @@ or access date (house rule); `note` says what was actually read.
   note         = {Read for eq. (1.1), the unequal-probability coupon integral
                   attributed to Flajolet, Gardy and Thimonier. Accessed
                   2026-11-16}
+}
+@article{chao1987capture,
+  author  = {Chao, Anne},
+  title   = {Estimating the Population Size for Capture-Recapture Data with
+             Unequal Catchability},
+  journal = {Biometrics},
+  volume  = {43},
+  number  = {4},
+  pages   = {783--791},
+  year    = {1987},
+  url     = {https://gwern.net/doc/statistics/order/capture/1987-chao.pdf},
+  note    = {Read (scan): the lower bound S + f1^2/(2 f2) under the
+             heterogeneity model; volume, pages and December 1987 as
+             printed; issue number not seen; DOI not retrieved (add when
+             confirmed, then drop url and access date). Accessed
+             2026-11-16}
+}
+
+@article{musa1989quantifying,
+  author  = {Musa, John D. and Ackerman, A. Frank},
+  title   = {Quantifying Software Validation: When to Stop Testing?},
+  journal = {IEEE Software},
+  pages   = {19--26},
+  year    = {1989},
+  month   = may,
+  url     = {https://www.rose-hulman.edu/class/csse/csse376/Resources/musa.pdf},
+  note    = {Read (course copy; OCR prints the first author as "Muss"):
+             operational profile defined, testing by the profile. Pages
+             and month as printed; volume, issue and DOI not seen: add
+             when confirmed. Accessed 2026-11-16}
+}
+
+@article{musa1993profiles,
+  author  = {Musa, John D.},
+  title   = {Operational Profiles in Software-Reliability Engineering},
+  journal = {IEEE Software},
+  volume  = {10},
+  number  = {2},
+  pages   = {14--32},
+  year    = {1993},
+  doi     = {10.1109/52.199724},
+  note    = {Scilit record and abstract read 2026-11-16 (author not shown
+             there); text not opened}
+}
+
+@article{newman1995small,
+  author  = {Newman, Thomas B.},
+  title   = {If Almost Nothing Goes Wrong, Is Almost Everything All Right?
+             Interpreting Small Numerators},
+  journal = {JAMA},
+  volume  = {274},
+  number  = {13},
+  pages   = {1013},
+  year    = {1995},
+  url     = {https://jamanetwork.com/journals/jama/article-abstract/389714},
+  note    = {Letter; abstract page read: the rule of three, credited to
+             Hanley and Lippman-Hand. Accessed 2026-11-16}
+}
+
+@techreport{accellera2002constraints,
+  author      = {{Accellera SystemVerilog Committee}},
+  title       = {{SystemVerilog} 3.1 Random Constraints Proposal, Version 1.0},
+  institution = {Accellera},
+  year        = {2002},
+  month       = nov,
+  url         = {https://accellera.org/images/eda/sv-ec/att-0248/01-Random-Constraints_Proposal.pdf},
+  note        = {Read: section 12, Variable Ordering (the s => d == 0
+                 example; 50\% with solve s before d). Origin of the
+                 IEEE 1800 variable-ordering clause; evidence for the
+                 expectation, not a citation for the standard's
+                 semantics. Author field to check against the document's
+                 cover. Accessed 2026-11-16}
 }
 ```
 
