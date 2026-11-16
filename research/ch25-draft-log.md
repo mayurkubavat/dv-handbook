@@ -418,3 +418,83 @@ expanded by script: every range within its file, every spliced line
 at 80 columns or less. Pandoc 3.1.3 with `--citeproc` to HTML
 (MathJax) and LaTeX: no warnings other than the Quarto
 cross-references.
+
+## 9. Round 2 fixes (gate 2, 2026-11-16)
+
+Reviews: `docs/reviews/ch25-gate2c-2026-11-16.md` (text, C-B1 and
+N1-N13) and `docs/reviews/ch25-gate2d-2026-11-16.md` (code, B1-B3 and
+N1-N2). Every finding is fixed; none left.
+
+### Blocking
+
+- 2d B1: `figures/gen_ch25_figures.py` re-pinned `source-sim/run.out`
+  to `c03da492...54c332`. Regenerated under `python3` and `python3 -O`:
+  all four SVGs byte-identical to the committed ones. (The axes
+  footnote was then reworded for 2c N2, which changes only that text
+  line of `ch25-axes.svg`.)
+- 2c C-B1: lines 34 and 39 no longer say the covergroup reports the
+  same percentages on any FIFO. Line 34: "reports percentages and never
+  a failure, whether the FIFO is correct or broken". Line 39: the even
+  mix gives the same 75.86 as the coverage chapter's original
+  (`ch08-functional-coverage/fifo-coverage/run.out` 2, `opening/run.out`
+  7); the push-biased mix gives 89.66 against 86.21 (`fifo-coverage`
+  15, `opening` 8), because the monitor counts a push only while `full`
+  is low, so the bin for sixteen entries stays empty on the original
+  (the coverage chapter's "still zero after the merge: full_16") and
+  fills on the repaired FIFO. Checked in a scratch run of the coverage
+  chapter's runner against `fifo_fixed.sv` (not committed): run A
+  identical bin for bin, 75.86; run B 89.66, `full_16=136`, "push
+  while full at occupancy 16", every other bin hit in both designs.
+- 2d B2 / 2c N1: summary "the random test, with the same line, branch
+  and expression coverage, kills 35".
+- 2d B3 / 2c N2: line 157 "for this chapter's copy of the test at
+  `+seed=1` and 400 cycles"; the axes figure's footnote "each testbench
+  was run as the chapter configures it".
+
+### Non-blocking
+
+- 2c N3: line 23 "never holds sixteen entries".
+- 2c N4 / 2d N1: Step 3 splices `fifth-tb/run.out` 7-22, so the
+  ports heading appears only under Step 5.
+- 2c N5: `nformal.py` prints "(the property set's kills: 18 or less)".
+  Formatting of committed `measure.out` data only; the same two lines,
+  so no splice moved. No `MEASURE=1` rerun.
+- 2c N6: line 464 "what three seconds of bounded search on
+  `a_integrity` reaches on this design".
+- 2c N7 (bounds, not gaps): demonstrated rather than softened. The
+  default run of `netlist-formal` now runs `a_integrity` alone on each
+  of the fourteen misses, bounded search for 30 s, then rIC3 for 120 s
+  if that finds nothing. Bounded search refutes twelve, each at exactly
+  its miter depth (7 at 16, 4 at 17, 1 at 18; pinned per mutation);
+  rIC3 refutes 7759 at 29 and 8394 at 31 (trace lengths, upper
+  bounds). In a probe, 60 s of bounded search did not reach those two.
+  Cost: about 45 s more (the deep two start first); the default run
+  is now about a minute and a half (docstring, Makefile). Printed as
+  `run.out` 40-43, spliced with the rIC3 reruns (34-43); the settings
+  splice moved from 41-43 to 45-47. Text at 327, 459, 464-469 says the
+  run shows it; summary 557 unchanged and now rests on the run.
+- 2c N8: `fifth.py` runs the port bind on the 1,000-mutation netlist
+  sample too: 899/1000 at the ports, 0 killed only by `Sync_A`
+  (pinned). Printed as `run.out` 30-31; Step 5 splices 23-31; line 533
+  adds "all of them at the ports". About 20 s more (docstring and
+  Makefile updated).
+- 2c N9: line 488 "The commercial tool Lin and colleagues use".
+- 2c N10 / 2d N2: line 309 "the first property tried that fails it,
+  `FullBackward_A`, needs eighteen cycles".
+- 2c N11: line 245 "A testbench that does not, and instead pulses the
+  reset between two edges and looks at the FIFO before the next one,
+  tells them apart:".
+- 2c N12: line 440 "The output of `mutate -list N` may be ...".
+- 2c N13: alt text "toward reveal".
+
+### Checks
+
+`scripts/check-examples.sh examples/ch25-mutation-testing` from clean
+(build directories and caches removed first): 17 of 17 pass. Changed
+outputs: `fifth-tb/run.out` (two new lines, checks 10 of 10) and
+`netlist-formal/run.out` (the N5 wording, four new lines, checks 14 of
+14, verdict reworded); every other `run.out`, table, `measure.out` and
+`pop.tsv` unchanged. Includes expanded by script: every range inside its
+file and on the intended lines, every spliced line at 80 columns or
+less. `scripts/check-structure.sh` and `scripts/check-citations.sh`
+pass.

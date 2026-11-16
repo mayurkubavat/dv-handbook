@@ -2,9 +2,10 @@
 # read by path and unchanged, plus a data check (fifo_data_sva.sv and its
 # bind). Control on the repaired and the original FIFO; the 44 source
 # mutants at default and randomized initial values; the 1,000-mutation
-# netlist sample; the kills at the ports, with the white-box Sync_A made
-# vacuous by fifo_port_bind.sv; the before-and-after table
-# tbl-ch25-report.md. Yosys and Verilator; about a minute.
+# netlist sample; the kills at the ports, source and netlist, with the
+# white-box Sync_A made vacuous by fifo_port_bind.sv; the before-and-
+# after table tbl-ch25-report.md. Yosys and Verilator; about a minute
+# and a half.
 C09           := ../../ch09-temporal-properties
 EXAMPLE_LANG  := python
 REQUIRES      := yosys

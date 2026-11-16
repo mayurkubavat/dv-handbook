@@ -40,8 +40,8 @@ PIN = {
         ("5aa8aaa1aebceb5edb6dc860236d5c53"
          "367f123eb92c23d512aeb64be2a3fb40"),
     "source-sim/run.out":
-        ("5dc71d4e224523ee9cf004aba9b7cc2d"
-         "86de217049612ac332ef7cb171b99156"),
+        ("c03da4926d0b5e72196feabfd5b63762"
+         "28efa62e8b85b6dab02a0d1ade54c332"),
     "property-set/run.out":
         ("78652a22859395ba71d2ca787747e2ea"
          "93693117efdc14fafdd7e72203aeb267"),
@@ -298,7 +298,7 @@ def fig_axes():
             d.text(ax.px(tog) + dx, ax.py(y) + dy, lab, 12.5, COL[tb]
                    if tb != "ch08-coverage" else INK, "600", anc)
     d.text(110, H - 22, "Toggle coverage is the same in both panels; each "
-           "testbench was run as it ships.", 13, DIM)
+           "testbench was run as the chapter configures it.", 13, DIM)
     d.save("ch25-axes.svg")
 
 

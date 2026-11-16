@@ -27,5 +27,7 @@ fifth testbench: the traffic of tb_fifo_sva.sv, the checker of
   randomized 39/44 at the ports; non-equivalent killed 39/39
     survivors: m05 m32 m36 m43 m44
   killed only by the white-box Sync_A: m44
-checks: 8 of 8 hold
+  netlist sample at the ports: 899/1000 = 0.899 [0.879, 0.917]
+  killed only by the white-box Sync_A on the sample: 0
+checks: 10 of 10 hold
 verdict: the data check raises the source kills from 22 to 37 of 44

@@ -3,7 +3,7 @@ uniform sample: which sampled mutations are equivalent (the miter),
 and which the property set kills.
 
     python3 nformal.py              recompute and spot-check (about
-                                    40 seconds)
+                                    a minute and a half)
     MEASURE=1 python3 nformal.py    first the whole sample of 100,
                                     into measure.out (several minutes
                                     on four cores)
@@ -26,7 +26,10 @@ and it reruns four rows by rIC3: two equivalents proved again, and the
 two deepest differences found again at the depth recorded. That depth
 (31) is the length of rIC3's trace, past what bounded search reached
 in its 10 s; an IC3 trace is not always the shortest, so it bounds the
-shortest difference from above. Selects ric3-ic3, so it needs rIC3.
+shortest difference from above. Last, it runs a_integrity alone on
+each miss with more time (bounded search 30 s, then rIC3 120 s), to
+show that each miss is a bound of the 3 s search and not a gap in the
+property set. Selects ric3-ic3, so it needs rIC3.
 """
 import datetime
 import os
@@ -127,14 +130,34 @@ def misses(rows, pop, cmds, C):
               f"{pop[k][rnd]}")
     lo, hi = min(d for _, d in miss), max(d for _, d in miss)
     print(f"  the mutations a_integrity kills differ at depth {max(data)} "
-          f"or less (all")
-    print(f"  its kills: {max(hit)} or less); the misses only at depth "
-          f"{lo} to {hi}")
+          f"or less (the")
+    print(f"  property set's kills: {max(hit)} or less); the misses only "
+          f"at depth {lo} to {hi}")
     C.pin("property-set misses", len(miss), 14)
     C.pin("kill and miss depths", (max(data), max(hit), lo, hi),
           (15, 18, 16, 31))
     C.pin("the random test kills every miss",
           sum(pop[k][rnd] in mutlib.DEAD for k, _ in miss), len(miss))
+    return miss
+
+
+def integrity(arg):
+    """a_integrity alone on one mutation, with more time than the
+    measured run's 3 s: bounded search for 30 s, then rIC3 for 120 s if
+    that found nothing. Returns (engine, status, depth)."""
+    k, cmd = arg
+    d = B / f"ai{k}"
+    d.mkdir(parents=True, exist_ok=True)
+    net = yosysmut.single_netlist(cmd, d / "fifo_m.v")
+    for engine, limit in (("informal-bmc", "30s"), ("ric3-ic3", "120s")):
+        tcl = (miter.head() + miter.setup_tcl([net, miter.FWRAP])
+               + f"one {engine} {limit} -property [full a_integrity]\n"
+               + miter.ROWS + "finish\n")
+        _, out = miter.shell(tcl, d / engine)
+        st, dep = miter.rows(out).get("a_integrity", ("error", -1))
+        if st == "cex":
+            break
+    return engine, st, dep
 
 
 def read_measure():
@@ -183,7 +206,7 @@ def main():
     again = summary(rows, pop)
     print("\n".join(again))
     C.pin("summary recomputed equals measure.out's", again, summ)
-    misses(rows, pop, cmds, C)
+    miss = misses(rows, pop, cmds, C)
     mutlib.pin_measured(C, MEASURE, MEASURE_SHA)
     mutlib.pin_measured(C, POP, POP_SHA)
 
@@ -208,13 +231,38 @@ def main():
         want = dict((kk, ("cex", d)) for d, kk in deep)
         C.pin(f"rerun {k}", (st, dep) if k in want else st,
               want.get(k, "proven"))
+    # The deepest first, so that the two longest jobs start at once.
+    order = [k for k, _ in sorted(miss, key=lambda x: -x[1])]
+    ai = dict(zip(order, mutlib.pmap(integrity,
+                                     [(k, cmds[k]) for k in order])))
+    print(f"rerun now: a_integrity alone on the {len(miss)} misses, by "
+          "bounded")
+    print("  search for 30 s, then by rIC3 for 120 s where that finds "
+          "nothing")
+    bmc = sorted(dep for e, st, dep in ai.values()
+                 if e == "informal-bmc" and st == "cex")
+    ic3 = sorted((dep, k) for k, (e, st, dep) in ai.items()
+                 if e == "ric3-ic3" and st == "cex")
+    by = ", ".join(f"{d} ({bmc.count(d)})" for d in sorted(set(bmc)))
+    print(f"  bounded search refutes {len(bmc)}, each at its miter depth: "
+          f"{by}")
+    print(f"  rIC3 refutes the other {len(ic3)}: "
+          + ", ".join(f"{k} at depth {d}" for d, k in ic3))
+    C.pin("a_integrity refutes every miss given time",
+          (len(bmc), [k for _, k in ic3]), (12, [7759, 8394]))
+    C.pin("a_integrity depths", (bmc, [d for d, _ in ic3]),
+          ([16] * 7 + [17] * 4 + [18], [29, 31]))
+    C.pin("bounded search refutes each at its miter depth",
+          [k for k, d in miss if ai[k][0] == "informal-bmc"
+           and ai[k][2] != d], [])
     head = MEASURE.read_text().splitlines()[2:4]
     print("the measured run's settings and cost (committed measure.out):")
     for part in "; ".join(head).split("; "):
         print(mutlib.wrap("  " + part, indent="    "))
     C.report()
     print("verdict: the formal sample's summary is reproduced,")
-    print("  and four of its rows rerun as recorded")
+    print("  four of its rows rerun as recorded, and a_integrity, given")
+    print("  more time, refutes every miss")
 
 
 if __name__ == "__main__":

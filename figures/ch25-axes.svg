@@ -84,5 +84,5 @@
 <line x1="913.0" y1="394.1" x2="921.0" y2="394.1" stroke="#5B3E8E" stroke-width="2.2"/>
 <circle cx="917.0" cy="398.3" r="5.5" fill="#5B3E8E" stroke="white" stroke-width="1.5"/>
 <text x="903.0" y="368.3" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12.5" font-weight="600" text-anchor="end" fill="#5B3E8E">checking testbench 39/1000</text>
-<text x="110.0" y="498.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="400" text-anchor="start" fill="#7FA3C0">Toggle coverage is the same in both panels; each testbench was run as it ships.</text>
+<text x="110.0" y="498.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="400" text-anchor="start" fill="#7FA3C0">Toggle coverage is the same in both panels; each testbench was run as the chapter configures it.</text>
 </svg>

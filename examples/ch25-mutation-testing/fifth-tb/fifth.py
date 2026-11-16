@@ -15,9 +15,10 @@ plus a data check (fifo_data_sva.sv, bound by fifo_data_bind.sv).
 4. The kills at the ports: the fifth testbench again, with the checker
    bound by fifo_port_bind.sv, which ties Sync_A's count to the
    checker's own, so that the white-box Sync_A cannot fail. With the
-   five equivalent mutants of the miter examples, the score.
+   five equivalent mutants of the miter examples, the score; then the
+   same on the netlist sample of step 3.
 5. tbl-ch25-report.md, the before-and-after table.
-About a minute.
+About a minute and a half.
 """
 import pathlib
 import sys
@@ -158,9 +159,19 @@ def main():
     wb = [m.id for i, m in enumerate(ms, 1)
           if dead(i, "fifth", 0) and pr[(i, 0)] not in mutlib.DEAD]
     print(f"  killed only by the white-box Sync_A: {' '.join(wb)}")
+    pn = yosysmut.build_netlist(B / "netports", net, ["ports"], tbs=PORTS)
+    pv = yosysmut.run_netlist(pn, [0] + draw, tbs=PORTS)
+    C.pin("netlist ports control", pv[(0, "ports")], "survived")
+    pk = sum(pv[(j, "ports")] in mutlib.DEAD for j in draw)
+    nwb = sum(v[(j, "fifth")] in mutlib.DEAD
+              and pv[(j, "ports")] not in mutlib.DEAD for j in draw)
+    print(f"  netlist sample at the ports: {mutlib.fmt_cp(pk, 1000)}")
+    print(f"  killed only by the white-box Sync_A on the sample: {nwb}")
     C.pin("port kills", port, {"default": (36, 36),
                                "randomized": (39, 39)})
     C.pin("white-box only", wb, ["m44"])
+    C.pin("netlist kills at the ports, white-box only", (pk, nwb),
+          (899, 0))
 
     rows = []
     for tb, label in (("ch09-sva", "the checker as shipped"),

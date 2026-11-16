@@ -29,18 +29,23 @@ missed by the property set: 14 non-equivalent mutations
   8108      cnot1   42    procmux           16  killed
   8130      cnot0   42    procmux           16  killed
   8394      const1  42    procmux           31  killed
-  the mutations a_integrity kills differ at depth 15 or less (all
-  its kills: 18 or less); the misses only at depth 16 to 31
+  the mutations a_integrity kills differ at depth 15 or less (the
+  property set's kills: 18 or less); the misses only at depth 16 to 31
 rerun now by rIC3: two equivalents, and the two deepest
   differences (beyond what 10 s of bounded search reached)
   mutation 252 (inv - auto): ric3-ic3: proved equivalent
   mutation 264 (const1 - auto): ric3-ic3: proved equivalent
   mutation 8394 (const1 42 procmux): ric3-ic3: differs at depth 31
   mutation 7759 (const1 43 procmux): ric3-ic3: differs at depth 31
+rerun now: a_integrity alone on the 14 misses, by bounded
+  search for 30 s, then by rIC3 for 120 s where that finds nothing
+  bounded search refutes 12, each at its miter depth: 16 (7), 17 (4), 18 (1)
+  rIC3 refutes the other 2: 7759 at depth 29, 8394 at depth 31
 the measured run's settings and cost (committed measure.out):
   property set: informal-bmc 3 s for each property
   miter: informal-bmc 10 s, then ric3-ic3 120 s
   wall 715 s on 4 workers
-checks: 11 of 11 hold
+checks: 14 of 14 hold
 verdict: the formal sample's summary is reproduced,
-  and four of its rows rerun as recorded
+  four of its rows rerun as recorded, and a_integrity, given
+  more time, refutes every miss
