@@ -33,6 +33,7 @@ seeds that pushed while full: 0 of 250
 exact chain for this generator: p = 8.45e-05
   P(all 250 seeds clean) = 0.979; seeds for a 95% chance of one trigger: 35462
   the bound is 141 times the truth, and the bug is in every seed's RTL
+  a clean run of n seeds is more likely than not below n = ln 2 / p = 8205
 fifo_cg bins this generator never hit in 250 seeds: 7
   occupancy.almost occupancy.full_16 full_cp.full op_x_full.both_x_full
   op_x_full.idle_x_full op_x_full.pop_x_full op_x_full.push_x_full

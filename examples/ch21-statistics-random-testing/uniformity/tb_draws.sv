@@ -1,10 +1,10 @@
-// tb_draws.sv -- draws from Chapter 7's own constraint classes, printed
-// one per line ("D <class> <value>") so that a Python script can test
-// each histogram against the law its constraint asks for. The classes
-// come from Chapter 7's files, compiled by path beside this one:
-// forms.sv (the dist, implication and solve...before forms) and
+// tb_draws.sv -- draws from the constrained-random chapter's own classes,
+// printed one per line ("D <class> <value>") so that a Python script can
+// test each histogram against the law its constraint asks for. The
+// classes come from that chapter's files, compiled by path beside this
+// one: forms.sv (the dist, implication and solve...before forms) and
 // rand_packet.sv (the packet kind mix). The one class defined here is
-// the 16-bit range constraint of Chapter 7's distribution example,
+// the 16-bit range constraint of that chapter's distribution example,
 // which lives inside that example's module and cannot be compiled
 // alone. +n sets the draws per class; +cls=<name> draws from one class
 // only, so that a runner can draw the six in parallel processes.

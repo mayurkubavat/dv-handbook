@@ -28,5 +28,12 @@ Pearson X2 of 6076, 2940, 984 against 6:3:1          2.41867
 G of the same counts                                 2.42408
 mutual information of a bit with itself              1
 pairwise lower bound for levels 6, 4, 3, 3, 2        24
-checks: 25 of 25 hold
+== edge cases: an unreachable bin, an empty sample ==
+p = 0: seeds_to_hit, union sum, union split, first_n None
+E[T] with an unreachable bin                         inf
+chao1, chao2, good_turing, ks_uniform on no data     ValueError
+Pearson p with a count in a zero-probability cell    0.0
+Pearson ignores an empty zero-probability cell       True
+quantile with a run that never finished              None
+checks: 31 of 31 hold
 self-test: the library reproduces every tabulated value

@@ -1,10 +1,10 @@
 python seed 2026
 == 1. the constrained-random chapter's laws, in bits ==
-  v uniform 0..255   H  8.000 of  8.000; 2^H  256.0; KL to uniform 0.0000
-  v dist := {1,1,2}  H  7.929 of  8.000; 2^H  243.7; KL to uniform 0.0708
-  v dist :/ {1,1,2}  H  7.596 of  8.000; 2^H  193.5; KL to uniform 0.4039
-  kind 6:3:1         H  1.295 of  1.585; 2^H    2.5; KL to uniform 0.2895
-  kind uniform 0..2  H  1.585 of  1.585; 2^H    3.0; KL to uniform 0.0000
+  v uniform 0..255   H  8.000 of  8.000; 2^H  256.0; KL to uniform 0.0000 bits
+  v dist := {1,1,2}  H  7.929 of  8.000; 2^H  243.7; KL to uniform 0.0708 bits
+  v dist :/ {1,1,2}  H  7.596 of  8.000; 2^H  193.5; KL to uniform 0.4039 bits
+  kind 6:3:1         H  1.295 of  1.585; 2^H    2.5; KL to uniform 0.2895 bits
+  kind uniform 0..2  H  1.585 of  1.585; 2^H    3.0; KL to uniform 0.0000 bits
 == 2. G = 2 n KL (nats) is Pearson's statistic's cousin ==
   dist :/      n=10000 KL 0.000255 nats; G 5.101 (p 0.078); X2 5.097 (p 0.078)
   dist :=      n=10000 KL 0.000025 nats; G 0.492 (p 0.782); X2 0.485 (p 0.785)
@@ -37,11 +37,12 @@ Verilator 5.052; 250 seeds each; fifo_cg's 29 bins
   occupancy.almost             0.695   0.576   0.042
   op_x_full.idle_x_full        0.642   0.482   0.054
   op_x_empty.pop_x_empty       0.535   0.519   0.006
+  op_x_full.pop_x_full         0.491   0.253   0.138
   empty_cp.empty               0.000   0.000   0.000
   empty_cp.not_empty           0.000   0.000   0.000
   full_cp.not_full             0.000   0.000   0.000
   permutation baseline, 95th percentile of the largest over the 29 bins:
   0.0075
   I(generator; trigger) = 0.707 bits
-checks: 20 of 20 hold
+checks: 23 of 23 hold
 verdict: entropy peaks at even 400, bins per seed at push 400

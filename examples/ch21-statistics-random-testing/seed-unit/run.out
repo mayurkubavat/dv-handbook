@@ -1,5 +1,5 @@
 Verilator 5.052; the coverage chapter's tb_fifo_cov.sv on the first chapter's
-fifo.sv; generator +bias=even +n=200, seeds 1..1000; python seed 2026
+fifo.sv; generator +bias=even +n=200, seeds 1..1000
 == 1. fifo_cg: 29 bins, 28 hit in some seed; never hit: occupancy.full_16 ==
 bin (rarest first)            p/cycle  iid seed  measured  95% CP
 op_x_full.push_x_full         0.00263     0.409     0.187  [0.163, 0.213]
@@ -30,20 +30,24 @@ first trigger, from the chain (the testbench prints no cycle):
 == 3. a cross cell's probability is joint ==
 per seed: push_x_full 0.187; P(push) x P(full) = 1.000 x 0.271 = 0.271
 per cycle: push_x_full 0.00263; P(push) x P(full) = 0.00282
-  of 2266 cycles that showed full, 525 pushed: z = -1.88 against a
-  binomial share 0.249
+  of 2266 cycles that showed full, 525 pushed: z = -1.88 against the
+  measured per-cycle push share 0.249
 == 4. seeds until every reachable fifo_cg bin is hit, 99% ==
 seed level, from the measured per-seed rates:
   union bound, sum_i (1-p_i)^n <= 0.01:       27 seeds
   union bound, 0.01/28 for each bin:           39 seeds
   bins taken as independent (product):        27 seeds
-  measured by resampling (2000 orders):       median 5, q99 26
-  with fill_cg's climb as well:              median 9, q99 43
+  measured, the exact law of the 1000 seeds: median 5, q99 25
+  with fill_cg's climb as well:              median 9, q99 46
 cycle level, from the per-cycle rates (independent cycles):
   product: 2126 cycles = 10.6 seeds; union: 2128 cycles = 10.6 seeds
   union with 0.01/28 for each bin: 3020 cycles = 15.1 seeds
   measured q99 over cycle-model product: 2.4 times
 rarest bin op_x_full.push_x_full at 0.187: alone it needs 23 seeds for 99%
 almost at its measured rate 0.271 needs 15 seeds for 99%
-checks: 22 of 22 hold
-verdict: 247 of 1000 seeds triggered the bug; 28 bins reachable; q99 26 seeds
+at 25 seeds: sum_i (1-p_i)^n 0.0149; P(some bin missed) 0.0099, of which
+  two or more 0.0028
+seeds that show full: 271, each also almost; 0 show an op_x_full cell without
+  it; 137 hit all four op_x_full cells (0.51; 0.34 if independent given full)
+checks: 31 of 31 hold
+verdict: 247 of 1000 seeds triggered the bug; 28 bins reachable; q99 25 seeds

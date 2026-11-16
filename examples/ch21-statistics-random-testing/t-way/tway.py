@@ -86,7 +86,7 @@ print("\n== 1. constructions that meet the bound ==")
 
 
 def binary_pairwise(k):
-    """Katona; Kleitman and Spencer: row 0 all zeros; column j, read on
+    """Kleitman and Spencer: row 0 all zeros; column j, read on
     rows 1..N-1, is a distinct subset of size ceil(N/2). Two such sets
     are incomparable and intersect, which gives the pairs 10, 01, 11;
     row 0 gives 00. N is the least with C(N-1, ceil(N/2)) >= k."""
@@ -289,13 +289,14 @@ for t in (2, 3):
           % (t, len(tup) - len(reach), len(tup), len(reach), med_c))
     worst = max(abs(sim[n] - expected(qu, tup, n)) for n in CHECK_N)
     print("       formula against %d simulated runs, uniform: largest gap"
-          " %.3f" % (REPS, worst))
-    C.holds("t=%d formula within 0.01 of simulation" % t, worst <= 0.01)
+          " %.4f" % (REPS, worst))
+    C.holds("t=%d formula within 0.006 of simulation" % t, worst <= 0.006)
     C.holds("t=%d: zero-probability tuples are the max ones" % t,
             all(any(p == 0 and v == 4 for p, v in zip(*x))
                 for x in tup - reach))
     C.pin("t=%d uniform median to full" % t, med_u, {2: 200, 3: 551}[t])
-    C.pin("t=%d ch11 unreachable tuples" % t, len(tup) - len(reach),
+    C.pin("t=%d unreachable tuples, architecture chapter" % t,
+          len(tup) - len(reach),
           {2: 13, 3: 57}[t])
     C.pin("t=%d ordered median to full" % t, med_s, {2: 89, 3: 378}[t])
     curves[t] = (g, tup, qu, qc, qs)
@@ -354,8 +355,24 @@ if len(sys.argv) > 1:
         print("  %-20s %12.3f %27.3f %6.2f" % (cell, pm, meas, z))
     print("  largest |z| over the cells the model gives a chance: %.2f"
           % zmax)
+    # The per-seed rates have little power: most cells are hit by nearly
+    # every seed. The summed counts test the model's law itself: every
+    # transfer lands in one cell, so the counts over all seeds are a
+    # multinomial sample against q (cells of probability zero held out,
+    # and required to be empty).
+    cnt = {names[i].split(".")[-1]: sum(r[i] for r in rows) for i in lx}
+    qq = {c: q2.get((lnames.index(c.split("_x_")[0]),
+                     onames.index(c.split("_x_")[1])), 0.0) for c in cnt}
+    live = [c for c in sorted(cnt) if qq[c] > 0]
+    x2, df, px2 = S.pearson([cnt[c] for c in live], [qq[c] for c in live])
+    print("  summed counts, %d transfers, against the model: X2 %.1f, %d df,"
+          " p %.2f" % (sum(cnt.values()), x2, df, px2))
     C.holds("cells of probability zero or one measured so", zero_ok)
-    C.holds("every cell within 3.5 sd of the model", zmax < 3.5)
+    C.near("largest |z| per seed", zmax, 1.52, 0.005)
+    C.pin("transfers counted", sum(cnt.values()), seeds * trans)
+    C.holds("cells of probability zero have no count",
+            all(cnt[c] == 0 for c in cnt if qq[c] == 0))
+    C.holds("summed counts fit the model (p > 0.01)", px2 > 0.01)
 C.report()
 print("verdict: greedy %d rows for every legal pair, %d for every triple"
       % (len(res[2][1]), len(res[3][1])))

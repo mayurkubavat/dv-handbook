@@ -36,11 +36,12 @@ seeds  seen Chao2 med [10,90]  Q1/Q2 Chao1cy    Q1/T pred new  P(new)
  expected new bins in one more seed; pred new is Chao2's extrapolation of
  the same; P(new) is measured on a held-out seed)
 all 250 seeds of 30 cycles: 22 bins seen, Q1 0, Q2 0, Chao2 22.0; Good-Turing
-P(next seed adds a bin) = 0.0000
+Q1/T, new bins expected in the next seed: 0.0000
 the chain's chance that a 30-cycle seed reaches 15 entries, where the 6
-unseen reachable bins live: 0.00018; and 6 reachable bins are missing
+unseen reachable bins live: 0.00018, so 0.044 of the 250 seeds are expected
+there; and 6 reachable bins are missing
 the unit of independence: at 4 seeds of 200 cycles, 25.7 seen, Chao1 over
 cycles 26.0, Chao2 over seeds 28.1 (median); at 128 seeds of 30 cycles,
 22.0 seen, Chao1 over cycles 22.0, Chao2 22.0 (median), reachable 28
-checks: 11 of 11 hold
-verdict: 250 seeds of 30 cycles saw 22 of 28 reachable bins; Good-Turing 0.000
+checks: 16 of 16 hold
+verdict: 250 seeds of 30 cycles saw 22 of 28 reachable bins; Q1/T 0.000

@@ -14,9 +14,14 @@ C = S.Checks()
 
 
 def show(text, got, want, tol):
-    print("%-52s %s" % (text, got if isinstance(got, str) else
-                        "%.6g" % got))
-    C.near(text, got if not isinstance(got, str) else want, want, tol)
+    print("%-52s %.6g" % (text, got))
+    C.near(text, got, want, tol)
+
+
+def show_is(text, got, want):
+    """For a value that must be exactly want (a string, None, inf)."""
+    print("%-52s %s" % (text, got))
+    C.pin(text, got, want)
 
 
 print("== special functions against tabulated values ==")
@@ -73,5 +78,37 @@ show("mutual information of a bit with itself",
      S.mutual_info([(0, 0), (1, 1)] * 50), 1.0, 1e-12)
 lb = math.prod(sorted([6, 4, 3, 3, 2])[-2:])
 show("pairwise lower bound for levels 6, 4, 3, 3, 2", lb, 24, 0)
+
+print("== edge cases: an unreachable bin, an empty sample ==")
+
+
+def raises(f):
+    try:
+        f()
+    except ValueError:
+        return "ValueError"
+    return "no error"
+
+
+none = (S.seeds_to_hit(0, 0.01), S.union_sum_draws([0.5, 0], 0.01),
+        S.union_split_draws([0.5, 0], 0.01),
+        S.first_n(S.coupon_cdf_poisson, [0.5, 0], 0.01))
+show_is("p = 0: seeds_to_hit, union sum, union split, first_n",
+        " ".join(map(str, sorted(set(map(str, none))))), "None")
+show_is("E[T] with an unreachable bin", S.coupon_expect([0.5, 0.5, 0]),
+        math.inf)
+show_is("chao1, chao2, good_turing, ks_uniform on no data",
+        " ".join(sorted({raises(lambda: S.chao1([], 0)),
+                         raises(lambda: S.chao2([], 0)),
+                         raises(lambda: S.good_turing(0, 0)),
+                         raises(lambda: S.ks_uniform([], 4))})),
+        "ValueError")
+show_is("Pearson p with a count in a zero-probability cell",
+        S.pearson([5, 5, 1], [0.5, 0.5, 0])[2], 0.0)
+show_is("Pearson ignores an empty zero-probability cell",
+        S.pearson([5, 5, 0], [0.5, 0.5, 0]) == S.pearson([5, 5], [0.5, 0.5]),
+        True)
+show_is("quantile with a run that never finished",
+        S.quantile([3, None, 1, 2], 0.9), None)
 C.report()
 print("self-test: the library reproduces every tabulated value")

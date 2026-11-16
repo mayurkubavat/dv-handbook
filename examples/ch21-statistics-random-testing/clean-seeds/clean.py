@@ -67,6 +67,7 @@ print("\n== 2. how often the 95%% bound covers the true p (%d trials) =="
 print("%7s %6s %9s %10s %8s" % ("true p", "n", "exact CP", "3/n, x=0",
                                 "P(x=0)"))
 memo = {}
+covered = []
 
 
 def cp95(x, n):
@@ -87,10 +88,12 @@ for p in (0.001, 0.01, 0.05):
         print("%7.3f %6d %9.3f %10s %8.3f" % (
             p, n, c_cp / REPS,
             ("%.3f" % (c_r3 / zero)) if zero else "-", zero / REPS))
-        C.holds("exact CP covers at least 94%% at p=%g n=%d" % (p, n),
-                c_cp / REPS >= 0.94)
+        covered.append(c_cp / REPS)
 print("(3/n is scored only on the trials with no failure, the only ones"
       " it\n applies to)")
+C.pin("smallest coverage of the exact bound", "%.3f" % min(covered), "0.959")
+C.holds("the exact bound covers at least 95% everywhere",
+        min(covered) >= 0.95)
 
 print("\n== 3. clean seeds needed for a target bound ==")
 for target in (0.01, 0.001, 1e-4, 1e-6):
@@ -126,6 +129,9 @@ print("  P(all %d seeds clean) = %.3f; seeds for a 95%% chance of one"
       " trigger: %d" % (n, (1 - exact) ** n, S.seeds_to_hit(exact, 0.05)))
 print("  the bound is %.0f times the truth, and the bug is in every"
       " seed's RTL" % (ub / exact))
+half = math.log(2) / exact
+print("  a clean run of n seeds is more likely than not below n = ln 2 / p"
+      " = %.0f" % half)
 hit = [i for i in range(len(names)) if any(r[i] for r in rows)]
 miss = [names[i].split(".", 1)[1] for i in range(len(names))
         if names[i].startswith("fifo_cg.") and i not in hit]
@@ -137,6 +143,11 @@ C.pin("triggers at n=30", x, 0)
 C.near("bound after 250 clean", ub, 0.0119, 0.00005)
 C.near("chain at 30 cycles", exact, 8.45e-5, 0.005e-5)
 C.holds("the bound covers the chain's p", ub >= exact)
+C.pin("the bound over the truth", round(ub / exact), 141)
+C.pin("ln 2 / p", round(half), 8205)
+C.pin("seeds for a 95% chance of one trigger",
+      S.seeds_to_hit(exact, 0.05), 35462)
+C.pin("P(all 250 clean)", "%.3f" % ((1 - exact) ** n), "0.979")
 C.report()
 print("verdict: %d of %d seeds clean; bound %.4f against a true %.2g"
       % (n - x, n, ub, exact))

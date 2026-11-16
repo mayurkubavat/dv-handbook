@@ -3,8 +3,9 @@
 
 ch21-burst.svg   per bin of fifo_cg: the per-seed rate a model of
                  independent cycles predicts, against the measured rate
-ch21-coupon.svg  P(every reachable bin hit within n seeds): resampled,
-                 independent-bins product, union bound, cycle model
+ch21-coupon.svg  P(every reachable bin hit within n seeds): measured
+                 (exact law of the 1000 seeds), independent-bins product,
+                 union bound, cycle model
 ch21-clean.svg   the 95% bound after n clean seeds, exact and 3/n,
                  against the true rate of the 30-cycle generator
 ch21-tway.svg    t-way coverage of the DMA transfer space against tests:
@@ -37,8 +38,8 @@ PIN = {
         ("310e5c00768212fd3dc849c3c69c7ec5"
          "7804c09eacc3dd7d57ed87a0959aa8c0"),
     "seed-unit/curve.tsv":
-        ("9142baed3440d2ae501fe572bd71c15e"
-         "51c6d2564c0a990fea999dc9a58a28bc"),
+        ("8eabc9f5c8784a0275474a25506f4112"
+         "89dbd2161903c67260c79458ae0926ae"),
     "t-way/data.tsv":
         ("512d75f0a91c0647ee37fc67d4849184"
          "fd2cc34940adffb37af7b1bea55abf46"),
@@ -46,8 +47,8 @@ PIN = {
         ("52381211f14ae0fea13b347e62fdb437"
          "0205ac8323d62b7a97706f52e0c887a9"),
     "clean-seeds/run.out":
-        ("73887d67f394c370f25da46db43b997e"
-         "10eed8787808b07b2be6c1a62e629df2"),
+        ("d3d0644dfcc258b07dab8bcd5e5d42db"
+         "fa2dfb5af46d0155445090e0eb54d4fc"),
 }
 
 
@@ -195,18 +196,18 @@ def fig_burst():
 
 def fig_coupon():
     head, rows = tsv("seed-unit/curve.tsv")
-    assert head == ["seeds", "resampled", "product", "union", "cycle_iid"]
+    assert head == ["seeds", "measured", "product", "union", "cycle_iid"]
     cols = {h: [(int(r[0]), float(r[i])) for r in rows]
             for i, h in enumerate(head) if i}
     so = out("seed-unit")
-    assert re.search(r"median 5, q99 26$", so, re.M)
+    assert re.search(r"median 5, q99 25$", so, re.M)
     assert re.search(r"<= 0\.01:\s+27 seeds", so)
     assert "product: 2126 cycles = 10.6 seeds" in so
 
     def first(col, level):
         return next(n for n, v in cols[col] if v >= level)
     # the curves cross 0.99 where the run.out says they do
-    assert first("resampled", 0.99) == 26, first("resampled", 0.99)
+    assert first("measured", 0.99) == 25, first("measured", 0.99)
     assert first("union", 0.99) == 27, first("union", 0.99)
     assert first("cycle_iid", 0.99) == 11, first("cycle_iid", 0.99)
     d = HW(940, 560, "Seeds until every reachable bin of fifo_cg is hit",
@@ -218,14 +219,14 @@ def fig_coupon():
     ax.line(cols["cycle_iid"], AMBER, 2.4, "8 5")
     ax.line(cols["union"], VIOLET, 2.4)
     ax.line(cols["product"], GREEN, 2.4, "3 3")
-    ax.line(cols["resampled"], BLUE, 3.0)
-    for col, lab, c in (("cycle_iid", "11", AMBER), ("resampled", "26", BLUE),
+    ax.line(cols["measured"], BLUE, 3.0)
+    for col, lab, c in (("cycle_iid", "11", AMBER), ("measured", "25", BLUE),
                         ("union", "27", VIOLET)):
         n = first(col, 0.99)
         d.line(ax.px(n), ax.py(0.99), ax.px(n), ax.py(0) , c, 1, "2 3")
-        d.text(ax.px(n) + (-4 if col == "resampled" else 4), ax.py(0) - 8,
-               lab, 12.5, c, "700", "end" if col == "resampled" else "start")
-    key(d, 560, 330, [("measured: 1000 seeds resampled", BLUE, None),
+        d.text(ax.px(n) + (-4 if col == "measured" else 4), ax.py(0) - 8,
+               lab, 12.5, c, "700", "end" if col == "measured" else "start")
+    key(d, 560, 330, [("measured: exact law of the 1000 seeds", BLUE, None),
                       ("independent bins (product)", GREEN, "3 3"),
                       ("union-bound guarantee", VIOLET, None),
                       ("independent cycles", AMBER, "8 5")])

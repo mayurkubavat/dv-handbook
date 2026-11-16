@@ -22,7 +22,7 @@ python seed 2026
   t=2, the architecture chapter's generator: 13 of 115 legal tuples
        have probability zero (every one with len=max); the other 102 take
        a median of 137 tests
-       formula against 201 simulated runs, uniform: largest gap 0.005
+       formula against 201 simulated runs, uniform: largest gap 0.0054
   t=3, uniform over the 200 legal rows: to cover every legal tuple,
        median 551 tests (q90 1052); union bound for 99%: 1336;
        greedy 68; ratio 8.1
@@ -30,7 +30,7 @@ python seed 2026
   t=3, the architecture chapter's generator: 57 of 331 legal tuples
        have probability zero (every one with len=max); the other 274 take
        a median of 437 tests
-       formula against 201 simulated runs, uniform: largest gap 0.003
+       formula against 201 simulated runs, uniform: largest gap 0.0031
   plateau under the architecture chapter's generator: 0.887 of pairs, 0.828
   of triples, however many tests
 == 4. Verilator 5.052: that chapter's tb_v2 +test=random +n=10, seeds 1..50 ==
@@ -54,5 +54,6 @@ python seed 2026
   zero_x_rd_err               0.000                       0.000   0.00
   zero_x_wr_err               0.000                       0.000   0.00
   largest |z| over the cells the model gives a chance: 1.52
-checks: 33 of 33 hold
+  summed counts, 1000 transfers, against the model: X2 3.1, 9 df, p 0.96
+checks: 36 of 36 hold
 verdict: greedy 23 rows for every legal pair, 68 for every triple

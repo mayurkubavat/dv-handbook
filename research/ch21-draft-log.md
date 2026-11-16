@@ -263,3 +263,203 @@ computations were rerun in Python and agree with the forms the
 - `_quarto.yml`: ch21 registered after ch19 in Part IV.
 - `scripts/check-examples.sh` not run: it re-runs the examples and
   rewrites `examples/status.json`, which this task does not touch.
+
+## 8. Round 1 fixes (2026-11-16)
+
+Reviews: `docs/reviews/ch21-gate2a-2026-11-16.md` (A) and
+`docs/reviews/ch21-gate2b-2026-11-16.md` (B). Each finding, and what was
+done. Line ranges in section 2 above predate this round; the chapter's
+`include` attributes are the current map.
+
+### Blocking
+
+- **A-B1, B-B2 (second half): the coupon-figure paragraph.** Rewritten
+  with the mechanisms the data support, every number on a `run.out`
+  line (`seed-unit/run.out` 48-51, now spliced into the paragraph). The
+  bound cannot sit above the measured curve: a draw from the 1000 seeds
+  misses bin i with probability exactly 1 - p_i, so the bound is a
+  theorem about that law, and `seed_unit.py` checks it for n = 1..80
+  (this also removes A-B1 point 5, the 0.9968 against 0.9965 at n = 32,
+  which was resampling noise). It is pessimistic by two seeds, 27
+  against 25, because at 25 seeds the sum is 0.0149 against a true
+  P(some bin missed) of 0.0099: the 0.0028 of runs that miss two or
+  more bins are counted once per bin missed, and a factor of 1.5 in
+  risk costs about two seeds when each seed multiplies the rarest miss
+  probability by 0.813 (ln 1.5 / -ln 0.813 = 1.96). "Hit together or
+  not at all" replaced by the measured correlation: every seed that
+  shows `full` shows `almost`, none shows an `op_x_full` cell without
+  `full`, and 137 of 271 hit all four cells against 0.34 if independent
+  given `full`. The tail: the product and the sum agree for the
+  arithmetic reason A gives (they differ by products of two or more
+  small terms); what sets it is the individual cells missed in seeds
+  that do fill the FIFO, 25 seeds against 15 for `full` alone. The
+  reviewers' replacement text was used in substance and checked
+  against these numbers; A's "nearly disjoint" was not used, because at
+  the tail three runs in ten that miss anything miss more than one bin.
+- **A-B2: "a clean regression is the expected outcome".** Replaced with
+  A's text: 35,000 seeds is where a clean run becomes a 5% event; a
+  clean run is more likely than not below ln 2 / p. `clean.py` now
+  prints ln 2 / p = 8205 (pinned) inside the spliced Pitfall block
+  (`clean-seeds/run.out` 30-39); the text says "about 8,200".
+- **B-B1: "within its standard error".** `coupon.py` prints se to two
+  decimals and z = (sim - E[T]) / se on each row (the trial count moved
+  to the row's third line, so the block keeps its line numbers). z is
+  1.45, 1.44, 0.08 for 8, 64, 256 equal bins, -0.86 for 6:3:1, -0.20
+  and 0.34 for the two dist laws. The text now says "within one and a
+  half standard errors at every size" and quotes the z column; the
+  check is |z| <= 2 (was 4 se). "At 64 and 256 bins" became "at every
+  size" (at 8 bins sim q99 53 is above the bound's 51 too).
+- **B-B2: Chao2's blindness at 30 cycles.** The wrong mechanism ("arrive
+  together or not at all, so no singleton") replaced: no seed reached
+  fifteen entries, 250 x 0.00018 = 0.044 expected seeds, now printed by
+  `unseen.py` (pinned) in the spliced block (`unseen/run.out` 23-42).
+  The text adds that one seed reaching the region would have made
+  singletons. The same wrong reasoning in `research/ch21-outline.md`
+  10.2 is left as written: the outline is a gate-1 evidence record.
+
+### Non-blocking, taken
+
+- **B-N2 (and the 26s).** The resampled curve (2000 shuffled orders,
+  Python seed 2026) is replaced by the exact closure law of seeds drawn
+  independently from the 1000 measured ones, by inclusion-exclusion
+  over the 11 bins not hit by every seed (12 with `climb`): median 5,
+  q99 **25** (was 26), with `climb` median 9, q99 **46** (was 43).
+  Drawing with replacement was chosen over B's without-replacement
+  computation because it is the bootstrap model of a fresh seed and its
+  marginal misses are exactly (1 - p_i)^n, which is what makes the
+  union-bound comparison exact; without replacement gives the same
+  median and q99 (5, 25) and 9, 45 with `climb` (computed in scratch,
+  not shipped). The Python seed and the 2000-order loop are gone, so
+  the seed-dependence B found (24 to 28; seed 2027 failing the bound
+  check) cannot recur. Every use of 26 changed: the seed section, the
+  coupon paragraph and figure caption and alt text (0.57 -> 0.55 at 5
+  seeds, crossing at 25; "joins" -> "approaches from below" for the
+  product, which is 0.9545 against 0.9731 at 20), the summary (two
+  lines), the `climb` sentence (43 -> 46). The ratio to the cycle model
+  prints 2.4 still (25 / 10.63 = 2.35). `curve.tsv`'s column is renamed
+  `measured`; the figure generator was re-pinned (curve.tsv and
+  clean-seeds/run.out SHA-256, the q99 regex, the crossing assert and
+  the label) and the legend reads "measured: exact law of the 1000
+  seeds". Only `ch21-coupon.svg` changed; it was rendered with headless
+  Chrome and inspected (crossings 11, 25, 27 labeled; union below the
+  measured curve everywhere).
+- **B-N1.** `tway.py` section 4 adds the count-level Pearson test of the
+  summed `len_x_out` counts against the model (zero cells held out and
+  required empty, total required to be 1000): X2 3.1, 9 df, p 0.96,
+  checked p > 0.01. The text says so after the per-seed sentence; B's
+  three wrong models were not re-run here and are not claimed in the
+  text.
+- **B-N3: quoted numbers now checked.** seed-unit: 0.0031 before cycle
+  40, hazard more than sixfold, |z| < 2 for the 525-of-2266 line (was
+  3), iid/measured ratios 1.85-2.4 and above 3, the new tail and
+  correlation numbers. coupon: simulated mean, z and q99 pinned per
+  row. clean-seeds: smallest coverage 0.959 pinned (was >= 0.94), 141,
+  35462, 0.979, 8205 pinned. unseen: the synthetic means (0.2287,
+  0.2319, 154.5; 0.0211, 0.0218, 198.8), the 213.3 single-run Chao1,
+  the 22.0-39.2 band and 25.7 seen at four seeds. uniformity: every
+  p-value but the ordering's above 0.3; one control p-value below the
+  Bonferroni threshold. worked: the four op_x_full cells' share, which
+  is **95%**, not 94% (the four printed shares, rounded, sum to 94);
+  the text now says 95% and a "together" line prints it. t-way: the
+  per-seed |z| 1.52 pinned; the formula-against-simulation gap is
+  0.0054 at t = 2, so the text's "within 0.005" became "within 0.006"
+  and the gap prints to four decimals. info: plug-in 6.25 and true
+  7.93, baseline 0.0075, push_x_full's 0.650 and 0.027 pinned. Found
+  while doing this: `pop_x_full` carries 0.49 bits, not "about 0.7",
+  and was not printed; the table now prints seven rows, the text says
+  "0.49 to 0.75 bits, 65 to 100 times the baseline" and names
+  `pop_x_full` as the cell the run length moves most (0.138 bits). The
+  `Checks` docstring says "the numbers a chapter quotes" instead of
+  "every number". Also found: the self-test's `show()` passed every
+  string-valued check without comparing it; string, None and inf
+  results now go through a pinned `show_is()`.
+- **B-N4.** "Good-Turing P(next seed adds a bin)" and "Good-Turing chance
+  the next seed adds a bin" relabeled "Good-Turing Q1/T, new bins
+  expected in the next seed" in `unseen.py` and `worked.py`;
+  `good_turing`'s docstring distinguishes abundance (a probability)
+  from incidence (an expected count, an upper estimate of the chance).
+  The chapter sentence at the 30-cycle block now says "expects no new
+  bin".
+- **B-N6.** statlib: `coupon_expect` returns inf for a zero bin;
+  `seeds_to_hit` and `union_split_draws` return None for one; `first_n`
+  returns None past a cap instead of looping; `chao1`, `chao2`,
+  `good_turing` and `ks_uniform` raise ValueError on an empty sample;
+  `pearson` and `g_test` drop empty zero-probability cells from the sum
+  and df and return p = 0 for a count in one; `quantile` sorts None
+  last. Each is a self-test line. The five statlib splice ranges were
+  moved to the new line numbers; the `seeds_to_hit` splice now shows
+  the p = 0 case and the sentence before it says so.
+- **B-N7.** `uniform.py` pins the solver string, "Z3 version 5.4.1",
+  beside the simulator pin. The run used `/opt/dvtools/venv/bin/z3`,
+  z3-solver package 5.4.1.0 (`pip show`), z3 Python module 5.4.1.
+  Not taken: pinning z3-solver in CI and in `dvbook`, and correcting
+  `STATUS.md:122`; this round was told not to change the environment
+  or `STATUS.md`. `REQUIRES := z3` not added: B judged the loud failure
+  acceptable, and the solver pin now names the cause first.
+- **B-N8.** `run_worked.sh` records per seed whether `FullBackward_A`
+  fired; `worked.py` counts as the original's failures only seeds that
+  did not pass and fired it, checks that this is every non-passing seed
+  and that it never fires on the repaired FIFO; the printed line says
+  "fail in FullBackward_A". `run_tway.sh` uses `grep ... >/dev/null`
+  instead of `grep -q`.
+- **B-N9.** `tb_draws.sv` header: "Chapter 7's" -> "the constrained-random
+  chapter's" (same line count, so the 11-14 splice is unchanged). The
+  `tway.py` check label "ch11 unreachable tuples", which prints on
+  failure, now names the architecture chapter.
+- **A-N1** = B-B1. **A-N2, B-N5 first point:** "a factor of about two,
+  and `full` and `almost` by more than three" (ratios 1.88-2.37 and
+  3.31), checked. **A-N3:** reworded: the example has no unconstrained
+  baseline, so 3.9 to 8.7 does not test Arcuri and Briand's clause; what
+  it shows is that under constraints the ratio depends on how tests are
+  drawn. "The constraints make it worse" removed. **A-N4:** "on average
+  ... low; a single run can overshoot, as the 800-draw row does".
+  **A-N5:** the info column reads "KL to uniform ... bits". **A-N6:** "a
+  quarter of its cycles at fifteen entries". **A-N7, B-N5 second
+  point:** "if the pilot's rates are right". **A-N8:** "would be caught
+  nine times in ten by a sample of that size". **A-N9:** "almost
+  nothing unseen". **A-N10:** the run.out says "measured per-cycle push
+  share 0.249" and the text says it is the measured share, not the
+  driver's 1/4. **A-N12:** `institution` braced; renders as one name.
+  **A-N13:** `year = {2025}` for `kwon-dvcon-simai`, from the DVCon
+  archive listing recorded in `research/agentic-dv-tools-synopsys.md`
+  (the PDF states none; the edition is not confirmed, which the note
+  says). **A-N14:** the Newman URL could not be checked (no network:
+  the proxy refused jamanetwork.com and Crossref) and both research
+  records attach 389714 to different articles, so it was dropped; the
+  entry is located by JAMA 274(13):1013, and the note says why.
+  **A-N15:** Miller et al. softened to "treat explicitly input
+  distributions other than the uniform one". **A-N16:** Katona removed
+  from the Definition, exercise 12 and the spliced `binary_pairwise`
+  docstring (same line count) rather than cited without the text.
+  **A-N17:** the two glossary entries now call Q1/n an estimate of the
+  number of new bins and an upper estimate of the chance.
+
+### Left, with the reason
+
+- **A-N11** (section 2's mislabeled ranges): not rewritten; the
+  paragraph at the head of this section supersedes them.
+- **B-N5 third point** (alt text "zero until about 8 seeds"): B calls it
+  fine as written.
+- **B-N9, file and column names:** `uniformity/ch07_counts.py` and the
+  `ch11gen2`/`ch11gen3` columns of `t-way/data.tsv` keep their names;
+  they are identifiers that mirror the example directories, not prose,
+  and renaming them means re-pinning data the figure reads for no
+  change a reader sees.
+- **B-N7 environment items:** see above.
+
+### Checks run
+
+- Every changed example (all ten, since statlib changed) run twice from
+  clean (build/ and __pycache__ removed) with
+  `scripts/check-examples.sh ch21-statistics-random-testing`: all ten
+  lint=pass run=pass, and every `run.out`, `.tsv` and table byte-identical
+  between the two runs. (The first full run failed `worked` on the
+  share pin, 95 against 94; after the fix `worked` was run twice more
+  from clean.) `examples/status.json` is as those runs wrote it.
+- `python3 -I -B figures/gen_ch21_figures.py`: all five figures, only
+  `ch21-coupon.svg` changed.
+- `scripts/check-structure.sh` and `scripts/check-citations.sh` pass.
+- Includes expanded by script and converted with pandoc 3.1.3,
+  `--citeproc --bibliography refs.bib`, to HTML (MathJax) and LaTeX: no
+  warnings beyond the expected unresolved Quarto cross-references.
+  `kwon-dvcon-simai` prints 2025, the NIST institution prints whole.

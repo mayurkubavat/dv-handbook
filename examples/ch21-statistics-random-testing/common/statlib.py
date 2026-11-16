@@ -74,21 +74,35 @@ def kolmogorov_sf(lam):
 
 # ---- tests on histograms -------------------------------------------
 
+def _support(counts, probs):
+    """Cells the law can produce, and whether a count fell outside them.
+    A count in a cell of probability zero rejects the law outright."""
+    inside = [(c, p) for c, p in zip(counts, probs) if p > 0]
+    outside = any(c for c, p in zip(counts, probs) if p <= 0)
+    return inside, len(inside) - 1, outside
+
+
 def pearson(counts, probs):
-    """Pearson's X^2 of counts against a law; (X^2, df, p)."""
-    n = sum(counts)
-    x = sum((c - n * p) ** 2 / (n * p) for c, p in zip(counts, probs))
-    df = len(probs) - 1
+    """Pearson's X^2 of counts against a law; (X^2, df, p). Cells of
+    probability zero are left out of the sum and of df; a count in one
+    gives X^2 = inf and p = 0."""
+    cells, df, outside = _support(counts, probs)
+    if outside:
+        return math.inf, df, 0.0
+    n = sum(c for c, _ in cells)
+    x = sum((c - n * p) ** 2 / (n * p) for c, p in cells)
     return x, df, chi2_sf(x, df)
 
 
 def g_test(counts, probs):
     """The likelihood-ratio statistic G = 2 sum c ln(c / n p), which is
-    2 n KL(empirical || law) in nats; (G, df, p)."""
-    n = sum(counts)
-    g = 2 * sum(c * math.log(c / (n * p)) for c, p in zip(counts, probs)
-                if c > 0)
-    df = len(probs) - 1
+    2 n KL(empirical || law) in nats; (G, df, p). Zero-probability
+    cells as in pearson()."""
+    cells, df, outside = _support(counts, probs)
+    if outside:
+        return math.inf, df, 0.0
+    n = sum(c for c, _ in cells)
+    g = 2 * sum(c * math.log(c / (n * p)) for c, p in cells if c > 0)
     return g, df, chi2_sf(g, df)
 
 
@@ -98,6 +112,8 @@ def ks_uniform(xs, m):
     small-sample factor. For a discrete law the p-value is
     conservative."""
     n = len(xs)
+    if n == 0:
+        raise ValueError("ks_uniform: no draws")
     cnt = [0] * m
     for x in xs:
         cnt[x] += 1
@@ -171,7 +187,10 @@ def cp_interval(x, n, conf=0.95):
 
 
 def seeds_to_hit(p, delta):
-    """Smallest n with (1 - p)^n <= delta: n >= ln(delta)/ln(1 - p)."""
+    """Smallest n with (1 - p)^n <= delta: n >= ln(delta)/ln(1 - p).
+    A bin with p = 0 is never hit: None."""
+    if p <= 0:
+        return None
     if p >= 1:
         return 1
     return math.ceil(math.log(delta) / math.log1p(-p) - 1e-12)
@@ -188,8 +207,11 @@ def coupon_expect(p, steps=200000):
     """E[T] = integral_0^inf (1 - prod_i (1 - exp(-p_i t))) dt, the
     Poissonized form (draws as a rate-1 Poisson process), by the
     trapezoid rule. Equal probabilities are grouped, so a law with few
-    distinct values is cheap however many bins it has."""
-    groups = Counter(q for q in p if q > 0)
+    distinct values is cheap however many bins it has. A bin with
+    p_i = 0 is never hit, and E[T] is infinite."""
+    if any(q <= 0 for q in p):
+        return math.inf
+    groups = Counter(p)
     pmin = min(groups)
     h = 60.0 / pmin / steps
     tot, prev = 0.0, 1.0
@@ -235,10 +257,13 @@ def coupon_cdf_product(p, n):
     return prod
 
 
-def first_n(cdf, p, delta):
-    """Smallest n with cdf(p, n) >= 1 - delta (cdf rising in n)."""
+def first_n(cdf, p, delta, cap=2 ** 40):
+    """Smallest n with cdf(p, n) >= 1 - delta (cdf rising in n); None
+    if no n up to cap reaches it (a bin of probability zero)."""
     hi = 1
     while cdf(p, hi) < 1 - delta:
+        if hi > cap:
+            return None
         hi *= 2
     lo = max(1, hi // 2)
     while lo < hi:
@@ -266,7 +291,10 @@ def union_sum_draws(p, delta):
 
 def union_split_draws(p, delta):
     """The cruder form that gives every one of the k bins an equal
-    share delta/k of the risk: max_i ln(k/delta) / -ln(1 - p_i)."""
+    share delta/k of the risk: max_i ln(k/delta) / -ln(1 - p_i). Bins
+    with p_i = 0 make the answer infinite (None)."""
+    if any(q <= 0 for q in p):
+        return None
     k = len(p)
     return max(seeds_to_hit(q, delta / k) for q in p)
 
@@ -300,6 +328,8 @@ def mutual_info(pairs):
 def chao1(counts, n):
     """Abundance form, counts per bin over n draws: S_obs +
     ((n-1)/n) f1^2/(2 f2), or ((n-1)/n) f1(f1-1)/2 when f2 = 0."""
+    if n <= 0:
+        raise ValueError("chao1: no draws")
     f1 = sum(1 for c in counts if c == 1)
     f2 = sum(1 for c in counts if c == 2)
     sobs = sum(1 for c in counts if c > 0)
@@ -312,6 +342,8 @@ def chao2(inc, t):
     """Incidence form, inc[i] = number of the t units (seeds) that hit
     bin i: S_obs + ((t-1)/t) Q1^2/(2 Q2), or ((t-1)/t) Q1(Q1-1)/2 when
     Q2 = 0. Returns (estimate, Q1, Q2)."""
+    if t <= 0:
+        raise ValueError("chao2: no sampling units")
     q1 = sum(1 for x in inc if x == 1)
     q2 = sum(1 for x in inc if x == 2)
     sobs = sum(1 for x in inc if x > 0)
@@ -321,8 +353,13 @@ def chao2(inc, t):
 
 
 def good_turing(singletons, n):
-    """Probability that the next unit shows a class no unit has shown:
-    f1 / n (Good 1953, crediting Turing)."""
+    """f1 / n (Good 1953, crediting Turing). For abundance data, one
+    class per draw, it estimates the probability that the next draw is
+    a class not yet seen. For incidence data, Q1 / T over T seeds, it
+    estimates the number of new classes in the next seed, which is an
+    upper estimate of the chance that the seed shows any."""
+    if n <= 0:
+        raise ValueError("good_turing: no draws")
     return singletons / n
 
 
@@ -340,14 +377,15 @@ def chao2_new(inc, t, m=1):
 
 def quantile(xs, q):
     """The order statistic at floor(q * len): no interpolation, so the
-    value printed is one that occurred."""
-    xs = sorted(xs)
+    value printed is one that occurred. None (a run that never finished
+    within its cap) sorts above every number."""
+    xs = sorted(xs, key=lambda v: (v is None, v or 0))
     return xs[min(len(xs) - 1, int(q * len(xs)))]
 
 
 class Checks:
-    """Every number a chapter quotes is checked by the example that
-    prints it: pinned (a deterministic run must reproduce it) or held
+    """The numbers a chapter quotes are checked by the example that
+    prints them: pinned (a deterministic run must reproduce it) or held
     to a stated tolerance. A failed check is printed and fails the
     run."""
 

@@ -105,6 +105,9 @@ for c in CLASSES:
 print("\n== 2. %d fresh draws per class, seed 1 ==" % N)
 print("%s with %s" % (sys.argv[1], sys.argv[2]))
 C.pin("simulator", sys.argv[1], "Verilator 5.052")
+# The draws are the solver's models, so the pinned counts below belong to
+# this solver release; a different z3 fails here first, by name.
+C.pin("solver", sys.argv[2], "Z3 version 5.4.1")
 C.pin("draws per class", sorted({len(v) for v in d.values()}), [N])
 C.pin("randomize() failures", fails, 0)
 res = tests(d)
@@ -134,6 +137,8 @@ C.holds("only solve...before rejected at Bonferroni",
 C.pin("solve before: s = 1 draws", sb1, 0)
 C.pin("implication: s = 1 draws", im1, 10)
 C.pin("tests below 0.05", len(small), 1)
+C.holds("every p-value but the ordering's above 0.3",
+        min(t[3] for t in others) > 0.3)
 C.holds("s = 1 without ordering within the binomial 99.9% range",
         S.binom_cdf(im1, N, 1 / 257) > 0.0005
         and 1 - S.binom_cdf(im1 - 1, N, 1 / 257) > 0.0005)
@@ -174,8 +179,9 @@ below = sum(1 for p in allp if p < 0.05)
 print("  %d samples of %d draws, %d tests each: %d of %d p-values below"
       "\n  0.05 (%.1f expected)" % (CONTROLS, N, m, below, len(allp),
                                    0.05 * len(allp)))
-print("  below the Bonferroni threshold: %d"
-      % sum(1 for p in allp if p < 0.05 / m))
+bonf = sum(1 for p in allp if p < 0.05 / m)
+print("  below the Bonferroni threshold: %d" % bonf)
+C.pin("control p-values below the Bonferroni threshold", bonf, 1)
 lo, hi = S.cp_interval(below, len(allp))
 C.holds("control rejection rate consistent with 0.05 (CP interval)",
         lo <= 0.05 <= hi)

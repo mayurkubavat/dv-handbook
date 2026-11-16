@@ -39,6 +39,15 @@ def simulate(p, trials):
     return out
 
 
+# The simulated figures the chapter quotes; the run is deterministic.
+SIM = {"equal, k=8": ("22.0", "1.45", 53),
+       "equal, k=64": ("305.4", "1.44", 574),
+       "equal, k=256": ("1568.6", "0.08", 2666),
+       "kind 0/1/2": ("10.8", "-0.86", 45),
+       "v dist := {1,1,2}": ("2140.0", "-0.20", 3770),
+       "v dist :/ {1,1,2}": ("2031.9", "0.34", 3532)}
+
+
 def row(name, p, trials):
     """Print one case; return (E[T] formula, simulated mean, its se,
     n99 by Poisson, simulated q99, union sum, union split)."""
@@ -50,13 +59,16 @@ def row(name, p, trials):
     n99 = S.first_n(S.coupon_cdf_poisson, p, 0.01)
     q99 = S.quantile(sims, 0.99)
     us, usp = S.union_sum_draws(p, 0.01), S.union_split_draws(p, 0.01)
-    print("%-20s k=%3d  E[T] %7.1f  sim %7.1f (se %4.1f, %d trials)"
-          % (name, len(p), e, mean, se, trials))
+    z = (mean - e) / se
+    print("%-20s k=%3d  E[T] %7.1f  sim %7.1f (se %5.2f, z %+5.2f)"
+          % (name, len(p), e, mean, se, z))
     print("%-20s equal-p k H_k %7.1f;  99%%: Poisson %d, sim q99 %d,"
           % ("", S.coupon_expect_equal(len(p)), n99, q99))
-    print("%-20s union sum %d, union split %d" % ("", us, usp))
-    C.holds("%s: formula within 4 se of simulation" % name,
-            abs(e - mean) <= 4 * se)
+    print("%-20s union sum %d, union split %d; %d trials"
+          % ("", us, usp, trials))
+    C.holds("%s: formula within 2 se of simulation" % name, abs(z) <= 2)
+    C.pin("%s: simulated mean, z and q99" % name,
+          ("%.1f" % mean, "%.2f" % z, q99), SIM[name])
     return e, mean, se, n99, q99, us, usp
 
 

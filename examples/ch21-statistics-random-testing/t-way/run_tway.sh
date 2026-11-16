@@ -20,7 +20,8 @@ verilator --binary --timing --timescale 1ns/1ps -Wall -Wno-DECLFILENAME \
     -Mdir build $SRC >/dev/null
 for s in $(seq 1 $SEEDS); do
   ./build/Vtb_v2 +test=random +n=$ROUNDS +verilator+seed+$s \
-      +verilator+coverage+file+build/r_$s.dat | grep -q '^result: PASS'
+      +verilator+coverage+file+build/r_$s.dat | grep '^result: PASS' \
+      >/dev/null
 done
 python3 -I -B tway.py "$(verilator --version | cut -d' ' -f1-2)" \
     $SEEDS $ROUNDS

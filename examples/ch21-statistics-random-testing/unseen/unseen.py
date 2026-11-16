@@ -49,6 +49,9 @@ for target in (50, 200, 800, 3200):
     print("%6d %5d %7.1f %9.4f %9.4f" % (
         n, sum(1 for x in counts if x), S.chao1(counts, n),
         S.good_turing(f1, n), sum(q for q, x in zip(p, counts) if x == 0)))
+    if n == 800:
+        CH800 = S.chao1(counts, n)
+ZMEAN = []
 for t in (200, 1600):
     gt = tm = ch = 0.0
     for _ in range(ZIPF_REPS):
@@ -61,6 +64,7 @@ for t in (200, 1600):
     print("  mean of %d runs of %d draws: Good-Turing %.4f, true missing"
           " mass %.4f;\n  Chao1 %.1f against a truth of %d"
           % (ZIPF_REPS, t, gt, tm, ch, TRUE))
+    ZMEAN.append(("%.4f" % gt, "%.4f" % tm, "%.1f" % ch))
     C.near("Good-Turing unbiased at n=%d" % t, gt, tm, 0.01)
     C.holds("Chao1 below the truth on average at n=%d" % t, ch < TRUE)
 
@@ -130,11 +134,12 @@ e2, q1, q2 = S.chao2(inc, len(r30))
 seen30 = sum(1 for x in inc if x)
 reach15 = F.p_reach(15, 0.5, 0.5, 30)
 print("\nall %d seeds of 30 cycles: %d bins seen, Q1 %d, Q2 %d, Chao2 "
-      "%.1f; Good-Turing\nP(next seed adds a bin) = %.4f" % (
-          len(r30), seen30, q1, q2, e2, S.good_turing(q1, len(r30))))
+      "%.1f; Good-Turing\nQ1/T, new bins expected in the next seed: %.4f"
+      % (len(r30), seen30, q1, q2, e2, S.good_turing(q1, len(r30))))
 print("the chain's chance that a 30-cycle seed reaches 15 entries, where"
-      " the 6\nunseen reachable bins live: %.2g; and %d reachable bins are"
-      " missing" % (reach15, 28 - seen30))
+      " the 6\nunseen reachable bins live: %.2g, so %.3f of the %d seeds"
+      " are expected\nthere; and %d reachable bins are missing"
+      % (reach15, reach15 * len(r30), len(r30), 28 - seen30))
 with open(HERE / "data.tsv", "w") as f:
     f.write("# fifo_cg: bins seen and Chao2 (median, 10% and 90% points\n"
             "# over resamples) against seeds, two generators; reachable"
@@ -162,6 +167,15 @@ C.holds("Chao1 over cycles adds under one bin at 4 even seeds",
 C.holds("Chao2 median at 4 even seeds is at least the seen count",
         e4[2] >= e4[1])
 C.holds("the chain's reach probability is below 0.01", reach15 < 0.01)
+C.near("seeds expected to reach 15 entries", reach15 * len(r30), 0.044,
+       0.0005)
+# The figures the chapter quotes from sections 1 and 2.
+C.pin("Chao2 band at 4 even seeds", ("%.1f" % e4[3], "%.1f" % e4[4]),
+      ("22.0", "39.2"))
+C.pin("seen at 4 even seeds", "%.1f" % e4[1], "25.7")
+C.pin("synthetic means", ZMEAN, [("0.2287", "0.2319", "154.5"),
+                                 ("0.0211", "0.0218", "198.8")])
+C.pin("synthetic single run, Chao1 at 800 draws", "%.1f" % CH800, "213.3")
 C.report()
 print("verdict: 250 seeds of 30 cycles saw %d of 28 reachable bins; "
-      "Good-Turing %.3f" % (seen30, S.good_turing(q1, len(r30))))
+      "Q1/T %.3f" % (seen30, S.good_turing(q1, len(r30))))

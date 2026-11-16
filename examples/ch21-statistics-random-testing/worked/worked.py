@@ -68,8 +68,11 @@ print("the bins that set it, by their share of the bound at n:")
 tot = sum(m for m, _ in miss)
 for m, b in miss[:4]:
     print("  %-26s %.4f  (%.0f%%)" % (b, m, 100 * m / tot))
+top4 = sum(m for m, _ in miss[:4])
+print("  the four together          %.4f  (%.0f%%)" % (top4, 100 * top4 / tot))
 print("bound at n: %.4f" % tot)
 C.pin("union bound from the pilot", n, 32)
+C.pin("share of the four op_x_full cells", round(100 * top4 / tot), 95)
 
 print("\n== 3. fresh run: seeds 6001..%d, merged ==" % (6000 + n))
 merged = dat.read(B / "merged.dat")
@@ -89,9 +92,9 @@ fnames, frow = dat.table([B / ("fresh_%d.dat" % s)
 fi = cg(fnames)
 inc = [sum(1 for r in frow if r[i]) for i in fi]
 e2, q1, q2 = S.chao2(inc, n)
-print("bins seen %d; Q1 %d, Q2 %d; Chao2 %.1f; Good-Turing chance the "
-      "next seed adds\na bin: %.3f" % (sum(1 for x in inc if x), q1, q2,
-                                      e2, S.good_turing(q1, n)))
+print("bins seen %d; Q1 %d, Q2 %d; Chao2 %.1f; Good-Turing Q1/T, new bins"
+      "\nexpected in the next seed: %.3f" % (sum(1 for x in inc if x), q1,
+                                           q2, e2, S.good_turing(q1, n)))
 C.holds("Chao2 indicates no unseen reachable bin", e2 <= reach + 1e-9)
 
 print("\n== 5. the driver's stimulus as a law: op_cp against 1/4 each ==")
@@ -111,26 +114,28 @@ print("the temporal-properties chapter's tb_fifo_sva.sv, 400 cycles (push"
 
 
 def passes(tag):
+    """[(passed, FullBackward_A fired)] per seed, from run_worked.sh."""
     lines = (B / ("%s.pass" % tag)).read_text().split("\n")
-    return [int(x.split()[1]) for x in lines if x]
+    return [(int(x.split()[1]), int(x.split()[2]) > 0) for x in lines if x]
 
 
 def mix(c):
     return (0.8, 0.3) if c < 200 else (0.3, 0.8)
 
 
-fx, og = passes("fixed"), passes("orig")
+fxa, oga = passes("fixed"), passes("orig")
+fx, og = [p for p, _ in fxa], [p for p, _ in oga]
 nfx, cfx = len(fx), sum(fx)
 ub = S.cp_upper(nfx - cfx, nfx, 0.05)
 print("repaired FIFO: %d of %d seeds clean; 95%% upper bound %.4f (3/n"
       " %.4f)" % (cfx, nfx, ub, 3 / nfx))
 chain = F.p_reach(15, lambda c: mix(c)[0], lambda c: mix(c)[1], 400)
-fail = len(og) - sum(og)
+fail = sum(1 for p, a in oga if a and not p)
 lo, hi = S.cp_interval(fail, len(og))
-print("original FIFO, same seeds: %d of %d fail; 95%% CP [%.4f, %.4f];"
-      % (fail, len(og), lo, hi))
-print("  the chain's chance of reaching 15 entries in 400 cycles of this"
-      " mix: %.6f" % chain)
+print("original FIFO, same seeds: %d of %d fail in FullBackward_A; 95%% CP"
+      % (fail, len(og)))
+print("  [%.4f, %.4f]; the chain's chance of reaching 15 entries in 400"
+      " cycles\n  of this mix: %.6f" % (lo, hi, chain))
 short30 = F.p_trigger(0.5, 0.5, 30)
 print("release note: after %d clean seeds of this test, the per-seed "
       "failure\nprobability under this generator is below %.4f at 95%%."
@@ -141,6 +146,10 @@ print("  qualifier: a 30-cycle even generator gives 250 clean seeds with"
 C.pin("repaired clean seeds", cfx, 1000)
 C.pin("op_cp counts", ops, [1603, 1612, 1622, 1563])
 C.holds("chain inside the original's interval", lo <= chain <= hi)
+C.holds("every original seed that does not pass fails in FullBackward_A",
+        fail == len(og) - sum(og))
+C.holds("FullBackward_A never fires on the repaired FIFO",
+        not any(a for _, a in fxa))
 C.report()
 print("verdict: %d seeds closed fifo_cg; %d of %d clean on the repaired"
       " FIFO" % (n, cfx, nfx))

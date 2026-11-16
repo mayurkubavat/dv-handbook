@@ -36,7 +36,7 @@ laws = {
 }
 for name, p in laws.items():
     h = S.entropy(p)
-    print("  %-18s H %6.3f of %6.3f; 2^H %6.1f; KL to uniform %.4f"
+    print("  %-18s H %6.3f of %6.3f; 2^H %6.1f; KL to uniform %.4f bits"
           % (name, h, math.log2(len(p)), 2 ** h,
              S.kl(p, [1 / len(p)] * len(p))))
 C.near(":= effective values", 2 ** S.entropy(laws["v dist := {1,1,2}"]),
@@ -91,6 +91,8 @@ for m in (100, 300, 1000, 3000):
     if m == 100:
         C.holds("plug-in at 100 draws more than one bit low",
                 true_h - pl > 1.0)
+        C.pin("plug-in and true entropy at 100 draws",
+              ("%.2f" % pl, "%.2f" % true_h), ("6.25", "7.93"))
 
 print("\n== 4. eight generators from the coverage chapter's two knobs ==")
 print("%s; %d seeds each; fifo_cg's 29 bins" % (sys.argv[1], SEEDS))
@@ -166,7 +168,7 @@ for _ in range(PERMS):
     base.append(max(mi_of(None, i, lab) for i in range(len(names))))
 b95 = S.quantile(base, 0.95)
 print("  %-24s %9s %7s %7s" % ("bin", "generator", "bias", "n"))
-for v, vb, vn, nm in res[:6] + [x for x in res[6:] if x[0] < 1e-12][:3]:
+for v, vb, vn, nm in res[:7] + [x for x in res[7:] if x[0] < 1e-12][:3]:
     print("  %-24s %9.3f %7.3f %7.3f" % (nm, v, vb, vn))
 print("  permutation baseline, 95th percentile of the largest over the 29"
       " bins:\n  %.4f" % b95)
@@ -174,7 +176,16 @@ trig = [t for g in GENS for t in data[g][1]]
 it = S.mutual_info(list(zip([g for g in GENS for _ in range(SEEDS)],
                             trig)))
 print("  I(generator; trigger) = %.3f bits" % it)
-C.holds("the top bin's MI is ten times the baseline", res[0][0] > 10 * b95)
+C.pin("permutation baseline", "%.4f" % b95, "0.0075")
+fullc = [v for v, _, _, nm in res
+         if nm in ("full_cp.full", "occupancy.almost")
+         or (nm.startswith("op_x_full.") and nm.endswith("_x_full"))]
+C.holds("the six full-FIFO cells carry 0.49 to 0.75 bits, at least 65"
+        " times the baseline",
+        len(fullc) == 6 and all(0.49 <= v <= 0.75 and v >= 65 * b95
+                                for v in fullc))
+C.pin("push_x_full: bits from +bias and from +n",
+      ("%.3f" % res[0][1], "%.3f" % res[0][2]), ("0.650", "0.027"))
 C.near("I(generator; trigger)", it, 0.707, 0.0005)
 C.pin("generators that always trigger", top_tr,
       [("push", n) for n in (50, 100, 200, 400)])

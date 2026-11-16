@@ -180,7 +180,7 @@ DIMACS CNF
 : The text format SAT solvers read: a header `p cnf` with the numbers of variables and clauses, then one clause to a line as signed integers ended by 0. See @sec-ch17-tseitin.
 
 Discovery probability
-: The chance that the next seed hits a bin not yet seen. The Good-Turing estimate gives it from the bins seen in exactly one seed so far. See @sec-ch21-unseen.
+: The chance that the next seed hits a bin not yet seen. The Good-Turing estimate, from the bins seen in exactly one seed so far, gives an upper estimate of it. See @sec-ch21-unseen.
 
 DPLL
 : Search for a satisfying assignment by unit propagation, a decision when propagation stops, and backtracking on a conflict. See @sec-ch17-dpll.
@@ -234,7 +234,7 @@ Ghost state
 : Logic added for verification that reads the design and is never read by it, such as a counter or a shadow register. It does not change what the design can do. See @sec-ch19-ghost.
 
 Good-Turing estimate
-: The estimate, from the number of bins seen in exactly one of n seeds divided by n, of the chance that the next seed shows a new bin. See @sec-ch21-unseen.
+: The number of bins seen in exactly one of n seeds, divided by n: an estimate of the number of new bins the next seed will show, and so an upper estimate of the chance that it shows any. With one class per draw, it estimates that chance directly. See @sec-ch21-unseen.
 
 Goodness-of-fit test
 : A test of whether observed draws are consistent with a stated distribution, such as Pearson's chi-square on a histogram or Kolmogorov-Smirnov on a continuous range. A pass is the absence of evidence against the law at the test's power, not proof of it. See @sec-ch21-uniform.

@@ -33,10 +33,13 @@ for rtl in fixed orig; do
       $C09/fifo-checker/fifo_sva.sv $C09/fifo-checker/fifo_bind.sv \
       $C09/fifo-checker/tb_fifo_sva.sv >/dev/null
   : > build/$rtl.pass
+  # per seed: did it pass, and did FullBackward_A fire (the original's
+  # early full)? Only that assertion counts as the bug's failure.
   for s in $(seq 1 1000); do
-    p=$(./build/$rtl/Vtb_fifo_sva +verilator+seed+$s 2>&1 \
-        | grep -c '^PASS: 400 cycles' || true)
-    echo "$s $p" >> build/$rtl.pass
+    out=$(./build/$rtl/Vtb_fifo_sva +verilator+seed+$s 2>&1) || true
+    p=$(grep -c '^PASS: 400 cycles' <<< "$out" || true)
+    a=$(grep -c 'Assertion failed in .*\.FullBackward_A:' <<< "$out" || true)
+    echo "$s $p $a" >> build/$rtl.pass
   done
 done
 python3 -I -B worked.py report "$(verilator --version | cut -d' ' -f1-2)" \
