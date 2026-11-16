@@ -364,13 +364,20 @@ def summary(rows, vnext):
               f" no-build rows: {n} build, {w} of them wrong")
 
 
+def escape(text):
+    """A bare dollar would open inline math in the book's Markdown, so
+    it is escaped, but only outside code spans: inside one the
+    backslash would be printed. A pipe is left alone: the table is a
+    grid table (see grid below)."""
+    parts = text.split("`")
+    for i in range(0, len(parts), 2):       # the parts outside spans
+        parts[i] = parts[i].replace("$", "\\$")
+    return "`".join(parts)
+
+
 def cell(c):
     verdict, why = c
-    # A bare dollar in a note would open inline math in the book's
-    # Markdown, so it is escaped. A pipe is left alone: the table is a
-    # grid table (see grid below).
-    why = why.replace("$", "\\$")
-    return verdict + (" — " + why if why else "")
+    return escape(verdict + (" — " + why if why else ""))
 
 
 def grid(header, rows):
@@ -401,7 +408,8 @@ def table(rows, vers, vnext, what, label):
     cols = [k for k, _ in columns(vnext)]
     head = [names[k] for k in cols]
     md = grid(["Construct"] + head,
-              [[lab] + [cell(c[k]) for k in cols] for lab, _, c in rows])
+              [[escape(lab)] + [cell(c[k]) for k in cols]
+               for lab, _, c in rows])
     counts = "; ".join(f"{h}: {count(rows, k)}"
                        for h, k in zip(head, cols))
     tried, n, w = flag_counts(rows)

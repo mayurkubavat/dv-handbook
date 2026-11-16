@@ -15,6 +15,7 @@ import re
 import shutil
 import subprocess
 import sys
+import textwrap
 
 PIN = "5114330"         # the commit of InFormal the book's text is pinned to
 MK = pathlib.Path(__file__).resolve().parent.parent.parent / "mk"
@@ -51,9 +52,21 @@ def cell(text):
 BLOCK = re.compile(r"([-+*] |[0-9]+[.)] |#|>|: )")
 
 
-def write(path, header, rows, caption, align=None, grid=False):
+def wrap(text, width):
+    """The lines of a cell wrapped at spaces to width characters; a
+    word longer than width keeps its own line. A code span broken at a
+    space is joined again with a space, which is what it held."""
+    return textwrap.wrap(text, width, break_long_words=False,
+                         break_on_hyphens=False) or [""]
+
+
+def write(path, header, rows, caption, align=None, grid=False,
+          widths=None):
     """Write a pipe table, or with grid=True a grid table, with a
-    caption and its label below it. Each cell is one line."""
+    caption and its label below it. Each cell is one line, except that
+    a grid table given widths wraps its cells to them: the dashes of a
+    grid table set the share of the page each column gets, and without
+    widths one long cell would squeeze the other columns."""
     align = align or ["---"] * len(header)
     every = [header] + rows
     if not grid:
@@ -65,7 +78,13 @@ def write(path, header, rows, caption, align=None, grid=False):
     else:
         for c in (c for r in every for c in r):
             assert "\n" not in c and not BLOCK.match(c), repr(c)
-        width = [max(len(r[i]) for r in every) for i in range(len(header))]
+        if widths:
+            width = [max([w] + [len(x) for r in every for x in
+                                wrap(r[i], w)])
+                     for i, w in enumerate(widths)]
+        else:
+            width = [max(len(r[i]) for r in every)
+                     for i in range(len(header))]
         rule = "+" + "+".join("-" * (w + 2) for w in width) + "+"
         head = "+" + "+".join(
             (":" if a.startswith(":") else "=") + "=" * w
@@ -73,11 +92,15 @@ def write(path, header, rows, caption, align=None, grid=False):
             for a, w in zip(align, width)) + "+"
 
         def line(r):
-            return "| " + " | ".join(
-                c.ljust(w) for c, w in zip(r, width)) + " |"
-        lines = [rule, line(header), head]
+            cells = [wrap(c, w) if widths else [c]
+                     for c, w in zip(r, width)]
+            return ["| " + " | ".join(
+                (c[k] if k < len(c) else "").ljust(w)
+                for c, w in zip(cells, width)) + " |"
+                for k in range(max(map(len, cells)))]
+        lines = [rule] + line(header) + [head]
         for r in rows:
-            lines += [line(r), rule]
+            lines += line(r) + [rule]
     pathlib.Path(path).write_text("\n".join(lines) + f"\n\n: {caption}\n")
 
 
