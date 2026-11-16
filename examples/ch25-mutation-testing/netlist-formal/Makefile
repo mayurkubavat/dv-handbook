@@ -5,7 +5,7 @@
 # reruns two equivalents and the two deepest differences by rIC3, and
 # a_integrity alone on each of the fourteen misses with more time.
 # Selects ric3-ic3, so it is skipped where rIC3 is not installed. About
-# a minute and a half.
+# two minutes.
 EXAMPLE_LANG  := python
 REQUIRES      := ric3
 TOP           := nformal.py

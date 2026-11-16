@@ -3,7 +3,7 @@ uniform sample: which sampled mutations are equivalent (the miter),
 and which the property set kills.
 
     python3 nformal.py              recompute and spot-check (about
-                                    a minute and a half)
+                                    two minutes)
     MEASURE=1 python3 nformal.py    first the whole sample of 100,
                                     into measure.out (several minutes
                                     on four cores)
@@ -27,7 +27,7 @@ two deepest differences found again at the depth recorded. That depth
 (31) is the length of rIC3's trace, past what bounded search reached
 in its 10 s; an IC3 trace is not always the shortest, so it bounds the
 shortest difference from above. Last, it runs a_integrity alone on
-each miss with more time (bounded search 30 s, then rIC3 120 s), to
+each miss with more time (bounded search 60 s, then rIC3 120 s), to
 show that each miss is a bound of the 3 s search and not a gap in the
 property set. Selects ric3-ic3, so it needs rIC3.
 """
@@ -143,13 +143,13 @@ def misses(rows, pop, cmds, C):
 
 def integrity(arg):
     """a_integrity alone on one mutation, with more time than the
-    measured run's 3 s: bounded search for 30 s, then rIC3 for 120 s if
+    measured run's 3 s: bounded search for 60 s, then rIC3 for 120 s if
     that found nothing. Returns (engine, status, depth)."""
     k, cmd = arg
     d = B / f"ai{k}"
     d.mkdir(parents=True, exist_ok=True)
     net = yosysmut.single_netlist(cmd, d / "fifo_m.v")
-    for engine, limit in (("informal-bmc", "30s"), ("ric3-ic3", "120s")):
+    for engine, limit in (("informal-bmc", "60s"), ("ric3-ic3", "120s")):
         tcl = (miter.head() + miter.setup_tcl([net, miter.FWRAP])
                + f"one {engine} {limit} -property [full a_integrity]\n"
                + miter.ROWS + "finish\n")
@@ -237,7 +237,7 @@ def main():
                                      [(k, cmds[k]) for k in order])))
     print(f"rerun now: a_integrity alone on the {len(miss)} misses, by "
           "bounded")
-    print("  search for 30 s, then by rIC3 for 120 s where that finds "
+    print("  search for 60 s, then by rIC3 for 120 s where that finds "
           "nothing")
     bmc = sorted(dep for e, st, dep in ai.values()
                  if e == "informal-bmc" and st == "cex")

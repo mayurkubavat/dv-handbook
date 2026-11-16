@@ -498,3 +498,22 @@ outputs: `fifth-tb/run.out` (two new lines, checks 10 of 10) and
 file and on the intended lines, every spliced line at 80 columns or
 less. `scripts/check-structure.sh` and `scripts/check-citations.sh`
 pass.
+
+## 10. Round 3
+
+Text (`docs/reviews/ch25-gate2e-2026-11-16.md`) and code (`ch25-gate2f`)
+both pass with no blocking finding. Non-blocking notes taken:
+
+- E-N1: the sentence on the bin for sixteen entries no longer says it
+  fills on the repaired FIFO, which no committed output prints; it says
+  the bin can be hit there.
+- E-N2: the netlist sampling paragraph now names the `a_integrity`
+  rerun of the fourteen misses.
+- E-N3: "the five survivors at the ports" is qualified to the
+  randomized run.
+- F-N1: the `a_integrity` rerun's bounded search limit is raised from
+  30 s to 60 s, doubling its margin over the slowest job (8.5 s here);
+  `run.out` line 41 changes only in that number.
+- F-N2: the depth-15/16 split is stated as this machine's result, since
+  the twelve shallow misses take 3.1 to 8.5 s against the measured
+  run's 3 s.

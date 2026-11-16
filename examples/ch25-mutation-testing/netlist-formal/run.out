@@ -38,7 +38,7 @@ rerun now by rIC3: two equivalents, and the two deepest
   mutation 8394 (const1 42 procmux): ric3-ic3: differs at depth 31
   mutation 7759 (const1 43 procmux): ric3-ic3: differs at depth 31
 rerun now: a_integrity alone on the 14 misses, by bounded
-  search for 30 s, then by rIC3 for 120 s where that finds nothing
+  search for 60 s, then by rIC3 for 120 s where that finds nothing
   bounded search refutes 12, each at its miter depth: 16 (7), 17 (4), 18 (1)
   rIC3 refutes the other 2: 7759 at depth 29, 8394 at depth 31
 the measured run's settings and cost (committed measure.out):
