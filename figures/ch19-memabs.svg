@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 520" width="1000" height="520" role="img" aria-label="Left the RAM whole, right the storage boxed with one symbolic slot, its shadow and the contract, below a row of verdict cells">
+<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#7FA3C0"/></marker><marker id="ahj" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#5B3E8E"/></marker><marker id="ahd" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#1B4F72"/></marker><marker id="ahc" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#B7791F"/></marker><marker id="ahg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#1C1C1C"/></marker><pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="6" stroke="#CBD2D9" stroke-width="2"/></pattern></defs>
+<rect width="1000" height="520" fill="white"/>
+<text x="30" y="40.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="21" font-weight="700" text-anchor="start" fill="#1B4F72">One slot in place of 256 words</text>
+<text x="30" y="64.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="400" text-anchor="start" fill="#1C1C1C">The RAM with forwarding, whole and abstracted, and the verdicts of the mem-abs example.</text>
+<text x="40.0" y="106.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="700" text-anchor="start" fill="#1B4F72">the design</text>
+<rect x="40.0" y="120.0" width="300.0" height="200.0" rx="8" fill="#F4F6F8" stroke="#1B4F72" stroke-width="2"/>
+<text x="52.0" y="142.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" text-anchor="start" fill="#1B4F72">fwd_ram</text>
+<rect x="70.0" y="160.0" width="26.0" height="90.0" rx="0" fill="white" stroke="#123A56" stroke-width="1.2"/>
+<rect x="100.0" y="160.0" width="26.0" height="90.0" rx="0" fill="white" stroke="#123A56" stroke-width="1.2"/>
+<rect x="130.0" y="160.0" width="26.0" height="90.0" rx="0" fill="white" stroke="#123A56" stroke-width="1.2"/>
+<rect x="160.0" y="160.0" width="26.0" height="90.0" rx="0" fill="white" stroke="#123A56" stroke-width="1.2"/>
+<rect x="190.0" y="160.0" width="26.0" height="90.0" rx="0" fill="white" stroke="#123A56" stroke-width="1.2"/>
+<rect x="220.0" y="160.0" width="26.0" height="90.0" rx="0" fill="#DCE9F3" stroke="#123A56" stroke-width="1.2"/>
+<rect x="250.0" y="160.0" width="26.0" height="90.0" rx="0" fill="white" stroke="#123A56" stroke-width="1.2"/>
+<rect x="280.0" y="160.0" width="26.0" height="90.0" rx="0" fill="white" stroke="#123A56" stroke-width="1.2"/>
+<text x="190.0" y="275.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="500" text-anchor="middle" fill="#1C1C1C">m[0..255]: 2048 bits</text>
+<text x="190.0" y="300.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12.5" font-weight="400" text-anchor="middle" fill="#7FA3C0">the property reads one word</text>
+<path d="M330.0,205.0 L400.0,205.0" fill="none" stroke="#1C1C1C" stroke-width="1.6" marker-end="url(#ahg)"/>
+<text x="420.0" y="106.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="700" text-anchor="start" fill="#1B4F72">the abstraction</text>
+<rect x="420.0" y="120.0" width="540.0" height="200.0" rx="8" fill="#F4F6F8" stroke="#1B4F72" stroke-width="2"/>
+<text x="432.0" y="142.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" text-anchor="start" fill="#1B4F72">fwd_ram, storage boxed</text>
+<rect x="440.0" y="150.0" width="180.0" height="120.0" rx="6" fill="url(#hatch)" stroke="#7FA3C0" stroke-width="2"/>
+<text x="530.0" y="200.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="14" font-weight="700" text-anchor="middle" fill="#1C1C1C">mem_store</text>
+<text x="530.0" y="220.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12.5" font-weight="400" text-anchor="middle" fill="#7FA3C0">outputs free</text>
+<rect x="680.0" y="150.0" width="110.0" height="40.0" rx="3" fill="white" stroke="#123A56" stroke-width="2"/>
+<text x="735.0" y="168.2" font-family="'JetBrains Mono', Menlo, monospace" font-size="15" font-weight="600" text-anchor="middle" fill="#1C1C1C">sa</text>
+<text x="735.0" y="184.2" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="400" text-anchor="middle" fill="#7FA3C0">free, $stable</text>
+<path d="M688,190 L694,182 L700,190" fill="none" stroke="#123A56" stroke-width="1.5"/>
+<rect x="680.0" y="210.0" width="110.0" height="40.0" rx="3" fill="white" stroke="#123A56" stroke-width="2"/>
+<text x="735.0" y="228.2" font-family="'JetBrains Mono', Menlo, monospace" font-size="15" font-weight="600" text-anchor="middle" fill="#1C1C1C">sv, sv_ok</text>
+<text x="735.0" y="244.2" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="400" text-anchor="middle" fill="#7FA3C0">shadow</text>
+<path d="M688,250 L694,242 L700,250" fill="none" stroke="#123A56" stroke-width="1.5"/>
+<text x="820.0" y="175.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="500" text-anchor="start" fill="#1C1C1C">the slot</text>
+<text x="820.0" y="235.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="500" text-anchor="start" fill="#1C1C1C">last word written</text>
+<text x="820.0" y="252.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="500" text-anchor="start" fill="#1C1C1C">to sa, and whether</text>
+<path d="M680,262 C640,300 600,300 600,272" fill="none" stroke="#5B3E8E" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#ahj)"/>
+<text x="640.0" y="308.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="600" text-anchor="middle" fill="#5B3E8E">contract: read of sa returns sv</text>
+<text x="40.0" y="358.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13.5" font-weight="600" text-anchor="start" fill="#1C1C1C">mem-abs, 256 words unless noted:</text>
+<rect x="40.0" y="370.0" width="112.0" height="56.0" rx="5" fill="url(#hatch)" stroke="#CBD2D9" stroke-width="1.5"/>
+<text x="96.0" y="402.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12.5" font-weight="600" text-anchor="middle" fill="#1C1C1C">no verdict</text>
+<text x="96.0" y="444.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="11.5" font-weight="400" text-anchor="middle" fill="#7FA3C0">whole design</text>
+<rect x="156.0" y="370.0" width="112.0" height="56.0" rx="5" fill="#E6F2E7" stroke="#2E7D32" stroke-width="1.5"/>
+<text x="212.0" y="402.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12.5" font-weight="600" text-anchor="middle" fill="#1C1C1C">proven</text>
+<text x="212.0" y="444.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="11.5" font-weight="400" text-anchor="middle" fill="#7FA3C0">boxed</text>
+<text x="212.0" y="460.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="11.5" font-weight="400" text-anchor="middle" fill="#7FA3C0">contract</text>
+<rect x="272.0" y="370.0" width="112.0" height="56.0" rx="5" fill="#FBF1DC" stroke="#B7791F" stroke-width="1.5"/>
+<text x="328.0" y="402.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12.5" font-weight="600" text-anchor="middle" fill="#1C1C1C">cex, depth 3</text>
+<text x="328.0" y="444.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="11.5" font-weight="400" text-anchor="middle" fill="#7FA3C0">boxed</text>
+<text x="328.0" y="460.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="11.5" font-weight="400" text-anchor="middle" fill="#7FA3C0">no contract</text>
+<rect x="388.0" y="370.0" width="112.0" height="56.0" rx="5" fill="url(#hatch)" stroke="#CBD2D9" stroke-width="1.5"/>
+<text x="444.0" y="402.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12.5" font-weight="600" text-anchor="middle" fill="#1C1C1C">no verdict</text>
+<text x="444.0" y="444.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="11.5" font-weight="400" text-anchor="middle" fill="#7FA3C0">contract alone</text>
+<rect x="504.0" y="370.0" width="112.0" height="56.0" rx="5" fill="#E6F2E7" stroke="#2E7D32" stroke-width="1.5"/>
+<text x="560.0" y="402.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12.5" font-weight="600" text-anchor="middle" fill="#1C1C1C">proven</text>
+<text x="560.0" y="444.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="11.5" font-weight="400" text-anchor="middle" fill="#7FA3C0">helper</text>
+<rect x="620.0" y="370.0" width="112.0" height="56.0" rx="5" fill="#E6F2E7" stroke="#2E7D32" stroke-width="1.5"/>
+<text x="676.0" y="402.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12.5" font-weight="600" text-anchor="middle" fill="#1C1C1C">proven</text>
+<text x="676.0" y="444.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="11.5" font-weight="400" text-anchor="middle" fill="#7FA3C0">contract + helper</text>
+<rect x="736.0" y="370.0" width="112.0" height="56.0" rx="5" fill="#FBF1DC" stroke="#B7791F" stroke-width="1.5"/>
+<text x="792.0" y="402.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12.5" font-weight="600" text-anchor="middle" fill="#1C1C1C">cex, depth 3</text>
+<text x="792.0" y="444.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="11.5" font-weight="400" text-anchor="middle" fill="#7FA3C0">bug</text>
+<text x="792.0" y="460.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="11.5" font-weight="400" text-anchor="middle" fill="#7FA3C0">boxed</text>
+<rect x="852.0" y="370.0" width="112.0" height="56.0" rx="5" fill="#FBF1DC" stroke="#B7791F" stroke-width="1.5"/>
+<text x="908.0" y="402.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12.5" font-weight="600" text-anchor="middle" fill="#1C1C1C">cex, depth 3</text>
+<text x="908.0" y="444.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="11.5" font-weight="400" text-anchor="middle" fill="#7FA3C0">bug</text>
+<text x="908.0" y="460.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="11.5" font-weight="400" text-anchor="middle" fill="#7FA3C0">16 words whole</text>
+</svg>

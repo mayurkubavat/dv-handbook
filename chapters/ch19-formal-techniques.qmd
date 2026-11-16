@@ -1,0 +1,995 @@
+# Formal Techniques: Abstraction, Symbolic Reasoning and Decomposition {#sec-ch19}
+
+> Every technique here makes the problem smaller; the question is which answers survive the shrinking.
+
+::: {.callout-note title="Learning objectives"}
+After this chapter you will be able to:
+
+1. Say, for any change to a verification problem, whether it keeps proofs, keeps counterexamples or keeps both, and read a verdict accordingly.
+2. Remove logic from a proof with a black box, a cut point or a timer abstraction, and turn a spurious counterexample into the contract that removes it.
+3. Replace a memory by one symbolic slot, and start a proof from an invariant instead of from reset, discharging the side condition each one leaves.
+4. Write a symbolic constant, a free oracle and a tracked-word check in a tool without `$anyconst`, and say when data independence justifies them.
+5. Argue symmetry soundly, including the reset state, or show why a design is not symmetric.
+6. Write ghost state, a reference model, history variables and a protocol checker used as assertion on one side and assumption on the other, and say why a prophecy cannot be used the same way in a safety check.
+7. Decompose a proof by assume-guarantee, case split, lemmas and hierarchy, and list the side conditions that keep each sound, including the circularity that is sound for safety and not for liveness.
+8. Check that a proof's assumptions leave the design room to fail, and that its properties can fail at all, with witness covers under the final assumptions and with mutants.
+9. Choose a technique for a row without a verdict from the shape of its counterexample to induction, and record what the resulting proof rests on.
+:::
+
+## The row that stayed green {#sec-ch19-motivation}
+
+The previous chapter ended on a grid (@fig-ch18-scale). Without the helper, the pointer property of the FIFO left the reach of one engine after another as the FIFO grew; with the helper assumed, size stopped mattering to every engine measured. That helper was one line written by someone who knew the design. This chapter is the rest of the toolkit: what to do when no single helper is obvious, when the design is too large for any engine to see whole, and when a `proven` has to be trusted by someone who did not write the proof.
+
+One exhibit sets the stakes. A RAM of 256 words with write-to-read forwarding has one property: a read of an address returns the last word written there. Induction on the whole design gives no verdict in five seconds. Replace the 256-word array by one symbolic slot, put the storage in a black box, and state as an assumption what the storage promises at that slot, and the same engine proves the property:
+
+```{.text include="examples/ch19-formal-techniques/mem-abs/run.out" lines="1-14"}
+```
+
+That is not the end of the story, and the rest of the chapter is about why. The proof in the second block rests on an assumption, `m_store`, which is a claim about the real storage that nobody has yet checked. The abstraction made the problem small by moving part of it somewhere else. Every technique in this chapter does that: it changes the problem so that an engine can finish, and it leaves behind a claim that must be discharged elsewhere, or a verdict that may not mean what it seems to. Keeping track of those claims is the chapter's real subject.
+
+The techniques are arranged as a catalog of thirty-one entries in six families, mapped in @fig-ch19-map. Each full entry has the same six parts: the problem it answers, the idea, how to write it in the book's tool, what it preserves, a runnable example, and its pitfalls. A compact entry has three: the idea, what it preserves, and where the book teaches it in full, either because an earlier chapter owns the idea or because the tool has no feature for it. The entries run on three designs the reader already knows: the book's FIFO of @sec-ch09-example; the handshake with its 200-cycle timer of @sec-ch18-assume; and the DMA of the architecture case study, @sec-ch11. On the small designs each technique is shown working and failing. On the DMA the chapter shows, as honestly as it can, where techniques stop paying.
+
+![The catalog. Each cell is one entry: what the change preserves, the design its example runs on, and whether the example needs the external engine rIC3. The chapter's own classification, drawn from a data file that the figure script checks against the entry headings of this chapter.](../figures/ch19-map.svg){#fig-ch19-map fig-alt="Six columns, one per family: shrinking the problem, symbolic reasoning, modeling code, decomposition, constraining and bug hunting, trusting the result. Each column lists its entries as cells. A colored band on each cell says whether the entry preserves proofs, counterexamples, both, or neither by itself, and a tag gives the design of its example: FIFO, handshake, DMA, other, or none."}
+
+Every example runs on InFormal with the in-house engines `informal-bmc`, `informal-kind` and `informal-ic3`, introduced in @sec-ch18-engines, unless its text says otherwise. Five examples select rIC3, the external engine of that section, and the text says so where each appears: `mem-abs-ric3` and `hier-ric3` set a proof of the whole design beside the in-house proof through an abstraction; `two-word-ric3` shows what rIC3 does without the helpers the in-house proof needed; `history-ric3` holds two proofs of the history entry that the in-house engines did not give; and `seconds-ric3` produces the chapter's one table of seconds. Each declares that it needs rIC3 and is skipped where the program is not installed; every entry's main lesson runs without them. Every script selects one engine for each run with the previous chapter's procedure `one`, starts a new session before each run so that a report holds only the verdicts of the engine named above it, and checks every verdict with `expect`.
+
+## Reading an entry: what a change to the problem preserves {#sec-ch19-preserve}
+
+A property-checking problem has three parts: a design, a set of assumptions about its environment, and a property. Every technique in this chapter changes one of the three. The design can lose a module, gain a free input, start from different states, or be built at a smaller parameter. The assumptions can grow or shrink. The property can be split into several, or rewritten in terms of logic added for the purpose. Before reading any verdict from a changed problem, the engineer has to know which answers carry back to the original, and there are only three possibilities.
+
+::: {.callout-note title="Definition"}
+A changed problem is an **over-approximation** of the original if it allows every behavior of the original and possibly more; it **preserves proofs** of safety properties, because a property that holds on every behavior of the larger set holds on every behavior of the smaller one, and its counterexamples may be **spurious**, traces the original cannot produce. It is an **under-approximation** if it allows only some of the original's behaviors; it **preserves counterexamples**, and its proofs say nothing about the behaviors it left out. A change that alters nothing the property can observe **preserves both**.
+:::
+
+The first rule has a classical form. Clarke, Grumberg and Long showed that when an abstract model can mimic every step of the concrete one, a formula of the universal fragment of temporal logic that holds on the abstract model holds on the concrete one; the converse holds when the abstraction is exact [@clarke1994abstraction]. Universal is the operative word. Every safety property this book writes says that something holds on every trace, and is of that kind. A cover is the opposite: it asks whether *some* trace reaches a state. So the rule turns around for covers. A cover reached on an over-approximation may be unreachable in the design, because the trace that reached it may be one the design cannot produce; a cover that is unreachable on an over-approximation is unreachable in the design.
+
+@fig-ch19-preserve draws the three cases as sets of behaviors.
+
+![Three kinds of change, as sets of behaviors. Left: the changed problem contains every behavior of the design and more, so a proof carries back and a counterexample outside the design is spurious. Middle: the changed problem keeps only some behaviors, so a counterexample carries back and a bug outside the restriction is missed. Right: the change is invisible to the property. Under each panel, the entries of this chapter of that kind.](../figures/ch19-preserve.svg){#fig-ch19-preserve fig-alt="Three panels of nested ovals. In the first, the design's behaviors sit inside a larger oval of abstract behaviors, and a red cross marks a bad trace outside the design but inside the abstraction, labeled spurious. In the second, an oval of restricted behaviors sits inside the design, and a red cross marks a bug inside the design but outside the restriction, labeled missed. In the third, the two ovals coincide. Captions list black box, cut point, timer abstraction, memory abstraction and initial-value abstraction under the first; over-constraint for hunting and bounded proof under the second; symbolic constant, oracle, ghost state and history variable under the third."}
+
+The tool states the first rule itself. Whenever a model has a black box in it, it prints one line before the report, and the line says what the rule says:
+
+```{.text include="examples/ch19-formal-techniques/cut-timer/run.out" lines="11-11"}
+```
+
+The line is spliced here from a real run, and every abstracted run in this chapter prints it or its twin for cut points. It is worth reading every time. A proof under it is a proof of the design. A counterexample under it is a question, and the question is whether the boxed logic could have produced the values the trace uses.
+
+Some changes create a second problem as they solve the first. The memory abstraction above proved the property only under a promise about the storage. Starting a proof from an invariant needs the invariant to hold at reset. Proving a block under its neighbor's guarantee needs the neighbor to keep it.
+
+::: {.callout-note title="Definition"}
+A **side condition** is an obligation that a technique creates and that must be discharged elsewhere for the technique's result to count: a contract assumed of a black box and proved on the real block, an invariant assumed at the start and proved from reset, a case list assumed complete and proved to be so. A result whose side conditions are not all discharged is a conditional result, and the verification plan records it as one.
+:::
+
+Three things accompany every entry in this chapter, and the chapter does not restate them each time. Every assertion has a witness cover, run under the same assumptions as the proof (@sec-ch18-cover), because an over-constrained proof and a sound one print the same word. Some property must catch a planted bug, a mutant of the design, because a property set that cannot fail proves nothing (@sec-ch19-mutation). And every side condition is a line in the proof record of @sec-ch18-example, with the row of a report that discharges it.
+
+::: {.callout-warning title="Pitfall"}
+A cover is existential, so the preservation rule runs backwards for it. Reached on an abstracted model, a cover says nothing about the design. Under a black box the handshake's grant is covered at depth 3, against 202 in the design (@sec-ch19-bbox): the box can expire its timer at once, the real timer cannot. Run the covers that measure the design's time scale on the design, not on an abstraction of it.
+:::
+
+The six parts of a full entry are written as run-in labels. *Problem* names what goes wrong without the technique. *Idea* says what the technique changes. *How to write it* gives the tool's spelling, which is sometimes a command and sometimes a few lines of RTL or Tcl, since the tool has no command for most techniques. *What it preserves* places the change in @fig-ch19-preserve and names its side conditions. *Example* is a runnable directory under `examples/ch19-formal-techniques/`, whose output is spliced from its `run.out`. *Pitfalls* lists what has gone wrong in the book's own runs.
+
+## Shrinking the problem {#sec-ch19-shrink}
+
+The first family removes logic from the problem, or replaces it with something smaller. It opens on the handshake of @sec-ch18-assume, a request, a timer that counts 200 cycles and a grant, where three ways of cutting the same logic can be compared on one design. Then it moves to the FIFO for parameters, memories and the reset state, and closes with a pointer to the automatic form of the whole family.
+
+::: {.callout-note title="Definition"}
+A **black box** is a module instance whose contents are removed from the model: its outputs become free inputs, able to take any value in any cycle, and its inputs are ignored. A **cut point** is one internal signal treated the same way: the logic that drives it is disconnected, and the signal becomes a free input. Both make the model an over-approximation of the design.
+:::
+
+### Black box {#sec-ch19-bbox}
+
+**Problem.** A sub-block that a property does not depend on, or depends on only through a promise, makes the model large. A controller's proof should not have to carry the arithmetic of the datapath beside it, nor a protocol property the 200-cycle timer that only decides *when*.
+
+**Idea.** Remove the sub-block. Its outputs become free inputs, so the model contains every behavior the sub-block could produce and many it could not.
+
+**How to write it.** InFormal takes the module name at elaboration, `elaborate -bbox_m {timer}`, and an instance name with `-bbox_i` [@informal-tool]. The script builds the handshake of the previous chapter, read where it stands, with three properties and a cover, and a separate file binds one assertion into the timer itself:
+
+```{.tcl include="examples/ch19-formal-techniques/cut-timer/cut.tcl" lines="22-36"}
+```
+
+**What it preserves.** Proofs. Freeing the outputs adds behaviors and removes none, so the boxed model is an over-approximation in the sense of @sec-ch19-preserve. A counterexample may be spurious.
+
+**Example.** `cut-timer/`, in-house engines. The first block is the whole design, the second the same with the timer boxed:
+
+```{.text include="examples/ch19-formal-techniques/cut-timer/run.out" lines="1-17"}
+```
+
+Three things changed. The two properties that do not depend on the timer's timing, that `q` holds while busy and that a grant lasts one cycle, are still proven, now on a model without the timer's sixteen-bit counter. The property that the grant does not come in the cycle after busy rises is refuted at depth 3. The design never does that: its timer counts 200 cycles. The boxed timer's `expired` output is free, so it can rise in the first cycle of the wait, and the trace uses exactly that. This is a spurious counterexample, and the note line above the report says that it may be one. The cover tells the same story from the other side: the grant is covered at depth 3, against 202 for the design.
+
+The fourth change is the first row of each block. `Range_A` is the assertion written inside the timer, bound in by `timer_chk.sv`. With the timer boxed it is still listed, with the status `error` and the detail that it is not in the model. It is not silently dropped; it is also not checked. A regression that counts passing rows should count this one as missing.
+
+::: {.callout-warning title="Pitfall"}
+Under a black box, read no counterexample until the box's contract is assumed. Most traces of a freshly boxed model use output values the box cannot produce: a timer that expires at once, a FIFO that is full and empty together, a memory that returns a word nobody wrote. Each such trace is a request for a line of contract, and the contract is then a side condition to prove on the real block (@sec-ch19-memabs, @sec-ch19-hier).
+:::
+
+**Pitfalls.** A boxed module's own assertions stay in the report as errors and are not checked. A name inside the box is accepted by `assert` and refused when the property is run, with an error on that property and every other property of the session left unprocessed:
+
+```{.text include="examples/ch19-formal-techniques/cut-timer/run.out" lines="18-22"}
+```
+
+And covers become shallow, by the Pitfall of @sec-ch19-preserve: a depth measured under a box is not a depth of the design.
+
+### Cut point {#sec-ch19-cut}
+
+**Problem.** Sometimes the complexity sits behind one signal, not one module. The handshake's timer has one output the rest of the design reads; boxing the whole module is more than needed when only that output matters, and a module boundary may not fall where the cut is wanted.
+
+**Idea.** Free that one signal. The logic behind it drops out of the model if nothing else reads it.
+
+**How to write it.** `stopat u_timer.expired`, after elaboration; `stopat -list` shows the cut points in force and `stopat -clear` removes them [@informal-tool]:
+
+```{.tcl include="examples/ch19-formal-techniques/cut-timer/cut.tcl" lines="61-69"}
+```
+
+**What it preserves.** Proofs, for the same reason as the black box, restricted to the cone behind the cut.
+
+**Example.** `cut-timer/`, third block. The tool prints its note for cut points, the twin of the black-box note, and the verdicts match the boxed run:
+
+```{.text include="examples/ch19-formal-techniques/cut-timer/run.out" lines="30-39"}
+```
+
+`Range_A` is proven here, because the timer's counter is still in the model: only its comparator output was cut. The same spurious trace refutes `a_no_early` at depth 3.
+
+**Pitfalls.** Cutting a register, rather than a wire, frees it in every cycle, not only in the first. That is a much larger change than freeing its initial value, which is the different technique of @sec-ch19-initval. And a cut on a signal that feeds a property's antecedent, together with an assumption that restricts the cut signal, can make the antecedent impossible: the assertion is then proved vacuously, and only its witness cover shows it.
+
+### Timer abstraction {#sec-ch19-timer}
+
+**Problem.** A long timer makes every interesting trace deep. The handshake's first grant is 202 cycles from reset, so a bounded search for anything after a grant has to unroll more than two hundred copies of the design.
+
+**Idea.** Replace the count by a free *expired* signal, and add back only as much of the timer's behavior as the property needs, as an assumption. The assumption is then a claim about the real timer and is proved there.
+
+This is the technique hardware engineers call counter abstraction. The model-checking literature uses that name for something else: in the verification of systems with many identical processes, a counter abstraction replaces the processes by counts of how many are in each local state, saturated at a small bound [@pnueli2002counter]. This book calls the hardware technique a *timer abstraction* to keep the two apart.
+
+**How to write it.** The cut of the last entry, plus an assumption on the cut signal, typed once in a Tcl variable and used twice: assumed under the cut, asserted on the real timer.
+
+```{.tcl include="examples/ch19-formal-techniques/cut-timer/cut.tcl" lines="71-85"}
+```
+
+**What it preserves.** Proofs, as a cut, provided the assumption holds of the real timer. The assumption is a side condition.
+
+**Example.** `cut-timer/`, fourth and fifth blocks:
+
+```{.text include="examples/ch19-formal-techniques/cut-timer/run.out" lines="40-53"}
+```
+
+The property needs one fact about the timer: it does not expire in the cycle busy rises. With that fact assumed, `a_no_early` is proven under the cut and the grant is covered at depth 4, still far from the design's 202 but no longer the impossible 3. In block E the same expression, as an assertion on the uncut timer, is proven. The proof under the cut and the proof of the gap together prove `a_no_early` of the design.
+
+**Pitfalls.** The assumption has to bind the traces that matter, and an assumption whose window spans many cycles may not. Block F assumes a stronger gap, 199 cycles without expiry after a request, which is also true of the real timer. The depth-3 trace survives it:
+
+```{.text include="examples/ch19-formal-techniques/cut-timer/run.out" lines="54-64"}
+```
+
+The assumption is an implication whose consequent lasts 199 cycles, and the trace ends three cycles after its antecedent. On this tool, a trace counts as satisfying the assumption if it ends before the window closes, so a multi-cycle assumption constrains only traces long enough to contain its whole window. The one-cycle gap of block D binds at once. The same mechanism defeats the prophecy variable of @sec-ch19-history, and the rule there applies here: an assumption checks nothing in cycles the trace does not reach. Finally, a property that names the exact delay cannot survive the cut. Block G of the example proves that a request is granted within 201 cycles on the real timer, refutes the 200-cycle version at depth 201, and refutes the 201-cycle version under the cut, where the free `expired` need never rise (@sec-ch19-boundedlive).
+
+::: {.callout-tip title="In Practice"}
+Box a module when the property depends on none of its behavior or on a few facts about its ports; cut a signal when one wire carries all the property needs from a block that stays in the model for other reasons; abstract a timer when the property depends on order and not on duration. In each case, write down the facts the property needs about the removed logic before running anything, assume them, and prove them where the logic is. A black box with no contract is a search for spurious counterexamples.
+:::
+
+### Parameter reduction {#sec-ch19-param}
+
+**Problem.** The proof finishes at `DEPTH` 4 and not at 256. The previous chapter's grid measured exactly that pressure.
+
+**Idea.** Prove the design at a small parameter, and argue that the result holds at the large one.
+
+**How to write it.** `elaborate -parameter DEPTH 4`. The command is trivial; the argument is not.
+
+**What it preserves.** Neither, by itself. A proof at a small parameter transfers to a large one only with an argument: a theorem that says the class of designs needs no more than some cutoff size, data independence of the kind in @sec-ch19-track, or an induction on the parameter. Cutoff theorems exist for restricted classes of concurrent systems, such as identical processes whose transitions are guarded by conditions on the others' states [@emerson2000cutoff]; none covers parameterized RTL in general. A counterexample at a small size is a counterexample at the large one only when the large design contains the small design's behavior, which a `full` flag computed from `DEPTH` may prevent.
+
+**Example.** `param-width/`, in-house engines, three blocks. The wrapper adds a five-bit occupancy count built from the FIFO's ports, sized as the FIFO checker of @sec-ch09-example sizes its own:
+
+```{.systemverilog include="examples/ch19-formal-techniques/param-width/pw_top.sv" lines="6-17"}
+```
+
+```{.text include="examples/ch19-formal-techniques/param-width/run.out"}
+```
+
+Block A is the FIFO of @sec-ch01-example, whose full flag rises one entry early. It is refuted at `DEPTH` 4 at depth 4, and at 16 at depth 16, with the full occupancy unreachable at both: the small counterexample is the same bug as the large one, because the bug is in the logic that computes `full` from the count at every depth. That direction is the useful one, and it holds here because the bug does not depend on the parameter. Block B goes the other way. The repaired FIFO checked against the five-bit count is proven at 16 and refuted at 32: the count is too narrow at 32, and a proof at 16 said nothing about it. Block C shows the same through `$clog2`. The pointers of the repaired FIFO stay below `DEPTH` at 4 and at 8, both powers of two, and not at 5, where a three-bit pointer can count to 7 before it wraps.
+
+**Pitfalls.** Widths that change with the parameter change the control logic, so a proof at one width is a proof about a different circuit. Flags that depend on `DEPTH`, such as `full`, differ between sizes in exactly the cycles a FIFO bug lives in. And a non-power-of-two parameter breaks wrap-around arithmetic that every power of two keeps. Before a small-parameter proof counts for the shipped parameter, write down the argument that carries it across, and if there is none, record the result as a result about the small design.
+
+### Memory abstraction {#sec-ch19-memabs}
+
+**Problem.** An array is thousands of state bits, and the property reads them one word at a time. The RAM of the opening exhibit has 256 words of eight bits behind its forwarding logic, and induction on the whole design gives no verdict: its counterexamples to induction start from arrays full of words that disagree with whatever the checking logic remembers, and there are more such states than any $k$ walks past.
+
+**Idea.** Keep one word. A free address `sa`, held constant over the trace, names the slot the property is about. A shadow register `sv` holds the last word written to that slot and a valid bit `sv_ok` says whether there is one. The storage is boxed, and a contract, assumed, pins what the box returns when the slot is read. Burch and Dill treated memories in processor verification the same way at the level of logic, as terms built from reads and writes over an unbounded address space, so that the argument does not depend on the memory's size [@burch1994pipelined]; automatic versions of the idea for model checking keep only the slots a property can observe, as in Bjesse's *Word-Level Sequential Memory Abstraction for Model Checking* [@bjesse2008memory].
+
+**How to write it.** Four pieces. The checking logic, written once in the wrapper around the RAM:
+
+```{.systemverilog include="examples/ch19-formal-techniques/mem-abs/mem_abs.sv" lines="44-75"}
+```
+
+The address assumption, the property, its witness cover, the contract and the helper, each typed once in the script:
+
+```{.tcl include="examples/ch19-formal-techniques/mem-abs/mem.tcl" lines="11-24"}
+```
+
+The storage boxed with `-bbox_m {mem_store}`; and the contract assumed. The contract says that when the slot was read in the previous cycle, after a write to it, the storage returned the shadow. It speaks of the storage alone, which returns the old word on a read during a write to the same address; forwarding is the job of the logic around it, which stays in the model.
+
+**What it preserves.** Proofs, provided the contract holds of the real storage. The box returns anything at any address except the slot, where the contract pins it, so the real storage's behaviors are among the model's. And because `sa` is free, a proof at "the" address is a proof at every address: the engine had to show the property for all values of `sa` at once, which is the symbolic constant of @sec-ch19-symconst.
+
+**Example.** `mem-abs/`, in-house engines, five blocks at 256 words. The first two opened the chapter. The third shows what the contract is for:
+
+```{.text include="examples/ch19-formal-techniques/mem-abs/run.out" lines="15-21"}
+```
+
+Without it, the boxed storage returns an arbitrary word at the slot, and the property fails at depth 3 on a correct design. The fourth block discharges the side condition, on the real storage:
+
+```{.text include="examples/ch19-formal-techniques/mem-abs/run.out" lines="22-37"}
+```
+
+The contract alone gives no verdict in five seconds, for the same reason the whole design did: it is true and not inductive, because nothing ties the array word at `sa` to the shadow. The helper says exactly that, `sv_ok |-> u_ram.u_mem.m[sa] == sv`. It is proven alone, and the contract is proven with it assumed. The limit for these two runs is 20 s, longer than the others; @tbl-ch19-seconds gives the measured times. Now the chain closes: the property is proven of the boxed design under the contract, and the contract of the real storage under a helper that is itself proven. The last block plants a bug in the forwarding comparison, which matches only the low address bit:
+
+```{.text include="examples/ch19-formal-techniques/mem-abs/run.out" lines="38-51"}
+```
+
+It is found at depth 3 through the box, and at depth 3 in a whole design of 16 words. The abstraction did not hide it. The comparison is the example `mem-abs-ric3/`, which needs rIC3: the whole design, no box and no contract, at 16 and at 256 words.
+
+```{.text include="examples/ch19-formal-techniques/mem-abs-ric3/run.out"}
+```
+
+rIC3 proves the flat design at both sizes. So an engine that builds its own strengthening can do without the abstraction here, and the seconds table shows what each route cost on the day it was measured. The abstraction's value is that it makes the in-house induction engine finish, and that the obligation it leaves, the contract, is small and stated in words a reviewer can check.
+
+![Memory abstraction on the RAM of 256 words. Left: the property reads one word of the array. Right: the array boxed, one symbolic slot with its shadow and valid bit, and the contract that pins the box's read data at the slot. Below, the verdicts of the `mem-abs` example, read from its output.](../figures/ch19-memabs.svg){#fig-ch19-memabs fig-alt="Two diagrams side by side. On the left, a RAM of 256 words with the property reading one entry. On the right, the same RAM with its storage drawn as a gray black box, a register sa marked free and stable, registers sv and sv_ok as the shadow, and an arrow labeled contract from the shadow to the box's read data. Beneath both, a row of verdict cells: whole design no verdict, boxed with contract proven, boxed without contract counterexample at depth 3, contract alone no verdict, helper proven, contract with helper proven, bug found boxed and whole at depth 3."}
+
+**Pitfalls.** The contract must describe the storage's read-during-write behavior exactly. A contract stronger than the memory, one that promises the new word on a same-cycle read when the storage returns the old one, is a false assumption, and a false assumption proves things that are not true. The shadow needs its valid bit: without `sv_ok`, the first read of a slot never written compares against a shadow that holds anything. And `sa` is constant over the whole trace, reset included: the slot is chosen once, and a reset in the middle of a trace does not choose again.
+
+### Initial-value abstraction {#sec-ch19-initval}
+
+**Problem.** A bug that is 256 pushes from reset is out of reach of a bounded search that does not unroll 256 cycles. The repaired FIFO with one line changed, so that its count wraps to zero one push short of full, is such a bug at 256 entries.
+
+**Idea.** Start the search from every state that satisfies an invariant, not from reset. If the invariant holds in the reset state and is inductive, then by @sec-ch18-reach every reachable state satisfies it, and @sec-ch18-induction gives the argument: a property proved for every trace that starts in an invariant state is proved for every trace from reset. A deep state of the design may be a shallow state of the changed problem.
+
+**How to write it.** The shell's `reset -none` leaves every register free in the first cycle [@informal-tool]. An assumption that should hold in the first cycle only needs a flag that is true there and false after, because this tool applies every assumption in every cycle; the wrapper provides one, written as RTL:
+
+```{.systemverilog include="examples/ch19-formal-techniques/init-value/iv.sv" lines="4-14"}
+```
+
+The script's procedure makes a session that starts from the states a start condition allows. The invariant `INV` is the previous chapter's helper with the count in range:
+
+```{.tcl include="examples/ch19-formal-techniques/init-value/init.tcl" lines="16-30"}
+```
+
+**What it preserves.** Proofs, with two side conditions: `INV` holds in the reset state, and `INV` is inductive. A counterexample from an invariant state is a counterexample of the design only if its start state is reachable from reset.
+
+**Example.** `init-value/`, in-house engines, five blocks:
+
+```{.text include="examples/ch19-formal-techniques/init-value/run.out" lines="1-12"}
+```
+
+From reset, the mutant fails the previous chapter's pointer property at depth 16 at 16 entries, as a wrap one push short of full should, and gives no verdict at 256 within five seconds. From invariant states at 256 it fails at depth 1: the solver can pick a state whose count stands at 254, which `INV` allows and from which the mutant's next push wraps the count to zero. That start state is reachable in the mutant, by 254 pushes from reset, so the trace is a real bug; the 16-entry run from reset is the same bug where reset can reach it. The third block is the correct FIFO and its side conditions:
+
+```{.text include="examples/ch19-formal-techniques/init-value/run.out" lines="13-36"}
+```
+
+Starting from invariant states does not make a property inductive. At 16 entries induction gives no verdict and IC3 proves the property; at 256, with the helper assumed in every cycle, induction proves it. The last two runs discharge the side conditions: `INV` is proven from reset, and proven again from invariant states, which is the statement that no trace starting inside `INV` leaves it. The fourth block shows why the start set must be the right one:
+
+```{.text include="examples/ch19-formal-techniques/init-value/run.out" lines="37-41"}
+```
+
+With only the count in range as the start condition, the correct FIFO fails at depth 0: the solver starts in a state that is empty with the pointers apart, which the weaker set allows and no trace from reset reaches. The last block measures what the change does to depth. A full FIFO is covered at depth 257 from reset and at depth 0 from invariant states:
+
+```{.text include="examples/ch19-formal-techniques/init-value/run.out" lines="42-51"}
+```
+
+The line `the design has no assertions` is the tool describing a session that holds only a cover; it is true and harmless.
+
+**Pitfalls.** `reset -none` frees every register, including the ones `INV` does not mention; the start set is larger than its author pictures, and every unmentioned register is a source of counterexamples from unreachable states. Assumptions apply in every cycle, hence the first-cycle flag; and with the shell's reset off, the design's reset input is an ordinary free input that may fire in the middle of a trace. A deep bug found from an invariant state is real only if its start state is reachable: confirm it with a cover from reset, or replay it in simulation, before filing it.
+
+### Localization and refinement {#sec-ch19-localize}
+
+**Idea.** Free most of the design, run, and when a counterexample appears, check it against the real design: either it is real, or it names the logic to restore. Repeat until the property is proved or a real trace is found. Done by a tool, this is counterexample-guided abstraction refinement, as in Clarke, Grumberg, Jha, Lu and Veith's *Counterexample-Guided Abstraction Refinement* [@clarke2000cegar], or abstraction guided by which logic a bounded proof used, as in McMillan and Amla's *Automatic Abstraction without Counterexamples* [@mcmillan2003abstraction].
+
+**What it preserves.** Proofs at every step, because each abstract model over-approximates the design; both at the end, when a counterexample has been checked against the design.
+
+**Where it is taught.** The manual loop is the black box or the cut point plus a careful reading of the counterexample: the timer's spurious depth-3 trace asked for one fact about the timer, and the memory's asked for a contract at one slot. InFormal has no automatic localization at the pinned commit [@informal-tool]. @sec-ch19-future returns to what the loop becomes when a tool runs it.
+
+## Symbolic reasoning {#sec-ch19-symbolic}
+
+The second family replaces "for every value" by one value the engine may choose. A property about every address, every data word or every channel becomes a property about one free address, word or channel, and the engine's freedom to choose it is what makes the one stand for all. The family runs on the FIFO, then on an arbiter and the DMA, where the question is whether one channel can stand for its neighbors.
+
+::: {.callout-note title="Definition"}
+A **symbolic constant** is a free input that an assumption holds constant over the whole trace. A property proved with it is proved for each of its values, because the engine had to consider them all. A design is **data independent** with respect to some data if it only stores and moves that data and never computes on it, compares it or branches on it; for such a design, a property about one data word chosen freely stands for every word.
+:::
+
+### Symbolic constant {#sec-ch19-symconst}
+
+**Problem.** "For every address" is 256 properties at 256 addresses, and "for every slot of the FIFO" is as many. Writing them out is tedious and running them is slow.
+
+**Idea.** One free value, held constant over the trace, stands for every value. This is the logician's universal generalization in hardware form: what was proved for an arbitrary value, about which nothing was assumed but that it stays put, holds for each value.
+
+**How to write it.** Some tools take a system function for the purpose. SymbiYosys documents `anyconst` and its relatives as formal extensions to Verilog that Yosys supports [@sby-docs]; this book does not state what the language standard says of them. InFormal does not take `$anyconst`. The spelling it takes is a free input to the wrapper and an assumption that holds it, `assume {$stable(sa)}`:
+
+```{.systemverilog include="examples/ch19-formal-techniques/symconst/sc_free.sv" lines="7-23"}
+```
+
+**What it preserves.** Both. The value is universally quantified by being free, and nothing about the design changes.
+
+**Example.** `symconst/`, in-house engines. The first block is the same assertion in a wrapper that writes the address as `assign sa = $anyconst;`, the second the wrapper above, and the script prints how many properties the tool lists before it runs:
+
+```{.text include="examples/ch19-formal-techniques/symconst/run.out" lines="1-10"}
+```
+
+With `$anyconst`, the tool lists no property at all, prints an empty table and says nothing. With the free input, the slot assertion is listed and proven. The third block answers a question the reset cycle raises, since this tool leaves registers free in the reset cycle (@sec-ch09-axi): does the assumption bind the value in that cycle too? A register `sa0` holds the value `sa` had in the reset cycle, and `first` marks the cycle after it:
+
+```{.text include="examples/ch19-formal-techniques/symconst/run.out" lines="11-18"}
+```
+
+It does: the value in the first cycle after reset equals the value in the reset cycle, and the cover of the opposite is unreachable.
+
+::: {.callout-warning title="Pitfall"}
+A construct the tool does not accept can take every RTL property of the design with it, without a message. With `$anyconst` in the wrapper, the report above lists zero properties. A regression that checks only for failing rows reads that as a pass. Count the properties after every load, as @sec-ch18-reference recommends, and treat a count that drops as a failure.
+:::
+
+**Pitfalls.** The silent drop above. And a stable value is stable across a reset in the middle of a trace as well, so a symbolic constant does not model a value that software reprograms after each reset; that needs a free value captured at reset, which is ghost state (@sec-ch19-ghost).
+
+### Free oracle input {#sec-ch19-oracle}
+
+**Problem.** Some properties are about one particular event that nobody can name in advance: "some push", "the moment to save the state". A symbolic constant fixes a value, not a moment.
+
+**Idea.** A free input chooses. Each cycle the engine may raise it or not, so a property proved with it holds whichever cycle it picks. Restricted to fire at most once, it picks one event out of many. The liveness-to-safety construction of @sec-ch18-liveness uses an oracle of exactly this kind to choose the moment it saves the state.
+
+**How to write it.** A free input `pick`, and a guard that lets it take effect once: in the tracked-word wrapper of the next entry, the push it fires on is taken only while no word is being tracked, `pick && u.do_write && wr_data == sd && !in_q`.
+
+**What it preserves.** Both, provided the guard excludes no case the property is about. The oracle adds no behavior to the design; it only labels one of its events.
+
+**Example.** The tracked-word check of @sec-ch19-track, whose wrapper holds the oracle.
+
+**Pitfalls.** An oracle that may fire twice tracks two events with one register and reports a mixture of the two. And a guard that is stronger than needed silently narrows the check: an oracle that may not pick a push made while the FIFO is nearly full never examines the boundary where a FIFO's bugs live. Write the guard, then write the cover that shows the oracle firing in the case most likely to be excluded.
+
+### Data independence: tracking one word {#sec-ch19-track}
+
+**Problem.** Data integrity of a FIFO: every word that goes in comes out, unchanged and in order, over every value of every word. That is a statement about all data, and the data bits multiply the state space.
+
+**Idea.** If the design only moves the data, one word stands for all. Choose a symbolic constant `sd`, let the oracle pick one push of `sd` to track, count the words ahead of it, and check that when nothing is ahead, the word at the output is `sd`. The term data independence goes back to Wolper's *Expressing Interesting Properties of Programs in Propositional Temporal Logic* [@wolper1986expressing]; the argument for this check is the book's own. Suppose some word were corrupted, lost or overtaken. The oracle could have picked that word, and then the output at the moment its count of words ahead reached zero would not be `sd`. Since the engine had to consider every choice of word and of push, a proof covers them all. Order comes with it: if a word pushed after the tracked one left before it, or one pushed before it left after it, then some other word would be at the head when the tracked word's count of words ahead reached zero, and the check would see it.
+
+**How to write it.** A wrapper around the FIFO with the symbolic constant, the oracle and two registers of ghost state, `in_q` and `ahead`:
+
+```{.systemverilog include="examples/ch19-formal-techniques/track-word/track.sv" lines="10-30"}
+```
+
+The property is one line, `in_q && ahead == '0 |-> rd_data == sd`. Its helper names the one memory slot that holds the tracked word: while the word is inside, the slot `ahead` places past the read pointer holds `sd`, and fewer than `count` words are ahead of it; the previous chapter's pointer helper is joined to it:
+
+```{.tcl include="examples/ch19-formal-techniques/track-word/track.tcl" lines="11-19"}
+```
+
+**What it preserves.** Both, for a design that never computes on, compares or branches on the data. For any other design the reduction proves nothing.
+
+**Example.** `track-word/`, in-house engines, four blocks:
+
+```{.text include="examples/ch19-formal-techniques/track-word/run.out"}
+```
+
+At 16 entries the check alone has no verdict in five seconds from induction or from the in-house IC3; at four entries IC3 proves it. The helper is proven alone at 16 by induction, and with it assumed the check is proven. The witness cover shows the tracked word leaving with nine words behind it, at depth 10. A mutant whose read pointer steps by two is refuted at depth 3. The helper is the same kind of fact as the previous chapter's pointer helper, and it is what an engine would otherwise have to discover: where in the memory the tracked word is.
+
+**Pitfalls.** A design that computes a parity over its data, or matches the data against a pattern, is not data independent, and the one-word check proves nothing about it. The oracle's guard can exclude the boundary, as the last entry warned. And the ghost counter `ahead` must be wide enough to count a full FIFO.
+
+::: {.callout-tip title="In Practice"}
+For any design that stores and forwards data, a FIFO, a buffer, a crossbar, a packet queue, the one tracked word is the integrity check to write first. It catches corruption, loss of identity, duplication that disturbs order, and reordering, with one assertion and two ghost registers. Write the slot helper with it: the one-word check is rarely inductive alone, and the helper is a fact about the design that its designer can confirm at a glance.
+:::
+
+### Two-word ordering check {#sec-ch19-twoword}
+
+**Problem.** Order, loss and duplication across words, stated directly: the second of two words never leaves before the first, and each leaves once.
+
+**Idea.** Two symbolic words, `d1` and `d2`, distinct and constant. The environment may push `d1` at most once and `d2` at most once, after `d1`; every other push carries some other value. Then the FIFO is correct for order and duplication if `d2` never comes out before `d1` and each comes out at most once. This check is folklore of industrial formal verification, and the book attributes it to nobody.
+
+**How to write it.** In two forms. The *flag form* records, with one flag each, which word has gone in and which has come out, and asserts that `d2` comes out only after `d1` and each only once. The *position form* counts the words ahead of each tracked word, as the one-word check does for one, and asserts that each word with nothing ahead of it is at the head and that `d1` always has fewer words ahead of it than `d2`:
+
+```{.tcl include="examples/ch19-formal-techniques/two-word/two.tcl" lines="12-45"}
+```
+
+**What it preserves.** Both, under data independence. Loss of a word is not covered: "it comes out at most once" is satisfied by a word that never comes out, and loss needs a liveness or bounded-response property.
+
+**Example.** `two-word/`, in-house engines, at four entries:
+
+```{.text include="examples/ch19-formal-techniques/two-word/run.out"}
+```
+
+The position form alone has no verdict in five seconds. The helper, a conjunction of a slot helper for each word, the pointer helper and the ordering of the two counts, is proven alone by induction. With it assumed, the three position properties are proven, and so is the flag form's ordering assertion `a_order`; the flag form's once-only assertions, `a_once1` and `a_once2`, still have no verdict. A mutant that reads a word twice when a push and a pop meet is caught by all six properties, at depths 3 to 6.
+
+Why one form proves and the other does not is the lesson of the entry. The position form carries its own bookkeeping: a count per word says where that word is, and the slot helper says the word is in that slot. Every fact the proof needs is about one slot at a time. The flag form carries none. To show that `d1` cannot come out twice, a proof must know that once `d1` has come out, no slot of the memory holds `d1` any more, and that is a statement about every slot at once: a quantified invariant over the memory's contents. No engine here learned one, and none of the helpers states it. @fig-ch19-track draws the difference.
+
+![Tracking one word and two. Top: the tracked word in the FIFO, with the count of words ahead of it falling as the head is popped; the one slot the helper names is marked. Bottom: the two-word check. The position form needs a fact about the slot of each tracked word; the flag form's once-only checks need a fact about every other slot, the shaded set, which no helper here states.](../figures/ch19-track.svg){#fig-ch19-track fig-alt="Two FIFO strips. In the upper one, the read pointer is at the left, the tracked word sd sits three slots further on, a bracket marks ahead = 3 over the words in front of it, and the slot holding sd is outlined in blue as the slot the helper names. In the lower one, slots holding d1 and d2 are outlined in blue with their counts a1 and a2; every other slot is shaded amber and labeled: the flag form needs no other slot holds d1, a fact about all of these."}
+
+The comparison is the example `two-word-ric3/`, which needs rIC3: the same two forms with no helper.
+
+```{.text include="examples/ch19-formal-techniques/two-word-ric3/run.out"}
+```
+
+rIC3 proves neither ordering property without the helpers: the flag form gets no verdict in five seconds, and in the position form it proves the two head properties and not `p_ahead` in ten. So on this design the slot helpers are what made order provable, for either kind of engine. The example runs at four entries, and @sec-ch19-param says what a four-entry proof does and does not carry to a larger FIFO.
+
+**Pitfalls.** The environment's assumptions are part of the argument. Forget that every push other than the tracked ones carries another value, and a second push of `d1` is allowed, and is then reported as a duplicate the design never made. And on a FIFO, the one-word check of the last entry is the form to prefer: with its slot helper it covers order already, as its argument showed, and it needs no quantified fact.
+
+### Symmetry {#sec-ch19-symmetry}
+
+**Problem.** A design has $N$ identical channels, ports or requesters, and $N$ proofs where one ought to do.
+
+**Idea.** If a permutation of the channels maps the design's transitions onto themselves, maps its initial states onto themselves, and maps the property for one channel onto the property for another, then a proof for one channel stands for every channel it can be mapped to. Emerson and Sistla's treatment of symmetry in model checking requires all three: their definition of a symmetry of a structure includes the condition on initial states, and they show that a model reduced by such a group of symmetries preserves the formulas the group leaves unchanged [@emerson1996symmetry]. In hardware the useful permutations are almost always rotations of the ports, not arbitrary permutations, because round-robin pointers and priority chains are ordered.
+
+**How to write it.** InFormal has no symmetry reduction, and the book's method is to state the permutation and check its three conditions with the tool. The transition condition can be checked by a product: two copies of the design, the second fed the first's inputs permuted, with the assertion that its outputs are the first's permuted. The arbiter has the shape of the DMA's read-engine arbitration; `FREE_LAST` decides whether its pointer `last` has a reset value:
+
+```{.systemverilog include="examples/ch19-formal-techniques/symmetry/rr_arb.sv" lines="9-41"}
+```
+
+**What it preserves.** Proofs, if the three conditions hold. If any fails, nothing.
+
+**Example.** `symmetry/`, in-house engines, four blocks. The first is the round-robin arbiter with `last` free at the start, an initial-value abstraction whose start set is every value of `last`, and so a set that rotation maps onto itself:
+
+```{.text include="examples/ch19-formal-techniques/symmetry/run.out" lines="1-17"}
+```
+
+Port 0's property is proven: a request held until granted is granted within four cycles. The rotation check is proven: with the second copy's pointer one ahead of the first's at the start, rotated requests give rotated grants in every cycle, so rotation is a symmetry of the transition relation and of the free start set. And the reset state is among the free starts, as the cover of `last` at 3 after reset shows. So the proof for port 0 stands for all four ports. The second block is the arbiter as the DMA builds it, `last` reset to 3:
+
+```{.text include="examples/ch19-formal-techniques/symmetry/run.out" lines="18-32"}
+```
+
+All four ports are proven. That is four proofs, not a symmetry argument, and the rotation check shows why it could not be one: with both copies reset, `last` is 3 in each, and rotating the first copy's state gives a second copy whose pointer should be 0. The check fails at depth 2. No rotation fixes a reset state with `last` at 3, so the initial-state condition fails. The third block is the extreme case, fixed priority, where the ports are not interchangeable at all:
+
+```{.text include="examples/ch19-formal-techniques/symmetry/run.out" lines="33-43"}
+```
+
+Port 0 is proven; ports 1 to 3 fail at depth 5, starved by a lower-numbered port that requests every cycle. A symmetry argument from port 0 would have proved three false properties. The last block is the DMA. Its read-engine pointer `r_last` resets to the last channel, `NCH - 1`, so the swap of its two channels does not fix the reset state either. With two channels the sound and cheap answer is to prove both, and the block does, for the invariant that no channel is busy and done at once:
+
+```{.text include="examples/ch19-formal-techniques/symmetry/run.out" lines="44-48"}
+```
+
+**Pitfalls.** The initial-state condition is the one designers forget, because the RTL text looks symmetric and the reset values hide in a reset branch. A property whose image under the permutation is not the other channel's property, because it names a channel-specific constant or a fixed-priority tie-break, breaks the argument as surely. And a design symmetric in its text and asymmetric in its reset, like both arbiters here and the DMA, needs either a free start with its own proof that reset is inside it, or one proof per channel.
+
+## Modeling code {#sec-ch19-modeling}
+
+The third family adds logic to the problem instead of removing it: registers and wires that exist only so that a property can be stated, or so that a rule can be stated once and used on both sides of an interface. Added logic is safe exactly when it cannot change what the design does, and each entry says how that is guaranteed.
+
+::: {.callout-note title="Definition"}
+**Ghost state** is logic added for verification that reads the design and is never read by it: a counter, a shadow register, a flag. A **reference model** is ghost state that computes, at some level of abstraction, what the design should do. A **history variable** is ghost state that records something about the past, so that a property can refer to an unbounded stretch of it. A **prophecy variable** is a free value that guesses something about the future, together with a check, made when the future arrives, that the guess was right.
+:::
+
+### Ghost state {#sec-ch19-ghost}
+
+**Problem.** The property needs a quantity the design does not hold. A FIFO's contract with its neighbors, empty exactly when nothing is in it and full exactly when it holds `DEPTH` words, is stated most simply in terms of "pushes minus pops", which the FIFO computes internally in its own way and the neighbor cannot see.
+
+**Idea.** Add logic that computes the quantity from the design's signals and drives nothing in the design.
+
+**How to write it.** A module whose only connections to the design are inputs, attached with `bind` (@sec-ch09-where), or a wrapper whose added registers read the design's ports. The chapter's two-FIFO pipe uses the second: `fifo_ctr` wraps the FIFO with a ghost occupancy `g`, computed from the FIFO's own ports, so that it survives when the FIFO itself is boxed in @sec-ch19-hier:
+
+```{.systemverilog include="examples/ch19-formal-techniques/common/hier.sv" lines="8-22"}
+```
+
+**What it preserves.** Both, provided the ghost logic never drives the design. Owicki and Gries gave the rule for programs: auxiliary variables that appear only in assignments to auxiliary variables can be added to a proof and deleted afterwards without changing what the program does [@owicki1976axiomatic]. A module with inputs only, or registers nothing in the design reads, is that rule in hardware.
+
+**Example.** `contract/`, in-house engines. The contract has two assertions, `CE_A` (empty exactly when `g` is zero) and `CF_A` (full exactly when `g` is `DEPTH`); the ghost helper `H_A` ties `g` to the FIFO's internal `count`:
+
+```{.text include="examples/ch19-formal-techniques/contract/run.out"}
+```
+
+At 16 entries all three are proven. At 64 the contract alone has no verdict in five seconds, the helper alone is proven, and the contract is proven with the helper assumed. The ghost count has the same relation to the design's count that the previous chapter's helper had to its pointers, and it plays the same role.
+
+**Pitfalls.** The ghost has its own reset, and the tool models an asynchronous reset as a synchronous one (@sec-ch09-axi), so a ghost register that misses the reset branch starts free. A ghost counter that can wrap must be wide enough for the largest value or saturate: `g` here has one bit more than the pointers.
+
+::: {.callout-tip title="In Practice"}
+Put ghost logic in a module with inputs only and attach it with `bind`, or in a wrapper that touches the design only through its ports. Then the rule that keeps it harmless is checked by the compiler, not by a reviewer: a module with no outputs cannot drive anything. Name ghost registers so that a waveform reader sees at once that they are not design state.
+:::
+
+### Reference model {#sec-ch19-refmodel}
+
+**Problem.** The specification is a behavior, not a single relation between signals: "the FIFO answers as a queue would".
+
+**Idea.** A small abstract model that the design must match, run beside it, with assertions that compare the two. The ghost count `g` above is one: it models occupancy, not the stored words. The FIFO checker of @sec-ch09-example, with its occupancy model, is the same idea used both in simulation and in formal. Predictors in simulation, which are reference models at the transaction level, belong to the chapter *Reference Models and the Foreign Boundary*.
+
+**What it preserves.** Both, as ghost state.
+
+**Example.** `contract/` above; the contract is a comparison with a reference model of one counter.
+
+**Pitfalls.** A model written by reading the RTL repeats the RTL's bugs; write it from the specification. A model as large as the design is a second design, with its own bugs and its own state space. Choose the level of abstraction the property needs, occupancy for flags and one tracked word for data (@sec-ch19-track), and no more.
+
+### Protocol checker as assumption and assertion {#sec-ch19-protocol}
+
+**Problem.** The same interface rules are obligations for one block and promises for its neighbor. The sender of a valid/ready link must hold `valid` and its data while `ready` is low; the receiver may rely on that. @sec-ch09-where introduced the idea of one checker serving both sides and gave the definitions of assumption and assume-guarantee. This entry adds how to write such a checker so that one file serves both roles, and the trap of binding it on the wrong side.
+
+**Idea.** One module holds the rules. A parameter names the role of the block under proof. The rules on signals that block drives are asserted; the rules on signals its neighbor drives are assumed. OpenTitan's TL-UL checker works this way, with a host/device parameter [@opentitan-tlul-assert].
+
+**How to write it.** `hs_rules.sv`, a new file built from the rules of the handshake checker of @sec-ch09-properties, `hs_check`, which it does not edit, with `ROLE` taken from an enumerated type in a package. `Held` and `Stable` are rules on the sender; `Answer`, ready only in answer to valid, is a rule on the receiver, and `ANSWER = 0` leaves it out for protocols such as AXI that let `ready` come first:
+
+```{.systemverilog include="examples/ch19-formal-techniques/protocol/hs_rules.sv" lines="11-38"}
+```
+
+**What it preserves.** Proofs, if every assumed rule is discharged as an assertion on the block that drives the signals it constrains. That is the assume-guarantee discipline of @sec-ch19-ag.
+
+**Example.** `protocol/`, in-house engines, on a valid/ready stage that is either a wire from input to output or a pipeline register. The checker on the output is in the sender's role; with `ENV = 1` a second instance on the input is in the receiver's role:
+
+```{.text include="examples/ch19-formal-techniques/protocol/run.out" lines="1-24"}
+```
+
+The wire stage with a free input fails both output rules at depth 2: it passes on whatever its input does. With the input's rules assumed by the receiver-role checker, the output rules are proven, and the receiver's own rule `Answer_A` on the input, which the stage obeys because its output neighbor's `Answer_M` is assumed, is proven too. The register stage keeps the rules with a free input, because it holds its output itself. Part D binds the output's checker in the wrong role:
+
+```{.text include="examples/ch19-formal-techniques/protocol/run.out" lines="25-32"}
+```
+
+`Answer_A` fails, as it should: the output's `ready` is a free input of the stage, and nothing makes it answer `valid`. The serious row is the next one. With the output's sender rules now *assumed*, an assertion that the stage's input holds `valid` while not ready is proven, and the cover of the input dropping `valid` is unreachable. The assumption on the output reached back through the wire and constrained the input, which nobody is obliged to keep. The proof is correct and worthless.
+
+::: {.callout-warning title="Pitfall"}
+An assumption about signals a block drives is an over-constraint, and through combinational paths it constrains that block's inputs. Bound in the wrong role, a protocol checker proves rules about the environment that nothing enforces, and prints `proven`. The only row of part D that shows the mistake is a cover. For every protocol checker, write a cover of each assumed rule being broken by the environment, and expect it to be reachable on the block's inputs and unreachable only where the rule is enforced.
+:::
+
+The DMA of the architecture case study is a master on five AXI channels. @sec-ch09-axi proved its six master rules with every input free. The example `protocol-dma/` binds `hs_rules` three times in the sender's role on the channels the DMA drives and twice in the receiver's role on the read-data and write-response channels, all with `ANSWER = 0`, since AXI lets a slave raise `ready` before `valid`, and the `Answer` rule of `hs_check` would over-constrain the slave. It runs with `informal-ic3` and needs no external engine:
+
+```{.text include="examples/ch19-formal-techniques/protocol-dma/run.out"}
+```
+
+The master rules hold under the slave's, as they held without them. The second block is a property that does depend on the slave keeping its rules: the read response the DMA accepts, when it made the slave wait, is the response the slave offered first. A small piece of ghost state, bound into the DMA, captures the first offered response. With no rules assumed the property fails at depth 6, on a slave that changes its data while waiting; with the slave's rules assumed it is proven. That is the reason to assume the neighbor's rules at all: some properties of a block are true only of the block in a legal environment.
+
+**Pitfalls.** Direction, as part D shows. A rule such as `Answer` that constrains the other side belongs to that side, and an all-or-nothing switch that flips every rule between assert and assume puts it on the wrong one. And `disable iff` and reset apply to both roles: a rule assumed during reset can over-constrain the reset sequence.
+
+### History and prophecy variables {#sec-ch19-history}
+
+**Problem.** A property about "a request at some earlier time", or "the word pushed $k$-th", cannot be written with `$past`, whose look-back is a fixed number of cycles. The past the property needs is unbounded.
+
+**Idea.** A history variable records what the property needs as it happens. A prophecy variable guesses the future and is checked when the future arrives. Abadi and Lamport introduced both so that a refinement mapping between two specifications always exists; adding a history variable leaves the externally visible behaviors unchanged, and adding a prophecy variable does too under a finiteness condition, without which a prophecy can rule out behaviors [@abadi1991refinement].
+
+**How to write it.** A history variable is one register. For a grant unit that holds a request until `go`, the bit `seen` records that a request has arrived since the last grant:
+
+```{.systemverilog include="examples/ch19-formal-techniques/history/hp.sv" lines="8-28"}
+```
+
+For the $k$-th word of a FIFO, a saturating count of pushes and of pops, a constant `k`, a history register `hv` that captures the word pushed when the push count equals `k`, and a prophecy `pv`, a free constant that guesses the word the matching pop will return:
+
+```{.systemverilog include="examples/ch19-formal-techniques/history/hp.sv" lines="36-57"}
+```
+
+**What it preserves.** A history variable: both, since it is ghost state. A prophecy variable in this tool: nothing usable that a history variable does not already give. InFormal has no prophecy support. A prophecy is written as a free constant and an assumption that checks it at the pop, `pop_k |-> rd_data == pv`. That assumption cannot remove a trace that ends before the pop, because it constrains only the cycles a trace contains. So an assertion that reads the guess earlier, at the push, fails on a trace that pushes a word different from the guess and stops.
+
+**Example.** `history/`, in-house engines:
+
+```{.text include="examples/ch19-formal-techniques/history/run.out"}
+```
+
+Block A writes the history as three cycles of `$past` on the correct grant unit and fails at depth 5, a request four cycles before its grant: a false alarm, not a bug. Block B uses the `seen` bit: proven on the correct unit, refuted at depth 1 on a mutant that grants with nothing pending, and each with a cover of a grant whose request came more than three cycles earlier. Block C turns to the FIFO. The pop numbered $k = 9$ is covered at depth 11, so the property below it can be exercised. The prophecy asserted at the push fails at depth 1, on a correct FIFO, and the trace printed below it shows why: the word is pushed in cycle 1, the guess disagrees with it, and the trace ends long before the pop where the assumption would have checked the guess.
+
+![The prophecy trap, from the `history` example. The assertion reads the guess at push $k$; the assumption that checks the guess is evaluated at pop $k$. The counterexample is two cycles long and ends between the two, so the assumption never constrains it.](../figures/ch19-prophecy.svg){#fig-ch19-prophecy fig-alt="A timeline of cycles from 0. Cycle 0 is reset. In cycle 1 push_k is high, marked: the assertion reads pv here. Far to the right, a later cycle marked pop_k: the assumption checks pv here. A bracket over cycles 0 and 1 is labeled: the counterexample, depth 1. The gap between the end of the bracket and pop_k is shaded and labeled: the assumption constrains nothing here, because the trace has ended."}
+
+The proofs of the $k$-th word property are the example `history-ric3/`, which needs rIC3:
+
+```{.text include="examples/ch19-formal-techniques/history-ric3/run.out"}
+```
+
+With the history register, the $k$-th word out equals the $k$-th word in, proven. With the prophecy read only at the pop, after the assumption has checked it, the property is proven as well; it is the history check with one more free variable, and gains nothing.
+
+::: {.callout-warning title="Pitfall"}
+In a safety check, an assumption about the future does not remove a trace that ends before the future arrives. A prophecy asserted earlier than it is checked therefore produces a short spurious counterexample, here at depth 1 on a correct FIFO. The same mechanism let the timer's depth-3 trace survive a 199-cycle assumption (@sec-ch19-timer). Read a prophecy, or any assumption whose consequent lies in the future, only where the trace has already passed the cycle that checks it.
+:::
+
+**Pitfalls.** The depth-1 trace above. Bounded `$past` chains as stand-ins for history, which give false alarms whenever the real gap can be longer than the chain. And counters that saturate: the push and pop counts stop at 31, so a property about the $k$-th word holds only for `k` below the saturation value, which the 4-bit `k` respects.
+
+## Decomposition {#sec-ch19-decompose}
+
+The fourth family splits one proof into several, each smaller, and an argument that the pieces add up to the whole. The argument is where decompositions go wrong, and every entry here names the side condition that makes its argument sound. The family ends on the DMA, where the chapter shows a decomposition that is sound and does not, by itself, finish.
+
+::: {.callout-note title="Definition"}
+A **case split** proves a property separately under each of several conditions, together with a **completeness check**, a proof that in every reachable state at least one of the conditions holds. A **hierarchical contract** is a set of properties of a block, stated on its ports and on ghost state computed from its ports, that is proved on the block and assumed of it, as a black box, in the proof of its parent.
+:::
+
+### Helper invariant {#sec-ch19-helper}
+
+**Idea.** Prove a lemma about the design, then assume it in the proof of another property. @sec-ch18-helper defined the helper and its two obligations, and @sec-ch18-example used one on the 64-entry FIFO.
+
+**What it preserves.** Proofs, provided the helper is itself proved in the same flow.
+
+**Where it is taught.** @sec-ch18-helper. This chapter adds two things. The tool does not reuse a proved assertion as an assumption, so the helper is typed twice; every script here types it once, in a Tcl variable, and uses the variable for both the `assert` and the `assume`, so that the two cannot drift. And in this chapter every abstraction's side condition is a helper of this kind: the memory's contract (@sec-ch19-memabs), the invariant that starts a proof (@sec-ch19-initval), the slot helpers of the tracked words (@sec-ch19-track), and the parent's helper of @sec-ch19-hier.
+
+### Assume-guarantee {#sec-ch19-ag}
+
+**Problem.** Two blocks whose properties depend on each other: each behaves only if its neighbor does. Proving them together means proving the whole; proving each alone with free inputs fails.
+
+**Idea.** Prove each block under the assumption that its neighbor keeps its guarantee. The definitions are in @sec-ch09-where. The question this entry answers is when the circle closes.
+
+**How to write it.** An assumption whose text is the neighbor's assertion, typed once and used twice, as for a helper.
+
+**What it preserves.** Proofs, for safety properties, when every loop of mutual dependence passes through a register. Then each block's guarantee at cycle $t + 1$ depends on its neighbor's only up to cycle $t$, and induction on time closes the circle: neither guarantee can be the first to fail, because whichever failed first would have needed the other to fail earlier. Abadi and Lamport's composition theorem has this shape, for assumptions that are safety properties: a component's guarantee must hold one step longer than the assumption it was proved under [@abadi1995conjoining]. Misra and Chandy's *Proofs of Networks of Processes* is an early statement of the idea for networks of processes [@misra1981proofs]. For liveness, circular reasoning is unsound in general. McMillan gave conditions under which it is sound, by an explicit induction over time in which delay edges break every cycle of the dependence [@mcmillan1999circular].
+
+**Example.** `ag/`, in-house engines. Each block passes its neighbor's output on, one cycle later; two of them form a ring:
+
+```{.systemverilog include="examples/ch19-formal-techniques/ag/ag.sv" lines="5-20"}
+```
+
+```{.text include="examples/ch19-formal-techniques/ag/run.out"}
+```
+
+Block A proves one block's guarantee, its output is always 0, under the assumption that its input is always 0, and refutes it at depth 1 on a mutant whose reset value is 1. Block B checks the composition, flat: the ring keeps both guarantees. The circular argument and the flat proof agree, because the register in each block breaks the loop. Blocks C and D repeat the exercise for liveness. One block, under the assumption that its input is eventually 1, eventually outputs 1: proven. The ring, flat, is refuted at depth 3 with a lasso. Both outputs reset to 0 and pass 0 to each other for ever, and each block's assumption, that its input eventually rises, is exactly what the other block's guarantee would have supplied. @fig-ch19-ag draws the two rings.
+
+![Two rings of the `ag` example. Left: the safety ring; the register in each block means a guarantee at cycle t + 1 needs the other's only up to cycle t, so the circular argument is sound, and the flat proof agrees. Right: the liveness ring; each block is proved live under the other's eventually, and the composition is refuted by a lasso in which both outputs stay 0.](../figures/ch19-ag.svg){#fig-ch19-ag fig-alt="Two diagrams. On the left, two blocks ua and ub in a ring, each drawn with a register, the wire x from ua to ub and y from ub to ua; labels: assume in == 0, guarantee out == 0; under them the verdicts: each block proven, ring proven flat. On the right, the same ring with labels assume eventually in, guarantee eventually out; under it: each block proven, ring refuted at depth 3, and a small lasso of cycles in which x and y are 0 throughout, the loop closing on itself."}
+
+::: {.callout-warning title="Pitfall"}
+Each block proved live under its neighbor's "eventually" does not make the pair live. A liveness assumption is never violated at any particular cycle, so there is no first violation to start an induction from, and the circle proves nothing. The ring of the example never starts. Break the circle with a liveness argument that does not depend on the other block, such as a bounded response proved for one of them, or prove the composition directly.
+:::
+
+**Pitfalls.** The liveness ring. Fairness assumptions in a mutual liveness argument are the same trap in another form (@sec-ch19-fairness). And the safety rule needs a register in every loop. Two blocks whose guarantees depend on each other in the same cycle, through combinational paths, form a circle with no delay to induct over; the argument that justified block A does not apply, and this book has no example of the tool's behavior on such a ring.
+
+### Case split {#sec-ch19-casesplit}
+
+This entry runs on a design outside the chapter's three, a multiplier checked two ways, because a case split pays only where the cases shrink a hard solver problem, and the FIFO, the handshake and the DMA have no such datapath. It is also a preview of the equivalence chapter, *Equivalence, Structural and Static Verification*.
+
+**Problem.** One solver problem is too hard to solve whole.
+
+**Idea.** Prove the property under each of several conditions that together cover every case, and prove that they do. McMillan's case splitting in compositional model checking splits on the value of a variable, and its soundness rests on the cases ranging over every value [@mcmillan1999compositional].
+
+**How to write it.** One session per case, with the case as an assumption, and one more session for the completeness check, an assertion that the disjunction of the case conditions always holds. The miter compares the multiplication operator with a shift-and-add loop; a parameter plants a bug that only one case in four can show:
+
+```{.systemverilog include="examples/ch19-formal-techniques/case-split/mul.sv" lines="7-19"}
+```
+
+**What it preserves.** Proofs, if every case is proved and the completeness check is proved. On a case condition over a free input, as here, completeness is a tautology; on state, it is an invariant to prove.
+
+**Example.** `case-split/`, in-house engines, at eight bits:
+
+```{.text include="examples/ch19-formal-techniques/case-split/run.out"}
+```
+
+The whole miter is proven; so is each of the four cases on the top two bits of `a`, and so is the completeness check. With the bug planted, the case `a[7:6] == 3` fails at depth 0, the depth of a design with no registers. Then the trap: a case list that forgot case 3 passes all three of its cases, and only the completeness check, which fails at depth 0, says that the list is short. @tbl-ch19-seconds gives the time of each run: the four cases cost about as much in total as the whole, so on this design a split pays only if the cases run in parallel.
+
+**Pitfalls.** The forgotten case, which proves nothing and prints only `proven` rows unless the completeness check is run. And a split that does not shrink the hard part: if every case still contains the whole difficulty, each case is as slow as the whole.
+
+### Hierarchical proof {#sec-ch19-hier}
+
+**Problem.** A parent built from children, each of which has been proved. Proving the parent flat repeats every child's proof inside a larger model.
+
+**Idea.** Box each child, and assume of it the contract proved on it. This is the black box of @sec-ch19-bbox with the contract that removes its spurious traces, the ghost state of @sec-ch19-ghost that lets the contract be stated on ports, and the assume-guarantee of @sec-ch19-ag that makes the circle sound.
+
+**How to write it.** The pipe of two FIFOs in `hier.sv` moves a word from the first to the second whenever the first has one and the second has room, and counts the words it holds in a ghost `G` from its own ports. The script boxes the inner `fifo` module, which leaves each `fifo_ctr` wrapper and its ghost `g` in the model, and assumes the contract of each child:
+
+```{.tcl include="examples/ch19-formal-techniques/hier/hier.tcl" lines="11-27"}
+```
+
+`P1_A` says the pipe is empty when `G` is zero; `P2_A` that when the pipe is full, `G` is at least `DEPTH`.
+
+**What it preserves.** Proofs, if each contract is proved on its block under that block's own input assumptions, and those input assumptions are proved as assertions in the parent.
+
+**Example.** `hier/`, in-house engines, at 16 entries:
+
+```{.text include="examples/ch19-formal-techniques/hier/run.out"}
+```
+
+With both children boxed under the full contract, neither parent property gets a verdict from induction in five seconds; the cover of both children full is reached at depth 33. With half the contract, only "empty exactly when `g` is zero", `P2_A` fails at depth 1: the boxed FIFO raises `full` while its `g` is below `DEPTH`, which the missing half would have forbidden. Block C is the step that makes the proof go. The parent's own helper says that `G` is the sum of the two ghost counts, each at most `DEPTH`. It is proven, and with it assumed both parent properties are proven. The contracts are proved in `contract/` (@sec-ch19-ghost) at 16 and at 64 entries. The comparison is the example `hier-ric3/`, which needs rIC3:
+
+```{.text include="examples/ch19-formal-techniques/hier-ric3/run.out"}
+```
+
+rIC3 proves both properties without the parent helper, boxed and flat. The honest finding is that boxing alone did not make the parent cheaper for the in-house engine: the parent's properties read counters and flags, not the memories, and the tool's reduction of the model to the logic the properties can see may already have left the memories out. This book did not check whether it did. What the contracts bought is that the parent's helper could be stated on ports at all, and that the proof of the parent no longer depends on anything inside a child.
+
+**Pitfalls.** A contract that names a child's internal signal, such as its `count`, cannot be assumed once the child is boxed, because the signal is no longer in the model; state contracts on ports and on ghost state built from ports. And half a contract gives spurious counterexamples that look like parent bugs, as block B shows.
+
+### Property decomposition on the DMA {#sec-ch19-decomp}
+
+**Problem.** An end-to-end property of a design with hundreds of state bits. On the DMA: when channel 0 finishes without error, it has had as many write responses as the length it was started with.
+
+**Idea.** Replace the end-to-end property by a chain of local lemmas, each closer to the logic that keeps it, and check that the end-to-end property follows from the lemmas.
+
+**How to write it.** Ghost state bound into the DMA records the length when the channel starts and counts the write responses since:
+
+```{.systemverilog include="examples/ch19-formal-techniques/decomp/dma_wcount.sv" lines="4-21"}
+```
+
+The property `E2E_A` compares the two when the channel finishes without error. The lemma `L1` says that responses so far plus the words still to write equal the length, always; `L2` that when the channel finishes without error, no words are left. They are typed once and asserted or assumed:
+
+```{.tcl include="examples/ch19-formal-techniques/decomp/decomp.tcl" lines="11-13"}
+```
+
+**What it preserves.** Proofs, if the end-to-end property follows from the lemmas, which is itself a proof to run, and each lemma is proved.
+
+**Example.** `decomp/`, in-house engines:
+
+```{.text include="examples/ch19-formal-techniques/decomp/run.out"}
+```
+
+Alone, none of the three properties gets a verdict in five seconds from any of the three engines: bounded search finds no counterexample, and induction and IC3 find no proof. The witness cover, a channel finishing a three-word transfer without error, is reached at depth 15. With the two lemmas assumed, the end-to-end property is proven by induction.
+
+So the chain is sound and its last link is easy. The first links are where the work is. Neither lemma is proved here. Each is a statement about counters that the DMA updates in several places, and induction on such a statement fails for the reason the previous chapter's pointer property failed: its counterexamples to induction may start from combinations of internal state that no trace from reset reaches. Proving the lemmas would take a layer of invariants of the DMA itself, facts of the kind "a write in flight implies the channel is busy", each a helper with its own proof. @fig-ch19-decomp draws the chain with its verdicts. The next layer is left to the reader as a project: it is real verification work on a real block, and this chapter does not pretend it is done.
+
+![The decomposition of the DMA's end-to-end property, with the verdicts of the `decomp` example. The end-to-end property is proven from the two lemmas; the lemmas, alone, have no verdict from any engine in five seconds; below them, the layer of DMA invariants they would need, not written.](../figures/ch19-decomp.svg){#fig-ch19-decomp fig-alt="A tree with three levels. At the top, E2E_A, shaded green and labeled proven with L1 and L2 assumed. Below it, two nodes L1 and L2, hatched and labeled no verdict in 5 s by bmc, kind and ic3. Below them, a dashed box labeled invariants of the DMA, for example a write in flight implies busy, not written. Beside the top node, the witness cover Done3_C, covered at depth 15."}
+
+::: {.callout-tip title="In Practice"}
+Decomposition pays when each local property is inductive, or nearly so: a fact one step of the design shows, or one helper away from it. Before splitting a property, write the lemmas and run induction on each with a short limit. A lemma that is true and not inductive has not removed the difficulty; it has moved it, and the decomposition is only as far along as its least inductive lemma.
+:::
+
+**Pitfalls.** Lemmas that are true and not inductive move the difficulty without reducing it, as above. And a chain that assumes its own conclusion, directly or through a lemma that restates it, proves nothing; check that no lemma, alone or with the others, already implies the end-to-end property before the design is involved.
+
+## Constraining and bug hunting {#sec-ch19-constrain}
+
+The fifth family changes the assumptions or the question to reach an answer sooner. Each of its six entries is owned by the previous chapter, which defined assumptions, bounded proof, covers and liveness; each entry here is compact and says what it preserves and where it is taught in full.
+
+### Environment assumptions {#sec-ch19-envassume}
+
+**Idea.** State what the inputs may legally do, so that the engine examines only legal traffic. @sec-ch18-assume defined an assumption as a conjunct of every query and showed what an over-constraint does to a report.
+
+**What it preserves.** Proofs, for every environment that keeps the assumptions, and for no other.
+
+**Where it is taught.** @sec-ch18-assume. This chapter adds where assumptions should come from and where they go: write them from the interface rules of the specification, ideally as the receiver-role half of a protocol checker (@sec-ch19-protocol), and discharge each as an assertion on the neighbor that drives the signals (@sec-ch19-ag). An assumption with no named block that guarantees it is an unchecked claim about the world.
+
+### Over-constraint for hunting {#sec-ch19-overconstrain}
+
+**Idea.** Restrict the inputs on purpose, to steer a search toward a deep bug: hold a mode fixed, forbid back-pressure, allow only one requester. The search is smaller and reaches deeper within the same limit.
+
+**What it preserves.** Counterexamples only. A trace found under the restriction is a trace of the design; a `proven` under it is a statement about the restricted environment.
+
+**Where it is taught.** @sec-ch18-assume, whose run under `assume {!req}` proved a false assertion. A hunting script should print no `proven` a reader could take for a proof: name it as a hunt, select a bounded engine, which cannot report a proof (@sec-ch18-bmc), and keep it apart from the sign-off regression.
+
+### Bounded proof with a depth argument {#sec-ch19-bounded}
+
+**Idea.** Run a bounded search to some depth $N$ and argue that $N$ is enough.
+
+**What it preserves.** Counterexamples, and a proof only to depth $N$. It equals a full proof only if $N$ reaches a completeness threshold, which is as hard to know as the answer.
+
+**Where it is taught.** @sec-ch18-bmc, which defined the completeness threshold and the bounded result worth recording: a bound together with the depth of the deepest behavior of interest. The usual industrial argument, that every cover of interest is reached within the bound, is evidence and not proof. InFormal's report prints no bound for a bounded search [@informal-tool], so the tool offers no bounded proof as a feature; a time limit that expires says nothing about depth.
+
+### Cover-guided deep search {#sec-ch19-guided}
+
+**Idea.** Reach a deep state with a cover, then start a new search from that state, so that a bug a further $N$ cycles on needs an unrolling of $N$, not of the whole distance.
+
+**What it preserves.** Counterexamples: the start state is reachable because a trace from reset reached it.
+
+**Where it is taught.** Commercial tools sell this as a semi-formal search mode; this book read no peer-reviewed source for it and InFormal has no such feature. Its sound cousin is the initial-value abstraction of @sec-ch19-initval, which starts from a whole set of states and proves the side conditions that make the set safe to start from.
+
+### Bounded liveness {#sec-ch19-boundedlive}
+
+**Idea.** Replace "eventually" by "within $N$ cycles". The bounded form is a safety property, with finite counterexamples, and every engine handles it.
+
+**What it preserves.** It is a stronger property: a proof of the bounded form proves the eventual one, and a counterexample to the bounded form may be a latency, not a deadlock.
+
+**Where it is taught.** @sec-ch18-liveness. On the handshake, the last block of `cut-timer/` proves that a request taken while idle is granted within 201 cycles, refutes the 200-cycle version at depth 201, and shows the bounded form failing under the timer abstraction, because the free `expired` need never rise:
+
+```{.text include="examples/ch19-formal-techniques/cut-timer/run.out" lines="65-73"}
+```
+
+A property that names a delay needs the logic that makes the delay.
+
+### Fairness {#sec-ch19-fairness}
+
+**Idea.** Assume that something happens infinitely often, so that liveness counterexamples in which the environment stalls for ever are excluded.
+
+**What it preserves.** Proofs of liveness, for environments that are fair in the stated sense.
+
+**Where it is taught.** @sec-ch18-liveness. This chapter adds one observation from @sec-ch19-ag. A fairness assumption about a neighbor, used in a liveness argument whose neighbor in turn assumes fairness of this block, is the circular liveness case, and it is unsound in the same way: the ring of the example satisfies each block's fairness assumption only if the other block's guarantee already holds.
+
+## Trusting the result {#sec-ch19-trust}
+
+The last family changes nothing about the problem. It asks of a finished proof whether it could have failed: whether the assumptions left the design room to misbehave, and whether the properties would have noticed if it had.
+
+### Witness cover {#sec-ch19-witness}
+
+**Idea.** Every assertion ships with a cover of the situation it is about, run under the same assumptions.
+
+**What it preserves.** Not applicable; it is a check on the setup.
+
+**Where it is taught.** @sec-ch18-cover. Every entry of this chapter has used one, and the tool flags no vacuity on its own: a proved assertion whose antecedent can never occur reads `proven` like any other. The witness covers of this chapter's examples are the evidence that each proof had something to say, and the next entry shows that the choice of cover matters.
+
+### Assumption sanity {#sec-ch19-sanity}
+
+**Problem.** Assumptions that leave the design no room to fail. @sec-ch18-assume showed contradictory assumptions and a dead end that every trace runs into. The harder case is a dead end that only some traces meet.
+
+**Idea.** Check with covers that the environment can run on for a long time, and with a witness cover for each assertion that the assertion's own scenario survives the assumptions. The exact condition, that every reachable state satisfying the assumptions has a successor that satisfies them too, is a statement about all paths branching from each state, and SVA, a language about single traces, cannot express it. Covers can show only that some traces of the kind wanted exist.
+
+**How to write it.** A free-running cycle count with a deep cover, `Deep_C`, and a witness cover per assertion, `Witness_C`. The design is a counter with a mode chosen by an input in the first cycle after reset:
+
+```{.tcl include="examples/ch19-formal-techniques/sanity/sanity.tcl" lines="8-12"}
+```
+
+**What it preserves.** Not applicable.
+
+**Example.** `sanity/`, in-house engines:
+
+```{.text include="examples/ch19-formal-techniques/sanity/run.out"}
+```
+
+With no assumption, the false assertion is refuted at depth 10 and both covers are reached. Under an assumption that every trace runs into, the counter must never reach 5, the assertion is proven and both covers are unreachable: the generic check works. Under an assumption that only mode-1 traces run into, the assertion is proven, the deep cover is reached at depth 51, because mode-0 traces run on, and only the witness cover is unreachable. The assertion is about mode 1, and in mode 1 no trace survives long enough to test it.
+
+::: {.callout-warning title="Pitfall"}
+A generic deep cover, "time keeps passing", does not detect a dead end that only some traces meet. In part C above it is reached at depth 51 while the proved assertion is vacuous. Only the assertion's own witness cover, under the final assumptions, shows the problem. Write witness covers per assertion, and read an unreachable one as a failure of the proof, not as a curiosity.
+:::
+
+**Pitfalls.** The middle case above, where the generic check passes and the per-assertion check is the only one that fails. And contradictory assumptions, which the tool accepts without a message (@sec-ch18-assume): every assertion is then proven and every cover unreachable, so a regression with no covers reports a perfect result.
+
+### Mutation of the design {#sec-ch19-mutation}
+
+**Problem.** A property set that cannot fail. Witness covers show that the assertions' scenarios occur; they do not show that the assertions would notice a bug in them.
+
+**Idea.** Plant a bug and run the property set; some property must fail. A mutant that survives every property is either a gap in the property set or an equivalent mutant, one that changes the design without changing its behavior. Mutation as a test-quality measure goes back to DeMillo, Lipton and Sayward [@demillo1978mutation]. Chockler, Kupferman, Kurshan and Vardi applied the idea to model checking, measuring the coverage of a specification by which small changes to the design make it fail [@chockler2001practical]. The method in full belongs to the chapter *Mutation Testing: Qualifying the Testbench*.
+
+**How to write it.** A procedure that applies one `sed` edit to a copy of the design when the script runs, so that the mutant cannot drift from the design it mutates, and fails if the edit matched nothing. The property set is the FIFO checker of @sec-ch09-example, bound as it ships, the previous chapter's pointer property `EmptyPtrs_A`, and the tracked-word check of @sec-ch19-track.
+
+**What it preserves.** Not applicable; a killed mutant is evidence that the property set can fail.
+
+**Example.** `mutants/`, in-house engines, a two-second bounded search for each property on each of three mutants: a read pointer that stays put when a push and a pop meet, a count that wraps one push short of full, and a read pointer that steps by two. The summary the script prints last:
+
+```{.text include="examples/ch19-formal-techniques/mutants/run.out" lines="52-65"}
+```
+
+Every mutant is killed, but not by the same properties. The occupancy checker of @sec-ch09-example kills only the mutant that breaks the count; the two mutants that corrupt data without disturbing occupancy pass all of its assertions within the limit. The tracked-word check kills both data mutants and, within two seconds, not the count mutant, whose first failure is sixteen cycles deep. The pointer property kills all three. No single property would have been enough, and the occupancy checker alone, which a team might take for a FIFO's complete property set, misses both data bugs.
+
+**Pitfalls.** A mutant that survives because the property set is vacuous under the assumptions, which is why mutation and witness covers go together. Equivalent mutants, which no property can kill and which have to be argued away by hand. And the time limit: "no counterexample in two seconds" is a statement about a bounded search, not a survival.
+
+### Cone-of-influence and proof-core coverage {#sec-ch19-core}
+
+**Idea.** Ask which logic the proofs depended on. The cone of influence of a property, all the logic that can affect it, over-reports: much of it may be logic the proof never needed. A proof core, the part of the design that a particular proof actually used, is tighter. McMillan and Amla's *Automatic Abstraction without Counterexamples* uses the logic a bounded refutation needed [@mcmillan2003abstraction]; Ghassabani, Gacek and Whalen's *Efficient Generation of Inductive Validity Cores for Safety Properties* computes such cores for inductive proofs [@ghassabani2016ivc]. Cadence describes a coverage app for its Jasper platform that measures checker coverage with proof cores; that is the vendor's statement [@cadence-jasper-cov].
+
+**What it preserves.** Not applicable; it measures the property set.
+
+**Where it is taught.** Not available in InFormal at the pinned commit [@informal-tool]; described only. The chapter *Metrics, Closure and Sign-off* returns to formal coverage as part of a closure argument.
+
+::: {.callout-tip title="In Practice"}
+A proof that goes into a sign-off review should travel with three things. The first is a witness cover for each assertion, reached under the final assumptions, abstractions and black boxes, not under an earlier setup. The second is at least one planted bug that the property set kills, applied by script to the shipped design so that it cannot drift. The third is the record: the engine and its limit, the parameter values, each black box and cut, and each assumption, with the side condition that justifies it and where that side condition was discharged. A reviewer who has these can re-run the argument; a reviewer who has only the word `proven` cannot.
+:::
+
+## Six recipes {#sec-ch19-recipes}
+
+The catalog's entries combine into checks that teams run on every chip. Six of them have names of their own, and commercial tools sell each as an application. Each recipe below is one page: the question, the entries it combines, the assertion pattern in words, what it preserves, and the chapter that carries it further. None is run in this chapter; the recipes are prose, and each names where the book measures it.
+
+### Connectivity {#sec-ch19-conn}
+
+**Question.** Does each signal at one block's port reach the right port of another block, under the right condition and with the right delay?
+
+**Entries.** Black box (@sec-ch19-bbox) every IP block, so that only the wiring between them is left in the model; environment assumptions (@sec-ch19-envassume) for the mode and configuration inputs; one assertion per row of a connection table, of the form "when the condition holds, the destination equals the source", or the same after a fixed delay for a pipelined path. A script that reads the table and emits one assertion per row is the whole method. On the DMA, the interrupt output is a registered combination of each channel's enable, done and error bits, and its connection rows are three such assertions.
+
+**Preserves.** Proofs survive the boxes; a counterexample that runs through a box is spurious and names a box to open or a contract to add.
+
+**Further.** Cadence and Synopsys each sell a connectivity application; Cadence's, by its own description, reads the connection specification from a comma-separated file or an IP-XACT description [@cadence-jasper-conn; @synopsys-vcformal-datasheet]. The full flow belongs to *Equivalence, Structural and Static Verification*.
+
+### Register access {#sec-ch19-regs}
+
+**Question.** Does every register read back what was written, honor its access type and come out of reset with its documented value?
+
+**Entries.** Symbolic constants (@sec-ch19-symconst) for the address and the data, so that one property covers every register and every value; ghost state (@sec-ch19-ghost), a copy of the symbolic register written when the bus writes it; the bus protocol's rules assumed (@sec-ch19-protocol). The assertion: a read of the symbolic address, with no write to it since the last write, returns the ghost copy, masked by the register's access type. On the DMA, the source address register drops its two low bits by design, so the read-back assertion compares against the written value with those bits cleared, a fact the register description states and the property must repeat.
+
+**Preserves.** Both, since symbolic constants and ghost state are exact.
+
+**Further.** Both vendors describe register-checking applications, which by their own descriptions check access types and reset values; Cadence's takes the register description as a comma-separated file or an IP-XACT description [@cadence-jasper-csr; @synopsys-vcformal-datasheet]. The flow belongs to *Equivalence, Structural and Static Verification*, and register models to *Registers and Reuse*.
+
+### X-propagation {#sec-ch19-xprop}
+
+**Question.** Can an unknown value, from a register without reset or an undriven input, reach an output or a control point?
+
+**Entries.** A solver's model is two-valued (@sec-ch17-smt), and InFormal's front end drops a module that calls `$isunknown` (@sec-ch09-tools), so the tool cannot represent an unknown directly. The recipe is the book's own construction, by self-composition (@sec-ch19-infoflow): two copies of the design with every ordinary input shared and every source of an unknown free and independent in each copy. An output that can differ between the copies is an output an unknown can reach. Initial-value freedom (@sec-ch19-initval) supplies the unreset registers.
+
+**Preserves.** A difference between the copies is a real escape under the reading "an unknown is any value"; it is pessimistic with respect to silicon, where each unreset register takes one value.
+
+**Further.** Both vendors describe applications for unknown-value propagation [@cadence-jasper-xprop; @synopsys-vcformal-datasheet]. The flow belongs to *Equivalence, Structural and Static Verification*, with the simulation semantics of X that @sec-ch04-fourstate introduced.
+
+### Unreachable-coverage analysis {#sec-ch19-unreach}
+
+**Question.** A coverage point that simulation never hit: can it be hit at all?
+
+**Entries.** Restate the point as a cover (@sec-ch18-cover). An unreachable cover is a proof, so the point can be excluded from the coverage goal with a reason a reviewer can check, as @sec-ch08-closure asks of every exclusion.
+
+**Preserves.** Unreachable *under the assumptions in force*. An over-constraint makes points unreachable that real traffic can hit, so an exclusion from a formal run is an exclusion only for environments that keep its assumptions; it should carry them.
+
+**Further.** Both vendors describe applications for this [@cadence-jasper-cov; @synopsys-vcformal-datasheet]. The flow belongs to *Metrics, Closure and Sign-off*.
+
+### Information flow by self-composition {#sec-ch19-infoflow}
+
+**Question.** Can a secret input influence a public output?
+
+**Entries.** Two copies of the design in one wrapper, from the same reset, with public inputs tied together and secret inputs free and independent; an assertion that the public outputs are equal in every cycle. The pair property is a property of two traces at once, which Clarkson and Schneider call a hyperproperty [@clarkson2010hyperproperties]; self-composition turns it into an ordinary safety property of the product, the observation of Barthe, D'Argenio and Rezk's *Secure Information Flow by Self-Composition* and of Terauchi and Aiken's *Secure Information Flow as a Safety Problem* [@barthe2004selfcomposition; @terauchi2005safety]. Every engine of @sec-ch18-engines applies to the product. On the DMA, a candidate is that a read of one channel's status does not depend on the other channel's registers.
+
+**Preserves.** Both, for the modeled design, cycle by cycle. Timing differences in cycles are caught; physical channels are not modeled.
+
+**Further.** The flow, and security properties in general, belong to *Safety and Security Verification*.
+
+### Clock-gating equivalence {#sec-ch19-clockgate}
+
+**Question.** Does the design with clock gating inserted behave as the design without it?
+
+**Entries.** A miter (@sec-ch19-casesplit used one): both versions in one wrapper, inputs shared, same reset, outputs asserted equal. The miter is built by hand, as a wrapper. The gated register is written as a register with an enable, against the original; how the tool models a clock derived from a gate was not measured for this book, so the recipe keeps the gating at the level of an enable. Sequential equivalence checkers exploit the structural similarity of the two versions, as in van Eijk's *Sequential Equivalence Checking Based on Structural Similarities* [@vaneijk2000sec].
+
+**Preserves.** Both, for the outputs compared.
+
+**Further.** Both vendors list clock-gating checks among the uses of their sequential equivalence applications [@cadence-jasper-sec; @synopsys-vcformal-datasheet]. The flow belongs to *Equivalence, Structural and Static Verification*.
+
+## Worked example: a pipe of two 256-entry FIFOs {#sec-ch19-example}
+
+The pipe of @sec-ch19-hier, at 256 entries per FIFO. It has two control properties: `P1`, the pipe is empty when its count `G` is zero, and `P2`, when the pipe is full, `G` is at least 256. The two memories alone hold 4,096 bits, and the deepest behavior the properties are about, the pipe full, is more than five hundred cycles from reset. The procedure is the previous chapter's (@sec-ch18-example), with the techniques of this chapter inserted where the engines stop. Every property and assumption is typed once:
+
+```{.tcl include="examples/ch19-formal-techniques/pipe-256/pipe.tcl" lines="14-20"}
+```
+
+Before reading on, predict each step's verdict: the covers by bounded search on the boxed pipe; the child's contract by induction, with and without its ghost helper; induction on the parent with both children boxed; the parent's helper; the parent's properties under it; a mutant child.
+
+**Step 1, covers.** On the boxed pipe, under the children's contracts, by bounded search:
+
+```{.text include="examples/ch19-formal-techniques/pipe-256/run.out" lines="1-13"}
+```
+
+`Full_C`, the pipe full, is `P2`'s antecedent and its natural witness. It is 513 cycles deep, and bounded search gives no verdict on it in ten seconds. The step teaches choosing witnesses a search can reach. `Drain_C`, a word in and out again, is `P1`'s witness and is reached at depth 4; `Both1_C`, a word in each child, exercises both terms of the helper to come, at depth 3; `U1Full_C`, the second child full, shows that the boxed model can reach a full child under the contract, at depth 258. Together they show that the contracts leave the pipe room to move, fill and drain. `P2`'s own antecedent stays uncovered, and the record says so.
+
+**Step 2, the child's contract.** At 256 entries, on one FIFO with its ghost count, the contract of @sec-ch19-ghost is proven with the ghost helper assumed, and the helper is proven alone:
+
+```{.text include="examples/ch19-formal-techniques/pipe-256/run.out" lines="14-22"}
+```
+
+**Steps 3 and 4, box and induct.** Both children boxed, their contracts assumed, induction on the parent:
+
+```{.tcl include="examples/ch19-formal-techniques/pipe-256/pipe.tcl" lines="81-87"}
+```
+
+```{.text include="examples/ch19-formal-techniques/pipe-256/run.out" lines="23-32"}
+```
+
+No verdict in five seconds for either property. The memories are gone, and the parent is still not inductive.
+
+**Step 5, the parent's helper.** The tool prints no counterexample to induction (@sec-ch18-trust), so the question of @sec-ch18-helper is asked by hand: from which unreachable state could `P1` fail in one step? From one where `G` is zero while a child's ghost count is not, so that the pipe is not empty although its own count says it is. Nothing in the parent ties `G` to the children's counts. Say so: `G` is the sum of the two ghost counts, each at most 256. Induction proves it at once, through the boxes:
+
+```{.text include="examples/ch19-formal-techniques/pipe-256/run.out" lines="33-41"}
+```
+
+**Step 6, the properties under the helper.** With the helper assumed, both properties are proven, and the two reachable witnesses are reached again under the final assumptions:
+
+```{.tcl include="examples/ch19-formal-techniques/pipe-256/pipe.tcl" lines="96-105"}
+```
+
+```{.text include="examples/ch19-formal-techniques/pipe-256/run.out" lines="42-54"}
+```
+
+**Step 7, a mutant.** One child built from the FIFO whose count wraps one push short of full, the mutant of @sec-ch19-initval. The child's ghost helper catches it, by bounded search, at depth 256: the ghost count and the mutant's count part company at the wrap.
+
+```{.text include="examples/ch19-formal-techniques/pipe-256/run.out" lines="55-58"}
+```
+
+**Step 8, the record.** The script prints it last, one line per verdict with its step, engine and limit, and one line per assumption with the row that discharges it:
+
+```{.text include="examples/ch19-formal-techniques/pipe-256/run.out" lines="59-77"}
+```
+
+Read as a sentence for a verification plan: `P1_A` and `P2_A` are proven at 256 entries by induction on the pipe with both FIFOs boxed, under the children's contracts `CE` and `CF` and the parent's helper `HP`; each contract is proven on one FIFO by induction under the ghost helper `H`, which is proven alone; `HP` is proven by induction under the contracts; the witnesses `Drain_C` and `Both1_C` are reached under the final assumptions, `U1Full_C` is reached on the boxed pipe, and `P2`'s own antecedent was not reached within ten seconds; a mutant child is caught by `H_A` at depth 256. Nothing in the record depends on a run that ended without a verdict, and every run that did is listed. @fig-ch19-pipe draws the structure with its verdicts.
+
+![The worked example: the pipe of two 256-entry FIFOs, each boxed under its contract on its ghost count, the parent's helper tying the pipe's count to the two, and the verdict of each step of the `pipe-256` example.](../figures/ch19-pipe.svg){#fig-ch19-pipe fig-alt="Two gray boxes, FIFO u0 and FIFO u1, in series, each with a small ghost register g beside it and a contract label: empty iff g == 0, full iff g == 256. Above them the parent's ghost count G with the helper: G == u0.g + u1.g, each at most 256. Below, a strip of verdict cells for steps 1 to 7: covers reached at depths 4, 3 and 258 and one with no verdict; child helper and contract proven; parent properties without the helper no verdict; parent helper proven; P1 and P2 proven; mutant child refuted at depth 256."}
+
+::: {.callout-note title="Worked Example"}
+The procedure, for a design too large to prove flat. (1) Write witness covers and run them by bounded search on the design as it will be proved; where a natural witness is out of reach, choose shallower ones that exercise each term of the properties and record the one not reached. (2) Prove each child's contract on the child, stated on its ports and on ghost state built from its ports, with whatever helper the child needs. (3) Box the children and assume their contracts. (4) Run a proving engine on the parent with a limit. (5) On no verdict, ask what unreachable state a step could start from, write the reason as a helper over the parent's and the children's ghost state, and prove it. (6) Assume the helper, prove the properties, and run the covers again under the final assumptions. (7) Plant a mutant in a child and check that some property catches it. (8) Write the record: every property with its engine and assumptions, every assumption with the row that discharges it, every cover with its depth, and every limit that ended without a verdict.
+:::
+
+How much did the abstractions buy, in time? This book's rule is that seconds appear only in a table that carries its date and is regenerated by a script. The example `seconds-ric3`, which needs rIC3, runs the rows of this chapter that ended in a proof, one property and one engine at a time:
+
+{{< include /examples/ch19-formal-techniques/seconds-ric3/tbl-seconds.md >}}
+
+Read it for orders of magnitude. Through the box and the contract, the memory property is proved in hundredths of a second, and the side condition the abstraction left, the contract with its helper, costs far more than the property did: the work moved, and did not vanish. The pipe's properties with the parent helper cost about as little; without it, rIC3 needed noticeably longer, boxed or flat. The case split's four cases add up to about the whole.
+
+## Future directions {#sec-ch19-future}
+
+::: {.callout-important title="Future Directions"}
+Four directions are visible from this chapter's examples, and the chapter claims no result for any of them. The manual loop of boxing, reading a spurious trace and restoring logic is what counterexample-guided abstraction refinement automates [@clarke2000cegar]; an open tool that ran it on RTL would turn the first family of the catalog from a craft into a command. Proof-core coverage (@sec-ch19-core) is available today only as a vendor feature, and an open implementation would let a reader ask which logic a proof in this book actually used. The two-word check failed where a proof needed a fact about every slot of a memory at once; engines that learn such quantified invariants over arrays would close that gap without a hand-written helper. And the proof record of the worked example is a list of claims a reviewer must take on trust; a record whose every line a small independent program can re-check, extending the certificates of @sec-ch18-trust from one engine's invariant to a whole decomposition, would make a compositional proof a different kind of evidence. Proposing helpers and contracts is also the kind of step that @sec-ch34 discusses handing to a program, with the property checker as the judge of each proposal.
+:::
+
+## Summary {#sec-ch19-summary}
+
+- Every change to a verification problem keeps proofs (it adds behaviors), keeps counterexamples (it removes behaviors), or keeps both (the property cannot see it); a cover runs the other way. Know which before reading a verdict, and record every side condition a change leaves.
+- A black box, a cut point and a timer abstraction remove logic and keep proofs. Their counterexamples are often spurious, and each spurious trace asks for a line of contract, which is then proved on the real logic. A boxed module's own assertions stay listed as errors and are not checked.
+- A RAM of 256 words, with no verdict from induction whole, was proven through one symbolic slot and a contract; the contract was proven on the storage with one helper. A bug 256 pushes from reset was found at depth 1 from invariant states, with the invariant proven at reset and inductive.
+- The spelling `$anyconst` left no RTL property in the report and printed nothing; a free input held by `$stable` works, and binds the reset cycle too. One tracked word, with a slot helper, proved the FIFO's data integrity; two tracked words proved order only in the position form with slot helpers, and the flag form's once-only checks need a quantified invariant no engine learned.
+- A rotation proved to be a symmetry of the arbiter, with a free start that covers reset, let one port's proof stand for four; with `last` reset to 3 the same check failed at depth 2, and fixed priority failed ports 1 to 3 outright.
+- Ghost state and history variables add logic that only reads the design, and keep both answers. A protocol checker with a role parameter serves both sides of a link; bound in the wrong role it proved a false rule about the input, shown only by an unreachable cover. A prophecy asserted before it is checked failed at depth 1 on a correct FIFO.
+- Assume-guarantee is sound for safety when a register breaks every loop, and the flat ring agreed; for liveness the ring was refuted by a lasso in which neither block ever starts. A case split needs its completeness check, which alone caught a forgotten case. A hierarchical contract must be stated on ports.
+- On the DMA, an end-to-end property followed from two lemmas at once, and the lemmas had no verdict from any engine: the chain was sound, and the work was in its first links.
+- A generic deep cover passed a dead end that only some traces met; the assertion's own witness cover caught it. Three mutants were each killed, by different properties, and the FIFO's occupancy checker alone missed both data mutants.
+- Two control properties of a pipe of two 256-entry FIFOs were proven by induction through boxes, contracts and one parent helper, each assumption discharged in the record. @fig-ch19-map is the catalog to return to.
+
+## Exercises {#sec-ch19-exercises}
+
+::: {.callout-note title="Exercise"}
+1. For each change, say whether proofs, counterexamples or both survive: (a) box a module; (b) add `assume {!req}`; (c) replace an address by a free input held by `$stable`; (d) set `DEPTH` from 256 to 4.
+2. In the output of `mem-abs`, the boxed run without a contract reports a counterexample at depth 3. Is the memory wrong? Which line of the output says that the trace may be spurious, and what removes it?
+3. The wrap mutant is found at depth 1 from invariant states in `init-value`. Which two facts make a proof from those states a proof from reset, and which rows of the output prove them? Why is the depth-0 counterexample of the weaker start set not a bug?
+4. A colleague's FIFO proof reports only the shell's assumptions after they added `$anyconst` to the wrapper. What happened, and what spelling does the tool accept?
+5. For the four-port round-robin arbiter with `last` reset to 3, give the permutation of ports that maps its transition relation to itself, and say which of the three conditions of a symmetry fails. Under which change does "port 0 proven" cover all four ports, and which rows of `symmetry` support it?
+6. From the output of `symmetry`, which ports of the fixed-priority arbiter fail, and at what depth? Give a request pattern that starves port 3.
+7. In part D of `protocol`, which row shows that the checker was bound in the wrong role, and why is the proven assertion about the input worthless?
+8. From the two-row trace of part C of `history`, explain why the assumption that checks the prophecy does not remove the counterexample.
+9. In `ag`, which registers make the safety ring's circular argument sound, and why does the same argument not prove the liveness ring?
+10. The case list on `a[7:6]` that omits one case proves every case it has. Which assertion fails, at what depth, and which case is missing?
+11. With only "empty exactly when `g` is zero" assumed for each boxed FIFO in `hier`, `P2_A` fails at depth 1. Give the free behavior of a boxed FIFO that the trace must use.
+12. In part C of `sanity`, which cover is reached and which is not, and which of the two exposes the assumption?
+:::
+
+## Further reading {#sec-ch19-reading}
+
+- Erik Seligman, Tom Schubert and M. V. Achutha Kiran Kumar, *Formal Verification: An Essential Toolkit for Modern VLSI Design*, 2nd ed., Morgan Kaufmann, 2023 [@seligman2023formal].
+- Edmund M. Clarke, Orna Grumberg and David E. Long, *Model Checking and Abstraction*, ACM TOPLAS, 1994 [@clarke1994abstraction].
+- E. Allen Emerson and A. Prasad Sistla, *Symmetry and Model Checking*, Formal Methods in System Design, 1996 [@emerson1996symmetry].
+- Martín Abadi and Leslie Lamport, *The Existence of Refinement Mappings*, Theoretical Computer Science, 1991 [@abadi1991refinement], and *Conjoining Specifications*, ACM TOPLAS, 1995 [@abadi1995conjoining].
+- K. L. McMillan, *Circular Compositional Reasoning about Liveness* and *Verification of Infinite State Systems by Compositional Model Checking*, both CHARME 1999 [@mcmillan1999circular; @mcmillan1999compositional].
+- Jerry R. Burch and David L. Dill, *Automatic Verification of Pipelined Microprocessor Control*, CAV 1994 [@burch1994pipelined].
+- Armin Biere and Daniel Kroening, *SAT-Based Model Checking*, in the *Handbook of Model Checking*, Springer, 2018 [@bierekroening2018sat].

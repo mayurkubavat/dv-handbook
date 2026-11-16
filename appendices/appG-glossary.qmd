@@ -30,6 +30,9 @@ Assumption
 Assume-guarantee reasoning
 : Proving a block's properties under assumptions about its neighbors, and discharging each assumption as an assertion in the neighbor's own verification. See @sec-ch09-where.
 
+Assumption sanity
+: The check that a proof's assumptions leave the design room to fail: a deep cover that time keeps passing, and a witness cover for each assertion under the final assumptions. A dead end that only some traces meet is shown only by the assertion's own witness cover. See @sec-ch19-sanity.
+
 Back-pressure
 : The receiver's use of `ready` in a valid/ready handshake to slow the sender. See @sec-ch03-pipelines.
 
@@ -54,6 +57,9 @@ Bit-blasting
 Bit-vector
 : A fixed-width machine word as a solver's theory defines it: arithmetic modulo a power of two, no X or Z, and signedness carried by the operator, not the value. See @sec-ch17-smt.
 
+Black box
+: A module instance whose contents are removed from the formal model: its outputs become free inputs and its inputs are ignored. The model is an over-approximation, so a proof holds for the design and a counterexample may be spurious. See @sec-ch19-bbox.
+
 Bound
 : The number of transitions in an unrolling; bound $k$ has $k + 1$ states. Tools differ by one in what they call zero. See @sec-ch17-example.
 
@@ -62,6 +68,9 @@ Bounded model checking (BMC)
 
 Btor2
 : A line-based format for word-level models of sequential designs, with `state`, `init`, `next`, `bad` and `constraint` lines; the form in which this book's formal tool holds a design. See @sec-ch17-aig.
+
+Case split
+: Proving a property separately under each of several conditions, together with a completeness check that the conditions cover every reachable state. See @sec-ch19-casesplit.
 
 Certificate
 : Evidence for a verdict that a simple, independent program can check: a trace for a counterexample, an inductive invariant for a proof. See @sec-ch18-trust.
@@ -89,6 +98,9 @@ Code coverage
 
 Combinational cloud
 : The logic between registers. It has no memory, and its output is a function of its inputs alone. See @sec-ch03-rtl.
+
+Completeness check
+: The proof, required by a case split, that in every reachable state at least one of the cases holds. Without it the split proves the property only for the cases listed. See @sec-ch19-casesplit.
 
 Completeness threshold
 : A bound such that, if no counterexample of at most that many steps exists, none exists at all. See @sec-ch18-bmc.
@@ -129,7 +141,19 @@ Cross
 Cube
 : A conjunction of literals over the state bits, standing for every state that agrees with it. See @sec-ch18-ic3.
 
+Cut point
+: An internal signal whose driving logic is disconnected in the formal model, so that the signal becomes a free input. Like a black box, it makes the model an over-approximation. See @sec-ch19-cut.
+
+Cutoff
+: A parameter size beyond which, by a theorem about a restricted class of systems, a property that holds at the cutoff holds at every size. No cutoff theorem covers parameterized RTL in general. See @sec-ch19-param.
+
 ## D–H {#sec-appG-d}
+
+Data independence
+: The property of a design that only stores and moves some data and never computes on it, compares it or branches on it. For such a design a property about one freely chosen data word stands for every word. See @sec-ch19-track.
+
+Decomposition (property)
+: Replacing an end-to-end property by a chain of local lemmas, each closer to the logic that keeps it, and proving that the end-to-end property follows from them. The lemmas are then the work. See @sec-ch19-decomp.
 
 Delta cycle
 : VHDL's name for one pass of the simulator's loop within a timestep. This book says *iteration within a timestep*. See @sec-ch04-iteration.
@@ -182,6 +206,9 @@ Functional verification
 Generalization
 : In IC3, replacing a cube that is to be blocked by a larger cube whose lemma is still inductive relative to the same frame, so that one lemma excludes many states. See @sec-ch18-ic3.
 
+Ghost state
+: Logic added for verification that reads the design and is never read by it, such as a counter or a shadow register. It does not change what the design can do. See @sec-ch19-ghost.
+
 Helper invariant
 : A property of a design's state that is proved first and then assumed, so that a later proof starts only from states that satisfy it. See @sec-ch09-example.
 
@@ -190,6 +217,12 @@ Handle
 
 Handshake
 : See *valid/ready handshake*.
+
+Hierarchical contract
+: Properties of a block, stated on its ports and on ghost state computed from them, proved on the block and assumed of it, as a black box, in the proof of its parent. See @sec-ch19-hier.
+
+History variable
+: Ghost state that records something about the past, so that a property can refer to an unbounded stretch of it. See @sec-ch19-history.
 
 ## I–N {#sec-appG-i}
 
@@ -201,6 +234,9 @@ Inductive invariant
 
 Inductive strengthening
 : Replacing a property that is true and not inductive by a stronger one that is, by conjoining a helper invariant. See @sec-ch18-helper.
+
+Initial-value abstraction
+: Starting a formal search from every state that satisfies an invariant instead of from reset. Sound when the invariant holds at reset and is inductive. See @sec-ch19-initval.
 
 Interface
 : A named bundle of signals with its own ports and its own code, used to connect a testbench to a design. See *modport*, *virtual interface* and @sec-ch05-interfaces.
@@ -235,6 +271,9 @@ Liveness property
 Liveness-to-safety
 : A construction that adds a copy of the state, a save input and a flag to a design, so that a lasso violating a liveness property becomes a finite trace to a bad state. See @sec-ch18-liveness.
 
+Memory abstraction
+: Replacing a memory in a proof by one symbolic slot: a free address held constant, a shadow of the last word written there, and a contract on the boxed storage that pins what a read of the slot returns. See @sec-ch19-memabs.
+
 Metastability
 : Indecision in a flip-flop about whether its output should be zero or one, caused by a data change too close to the sampling edge. The chance that it persists falls exponentially with time but never reaches zero. See @sec-ch03-metastability.
 
@@ -246,6 +285,9 @@ Modport
 
 Monitor register
 : State a checker keeps for itself, as ordinary sequential logic, so that a rule spanning several ticks becomes a condition on one. See @sec-ch09-properties.
+
+Mutant (design)
+: A copy of the design with one planted bug, used to check that some property of a set can fail. A mutant that every property passes is a gap in the set or an equivalent mutant. See @sec-ch19-mutation.
 
 Netlist
 : What synthesis produces: the design's behavior expressed as instances of library cells and the wires between them. See @sec-ch03-rtl.
@@ -264,8 +306,17 @@ Non-blocking assignment
 Object
 : An instance of a class, created by `new` and reached through a handle. See @sec-ch05-classes.
 
+Oracle input
+: A free input that chooses, in a property's own logic, which cycle or which event to watch. A property proved with it holds whichever choice the engine makes. See @sec-ch19-oracle.
+
+Over-approximation
+: A changed problem that allows every behavior of the original and possibly more. It preserves proofs of safety properties; its counterexamples may be spurious. See @sec-ch19-preserve.
+
 Over-constraint
 : A set of assumptions that excludes behavior the real environment can produce. Properties proved under it are proved only for what remains; covers are the rows of a report that show it. See @sec-ch18-assume.
+
+Parameter reduction
+: Proving a design at a small parameter value in place of a large one. The result transfers only with an argument: a cutoff theorem, data independence, or an induction on the parameter. See @sec-ch19-param.
 
 Parameterized class
 : A family of classes, one per set of parameter values. Each specialization is its own type, with its own static members. See @sec-ch06-param.
@@ -282,11 +333,20 @@ Primary clock
 Process
 : A thread of execution in a design or testbench: an `always` block, an `initial` block, or a continuous assignment. See @sec-ch04-model.
 
+Proof core
+: The part of a design that a particular proof actually used. A tighter measure of what a property set checks than the cone of influence. See @sec-ch19-core.
+
 Proof obligation
 : In IC3, a pair of a cube and a frame index: the cube must be shown unreachable within that many steps. An obligation that reaches frame 0 yields a counterexample. See @sec-ch18-ic3.
 
 Property
 : A set of traces: the ones a requirement permits. A design satisfies it when every trace it can produce is in the set. See @sec-ch09-what.
+
+Prophecy variable
+: A free value that guesses something about the future, together with a check, made when the future arrives, that the guess was right. Without care it can rule out behaviors and so hide a bug. See @sec-ch19-history.
+
+Protocol checker role
+: The parameter of a protocol checker that names which side of an interface the block under proof is on. Rules on signals the block drives are asserted; rules on signals its neighbor drives are assumed. See @sec-ch19-protocol.
 
 Pure virtual method
 : A method declared without a body in an abstract (`virtual`) class. Every concrete subclass must implement it, and the abstract class cannot itself be constructed. See @sec-ch06-abstract.
@@ -302,6 +362,9 @@ Random stability
 
 Reachable state
 : A state to which a sequence of transitions leads from an initial state. See @sec-ch18-reach.
+
+Reference model
+: Ghost state that computes, at some level of abstraction, what the design should do, compared with the design by assertions. See @sec-ch19-refmodel.
 
 Region
 : One of the ordered stages a SystemVerilog timestep is divided into, such as Preponed, Active, NBA, Observed, Reactive and Postponed. The order between regions may be relied on; the order between processes within one region may not. See @sec-ch04-regions.
@@ -347,17 +410,32 @@ Seed
 Sequence (assertion)
 : A regular expression over clock ticks, built from boolean expressions with delays and repetition; the left side of an implication in the concurrent-assertion language. See @sec-ch09-sequences.
 
+Side condition
+: An obligation that a technique creates and that must be discharged elsewhere for the technique's result to count, such as a black box's contract proved on the real block. See @sec-ch19-preserve.
+
 Step case
 : The half of a k-induction proof that asks for $k$ good states in a row followed by a bad one, starting from any state. See @sec-ch18-induction.
 
 Structural hashing
 : Keeping a table of the AND gates of a graph, keyed on their inputs, so that a gate with the same inputs is built once. See @sec-ch17-aig.
 
+Symbolic constant
+: A free input that an assumption holds constant over the whole trace. A property proved with it is proved for each of its values. See @sec-ch19-symconst.
+
+Symbolic slot
+: The one memory location, named by a symbolic constant address, that a memory abstraction keeps. See @sec-ch19-memabs.
+
+Symmetry
+: A permutation of a design's identical parts, such as channels, that maps its transitions, its initial states and a property onto themselves. A proof for one part then stands for every part it maps to. See @sec-ch19-symmetry.
+
 Synchronizer
 : A structure that carries a signal safely into another clock domain. The common two-flop synchronizer samples the signal and waits a clock period before sampling it again, trading metastability for an uncertainty of one cycle in latency. It synchronizes control, not data. See @sec-ch03-cdc.
 
 Test (manufacturing)
 : The check that a particular manufactured die came out of the fab correctly. It looks for manufacturing defects, not design errors. See @sec-ch01-definitions.
+
+Timer abstraction
+: Replacing a counter by a free expired signal and adding back, as an assumption proved on the real timer, only as much of its behavior as the property needs. See @sec-ch19-timer.
 
 Timestep
 : All the work a simulator does at one value of simulation time. Time advances only when no events remain at the current time. See @sec-ch04-model.
@@ -379,6 +457,12 @@ Tseitin encoding
 
 Two-state
 : Having only the values zero and one. A two-state variable cannot hold an unknown; assigning X to it stores 0. Compare *four-state*; see @sec-ch04-fourstate and @sec-ch05-types.
+
+Two-word check
+: An ordering and duplication check for a FIFO with two distinct symbolic words, each pushed at most once in order: the second must never leave before the first, and each leaves at most once. See @sec-ch19-twoword.
+
+Under-approximation
+: A changed problem that allows only some of the original's behaviors. It preserves counterexamples; its proofs say nothing about the behaviors left out. See @sec-ch19-preserve.
 
 Undetermined
 : A formal tool's report that it neither proved nor refuted a property within its limits. It says nothing about the design. See @sec-ch09-formal.

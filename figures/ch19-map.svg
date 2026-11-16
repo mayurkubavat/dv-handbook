@@ -1,0 +1,153 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 640" width="1000" height="640" role="img" aria-label="Six columns of cells, one per family, each cell an entry with a colored band for what it preserves and a tag for the design of its example">
+<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#7FA3C0"/></marker><marker id="ahj" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#5B3E8E"/></marker><marker id="ahd" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#1B4F72"/></marker><marker id="ahc" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#B7791F"/></marker><marker id="ahg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#1C1C1C"/></marker><pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="6" stroke="#CBD2D9" stroke-width="2"/></pattern></defs>
+<rect width="1000" height="640" fill="white"/>
+<text x="30" y="40.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="21" font-weight="700" text-anchor="start" fill="#1B4F72">Thirty-one techniques in six families</text>
+<text x="30" y="64.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="400" text-anchor="start" fill="#1C1C1C">What each change to the problem preserves, and the design its example runs on.</text>
+<text x="30.0" y="104.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13.5" font-weight="700" text-anchor="start" fill="#1B4F72">Shrinking the</text>
+<text x="30.0" y="121.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13.5" font-weight="700" text-anchor="start" fill="#1B4F72">problem</text>
+<rect x="24.0" y="134.0" width="154.0" height="50.0" rx="5" fill="white" stroke="#CBD2D9" stroke-width="1.2"/>
+<rect x="24.0" y="134.0" width="9.0" height="50.0" rx="2" fill="#DCE9F3" stroke="#1B4F72" stroke-width="1.2"/>
+<text x="40.0" y="154.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="600" text-anchor="start" fill="#1C1C1C">Black box</text>
+<text x="40.0" y="173.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="10" font-weight="400" text-anchor="start" fill="#7FA3C0">handshake · in-house</text>
+<rect x="24.0" y="192.0" width="154.0" height="50.0" rx="5" fill="white" stroke="#CBD2D9" stroke-width="1.2"/>
+<rect x="24.0" y="192.0" width="9.0" height="50.0" rx="2" fill="#DCE9F3" stroke="#1B4F72" stroke-width="1.2"/>
+<text x="40.0" y="212.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="600" text-anchor="start" fill="#1C1C1C">Cut point</text>
+<text x="40.0" y="231.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="10" font-weight="400" text-anchor="start" fill="#7FA3C0">handshake · in-house</text>
+<rect x="24.0" y="250.0" width="154.0" height="50.0" rx="5" fill="white" stroke="#CBD2D9" stroke-width="1.2"/>
+<rect x="24.0" y="250.0" width="9.0" height="50.0" rx="2" fill="#DCE9F3" stroke="#1B4F72" stroke-width="1.2"/>
+<text x="40.0" y="270.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="600" text-anchor="start" fill="#1C1C1C">Timer abstraction</text>
+<text x="40.0" y="289.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="10" font-weight="400" text-anchor="start" fill="#7FA3C0">handshake · in-house</text>
+<rect x="24.0" y="308.0" width="154.0" height="50.0" rx="5" fill="white" stroke="#CBD2D9" stroke-width="1.2"/>
+<rect x="24.0" y="308.0" width="9.0" height="50.0" rx="2" fill="url(#hatch)" stroke="#CBD2D9" stroke-width="1.2"/>
+<text x="40.0" y="328.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="600" text-anchor="start" fill="#1C1C1C">Parameter reduction</text>
+<text x="40.0" y="347.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="10" font-weight="400" text-anchor="start" fill="#7FA3C0">FIFO · in-house</text>
+<rect x="24.0" y="366.0" width="154.0" height="50.0" rx="5" fill="white" stroke="#CBD2D9" stroke-width="1.2"/>
+<rect x="24.0" y="366.0" width="9.0" height="50.0" rx="2" fill="#DCE9F3" stroke="#1B4F72" stroke-width="1.2"/>
+<text x="40.0" y="386.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="600" text-anchor="start" fill="#1C1C1C">Memory abstraction</text>
+<text x="40.0" y="405.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="10" font-weight="400" text-anchor="start" fill="#7FA3C0">other · in-house+rIC3</text>
+<rect x="24.0" y="424.0" width="154.0" height="50.0" rx="5" fill="white" stroke="#CBD2D9" stroke-width="1.2"/>
+<rect x="24.0" y="424.0" width="9.0" height="50.0" rx="2" fill="#DCE9F3" stroke="#1B4F72" stroke-width="1.2"/>
+<text x="40.0" y="444.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="600" text-anchor="start" fill="#1C1C1C">Initial value</text>
+<text x="40.0" y="463.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="10" font-weight="400" text-anchor="start" fill="#7FA3C0">FIFO · in-house</text>
+<rect x="24.0" y="482.0" width="154.0" height="50.0" rx="5" fill="white" stroke="#CBD2D9" stroke-width="1.2"/>
+<rect x="24.0" y="482.0" width="9.0" height="50.0" rx="2" fill="#DCE9F3" stroke="#1B4F72" stroke-width="1.2"/>
+<text x="40.0" y="502.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="600" text-anchor="start" fill="#1C1C1C">Localization</text>
+<text x="40.0" y="521.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="10" font-weight="400" text-anchor="start" fill="#7FA3C0">- · no example</text>
+<text x="193.0" y="104.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13.5" font-weight="700" text-anchor="start" fill="#1B4F72">Symbolic</text>
+<text x="193.0" y="121.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13.5" font-weight="700" text-anchor="start" fill="#1B4F72">reasoning</text>
+<rect x="187.0" y="134.0" width="154.0" height="50.0" rx="5" fill="white" stroke="#CBD2D9" stroke-width="1.2"/>
+<rect x="187.0" y="134.0" width="9.0" height="50.0" rx="2" fill="#E6F2E7" stroke="#2E7D32" stroke-width="1.2"/>
+<text x="203.0" y="154.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="600" text-anchor="start" fill="#1C1C1C">Symbolic constant</text>
+<text x="203.0" y="173.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="10" font-weight="400" text-anchor="start" fill="#7FA3C0">FIFO · in-house</text>
+<rect x="187.0" y="192.0" width="154.0" height="50.0" rx="5" fill="white" stroke="#CBD2D9" stroke-width="1.2"/>
+<rect x="187.0" y="192.0" width="9.0" height="50.0" rx="2" fill="#E6F2E7" stroke="#2E7D32" stroke-width="1.2"/>
+<text x="203.0" y="212.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="600" text-anchor="start" fill="#1C1C1C">Free oracle</text>
+<text x="203.0" y="231.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="10" font-weight="400" text-anchor="start" fill="#7FA3C0">FIFO · in-house</text>
+<rect x="187.0" y="250.0" width="154.0" height="50.0" rx="5" fill="white" stroke="#CBD2D9" stroke-width="1.2"/>
+<rect x="187.0" y="250.0" width="9.0" height="50.0" rx="2" fill="#E6F2E7" stroke="#2E7D32" stroke-width="1.2"/>
+<text x="203.0" y="270.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="600" text-anchor="start" fill="#1C1C1C">Tracking one word</text>
+<text x="203.0" y="289.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="10" font-weight="400" text-anchor="start" fill="#7FA3C0">FIFO · in-house</text>
+<rect x="187.0" y="308.0" width="154.0" height="50.0" rx="5" fill="white" stroke="#CBD2D9" stroke-width="1.2"/>
+<rect x="187.0" y="308.0" width="9.0" height="50.0" rx="2" fill="#E6F2E7" stroke="#2E7D32" stroke-width="1.2"/>
+<text x="203.0" y="328.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="600" text-anchor="start" fill="#1C1C1C">Two-word check</text>
+<text x="203.0" y="347.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="10" font-weight="400" text-anchor="start" fill="#7FA3C0">FIFO · in-house+rIC3</text>
+<rect x="187.0" y="366.0" width="154.0" height="50.0" rx="5" fill="white" stroke="#CBD2D9" stroke-width="1.2"/>
+<rect x="187.0" y="366.0" width="9.0" height="50.0" rx="2" fill="#DCE9F3" stroke="#1B4F72" stroke-width="1.2"/>
+<text x="203.0" y="386.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="600" text-anchor="start" fill="#1C1C1C">Symmetry</text>
+<text x="203.0" y="405.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="10" font-weight="400" text-anchor="start" fill="#7FA3C0">DMA · in-house</text>
+<text x="356.0" y="104.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13.5" font-weight="700" text-anchor="start" fill="#1B4F72">Modeling</text>
+<text x="356.0" y="121.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13.5" font-weight="700" text-anchor="start" fill="#1B4F72">code</text>
+<rect x="350.0" y="134.0" width="154.0" height="50.0" rx="5" fill="white" stroke="#CBD2D9" stroke-width="1.2"/>
+<rect x="350.0" y="134.0" width="9.0" height="50.0" rx="2" fill="#E6F2E7" stroke="#2E7D32" stroke-width="1.2"/>
+<text x="366.0" y="154.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="600" text-anchor="start" fill="#1C1C1C">Ghost state</text>
+<text x="366.0" y="173.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="10" font-weight="400" text-anchor="start" fill="#7FA3C0">FIFO · in-house</text>
+<rect x="350.0" y="192.0" width="154.0" height="50.0" rx="5" fill="white" stroke="#CBD2D9" stroke-width="1.2"/>
+<rect x="350.0" y="192.0" width="9.0" height="50.0" rx="2" fill="#E6F2E7" stroke="#2E7D32" stroke-width="1.2"/>
+<text x="366.0" y="212.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="600" text-anchor="start" fill="#1C1C1C">Reference model</text>
+<text x="366.0" y="231.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="10" font-weight="400" text-anchor="start" fill="#7FA3C0">FIFO · in-house</text>
+<rect x="350.0" y="250.0" width="154.0" height="50.0" rx="5" fill="white" stroke="#CBD2D9" stroke-width="1.2"/>
+<rect x="350.0" y="250.0" width="9.0" height="50.0" rx="2" fill="#DCE9F3" stroke="#1B4F72" stroke-width="1.2"/>
+<text x="366.0" y="270.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="600" text-anchor="start" fill="#1C1C1C">Protocol checker</text>
+<text x="366.0" y="289.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="10" font-weight="400" text-anchor="start" fill="#7FA3C0">DMA · in-house</text>
+<rect x="350.0" y="308.0" width="154.0" height="50.0" rx="5" fill="white" stroke="#CBD2D9" stroke-width="1.2"/>
+<rect x="350.0" y="308.0" width="9.0" height="50.0" rx="2" fill="#E6F2E7" stroke="#2E7D32" stroke-width="1.2"/>
+<text x="366.0" y="328.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="600" text-anchor="start" fill="#1C1C1C">History and prophecy</text>
+<text x="366.0" y="347.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="10" font-weight="400" text-anchor="start" fill="#7FA3C0">FIFO · in-house+rIC3</text>
+<text x="519.0" y="104.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13.5" font-weight="700" text-anchor="start" fill="#1B4F72">Decomposition</text>
+<text x="519.0" y="121.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13.5" font-weight="700" text-anchor="start" fill="#1B4F72"></text>
+<rect x="513.0" y="134.0" width="154.0" height="50.0" rx="5" fill="white" stroke="#CBD2D9" stroke-width="1.2"/>
+<rect x="513.0" y="134.0" width="9.0" height="50.0" rx="2" fill="#DCE9F3" stroke="#1B4F72" stroke-width="1.2"/>
+<text x="529.0" y="154.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="600" text-anchor="start" fill="#1C1C1C">Helper invariant</text>
+<text x="529.0" y="173.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="10" font-weight="400" text-anchor="start" fill="#7FA3C0">- · no example</text>
+<rect x="513.0" y="192.0" width="154.0" height="50.0" rx="5" fill="white" stroke="#CBD2D9" stroke-width="1.2"/>
+<rect x="513.0" y="192.0" width="9.0" height="50.0" rx="2" fill="#DCE9F3" stroke="#1B4F72" stroke-width="1.2"/>
+<text x="529.0" y="212.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="600" text-anchor="start" fill="#1C1C1C">Assume-guarantee</text>
+<text x="529.0" y="231.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="10" font-weight="400" text-anchor="start" fill="#7FA3C0">other · in-house</text>
+<rect x="513.0" y="250.0" width="154.0" height="50.0" rx="5" fill="white" stroke="#CBD2D9" stroke-width="1.2"/>
+<rect x="513.0" y="250.0" width="9.0" height="50.0" rx="2" fill="#DCE9F3" stroke="#1B4F72" stroke-width="1.2"/>
+<text x="529.0" y="270.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="600" text-anchor="start" fill="#1C1C1C">Case split</text>
+<text x="529.0" y="289.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="10" font-weight="400" text-anchor="start" fill="#7FA3C0">other · in-house</text>
+<rect x="513.0" y="308.0" width="154.0" height="50.0" rx="5" fill="white" stroke="#CBD2D9" stroke-width="1.2"/>
+<rect x="513.0" y="308.0" width="9.0" height="50.0" rx="2" fill="#DCE9F3" stroke="#1B4F72" stroke-width="1.2"/>
+<text x="529.0" y="328.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="600" text-anchor="start" fill="#1C1C1C">Hierarchical proof</text>
+<text x="529.0" y="347.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="10" font-weight="400" text-anchor="start" fill="#7FA3C0">FIFO · in-house+rIC3</text>
+<rect x="513.0" y="366.0" width="154.0" height="50.0" rx="5" fill="white" stroke="#CBD2D9" stroke-width="1.2"/>
+<rect x="513.0" y="366.0" width="9.0" height="50.0" rx="2" fill="#DCE9F3" stroke="#1B4F72" stroke-width="1.2"/>
+<text x="529.0" y="386.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="600" text-anchor="start" fill="#1C1C1C">Decomposition</text>
+<text x="529.0" y="405.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="10" font-weight="400" text-anchor="start" fill="#7FA3C0">DMA · in-house</text>
+<text x="682.0" y="104.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13.5" font-weight="700" text-anchor="start" fill="#1B4F72">Constraining and</text>
+<text x="682.0" y="121.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13.5" font-weight="700" text-anchor="start" fill="#1B4F72">bug hunting</text>
+<rect x="676.0" y="134.0" width="154.0" height="50.0" rx="5" fill="white" stroke="#CBD2D9" stroke-width="1.2"/>
+<rect x="676.0" y="134.0" width="9.0" height="50.0" rx="2" fill="#DCE9F3" stroke="#1B4F72" stroke-width="1.2"/>
+<text x="692.0" y="154.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="600" text-anchor="start" fill="#1C1C1C">Environment</text>
+<text x="692.0" y="173.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="10" font-weight="400" text-anchor="start" fill="#7FA3C0">- · no example</text>
+<rect x="676.0" y="192.0" width="154.0" height="50.0" rx="5" fill="white" stroke="#CBD2D9" stroke-width="1.2"/>
+<rect x="676.0" y="192.0" width="9.0" height="50.0" rx="2" fill="#FBF1DC" stroke="#B7791F" stroke-width="1.2"/>
+<text x="692.0" y="212.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="600" text-anchor="start" fill="#1C1C1C">Over-constraint</text>
+<text x="692.0" y="231.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="10" font-weight="400" text-anchor="start" fill="#7FA3C0">- · no example</text>
+<rect x="676.0" y="250.0" width="154.0" height="50.0" rx="5" fill="white" stroke="#CBD2D9" stroke-width="1.2"/>
+<rect x="676.0" y="250.0" width="9.0" height="50.0" rx="2" fill="#FBF1DC" stroke="#B7791F" stroke-width="1.2"/>
+<text x="692.0" y="270.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="600" text-anchor="start" fill="#1C1C1C">Bounded proof</text>
+<text x="692.0" y="289.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="10" font-weight="400" text-anchor="start" fill="#7FA3C0">- · no example</text>
+<rect x="676.0" y="308.0" width="154.0" height="50.0" rx="5" fill="white" stroke="#CBD2D9" stroke-width="1.2"/>
+<rect x="676.0" y="308.0" width="9.0" height="50.0" rx="2" fill="#FBF1DC" stroke="#B7791F" stroke-width="1.2"/>
+<text x="692.0" y="328.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="600" text-anchor="start" fill="#1C1C1C">Guided search</text>
+<text x="692.0" y="347.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="10" font-weight="400" text-anchor="start" fill="#7FA3C0">- · no example</text>
+<rect x="676.0" y="366.0" width="154.0" height="50.0" rx="5" fill="white" stroke="#CBD2D9" stroke-width="1.2"/>
+<rect x="676.0" y="366.0" width="9.0" height="50.0" rx="2" fill="#DCE9F3" stroke="#1B4F72" stroke-width="1.2"/>
+<text x="692.0" y="386.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="600" text-anchor="start" fill="#1C1C1C">Bounded liveness</text>
+<text x="692.0" y="405.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="10" font-weight="400" text-anchor="start" fill="#7FA3C0">handshake · in-house</text>
+<rect x="676.0" y="424.0" width="154.0" height="50.0" rx="5" fill="white" stroke="#CBD2D9" stroke-width="1.2"/>
+<rect x="676.0" y="424.0" width="9.0" height="50.0" rx="2" fill="#DCE9F3" stroke="#1B4F72" stroke-width="1.2"/>
+<text x="692.0" y="444.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="600" text-anchor="start" fill="#1C1C1C">Fairness</text>
+<text x="692.0" y="463.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="10" font-weight="400" text-anchor="start" fill="#7FA3C0">- · no example</text>
+<text x="845.0" y="104.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13.5" font-weight="700" text-anchor="start" fill="#1B4F72">Trusting the</text>
+<text x="845.0" y="121.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13.5" font-weight="700" text-anchor="start" fill="#1B4F72">result</text>
+<rect x="839.0" y="134.0" width="154.0" height="50.0" rx="5" fill="white" stroke="#CBD2D9" stroke-width="1.2"/>
+<rect x="839.0" y="134.0" width="9.0" height="50.0" rx="2" fill="#EEE8F6" stroke="#5B3E8E" stroke-width="1.2"/>
+<text x="855.0" y="154.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="600" text-anchor="start" fill="#1C1C1C">Witness cover</text>
+<text x="855.0" y="173.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="10" font-weight="400" text-anchor="start" fill="#7FA3C0">- · no example</text>
+<rect x="839.0" y="192.0" width="154.0" height="50.0" rx="5" fill="white" stroke="#CBD2D9" stroke-width="1.2"/>
+<rect x="839.0" y="192.0" width="9.0" height="50.0" rx="2" fill="#EEE8F6" stroke="#5B3E8E" stroke-width="1.2"/>
+<text x="855.0" y="212.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="600" text-anchor="start" fill="#1C1C1C">Assumption sanity</text>
+<text x="855.0" y="231.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="10" font-weight="400" text-anchor="start" fill="#7FA3C0">other · in-house</text>
+<rect x="839.0" y="250.0" width="154.0" height="50.0" rx="5" fill="white" stroke="#CBD2D9" stroke-width="1.2"/>
+<rect x="839.0" y="250.0" width="9.0" height="50.0" rx="2" fill="#EEE8F6" stroke="#5B3E8E" stroke-width="1.2"/>
+<text x="855.0" y="270.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="600" text-anchor="start" fill="#1C1C1C">Mutation</text>
+<text x="855.0" y="289.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="10" font-weight="400" text-anchor="start" fill="#7FA3C0">FIFO · in-house</text>
+<rect x="839.0" y="308.0" width="154.0" height="50.0" rx="5" fill="white" stroke="#CBD2D9" stroke-width="1.2"/>
+<rect x="839.0" y="308.0" width="9.0" height="50.0" rx="2" fill="#EEE8F6" stroke="#5B3E8E" stroke-width="1.2"/>
+<text x="855.0" y="328.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="600" text-anchor="start" fill="#1C1C1C">Proof core</text>
+<text x="855.0" y="347.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="10" font-weight="400" text-anchor="start" fill="#7FA3C0">- · no example</text>
+<rect x="24.0" y="546.0" width="18.0" height="16.0" rx="2" fill="#DCE9F3" stroke="#1B4F72" stroke-width="1.2"/>
+<text x="50.0" y="559.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="400" text-anchor="start" fill="#1C1C1C">keeps proofs</text>
+<rect x="344.0" y="546.0" width="18.0" height="16.0" rx="2" fill="#FBF1DC" stroke="#B7791F" stroke-width="1.2"/>
+<text x="370.0" y="559.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="400" text-anchor="start" fill="#1C1C1C">keeps counterexamples</text>
+<rect x="664.0" y="546.0" width="18.0" height="16.0" rx="2" fill="#E6F2E7" stroke="#2E7D32" stroke-width="1.2"/>
+<text x="690.0" y="559.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="400" text-anchor="start" fill="#1C1C1C">keeps both</text>
+<rect x="24.0" y="572.0" width="18.0" height="16.0" rx="2" fill="url(#hatch)" stroke="#CBD2D9" stroke-width="1.2"/>
+<text x="50.0" y="585.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="400" text-anchor="start" fill="#1C1C1C">neither, without an argument</text>
+<rect x="344.0" y="572.0" width="18.0" height="16.0" rx="2" fill="#EEE8F6" stroke="#5B3E8E" stroke-width="1.2"/>
+<text x="370.0" y="585.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="400" text-anchor="start" fill="#1C1C1C">checks the setup (n.a.)</text>
+<text x="24.0" y="618.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12.5" font-weight="400" text-anchor="start" fill="#7FA3C0">Tag: the design of the example (other: a design built for the entry) and the engines it runs; - marks a compact entry with no example of its own.</text>
+</svg>

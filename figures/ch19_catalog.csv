@@ -1,0 +1,32 @@
+family,label,short,preserves,design,engine
+Shrinking the problem,bbox,Black box,proofs,handshake,in-house
+Shrinking the problem,cut,Cut point,proofs,handshake,in-house
+Shrinking the problem,timer,Timer abstraction,proofs,handshake,in-house
+Shrinking the problem,param,Parameter reduction,neither,FIFO,in-house
+Shrinking the problem,memabs,Memory abstraction,proofs,other,in-house + rIC3
+Shrinking the problem,initval,Initial value,proofs,FIFO,in-house
+Shrinking the problem,localize,Localization,proofs,none,no example
+Symbolic reasoning,symconst,Symbolic constant,both,FIFO,in-house
+Symbolic reasoning,oracle,Free oracle,both,FIFO,in-house
+Symbolic reasoning,track,Tracking one word,both,FIFO,in-house
+Symbolic reasoning,twoword,Two-word check,both,FIFO,in-house + rIC3
+Symbolic reasoning,symmetry,Symmetry,proofs,DMA,in-house
+Modeling code,ghost,Ghost state,both,FIFO,in-house
+Modeling code,refmodel,Reference model,both,FIFO,in-house
+Modeling code,protocol,Protocol checker,proofs,DMA,in-house
+Modeling code,history,History and prophecy,both,FIFO,in-house + rIC3
+Decomposition,helper,Helper invariant,proofs,none,no example
+Decomposition,ag,Assume-guarantee,proofs,other,in-house
+Decomposition,casesplit,Case split,proofs,other,in-house
+Decomposition,hier,Hierarchical proof,proofs,FIFO,in-house + rIC3
+Decomposition,decomp,Decomposition,proofs,DMA,in-house
+Constraining and bug hunting,envassume,Environment,proofs,none,no example
+Constraining and bug hunting,overconstrain,Over-constraint,counterexamples,none,no example
+Constraining and bug hunting,bounded,Bounded proof,counterexamples,none,no example
+Constraining and bug hunting,guided,Guided search,counterexamples,none,no example
+Constraining and bug hunting,boundedlive,Bounded liveness,proofs,handshake,in-house
+Constraining and bug hunting,fairness,Fairness,proofs,none,no example
+Trusting the result,witness,Witness cover,n.a.,none,no example
+Trusting the result,sanity,Assumption sanity,n.a.,other,in-house
+Trusting the result,mutation,Mutation,n.a.,FIFO,in-house
+Trusting the result,core,Proof core,n.a.,none,no example

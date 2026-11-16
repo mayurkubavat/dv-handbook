@@ -1,0 +1,101 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 560" width="1000" height="560" role="img" aria-label="Two boxed FIFOs with ghost counts and contracts, the parent&#x27;s count with its helper, and a strip of verdict cells for the steps">
+<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#7FA3C0"/></marker><marker id="ahj" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#5B3E8E"/></marker><marker id="ahd" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#1B4F72"/></marker><marker id="ahc" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#B7791F"/></marker><marker id="ahg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#1C1C1C"/></marker><pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="6" stroke="#CBD2D9" stroke-width="2"/></pattern></defs>
+<rect width="1000" height="560" fill="white"/>
+<text x="30" y="40.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="21" font-weight="700" text-anchor="start" fill="#1B4F72">Two 256-entry FIFOs, proved one level at a time</text>
+<text x="30" y="64.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="400" text-anchor="start" fill="#1C1C1C">Each child boxed under its contract; one helper at the parent; the verdicts of the pipe-256 example.</text>
+<rect x="160.0" y="190.0" width="220.0" height="90.0" rx="8" fill="url(#hatch)" stroke="#7FA3C0" stroke-width="2"/>
+<text x="270.0" y="230.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="14" font-weight="700" text-anchor="middle" fill="#1C1C1C">fifo in u0</text>
+<text x="270.0" y="250.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12.5" font-weight="400" text-anchor="middle" fill="#7FA3C0">boxed</text>
+<rect x="390.0" y="252.0" width="96.0" height="40.0" rx="3" fill="white" stroke="#123A56" stroke-width="2"/>
+<text x="438.0" y="277.2" font-family="'JetBrains Mono', Menlo, monospace" font-size="15" font-weight="600" text-anchor="middle" fill="#1C1C1C">u0.g</text>
+<path d="M398,292 L404,284 L410,292" fill="none" stroke="#123A56" stroke-width="1.5"/>
+<text x="270.0" y="304.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="600" text-anchor="middle" fill="#5B3E8E">contract: empty iff g == 0,</text>
+<text x="270.0" y="320.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="600" text-anchor="middle" fill="#5B3E8E">full iff g == 256</text>
+<rect x="540.0" y="190.0" width="220.0" height="90.0" rx="8" fill="url(#hatch)" stroke="#7FA3C0" stroke-width="2"/>
+<text x="650.0" y="230.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="14" font-weight="700" text-anchor="middle" fill="#1C1C1C">fifo in u1</text>
+<text x="650.0" y="250.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12.5" font-weight="400" text-anchor="middle" fill="#7FA3C0">boxed</text>
+<rect x="770.0" y="252.0" width="96.0" height="40.0" rx="3" fill="white" stroke="#123A56" stroke-width="2"/>
+<text x="818.0" y="277.2" font-family="'JetBrains Mono', Menlo, monospace" font-size="15" font-weight="600" text-anchor="middle" fill="#1C1C1C">u1.g</text>
+<path d="M778,292 L784,284 L790,292" fill="none" stroke="#123A56" stroke-width="1.5"/>
+<text x="650.0" y="304.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="600" text-anchor="middle" fill="#5B3E8E">contract: empty iff g == 0,</text>
+<text x="650.0" y="320.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12" font-weight="600" text-anchor="middle" fill="#5B3E8E">full iff g == 256</text>
+<path d="M60.0,235.0 L160.0,235.0" fill="none" stroke="#1B4F72" stroke-width="2.2" marker-end="url(#ahd)"/>
+<text x="110.0" y="228.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" font-weight="500" text-anchor="middle" fill="#1C1C1C">push</text>
+<path d="M380.0,235.0 L540.0,235.0" fill="none" stroke="#1B4F72" stroke-width="2.2" marker-end="url(#ahd)"/>
+<text x="460.0" y="228.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" font-weight="500" text-anchor="middle" fill="#1C1C1C">move</text>
+<path d="M760.0,235.0 L900.0,235.0" fill="none" stroke="#1B4F72" stroke-width="2.2" marker-end="url(#ahd)"/>
+<text x="830.0" y="228.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" font-weight="500" text-anchor="middle" fill="#1C1C1C">pop</text>
+<rect x="430.0" y="110.0" width="100.0" height="40.0" rx="3" fill="white" stroke="#123A56" stroke-width="2"/>
+<text x="480.0" y="135.2" font-family="'JetBrains Mono', Menlo, monospace" font-size="15" font-weight="600" text-anchor="middle" fill="#1C1C1C">G</text>
+<path d="M438,150 L444,142 L450,150" fill="none" stroke="#123A56" stroke-width="1.5"/>
+<text x="560.0" y="124.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="600" text-anchor="start" fill="#1B4F72">helper: G == u0.g + u1.g,</text>
+<text x="560.0" y="142.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="12.5" font-weight="600" text-anchor="start" fill="#1B4F72">each at most 256</text>
+<text x="30.0" y="356.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13.5" font-weight="600" text-anchor="start" fill="#1C1C1C">step, property: verdict</text>
+<rect x="30.0" y="370.0" width="60.0" height="52.0" rx="5" fill="#E6F2E7" stroke="#2E7D32" stroke-width="1.5"/>
+<text x="60.0" y="400.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="600" text-anchor="middle" fill="#1C1C1C">covered</text>
+<text x="60.0" y="438.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="700" text-anchor="middle" fill="#1C1C1C">1</text>
+<text x="60.0" y="454.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="10.5" font-weight="400" text-anchor="middle" fill="#7FA3C0">Drain</text>
+<text x="60.0" y="470.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="10.5" font-weight="400" text-anchor="middle" fill="#7FA3C0">4</text>
+<rect x="92.0" y="370.0" width="60.0" height="52.0" rx="5" fill="#E6F2E7" stroke="#2E7D32" stroke-width="1.5"/>
+<text x="122.0" y="400.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="600" text-anchor="middle" fill="#1C1C1C">covered</text>
+<text x="122.0" y="438.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="700" text-anchor="middle" fill="#1C1C1C">1</text>
+<text x="122.0" y="454.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="10.5" font-weight="400" text-anchor="middle" fill="#7FA3C0">Both1</text>
+<text x="122.0" y="470.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="10.5" font-weight="400" text-anchor="middle" fill="#7FA3C0">3</text>
+<rect x="154.0" y="370.0" width="60.0" height="52.0" rx="5" fill="#E6F2E7" stroke="#2E7D32" stroke-width="1.5"/>
+<text x="184.0" y="400.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="600" text-anchor="middle" fill="#1C1C1C">covered</text>
+<text x="184.0" y="438.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="700" text-anchor="middle" fill="#1C1C1C">1</text>
+<text x="184.0" y="454.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="10.5" font-weight="400" text-anchor="middle" fill="#7FA3C0">U1Full</text>
+<text x="184.0" y="470.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="10.5" font-weight="400" text-anchor="middle" fill="#7FA3C0">258</text>
+<rect x="216.0" y="370.0" width="60.0" height="52.0" rx="5" fill="url(#hatch)" stroke="#CBD2D9" stroke-width="1.5"/>
+<text x="246.0" y="400.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="600" text-anchor="middle" fill="#1C1C1C">no verdict</text>
+<text x="246.0" y="438.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="700" text-anchor="middle" fill="#1C1C1C">1</text>
+<text x="246.0" y="454.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="10.5" font-weight="400" text-anchor="middle" fill="#7FA3C0">Full</text>
+<rect x="278.0" y="370.0" width="60.0" height="52.0" rx="5" fill="#E6F2E7" stroke="#2E7D32" stroke-width="1.5"/>
+<text x="308.0" y="400.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="600" text-anchor="middle" fill="#1C1C1C">proven</text>
+<text x="308.0" y="438.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="700" text-anchor="middle" fill="#1C1C1C">2</text>
+<text x="308.0" y="454.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="10.5" font-weight="400" text-anchor="middle" fill="#7FA3C0">H</text>
+<rect x="340.0" y="370.0" width="60.0" height="52.0" rx="5" fill="#E6F2E7" stroke="#2E7D32" stroke-width="1.5"/>
+<text x="370.0" y="400.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="600" text-anchor="middle" fill="#1C1C1C">proven</text>
+<text x="370.0" y="438.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="700" text-anchor="middle" fill="#1C1C1C">2</text>
+<text x="370.0" y="454.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="10.5" font-weight="400" text-anchor="middle" fill="#7FA3C0">CE</text>
+<rect x="402.0" y="370.0" width="60.0" height="52.0" rx="5" fill="#E6F2E7" stroke="#2E7D32" stroke-width="1.5"/>
+<text x="432.0" y="400.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="600" text-anchor="middle" fill="#1C1C1C">proven</text>
+<text x="432.0" y="438.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="700" text-anchor="middle" fill="#1C1C1C">2</text>
+<text x="432.0" y="454.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="10.5" font-weight="400" text-anchor="middle" fill="#7FA3C0">CF</text>
+<rect x="464.0" y="370.0" width="60.0" height="52.0" rx="5" fill="url(#hatch)" stroke="#CBD2D9" stroke-width="1.5"/>
+<text x="494.0" y="400.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="600" text-anchor="middle" fill="#1C1C1C">no verdict</text>
+<text x="494.0" y="438.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="700" text-anchor="middle" fill="#1C1C1C">4</text>
+<text x="494.0" y="454.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="10.5" font-weight="400" text-anchor="middle" fill="#7FA3C0">P1</text>
+<rect x="526.0" y="370.0" width="60.0" height="52.0" rx="5" fill="url(#hatch)" stroke="#CBD2D9" stroke-width="1.5"/>
+<text x="556.0" y="400.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="600" text-anchor="middle" fill="#1C1C1C">no verdict</text>
+<text x="556.0" y="438.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="700" text-anchor="middle" fill="#1C1C1C">4</text>
+<text x="556.0" y="454.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="10.5" font-weight="400" text-anchor="middle" fill="#7FA3C0">P2</text>
+<rect x="588.0" y="370.0" width="60.0" height="52.0" rx="5" fill="#E6F2E7" stroke="#2E7D32" stroke-width="1.5"/>
+<text x="618.0" y="400.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="600" text-anchor="middle" fill="#1C1C1C">proven</text>
+<text x="618.0" y="438.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="700" text-anchor="middle" fill="#1C1C1C">5</text>
+<text x="618.0" y="454.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="10.5" font-weight="400" text-anchor="middle" fill="#7FA3C0">HP</text>
+<rect x="650.0" y="370.0" width="60.0" height="52.0" rx="5" fill="#E6F2E7" stroke="#2E7D32" stroke-width="1.5"/>
+<text x="680.0" y="400.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="600" text-anchor="middle" fill="#1C1C1C">proven</text>
+<text x="680.0" y="438.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="700" text-anchor="middle" fill="#1C1C1C">6</text>
+<text x="680.0" y="454.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="10.5" font-weight="400" text-anchor="middle" fill="#7FA3C0">P1</text>
+<rect x="712.0" y="370.0" width="60.0" height="52.0" rx="5" fill="#E6F2E7" stroke="#2E7D32" stroke-width="1.5"/>
+<text x="742.0" y="400.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="600" text-anchor="middle" fill="#1C1C1C">proven</text>
+<text x="742.0" y="438.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="700" text-anchor="middle" fill="#1C1C1C">6</text>
+<text x="742.0" y="454.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="10.5" font-weight="400" text-anchor="middle" fill="#7FA3C0">P2</text>
+<rect x="774.0" y="370.0" width="60.0" height="52.0" rx="5" fill="#E6F2E7" stroke="#2E7D32" stroke-width="1.5"/>
+<text x="804.0" y="400.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="600" text-anchor="middle" fill="#1C1C1C">covered</text>
+<text x="804.0" y="438.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="700" text-anchor="middle" fill="#1C1C1C">6</text>
+<text x="804.0" y="454.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="10.5" font-weight="400" text-anchor="middle" fill="#7FA3C0">Drain</text>
+<text x="804.0" y="470.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="10.5" font-weight="400" text-anchor="middle" fill="#7FA3C0">4</text>
+<rect x="836.0" y="370.0" width="60.0" height="52.0" rx="5" fill="#E6F2E7" stroke="#2E7D32" stroke-width="1.5"/>
+<text x="866.0" y="400.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="600" text-anchor="middle" fill="#1C1C1C">covered</text>
+<text x="866.0" y="438.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="700" text-anchor="middle" fill="#1C1C1C">6</text>
+<text x="866.0" y="454.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="10.5" font-weight="400" text-anchor="middle" fill="#7FA3C0">Both1</text>
+<text x="866.0" y="470.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="10.5" font-weight="400" text-anchor="middle" fill="#7FA3C0">3</text>
+<rect x="898.0" y="370.0" width="60.0" height="52.0" rx="5" fill="#FBF1DC" stroke="#B7791F" stroke-width="1.5"/>
+<text x="928.0" y="400.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="600" text-anchor="middle" fill="#1C1C1C">cex</text>
+<text x="928.0" y="438.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="700" text-anchor="middle" fill="#1C1C1C">7</text>
+<text x="928.0" y="454.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="10.5" font-weight="400" text-anchor="middle" fill="#7FA3C0">H</text>
+<text x="928.0" y="470.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="10.5" font-weight="400" text-anchor="middle" fill="#7FA3C0">256</text>
+<text x="30.0" y="500.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12.5" font-weight="400" text-anchor="start" fill="#7FA3C0">Depths in the last row; a hatched cell is a limit that ended without a verdict.</text>
+</svg>

@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 480" width="1000" height="480" role="img" aria-label="Two rings of two blocks each. Left: safety, each block proven under the other&#x27;s guarantee and the ring proven flat. Right: liveness, each block proven and the ring refuted by a lasso">
+<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#7FA3C0"/></marker><marker id="ahj" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#5B3E8E"/></marker><marker id="ahd" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#1B4F72"/></marker><marker id="ahc" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#B7791F"/></marker><marker id="ahg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#1C1C1C"/></marker><pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="6" stroke="#CBD2D9" stroke-width="2"/></pattern></defs>
+<rect width="1000" height="480" fill="white"/>
+<text x="30" y="40.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="21" font-weight="700" text-anchor="start" fill="#1B4F72">The same circle, sound for safety, not for liveness</text>
+<text x="30" y="64.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="400" text-anchor="start" fill="#1C1C1C">Two blocks that pass each other&#x27;s output on, one cycle later: the ag example.</text>
+<text x="40.0" y="108.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" text-anchor="start" fill="#1B4F72">safety</text>
+<rect x="80.0" y="150.0" width="110.0" height="40.0" rx="3" fill="white" stroke="#123A56" stroke-width="2"/>
+<text x="135.0" y="175.2" font-family="'JetBrains Mono', Menlo, monospace" font-size="15" font-weight="600" text-anchor="middle" fill="#1C1C1C">ua</text>
+<path d="M88,190 L94,182 L100,190" fill="none" stroke="#123A56" stroke-width="1.5"/>
+<rect x="300.0" y="150.0" width="110.0" height="40.0" rx="3" fill="white" stroke="#123A56" stroke-width="2"/>
+<text x="355.0" y="175.2" font-family="'JetBrains Mono', Menlo, monospace" font-size="15" font-weight="600" text-anchor="middle" fill="#1C1C1C">ub</text>
+<path d="M308,190 L314,182 L320,190" fill="none" stroke="#123A56" stroke-width="1.5"/>
+<path d="M190.0,170.0 L300.0,170.0" fill="none" stroke="#1B4F72" stroke-width="2.2" marker-end="url(#ahd)"/>
+<text x="245.0" y="163.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" font-weight="500" text-anchor="middle" fill="#1C1C1C">x</text>
+<path d="M410.0,170.0 L440.0,170.0 L440.0,240.0 L50.0,240.0 L50.0,170.0 L80.0,170.0" fill="none" stroke="#1B4F72" stroke-width="2.2" marker-end="url(#ahd)"/>
+<text x="245.0" y="258.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" font-weight="500" text-anchor="middle" fill="#1C1C1C">y</text>
+<text x="40.0" y="300.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" font-weight="500" text-anchor="start" fill="#1C1C1C">assume: in == 0</text>
+<text x="40.0" y="320.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" font-weight="500" text-anchor="start" fill="#1C1C1C">guarantee: out == 0</text>
+<rect x="40.0" y="340.0" width="190.0" height="50.0" rx="5" fill="#E6F2E7" stroke="#2E7D32" stroke-width="1.5"/>
+<text x="135.0" y="361.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="11.5" font-weight="600" text-anchor="middle" fill="#1C1C1C">each block</text>
+<text x="135.0" y="378.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="11.5" font-weight="400" text-anchor="middle" fill="#1C1C1C">proven</text>
+<rect x="245.0" y="340.0" width="190.0" height="50.0" rx="5" fill="#E6F2E7" stroke="#2E7D32" stroke-width="1.5"/>
+<text x="340.0" y="361.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="11.5" font-weight="600" text-anchor="middle" fill="#1C1C1C">the ring</text>
+<text x="340.0" y="378.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="11.5" font-weight="400" text-anchor="middle" fill="#1C1C1C">proven</text>
+<text x="540.0" y="108.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" text-anchor="start" fill="#1B4F72">liveness</text>
+<rect x="580.0" y="150.0" width="110.0" height="40.0" rx="3" fill="white" stroke="#123A56" stroke-width="2"/>
+<text x="635.0" y="175.2" font-family="'JetBrains Mono', Menlo, monospace" font-size="15" font-weight="600" text-anchor="middle" fill="#1C1C1C">ua</text>
+<path d="M588,190 L594,182 L600,190" fill="none" stroke="#123A56" stroke-width="1.5"/>
+<rect x="800.0" y="150.0" width="110.0" height="40.0" rx="3" fill="white" stroke="#123A56" stroke-width="2"/>
+<text x="855.0" y="175.2" font-family="'JetBrains Mono', Menlo, monospace" font-size="15" font-weight="600" text-anchor="middle" fill="#1C1C1C">ub</text>
+<path d="M808,190 L814,182 L820,190" fill="none" stroke="#123A56" stroke-width="1.5"/>
+<path d="M690.0,170.0 L800.0,170.0" fill="none" stroke="#1B4F72" stroke-width="2.2" marker-end="url(#ahd)"/>
+<text x="745.0" y="163.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" font-weight="500" text-anchor="middle" fill="#1C1C1C">x</text>
+<path d="M910.0,170.0 L940.0,170.0 L940.0,240.0 L550.0,240.0 L550.0,170.0 L580.0,170.0" fill="none" stroke="#1B4F72" stroke-width="2.2" marker-end="url(#ahd)"/>
+<text x="745.0" y="258.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" font-weight="500" text-anchor="middle" fill="#1C1C1C">y</text>
+<text x="540.0" y="300.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" font-weight="500" text-anchor="start" fill="#1C1C1C">assume: s_eventually in</text>
+<text x="540.0" y="320.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="13" font-weight="500" text-anchor="start" fill="#1C1C1C">guarantee: s_eventually out</text>
+<rect x="540.0" y="340.0" width="190.0" height="50.0" rx="5" fill="#E6F2E7" stroke="#2E7D32" stroke-width="1.5"/>
+<text x="635.0" y="361.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="11.5" font-weight="600" text-anchor="middle" fill="#1C1C1C">each block</text>
+<text x="635.0" y="378.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="11.5" font-weight="400" text-anchor="middle" fill="#1C1C1C">proven</text>
+<rect x="745.0" y="340.0" width="190.0" height="50.0" rx="5" fill="#FBF1DC" stroke="#B7791F" stroke-width="1.5"/>
+<text x="840.0" y="361.0" font-family="'JetBrains Mono', Menlo, monospace" font-size="11.5" font-weight="600" text-anchor="middle" fill="#1C1C1C">the ring</text>
+<text x="840.0" y="378.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="11.5" font-weight="400" text-anchor="middle" fill="#1C1C1C">cex, depth 3</text>
+<text x="40.0" y="420.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="400" text-anchor="start" fill="#7FA3C0">The register in each block means a guarantee at cycle t + 1 needs the other&#x27;s only up to cycle t.</text>
+<text x="40.0" y="442.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="400" text-anchor="start" fill="#7FA3C0">Lasso: x and y reset to 0 and pass 0 to each other for ever.</text>
+</svg>
