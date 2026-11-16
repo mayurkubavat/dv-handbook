@@ -390,3 +390,39 @@ Final checks:
   in ch09; no `\textbackslash{}\textbar{}`; the only `\textbackslash{}`
   are shell line continuations inside code blocks.
 - Build directories and `__pycache__` removed.
+
+## 9. Round 2 and round 3 fixes
+
+Round 2 inputs: `docs/reviews/ch18-gate2c-2026-11-16.md` (text, 3
+blocking) and `ch18-gate2d-2026-11-16.md` (code, 1 blocking, the same
+defect as 2c B1). Fixed in e777095:
+
+- 2c B1 / 2d D-B1: Chapter 9's `matrix.py` escapes `$` only outside
+  code spans, label column included; `matrix.md` regenerated with
+  InFormal and both simulators on the PATH (four cells changed).
+- 2c B2: lasso Definition rules out `b` in the cycle where `a` holds
+  as well as in every later cycle of the stem and the loop.
+- 2c B3: `tables.write` takes `widths` and wraps grid cells at spaces.
+
+Round 3: `ch18-gate2e` (text) and `ch18-gate2f` (code), both with no
+blocking finding; gate 2 passes. Non-blocking items taken:
+
+- 2e N1 / 2f N2: shell table widths now 36, 22, 36 (command column
+  37.5 % in LaTeX), so `over-constraint/handshake.sv` fits by estimate.
+- 2e N2, N3: `[@informal-tool]` on the portfolio default and on the
+  bounded-search order of `informal-bmc`.
+- 2e N4: the exit-status detail points to the temporal-properties
+  chapter's measurement.
+- 2e N5: only the lemma and query counts differ; the frame count
+  does not.
+- 2e N6: the seven queries are one per lemma plus one for the bad
+  states; the reset check is by evaluation.
+- 2e N7: "every grant follows a busy cycle".
+- 2e N8 / 2f N3: `tables.read` joins the lines of a wrapped row.
+- 2f N1, N4: `tables.write` asserts that no continuation line opens a
+  list, heading or hard break, that no wrapped cell holds two spaces,
+  and that `widths` is used only with a grid table.
+- 2e N9 / 2f N5: both changed examples rerun with InFormal on the PATH
+  and recorded as passing in `examples/status.json`.
+- Not taken: 2e N7's note on exercise 2's twin witness (an answer key
+  is not part of the chapter).

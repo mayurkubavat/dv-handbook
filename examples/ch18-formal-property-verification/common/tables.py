@@ -68,6 +68,7 @@ def write(path, header, rows, caption, align=None, grid=False,
     grid table set the share of the page each column gets, and without
     widths one long cell would squeeze the other columns."""
     align = align or ["---"] * len(header)
+    assert grid or not widths, "widths are for a grid table"
     every = [header] + rows
     if not grid:
         assert not any("|" in c for r in every for c in r), \
@@ -94,6 +95,14 @@ def write(path, header, rows, caption, align=None, grid=False,
         def line(r):
             cells = [wrap(c, w) if widths else [c]
                      for c, w in zip(r, width)]
+            for x in (x for c in cells for x in c[1:]):
+                # A continuation line is read as Markdown on its own:
+                # these would make a list, a heading or a line break.
+                assert not BLOCK.match(x) and x.strip("-=") \
+                    and not x.endswith("\\"), repr(x)
+            for o, c in zip(r, cells):
+                # Two spaces at a break would come back as one.
+                assert len(c) == 1 or "  " not in o, o
             return ["| " + " | ".join(
                 (c[k] if k < len(c) else "").ljust(w)
                 for c, w in zip(cells, width)) + " |"
@@ -106,8 +115,9 @@ def write(path, header, rows, caption, align=None, grid=False,
 
 def read(path):
     """The body rows of the grid tables in a Markdown file, each a
-    list of stripped cells; rules and header rows are left out."""
-    rows, cuts, header, inside = [], [], False, False
+    list of stripped cells; rules and header rows are left out. The
+    lines of a wrapped row are joined again, cell by cell."""
+    rows, cuts, header, inside, pending = [], [], False, False, False
     for text in pathlib.Path(path).read_text().splitlines():
         if text.startswith("+"):
             cuts = [i for i, ch in enumerate(text) if ch == "+"]
@@ -115,10 +125,18 @@ def read(path):
             inside = True
         elif text.startswith("|") and inside:
             if not header:
-                rows.append([text[a + 1:b].strip()
-                             for a, b in zip(cuts, cuts[1:])])
+                cells = [text[a + 1:b].strip()
+                         for a, b in zip(cuts, cuts[1:])]
+                if pending:             # a wrapped cell's next line
+                    rows[-1] = [" ".join(x for x in (o, n) if x)
+                                for o, n in zip(rows[-1], cells)]
+                else:
+                    rows.append(cells)
+                pending = True
+            continue
         else:
             inside = False
+        pending = False
     return rows
 
 

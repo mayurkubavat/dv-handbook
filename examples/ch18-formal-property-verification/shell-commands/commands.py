@@ -129,5 +129,5 @@ tables.write(
     "measured for that line: an error message, a message the tool "
     "printed, a change in the number of properties, the value "
     "returned. Paths are shown relative to the chapter's examples. "
-    "{#tbl-ch18-shell}", grid=True, widths=[30, 24, 40])
+    "{#tbl-ch18-shell}", grid=True, widths=[36, 22, 36])
 print("wrote tbl-shell.md")

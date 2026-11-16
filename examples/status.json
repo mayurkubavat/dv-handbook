@@ -1,8 +1,8 @@
 {
-  "checked": "2026-11-16T02:17:24Z",
+  "checked": "2026-11-16T02:38:38Z",
   "pass": 115,
   "fail": 0,
-  "skipped_run": 5,
+  "skipped_run": 3,
   "examples": [
     {
       "dir": "examples/appF-counter/cocotb",
@@ -490,7 +490,7 @@
     {
       "dir": "examples/ch09-temporal-properties/support-matrix",
       "lint": "pass",
-      "run": "skipped (informal)",
+      "run": "pass",
       "requires": "informal",
       "expect": "pass"
     },
@@ -798,7 +798,7 @@
     {
       "dir": "examples/ch18-formal-property-verification/shell-commands",
       "lint": "pass",
-      "run": "skipped (informal)",
+      "run": "pass",
       "requires": "informal",
       "expect": "pass"
     },
