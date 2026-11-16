@@ -1,7 +1,7 @@
 tools: Verilator 5.052
 design: examples/ch09-temporal-properties/rtl/fifo_fixed.sv, 44 source mutants
 testbenches: ch01-directed, ch01-random, ch08-coverage, ch09-sva
-  (ch01-random at +seed=1, 400 cycles, as shipped)
+  (ch01-random at +seed=1, 400 cycles, this chapter's copy)
 schema: one build for each testbench; warnings it draws: UNSIGNED, WIDTHEXPAND
 control (+mut=0, the repaired FIFO): ch01-directed survived, ch01-random
   survived, ch08-coverage survived, ch09-sva survived

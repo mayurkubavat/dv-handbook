@@ -124,7 +124,7 @@ def main():
     print(f"tools: {mutlib.version('verilator')}")
     print(f"design: {mutlib.FIXED}, {len(ms)} source mutants")
     print("testbenches: " + ", ".join(mutlib.NAMES))
-    print("  (ch01-random at +seed=1, 400 cycles, as shipped)")
+    print("  (ch01-random at +seed=1, 400 cycles, this chapter's copy)")
     dirs, warn = srcmut.build_schema(B, mutlib.NAMES)
     print(f"schema: one build for each testbench; warnings it draws: "
           f"{', '.join(warn)}")

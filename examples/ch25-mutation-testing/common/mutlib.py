@@ -60,7 +60,7 @@ TBS = {
         [f"{EX}/ch01-what-is-dv/sv-directed/tb_fifo_directed.sv"],
         "tb_fifo_directed", [], [[]], "PASS"),
     "ch01-random": (
-        [f"{EX}/ch01-what-is-dv/sv-random/tb_fifo_random.sv"],
+        [f"{EX}/ch25-mutation-testing/common/tb_fifo_random.sv"],
         "tb_fifo_random", [], [["+seed=1"]], "PASS"),
     "ch08-coverage": (
         [f"{CH08}/lint.vlt", f"{CH08}/tb_fifo_cov.sv"],

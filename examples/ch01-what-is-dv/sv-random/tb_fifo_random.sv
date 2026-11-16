@@ -51,7 +51,6 @@ module tb_fifo_random;
   initial begin
     automatic int seed = 1;
     automatic int levels = 0;
-    automatic int level  = 0;
     void'($value$plusargs("seed=%d", seed));
     void'($urandom(seed));
 
@@ -74,11 +73,9 @@ module tb_fifo_random;
       end
 
       // ---- checker, part 2: predict what the edge must have done ----
-      // (full and empty are judged before the edge, as the spec says)
       @(posedge clk); #1;
-      level = model.size();
-      if (rd_en && level > 0)     void'(model.pop_front());
-      if (wr_en && level < DEPTH) begin
+      if (rd_en && model.size() > 0)     void'(model.pop_front());
+      if (wr_en && model.size() < DEPTH) begin
         model.push_back(wr_data);
         writes++;
       end
