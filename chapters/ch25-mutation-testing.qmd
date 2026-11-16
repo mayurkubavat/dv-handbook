@@ -1,0 +1,580 @@
+# Mutation Testing: Qualifying the Testbench {#sec-ch25}
+
+> A testbench that cannot fail has told you nothing, however much it covered.
+
+::: {.callout-note title="Learning objectives"}
+After this chapter you will be able to:
+
+1. Say what it means for a testbench to kill a mutant, and why a kill rate and a coverage figure measure different things, using the FIFO's four testbenches as the example.
+2. Generate the source-level mutants of an RTL file under a stated operator set, and name the bug each mutant stands for.
+3. Classify a surviving mutant as a stimulus gap, a checking gap, an artifact of the simulator's model, or an equivalent mutant, using the reach, infect, propagate and reveal conditions and a formal miter.
+4. Build a miter of a design and its mutant, decide what it must compare, and read its verdict, knowing that a bounded search can only refute equivalence.
+5. Distinguish a mutant that is equivalent outright, equivalent under a reachable-state invariant, and equivalent only under a tool's model, and recognize a white-box assertion that kills an equivalent mutant.
+6. Run a formal property set as a judge of mutants and read its survivors as gaps in the specification.
+7. Generate a netlist mutation population with Yosys's `mutate` pass, run it as one schema build, and say what MCY adds to that mechanism.
+8. Estimate a kill rate, an equivalent fraction and a mutation score from samples, each with an interval, and say what the binomial model assumes about how the sample was drawn.
+9. Recognize the harness defects that make kills appear or disappear, and state what the software evidence on mutants and real faults does and does not license for hardware.
+:::
+
+## Kill rate beside coverage {#sec-ch25-motivation}
+
+Every chapter that has touched the FIFO measured something about a testbench. @sec-ch08-example measured what the stimulus reached. @sec-ch09-example wrote down what a checker asserts. @sec-ch19-mutation planted three bugs under a property set, and @sec-ch21-clean bounded the failure rate that a run of clean seeds allows. None of them asked the question a testbench exists to answer: if the design were wrong, would this testbench fail? This chapter asks it directly. It plants small bugs, called mutants, in the repaired FIFO of @sec-ch09-example, one at a time, and counts which of the book's testbenches notices each one.
+
+There are four testbenches, all read by path from their chapters and run unchanged against the repaired RTL. The *directed test* of @sec-ch01-example writes eight entries and reads them back. The *random test* of the same section drives random pushes and pops for 400 cycles under `+seed=1`, keeps a queue as its model and compares flags and data against it every cycle. The *coverage testbench* of @sec-ch08-example runs its two traffic mixes, even odds and push-biased, and samples the covergroup. The *checking testbench* of @sec-ch09-example drives random traffic with the temporal-properties chapter's assertions bound to the design. In printed output they are `ch01-directed`, `ch01-random`, `ch08-coverage` and `ch09-sva`.
+
+The example `opening` builds each of the four with code coverage on, runs it against the repaired FIFO, and sets the coverage beside the number of mutants, out of the 44 this chapter generates in @sec-ch25-source, that the testbench kills. Before reading the last column, cover it, and predict it from the other four:
+
+```{.text include="examples/ch25-mutation-testing/opening/run.out" lines="14-20"}
+```
+
+The "line" column counts the coverage points Verilator places in the module, four of them, and not source lines; @sec-ch08-code-coverage describes what each kind of point records. Every testbench reaches every line and branch point. Three of them reach every expression point and 99% or more of the toggles. The directed test, eight entries in and out, toggles 24% of the bits.
+
+The kill column does not follow. The coverage testbench, which reaches every line, branch and expression point and 99% of the toggles, kills none of the 44 mutants. The directed test, with the least coverage of the four, kills 34. The random test has the same code coverage as the coverage testbench and kills 35. Two testbenches with identical code coverage sit at opposite ends of the kill axis, and the testbench that covers least is near the top.
+
+The zero is not a defect of the coverage testbench. @sec-ch08-example wrote it to measure stimulus, and said so: "nothing in the file checks the FIFO". Its covergroup reports the same percentages on the repaired FIFO as it would on any FIFO, correct or broken:
+
+```{.text include="examples/ch25-mutation-testing/opening/run.out" lines="7-8"}
+```
+
+These are the percentages on the repaired FIFO, which differ from the ones @sec-ch08-example printed for the original. A score of zero is the correct result of a correct measurement. What the table shows is that coverage, of any kind, cannot tell a testbench with a checker from one without. @sec-ch08-where put the point as a principle, that coverage measures activation only; the table puts a number on it.
+
+The chapter makes that number as well understood as coverage. @sec-ch25-concepts fixes the vocabulary: what a mutant is, what it means to kill one, and the four conditions a kill needs. @sec-ch25-source generates the 44 mutants from the RTL under a stated operator set, and @sec-ch25-survivors reads the kill matrix and its survivors. @sec-ch25-equiv builds a formal miter to decide which survivors are bugs the testbenches missed and which are not bugs at all, and @sec-ch25-formal runs the formal property set of @sec-ch19-mutation as a fifth judge. @sec-ch25-netlist changes the fault model to the netlist mutations of Yosys, 9,281 of them, the mechanism that MCY packages. @sec-ch25-sampling estimates kill rate, equivalent fraction and score from samples with intervals, against a population whose truth is known. @sec-ch25-evidence reports what the software literature found about whether mutants stand for real bugs, and @sec-ch25-example closes the gap the matrix finds. @fig-ch25-axes draws the opening table, and its netlist counterpart, as two axes.
+
+![Kill rate against toggle coverage for the four testbenches on the repaired FIFO. Left: the 44 source mutants. Right: a uniform sample of 1,000 of the 9,281 netlist mutations (seed 1), with 95% Clopper-Pearson intervals. Toggle coverage is the same in both panels. Data from the `opening` and `netlist-sample` examples.](../figures/ch25-axes.svg){#fig-ch25-axes fig-alt="Two scatter plots side by side, each with toggle coverage from 0 to 100 percent on the horizontal axis and kill rate from 0 to 1 on the vertical. In both, the directed test sits alone at 24 percent toggle coverage, at a kill rate of 0.77 on the left and 0.30 on the right. The other three testbenches sit between 98.8 and 99.7 percent toggle coverage: the random test at 0.80 on the left and 0.90 on the right, the checking testbench at 0.50 on the left and 0.04 on the right, and the coverage testbench at zero in both."}
+
+One sentence carries the chapter's position. A kill rate is a measurement of a testbench's ability to fail, reported beside coverage and never instead of it, and with the fault model, the sample and the run that produced it.
+
+## Mutants, kills and the two hypotheses {#sec-ch25-concepts}
+
+Mutation analysis comes from software testing, where it has two independent origins in the late 1970s: Hamlet's *Testing Programs with the Aid of a Compiler* [@hamlet1977compiler] and DeMillo, Lipton and Sayward's *Hints on Test Data Selection* [@demillo1978mutation]. Its vocabulary, as Jia and Harman's survey sets it out [@jia2011survey], carries over to hardware with one change: a test is a testbench run, and its result is a pass or a fail.
+
+::: {.callout-note title="Definition"}
+A **mutant** is the design with one small syntactic change, made by a rule called a mutation operator. A test **kills** a mutant when its verdict on the mutant differs from its verdict on the original design; a mutant no test kills **survives**. In **strong mutation** the verdict compares the program's outputs. In **weak mutation** it compares the state immediately after the mutated point is executed, an idea Jia and Harman credit to Howden; **firm mutation**, credited to Woodward and Halewood, compares at some point in between [@jia2011survey]. For a testbench the verdict is its pass or fail: in this chapter's harness, the exit status of every run and the testbench's pass line. Because every testbench passes the unmutated design, a kill is a fail.
+:::
+
+The harness that every example of the chapter shares states the verdict in its header, and adds two outcomes that a hardware run can have and a software test usually does not:
+
+```{.python include="examples/ch25-mutation-testing/common/mutlib.py" lines="5-11"}
+```
+
+A timeout is a kill, because a testbench that hangs on a mutant and finishes on the original has noticed something, but it is reported apart, because a hang can also be a harness fault. A mutant that does not compile is left out of every score. A mutant that the build's lint rejects is a case of its own, which @sec-ch25-source counts on its own line.
+
+::: {.callout-note title="Definition"}
+The **mutation score** of a test set is the number of mutants it kills divided by the number of mutants that are not equivalent to the original [@jia2011survey]. An **equivalent mutant** is one that no test can kill, because it changes the text and not the behavior; @sec-ch25-equiv says what "behavior" means for a FIFO and how to decide it. The **kill rate** is killed mutants over all mutants, equivalent ones included. The two differ by the denominator, and the difference is the subject of @sec-ch25-equiv and @sec-ch25-sampling.
+:::
+
+Two hypotheses justify the method, and they are hypotheses about software. The *competent programmer hypothesis* says that programmers write programs close to correct, so that a real fault is a small deviation that a small change would repair. The *coupling effect* says that tests which catch every simple fault catch most complex faults too. Jia and Harman attribute both to DeMillo, Lipton and Sayward [@jia2011survey], and Budd, DeMillo, Lipton and Sayward's 1980 report states both, with the coupling effect posed as a question for study rather than a result [@budd1980theoretical]. Together they say that single small changes are a fair sample of the bugs worth finding, and that a testbench which catches them is a testbench worth having. Every mutant in this chapter is accordingly *first-order*, one change to the original. A mutant with several changes at once is a higher-order mutant, and the coupling effect is the argument for not generating them: if it holds, a testbench that kills the single changes kills most of their combinations too.
+
+The FIFO is a competent designer's bug in miniature. The original's bug in @sec-ch01-example is one constant, the full threshold set to the largest value a four-bit counter holds, and the repair in @sec-ch09-example is one width. A mutation operator that replaced a constant or a comparison would have produced either. That is an illustration, not evidence: neither hypothesis has been tested on hardware in any source found in writing this chapter, and @sec-ch25-evidence returns to what the software studies did and did not show.
+
+A kill needs more than a bug in the design. The literature names the conditions in a sequence that this chapter calls reach, infect, propagate and reveal.
+
+::: {.callout-note title="Definition"}
+A testbench kills a mutant only if four things happen in one run. It must **reach** the mutated point: execute the changed statement, with the values under which it differs. The change must **infect** the state: some register or signal must take a value different from the one the original would have given. The difference must **propagate** to an output the testbench observes. And the testbench must **reveal** it: a check must compare that output with an expected value and fail. The first three are the reachability, infection and propagation conditions of the mutation literature; the later survey of Papadakis and colleagues reports the fourth, revealability, added to them [@papadakis2019advances].
+:::
+
+@fig-ch25-rip traces one mutant through the four conditions, and marks where each testbench's chain stops.
+
+![One mutant through the four conditions. `m16` writes each pushed word to the slot the read pointer names instead of the write pointer's. Every testbench reaches it and infects the memory, and the wrong word propagates to `rd_data` on a pop. The coverage testbench has no check, and the checking testbench checks occupancy and flags but never data, so the chain stops before reveal for both; the random test compares `rd_data` with its queue and kills the mutant. Drawn by the book; the verdicts are those of the `source-sim` example.](../figures/ch25-rip.svg){#fig-ch25-rip fig-alt="Top: a block diagram of the FIFO with write pointer, read pointer, a sixteen-word memory, the counter and the full and empty flags; the memory's write address is highlighted where the mutant swaps the write pointer for the read pointer. Below, four boxes left to right labeled reach, infect, propagate and reveal, each with a one-line description. Under them three rows, one per testbench, each a bar running from reach towards reveal. The coverage testbench and the checking testbench bars stop at the end of propagate with a cross and the word survived; the random test bar reaches reveal and ends in a check mark and the word killed."}
+
+A vendor of a commercial mutation tool names three conditions, activation, propagation and detection, which @sec-ch08-where quotes as the vendor's [@hampton2009fq]. @tbl-ch25-conditions sets them beside the peer-reviewed conditions, with what each needs of a FIFO testbench and what, if anything, measures it.
+
+| condition | the vendor's name | what a FIFO testbench must do | what measures it |
+|---|---|---|---|
+| reach | activation | drive the inputs that execute the changed line with the values under which it differs | code coverage, in part |
+| infect | (part of activation) | make a register take a different value | nothing in a coverage report |
+| propagate | propagation | carry that value to `rd_data`, `full` or `empty` while the testbench looks | nothing in a coverage report |
+| reveal | detection | compare the port with an expected value, and fail | nothing in a coverage report |
+
+: The conditions for a kill: the peer-reviewed names, the vendor's names, and what a coverage report can show of each {#tbl-ch25-conditions}
+
+Code coverage measures reach, and only part of it: a covered line was executed, not necessarily with the values that make the mutant differ. Nothing in a coverage report measures the other three. The coverage testbench reaches everything and reveals nothing, which is the opening table's zero; the directed test reaches little, and reveals what it reaches.
+
+## Fault model I: source-level operators {#sec-ch25-source}
+
+A mutant is defined by the operator that made it, and a set of mutants is defined by the operator set and the sites it was applied to. Together they are a fault model: a statement of which bugs the measurement can represent. A kill rate means nothing without its fault model, and this chapter uses two. The first is written at the level a designer writes, one operator applied to one place in the RTL.
+
+::: {.callout-note title="Definition"}
+A **mutation operator** is a rule that makes one small change of a stated kind at one site of a description: replace a relational operator, delete an assignment, negate a condition. A **fault model**, for mutation, is the operator set together with the rule that chooses sites, here every site in the module body, so that the population of mutants is fixed by the file and the operators and not by anyone's choice.
+:::
+
+The operator set starts from software. Offutt, Lee, Rothermel, Untch and Zapf searched for a small set of operators whose adequate tests also kill nearly every mutant of the full set used by the Mothra system, and found five: absolute-value insertion (ABS), arithmetic operator replacement (AOR), logical connector replacement (LCR), relational operator replacement (ROR) and unary operator insertion (UOI); tests adequate for those five scored about 99.5% on the full set in their experiments [@offutt1996sufficient]. On the FIFO, four of the five have sites: AOR, LCR, ROR, and a negation operator in two forms, inserting a negation around a condition and removing one. ABS has none. To these the chapter adds three general operators, statement deletion, constant replacement and the exchange of the two pointers in a use, and two that exist only in a hardware description: dropping the asynchronous reset from a sensitivity list, and exchanging two case labels. The reset polarity needs no operator of its own: the negation operators produce it at the reset's `if`.
+
+The generator lives in the example library. It reads `fifo_fixed.sv` from the temporal-properties chapter's directory when it runs, applies each operator at every site in the module body, and stops if an edit changes nothing, the rule @sec-ch19-mutation set for its three mutants, so that a mutant can never drift from the file it claims to mutate. The core is a function that yields every mutation of one line:
+
+```{.python include="examples/ch25-mutation-testing/common/srcmut.py" lines="40-75"}
+```
+
+The example `source-mutants` lists the population as the run made it:
+
+```{.text include="examples/ch25-mutation-testing/source-mutants/run.out" lines="3-47"}
+```
+
+The names `m01` to `m44` are the generator's, in file order, and the rest of the chapter refers to a mutant by its name and its change together. The example also writes the operator table, @tbl-ch25-operators.
+
+{{< include /examples/ch25-mutation-testing/source-mutants/tbl-ch25-operators.md >}}
+
+Five mutants, read as RTL, show what the operators stand for.
+
+- `m14`, `if (!(do_write))` for `if (do_write)`, is a write enable of the wrong polarity: the memory and the write pointer update on exactly the cycles they should not, while the counter, which reads `do_write` in its own `case`, stays correct.
+- `m35`, `empty` computed as `count < '0`, is a comparison against an unsigned zero that can never be true. The FIFO never says it is empty. This is the kind of bug a designer writes when a signed comparison is meant.
+- `m13` deletes `count <= '0` from the reset branch: a missing reset. After reset the counter holds whatever it held before.
+- `m42` computes `full` as `count > 16`, which a five-bit count of at most sixteen never satisfies: an off-by-one in the other direction from the original FIFO's bug, which raised `full` too early.
+- `m44` exchanges the labels `2'b10` and `2'b01` of the counter's `case`, so that a push decrements the count and a pop increments it. @sec-ch25-equiv shows that this mutant is, at the ports, not a bug at all.
+
+Two facts about the population matter before any testbench runs. The first is that the build kills seven mutants by itself. The book's Verilator flags include `-Wall`, under which a warning stops the build, and seven mutants draw one:
+
+```{.text include="examples/ch25-mutation-testing/source-mutants/run.out" lines="59-68"}
+```
+
+`m35` is among them: the comparison of an unsigned value with zero by `<` draws `UNSIGNED`. A lint rejection is a real kill, by the flow rather than by a testbench, and a project that runs lint before simulation gets it free. The chapter reports the seven on their own line and never folds them into a testbench's score, because a testbench's kill rate should say what the testbench would catch. Every testbench result below is measured with the warnings demoted, so that each of the 44 runs.
+
+The second fact is that the 44 are not 44 independent pieces of evidence. `m34` to `m38` are five changes of one comparison, `empty = (count == '0)`, and a testbench that observes `empty` at all kills most of them together. `m06`, `if (rst_n)`, and `m07`, `if (!(!rst_n))`, are the same change written two ways. Mutants that one test always kills together inflate a score without adding information: a testbench is credited five times for one observation. The software literature calls a mutant whose kills imply another's a *subsuming* mutant and two mutants with the same behavior *duplicates*; @sec-ch25-equiv measures how many duplicates a synthesis tool finds here.
+
+::: {.callout-tip title="In Practice"}
+Choose RTL operators by the bugs they stand for, and weight the choice by the software evidence where it exists. Just and colleagues found that the mutants most often coupled to real faults in Java programs were those of conditional operators, relational operators and statement deletion [@just2014mutants]. Those three families are the majority of the FIFO set: ten relational replacements, nine deletions, and eight conditional changes (connector replacement and the two negation operators). Reset and sensitivity-list operators have no software counterpart, and @sec-ch25-equiv shows that they are the ones that expose the simulator's and the formal tool's assumptions. State the operator set beside every kill rate.
+:::
+
+Run naively, a mutant costs one build for each testbench, since a Verilator model is compiled for one design. The example `source-sim` keeps that naive harness as its opt-in measurement, run once with `MEASURE=1` and committed; the measured cost, the four testbenches against the 44 mutants and the original, was:
+
+```{.text include="examples/ch25-mutation-testing/source-sim/measure.out" lines="3-3"}
+```
+
+Nearly all of that time is the compiler's; each run is a few hundred cycles. The default run instead builds a *schema*: one copy of the FIFO in which every one of the 44 edits sits behind a select read from a plusarg, `+mut=K`, with 0 the unchanged design, so that each testbench is built once and run 45 times. The generator says how each kind of line becomes a selection:
+
+```{.python include="examples/ch25-mutation-testing/common/srcmut.py" lines="142-151"}
+```
+
+The two hard cases are the reset ones. The sensitivity-list mutant `m05` cannot be a run-time choice of sensitivity list, so the schema keeps the asynchronous edge on a signal `rst_a` that follows `rst_n` except when `m05` is selected, when it is held high and the reset is seen only at the clock. The polarity mutants `m06` and `m07` are a selected `if` condition like any other. The schema is a test harness, not a design, and it must be shown to agree with the naive harness before it is trusted; the default run compares its matrix with the committed per-mutant one, and @sec-ch25-survivors prints the result. @sec-ch25-netlist names the idea and its origin.
+
+## Reading survivors {#sec-ch25-survivors}
+
+The schema run gives one verdict for every mutant under every testbench. The example prints the matrix with each mutant's operator:
+
+```{.text include="examples/ch25-mutation-testing/source-sim/run.out" lines="1-60"}
+```
+
+The random test's column is for `+seed=1` and 400 cycles, the testbench as it ships, and every column is for one run of one configuration; the next Pitfall says why that matters. The schema's matrix agrees with the naive harness's cell for cell:
+
+```{.text include="examples/ch25-mutation-testing/source-sim/run.out" lines="63-64"}
+```
+
+A survivor is a question with three possible answers. The testbench did not reach the mutant, or reached it and did not check what it changed, or the mutant changes nothing that can be checked. The matrix alone cannot say which, and reading it is the work of naming one answer for each survivor. The conditions of @sec-ch25-concepts are the tool.
+
+**Not reached: a stimulus gap.** `m35`, `empty` stuck low, survives the random test and dies to the directed test and the checking testbench. The random test reports its own occupancy coverage, and on the repaired FIFO that line already says why:
+
+```{.text include="examples/ch25-mutation-testing/opening/run.out" lines="5-6"}
+```
+
+Under seed 1 the random test never returns to empty after its first push, so the one state in which `m35` differs from the original, an empty FIFO, never occurs after reset. The directed test drains the FIFO at its end, and the checking testbench drains it for the second half of its run, and both check `empty` when it should be set. Here coverage and mutation agree, and the mutant gives the coverage hole a concrete consequence: the occupancy level that was never reached is a bug that would not have been seen.
+
+**Reached and propagated, not revealed: a checking gap.** Fifteen mutants survive the checking testbench while the random test kills them: the two pointer-reset constants `m08` and `m10`, every mutant of the memory write and the pointers' increments, `m14` to `m25`, and `m33`, which reads the memory at the write pointer. Each of them changes which word comes out of `rd_data`, and none of them changes the count or the flags. The checking testbench's assertions are about occupancy, `full` and `empty`; @sec-ch09-example built them that way, and nothing in it compares data. The wrong word reaches the port on every pop, which is propagation, and nothing looks at it. @sec-ch19-mutation found the same thing with three mutants under the formal property set; here it is fifteen of fifteen. A checking gap is the most useful survivor there is, because the fix is a specific check, and @sec-ch25-example writes it.
+
+**The directed test's own gaps.** `m12` resets the count to 31 and `m42` never raises `full`; the directed test kills neither, and every other checking testbench kills both. `m42` is a stimulus gap: eight entries never fill a sixteen-entry FIFO, so the one state in which `m42` differs never occurs. `m12` is subtler. A count that starts at 31 wraps to zero on the first push and, after eight pushes and eight pops, ends at zero; the test checks `empty` only at its end, where it is correct, and compares each word before the clock edge, where a pop that the design refused still shows the right word. Both mutants are reached; `m12` is infected and not revealed.
+
+**Killed by nobody.** Seven mutants survive every testbench: `m05` (asynchronous reset made synchronous), `m09` and `m11` (a pointer's reset deleted), `m13` (the count's reset deleted), `m32` (the counter's `default` hold deleted), `m36` (`empty` from `count <= '0`) and `m43` (`full` from `count >= 16`). Some of these may be bugs no testbench reached, and some may not be bugs. Reading the RTL suggests answers for a few of them: a clocked register holds its value without being told to, so deleting `default: count <= count` should change nothing. But a suggestion is not a classification, and the next section builds the tool that classifies them. `m44`, the exchanged case labels, belongs with them too: only the checking testbench kills it, for a reason @sec-ch25-equiv gives.
+
+The union of the three testbenches that check anything kills 37 of 44. Seven survive all four, and the method now has to decide whether those seven are a failing of the testbenches or of the mutants.
+
+The matrix can be read by column as well as by row, and a column is a profile of what a testbench checks. The coverage testbench's column is empty, and it is the most useful column in the matrix: a testbench with no checker must kill nothing, and if it ever kills something, the harness is at fault, as @sec-ch25-netlist will show. The checking testbench's column is dense exactly where the count and the flags are involved, the connector and negation mutants of the two `do_` signals, the counter's arithmetic `m26` to `m31`, and the comparisons that make `empty` and `full`, and empty where only data is involved. The directed test's column is dense too, on data and flags alike, and its few gaps are the states its eight entries never create: a full FIFO for `m42`, a counter that wraps for `m12`. Each column is a specification of the testbench, recovered from its behavior, and a reviewer can compare it with what the verification plan says the testbench is for.
+
+::: {.callout-warning title="Pitfall"}
+A survivor of a single-seed run is a statement about that seed. `m35` survives the random test at seed 1; run the same testbench over seeds 1 to 100, each seed given once:
+
+```{.text include="examples/ch25-mutation-testing/source-sim/run.out" lines="61-62"}
+```
+
+Seed 2 kills it, and about half the seeds do. The netlist population of @sec-ch25-netlist shows the same effect at scale: running the random test under more seeds and counting a mutation as killed if any seed kills it raises the count, and then stops rising:
+
+```{.text include="examples/ch25-mutation-testing/netlist-population/run.out" lines="9-16"}
+```
+
+Report a kill rate with the seeds and the cycles that produced it, and compare kill rates only between runs of comparable length. @sec-ch25-evidence shows that the software studies found the same confound in the size of a test suite.
+:::
+
+## Equivalent mutants and the miter {#sec-ch25-equiv}
+
+In software the equivalent mutant is the hard part of mutation testing. Deciding whether two programs behave the same on every input is undecidable in general, a result Jia and Harman's survey cites from Budd and Angluin, and the same survey reports that hand studies found between 10% and 40% of mutants to be equivalent in two earlier studies [@jia2011survey]. Every equivalent mutant left in the denominator lowers the score of a perfect test set, and every hour spent arguing one away by hand is an hour not spent testing.
+
+A finite-state design changes the problem. Two finite-state machines are either equivalent or not, and the question can be put to a model checker. The tool is the miter of @sec-ch17: both designs side by side, fed the same inputs, with an assertion that their outputs agree. A trace that violates the assertion is an input sequence on which the two differ, and the mutant is not equivalent. A proof that the assertion holds in every reachable state is the equivalence. The question is decidable; whether a given engine decides it in a given time is the practical limit, and this section measures it.
+
+The book's formal tool has no equivalence command, so the miter is built by hand. It instantiates the repaired FIFO as `fifo` and the mutant, renamed, as `fifo_m`, on the same inputs:
+
+```{.systemverilog include="examples/ch25-mutation-testing/common/miter.sv"}
+```
+
+What the assertion compares is not a detail; it is the definition of the word "equivalent". The FIFO's memory is not reset, and its contract gives `rd_data` no meaning while the FIFO is empty, so two copies of the same design can show different words on `rd_data` from the first cycle. The miter compares `full` and `empty` always, and `rd_data` only while the original is not empty:
+
+```{.python include="examples/ch25-mutation-testing/common/miter.py" lines="29-30"}
+```
+
+::: {.callout-note title="Definition"}
+An **equivalent mutant**, as this chapter measures it, is one for which the miter's assertion holds in every reachable state:
+$$\texttt{full}_a = \texttt{full}_b \;\wedge\; \texttt{empty}_a = \texttt{empty}_b \;\wedge\; \bigl(\texttt{empty}_a \vee \texttt{rd}_a = \texttt{rd}_b\bigr),$$
+with $a$ the repaired FIFO and $b$ the mutant, both started from reset with the same inputs. The comparison is part of the definition: a miter that compared less would call more mutants equivalent, and one that compared more would call some designs different from themselves.
+:::
+
+::: {.callout-note title="Definition"}
+A **miter** of a design and a mutant is the two side by side on shared inputs, with one assertion that the observed outputs agree. A counterexample at depth $k$ is an input sequence of $k$ cycles on which they differ, and shows that the mutant is not equivalent. A bounded search that finds no counterexample to depth $k$ shows only that any difference is deeper than $k$. Equivalence needs an unbounded proof: induction with whatever invariants it needs, or IC3 (@sec-ch18-induction, @sec-ch18-ic3).
+:::
+
+The example `miter-differ` builds the miter for every source mutant and runs a bounded search on each for ten seconds. The head and tail of what it prints:
+
+```{.text include="examples/ch25-mutation-testing/miter-differ/run.out" lines="1-13"}
+```
+
+```{.text include="examples/ch25-mutation-testing/miter-differ/run.out" lines="48-52"}
+```
+
+Thirty-seven mutants differ, most within three cycles of reset; `m42`, `full` never raised, needs seventeen, the sixteen pushes that fill the FIFO and one more. The tool's front end refuses `m06` and `m07`: in both, the `if` that tests the reset no longer matches the falling edge in the sensitivity list, which is a rule the front end enforces for an asynchronous reset. Those two are kills by the tool, like the lint kills of @sec-ch25-source, and are counted apart. Five mutants are left undecided, and bounded search cannot decide them however long it runs: it can only ever refute. Every "equivalent" verdict below is a proof by IC3, from the engine rIC3 [@su2025ric3], which the examples select by name through the book's InFormal runner [@informal-tool]; where rIC3 is not installed, those examples are skipped rather than run with an engine that cannot finish.
+
+The seven survivors of @sec-ch25-survivors fall into four classes.
+
+**Equivalent outright.** `m32` deletes `default: count <= count` from the counter's `case`; a clocked block that assigns nothing to a register leaves it holding its value, which is exactly what the deleted line said. `m36` computes `empty` as `count <= '0` instead of `count == '0`; for an unsigned count the two are the same comparison. The example `equiv-outright`:
+
+```{.text include="examples/ch25-mutation-testing/equiv-outright/run.out" lines="4-11"}
+```
+
+**Equivalent under a reachable-state invariant.** `m43` computes `full` as `count >= 16` instead of `count == 16`. The two agree whenever the count is at most sixteen, and they disagree for counts from 17 to 31, which the five-bit register can hold and the design never reaches. Bounded search never decides this, because no trace from reset reaches the states in which the two differ. Induction, as @sec-ch18-helper showed, is defeated by unreachable states that satisfy the assertion and step to ones that do not, and needs an invariant to exclude them. The example `equiv-invariant` tries the obvious one:
+
+```{.text include="examples/ch25-mutation-testing/equiv-invariant/run.out" lines="2-12"}
+```
+
+The invariant `count <= 16` on both copies is proven at once, and the half of the miter that compares the flags is proven by induction with no help at all. The whole miter is not, even with the invariant assumed. The comparison of `rd_data` concerns the memory, and induction would need an invariant about which words of the two memories must agree, the words between the read and write pointers, which a bound on the count does not state and which free initial memory makes awkward to write. rIC3 finds what is needed and proves the whole miter. The lesson is about engines rather than about this mutant: a short invariant that looks sufficient may cover only part of what a miter compares.
+
+**Equivalent only under the tool's reset model.** `m05` drops `or negedge rst_n` from the sensitivity list, making the asynchronous reset synchronous. rIC3 proves the miter, because the formal tool models every reset at the clock, so the two designs are the same machine to it. The book's simulation testbenches share the assumption: each holds `rst_n` low across a rising edge of the clock, where a synchronous reset acts too. A testbench that does not share it pulses the reset between two edges and looks at the FIFO before the next one:
+
+```{.systemverilog include="examples/ch25-mutation-testing/equiv-reset/tb_async_reset.sv" lines="20-37"}
+```
+
+```{.text include="examples/ch25-mutation-testing/equiv-reset/run.out" lines="1-12"}
+```
+
+The repaired FIFO empties at the pulse; `m05` never sees it. The designs are not equivalent in silicon, and they are equivalent in every model the chapter's other tools build. That class is reported on its own and never folded into "equivalent": it is a statement about a tool's model of time, and a design whose reset can arrive and leave between clock edges has a real bug here.
+
+**Not equivalent at all.** `m09`, `m11` and `m13` each delete one register's reset. The miter refutes them at depth 1 or 2, because the formal tool starts every register with an arbitrary value, and a register whose reset was deleted keeps that value after reset. They survived every simulation for a reason that lies in the simulator, and the Pitfall below gives it.
+
+@tbl-ch25-survivors collects the verdicts, with the simulation results at the simulator's default initial values and with randomized ones.
+
+{{< include /examples/ch25-mutation-testing/rand-init/tbl-ch25-survivors.md >}}
+
+The table's last row is the strangest. `m44` exchanges the case labels of the counter, so a push decrements the count and a pop increments it. rIC3 proves the miter: at the ports, `m44` is equivalent. The reason is arithmetic. In the mutant the count holds minus the occupancy, modulo 32. The flags test only two values, `count == 0` for `empty` and `count == 16` for `full`, and those are the two fixed points of negation modulo 32: $-0 \equiv 0$ and $-16 \equiv 16$. Every other value is wrong, and no port shows it. Yet the checking testbench kills `m44`, and so does the property set. The example `white-box` shows both halves and the count itself:
+
+```{.text include="examples/ch25-mutation-testing/white-box/run.out" lines="8-32"}
+```
+
+`Sync_A` is the one assertion of @sec-ch09-example that reads the design's internal `count` and compares it with the checker's occupancy, and the temporal-properties chapter introduced it as cheap insurance against a mistake in its own occupancy register. Under mutation it does something else: it constrains the implementation and not the contract, and it kills a mutant that no observation of the ports could kill. MCY, the open mutation tool @sec-ch25-netlist describes, has a tag for this situation, a test failure on a mutant its equivalence check passes, and its documentation treats it as a sign that one of the setup's assumptions is broken [@mcy-docs]. Here the assumption that breaks is that the testbench judges only what the contract specifies. That does not make `Sync_A` wrong, and the remedy is not to delete it. The remedy is to report kills by white-box assertions separately from kills at the ports, so that a score is not raised by checks of how the design was written.
+
+The cheapest equivalence test of all needs no formal tool. Papadakis, Jia, Harman and Le Traon compiled each mutant of large C programs and compared the object code with the original's: identical code means an equivalent mutant, and two mutants with identical code are duplicates. On their subjects this *trivial compiler equivalence* marked 7.4% of the mutants equivalent and 21% duplicates, and found about 30% of the equivalent mutants that had been identified by hand [@papadakis2015tce]. The hardware form synthesizes each mutant with one script and compares the netlists. `source-mutants` does that with Yosys, comparing netlists up to the names of internal wires and cells:
+
+```{.text include="examples/ch25-mutation-testing/source-mutants/run.out" lines="69-77"}
+```
+
+Synthesis finds one of the five equivalent mutants, `m32`, whose netlist is the original's. It does not find `m36`, because `count <= '0` and `count == '0` synthesize to different comparators that only a proof shows to be the same function. It cannot see the duplicate pair `m06` and `m07`, because Yosys, like the formal front end, refuses both. Trivial compiler equivalence is cheap and incomplete in both directions, and a miter is still needed for what it misses.
+
+::: {.callout-warning title="Pitfall"}
+The simulator's initial values are part of the oracle. `m09`, `m11` and `m13` delete a reset and survive every testbench, and they are not equivalent. Verilator initializes variables that have no reset through a function chosen at run time; by default that function returns zero [@verilator-exe-verilator; @verilator-exe-sim], so a register whose reset was deleted starts exactly where the reset would have put it, and the bug is invisible. The guide documents the remedy: the run-time option `+verilator+rand+reset+2`, which randomizes the initial values, with a different `+verilator+seed+` for each run. The example `rand-init` reruns the schema that way under five seeds, with the book's build flags unchanged:
+
+```{.text include="examples/ch25-mutation-testing/rand-init/run.out" lines="5-24"}
+```
+
+With random initial values the directed and random tests kill all three reset deletions under every seed, and the checking testbench kills `m13`, the one whose count it can see. `m05`, `m32`, `m36` and `m43` survive every run, as the miter says they must. A missing reset is a real bug that a zero-initialized run cannot see. Run mutation, and run regressions, with randomized initial values and the seed recorded.
+:::
+
+::: {.callout-warning title="Pitfall"}
+An equivalent verdict is only as good as the comparison. A miter that dropped `rd_data` would prove every data-path mutant of @sec-ch25-survivors equivalent, and so excuse exactly the checking gap that the matrix found. A miter that compared `rd_data` on every cycle would find the original different from itself; `miter-differ` runs that miter on the repaired FIFO against an unmodified copy:
+
+```{.text include="examples/ch25-mutation-testing/miter-differ/run.out" lines="53-53"}
+```
+
+Write down what the miter compares, and check the comparison by running the miter on the original against itself, where it must not find a difference.
+:::
+
+## The property set as a judge {#sec-ch25-formal}
+
+A property set is a testbench too, and it can be qualified the same way. @sec-ch19-mutation ran three mutants against the FIFO's property set: the checker of @sec-ch09-example bound as it ships, the pointer property `EmptyPtrs_A`, and the tracked-word check `a_integrity` of @sec-ch19-track, which follows one arbitrary word from push to pop. That section's procedure is the one used here, applied to the whole population, and is not repeated.
+
+::: {.callout-note title="Definition"}
+A **property-set kill** is a counterexample to some property of the set on the mutant, within the stated bound. A property set has two ways not to kill. A bounded search that finds no counterexample within its limit says that no property fails within that bound, and nothing about deeper traces. A proof of every property on the mutant says that the set cannot kill it at all: the mutant is a scenario the specification allows.
+:::
+
+The example `property-set` tries the properties one at a time in a fixed order, each by bounded search for two seconds, and stops at the first counterexample for each mutant:
+
+```{.text include="examples/ch25-mutation-testing/property-set/run.out" lines="2-5"}
+```
+
+```{.text include="examples/ch25-mutation-testing/property-set/run.out" lines="52-57"}
+```
+
+The property set kills every mutant that the miter calls different and the front end accepts. That includes the three reset deletions, which no simulation at default initial values killed: the formal tool starts registers free, so a deleted reset leaves a register that can hold anything after reset, and the first assertion to read it fails at depth 1 or 2. It includes `m35`, which the random test missed, because the bounded search tries every input sequence and finds the short one that empties the FIFO. The two refusals, `m06` and `m07`, are reported as refusals and counted apart, as the miter's were; a refusal is not a counterexample. And the property set kills one equivalent mutant, `m44`, through `Sync_A`, as @sec-ch25-equiv showed. The limit is a time and not a depth, because the tool's bounded search runs until its time is up. `m42`, `full` never raised, is the case where that matters: its first counterexample is eighteen cycles deep, and the two seconds happen to reach it. A shorter limit, or a design whose FIFO were deeper, would have turned that kill into a survivor that is nothing but a bound, the kind @sec-ch19-mutation warned of and @sec-ch25-sampling meets on the netlist.
+
+Which property kills which mutant is in the opt-in run, which checks every property on every mutant and is committed as `measure.out`. The data-path mutants:
+
+```{.text include="examples/ch25-mutation-testing/property-set/measure.out" lines="20-39"}
+```
+
+and the comparisons of `full`, with `m44`:
+
+```{.text include="examples/ch25-mutation-testing/property-set/measure.out" lines="59-64"}
+```
+
+The fifteen mutants that the checking testbench could not see in simulation fall to `a_integrity`, and most of them also to `EmptyPtrs_A`; no assertion of the checker as it ships kills any of them. The comparisons of `full` fall to `FullBackward_A`, and `m44` to `Sync_A` alone. No single property kills everything, which is the conclusion @sec-ch19-mutation reached with three mutants, now over the whole population: each property earns its place by a set of mutants that only it, or it and one other, can kill. The four mutants with no counterexample, `m05`, `m32`, `m36` and `m43`, are four of the five the miter proved equivalent; the fifth is `m44`. On this population the property set never leaves alone a mutant the miter calls different, which is what a complete-looking specification of a small design looks like.
+
+Mutation was proposed as a coverage measure for formal verification long before it was used to qualify testbenches in a flow like this one. Hoskote, Kam, Ho and Zhao's *Coverage Estimation for Symbolic Model Checking* [@hoskote1999coverage] is an early formulation of the question of how much of a design a set of verified properties constrains. Chockler, Kupferman, Kurshan and Vardi defined coverage in model checking by mutation: a state is covered for an observable signal when flipping that signal's value in that state makes some property fail, so the uncovered states are those whose behavior the specification does not pin down [@chockler2001practical]. Große, Kühne and Drechsler put the mutation on the outputs: they insert at an output a multiplexer that can invert it, and ask, with bounded model checking, whether the proven properties still hold; a counterexample is a behavior the properties leave unspecified, and on a RISC CPU the method found three such gaps [@grosse2007bmccoverage]. Claessen's analysis of safety property lists asks the same question without a design at all, looking for situations in which the list leaves an output unconstrained [@claessen2007coverage].
+
+Vacuity is the dual. A formula passes vacuously when some part of it could be replaced by anything at all without changing the verdict [@beer2001vacuity], as @sec-ch09-vacuity defined it. Asking whether a replaced subformula changes the verdict is mutation of the property, where this chapter mutates the design, and the two checks belong together: a property set that kills mutants and is not vacuous has been shown able to fail, and on the right traces.
+
+A survivor of the property set that the miter calls different is a gap in the specification, and the miter's counterexample is a scenario the properties leave open: exactly the trace to read before writing the missing property. On the 44 source mutants there are none. On the netlist, @sec-ch25-sampling finds fourteen, and every one of them is a bound and not a gap.
+
+::: {.callout-tip title="In Practice"}
+Run the property set and the simulation testbenches against the same mutants and report them in one matrix, @fig-ch25-matrix. They fail in different places. Formal kills what the simulator's initial values hide, and finds the one short input sequence that a seed missed. Simulation runs deep traces cheaply, hundreds of cycles per run, which a bounded search with a time limit may not reach; @sec-ch25-sampling shows the netlist mutations that only depth reveals. A mutant that only one of the two kills tells you which half of the flow is carrying that part of the verification.
+:::
+
+![The kill matrix of the 44 source mutants, grouped by operator. Rows: the lint verdict, the four simulation testbenches at the simulator's default initial values, and the property set; the bottom band gives the miter's class. A dark cell is a kill, a light one a survival; `m06` and `m07`, which the formal front end refuses, are marked R in the property-set row. Data from the `source-mutants`, `source-sim`, `property-set`, `miter-differ`, `equiv-outright`, `equiv-invariant`, `equiv-reset` and `white-box` examples.](../figures/ch25-matrix.svg){#fig-ch25-matrix fig-alt="A grid with 44 columns, one per source mutant, labeled m01 to m44 and grouped under operator names, and six rows: lint, the directed test, the random test, the coverage testbench, the checking testbench and the property set. The coverage testbench row is entirely light. The lint row is dark in seven columns. The checking testbench row is light over fifteen data-path mutants, spread across several operator groups, that the random test row kills. The property set row is dark everywhere except four columns and two cells marked R. A colored band under the grid marks 37 columns as differs, two as refused, and five as equivalent: m32 and m36 outright, m43 under an invariant, m05 under the tool's reset model, and m44 at the ports."}
+
+## Fault model II: netlist mutation, schemata and MCY {#sec-ch25-netlist}
+
+The source operators are a designer's view of what can go wrong. A second fault model takes the synthesis tool's view: mutate the netlist, one bit of one cell port at a time. It is the fault model of MCY, Mutation Cover with Yosys, the open-source mutation flow from YosysHQ [@mcy-repo; @mcy-docs], whose mutations each change the value of a single bit in the design. The mechanism underneath MCY is a pass of Yosys itself, `mutate`, and this chapter runs that pass directly.
+
+After `prep`, which elaborates the FIFO into a netlist of word-level cells, `mutate -list N` lists mutations of the cells' ports; the built-in help describes it as creating a list of N mutations "using an even sampling" [@yosys-mutate]. Asked for more mutations than exist, it lists every one, and warns how many it could create. The library asks for 100,000:
+
+```{.python include="examples/ch25-mutation-testing/common/yosysmut.py" lines="41-49"}
+```
+
+The example `netlist-list` makes the list and counts it:
+
+```{.text include="examples/ch25-mutation-testing/netlist-list/run.out" lines="4-22"}
+```
+
+For this file under Yosys 0.68 after `prep`, the population is 9,281 single-bit mutations in five modes, `inv`, `const0`, `const1`, `cnot0` and `cnot1`. The first three, by their names, invert the bit or tie it to 0 or to 1. The mode names are read from the list itself: neither the help text nor the documentation read for this chapter lists or defines them. Where the mutations fall is decided by the synthesis and not by the designer. Yosys turns the sixteen-word memory into registers and multiplexers, and most of the population is that memory:
+
+```{.text include="examples/ch25-mutation-testing/netlist-list/run.out" lines="47-48"}
+```
+
+Nobody reads 9,281 mutants one at a time. From here on the chapter counts. The cell types say the same thing from another side. The process multiplexers that Yosys builds from `if` and `case`, `$procmux`, carry six mutations in ten, and the registers, `$procdff`, one in seven; the arithmetic and comparison cells that the source operators of @sec-ch25-source were about, `$add`, `$sub`, `$eq` and the logic cells, carry about three percent between them. A fifth of the population carries no cell name or source tag at all, because it lies in the cells that Yosys's memory mapping made. The two fault models are not two resolutions of one picture: they put the mutants in different places.
+
+Counting needs a cheap way to run them. The idea is the one @sec-ch25-source used for the source mutants, and it has a name and an origin: Untch, Offutt and Harrold's *mutant schemata* encode every mutant of a program in one program, with a run-time selector, so that it is compiled once instead of once per mutant; in their experiments this ran faster than an interpretive mutation system by more than 300% [@untch1993schemata]. Yosys provides the netlist form. With `-ctrl mutsel 14 K`, each listed mutation is put behind its own value of a 14-bit select input, value 0 being the unmutated design, and a netlist with every mutation applied is built once. A small wrapper gives the book's testbenches the module they expect and reads the select from a plusarg:
+
+```{.systemverilog include="examples/ch25-mutation-testing/common/fifo_wrap.sv" lines="22-28"}
+```
+
+The opt-in run of `netlist-population` builds the whole population as one netlist and runs the four testbenches over every mutation, and its cost is a minute of building and under two minutes of running on four cores:
+
+```{.text include="examples/ch25-mutation-testing/netlist-population/measure.out" lines="3-6"}
+```
+
+Its verdicts are committed as a population file, one row per mutation, and the default run reads them:
+
+```{.text include="examples/ch25-mutation-testing/netlist-population/run.out" lines="3-8"}
+```
+
+Set beside the source mutants' kill rates:
+
+```{.text include="examples/ch25-mutation-testing/source-sim/run.out" lines="54-59"}
+```
+
+**The fault model sets the score.** The random test rises from 80% to 89%. The directed test falls from 77% to 29%. The checking testbench falls from half to under four percent, because three quarters of the netlist is the memory it never looks at. Neither number is the checking testbench's "real" kill rate. Each is a correct measurement under its fault model, and a kill rate quoted without its fault model, its operator set or mutation modes, and the composition of its population, cannot be compared with any other. The modes themselves matter less than the population's composition; the random test's kill rate by mode, from the population file, varies by a few points:
+
+```{.text include="examples/ch25-mutation-testing/netlist-population/run.out" lines="69-75"}
+```
+
+MCY packages this mechanism and adds four things. It keeps a project database of mutations and results. It draws its list as a weighted sample rather than the whole population: when the requested size is below the population, the candidates are chosen with weights that favor, among other things, source locations with few mutations so far [@mcy-docs]. It filters with a formal check, a miter of the netlist with `mutsel` at 0 against `mutsel` at the mutation's value, run by SymbiYosys in bounded mode, to depth 10 in the documentation's example [@mcy-docs] and to depth 1 in the tutorial application note [@yosys-ap400], which is an application note from YosysHQ, MCY's maintainer and vendor. And it tags each mutation with one of four labels: covered (some test fails on the mutation), uncovered (none does), no change (the formal check finds no difference), and EQGAP (a test fails although the formal check found no difference) [@mcy-docs]. Because the filter is bounded, "no change" means no difference within the depth, not equivalence, which is the distinction @sec-ch25-equiv drew. On the source mutants the distinction has a name: `m42`, `full` never raised, differs from the original only at depth 17, so a bounded filter of depth 10 would find no difference. Two of the four testbenches kill it, so the tag would be EQGAP, a sign of a broken setup, when the setup is sound and the filter is too shallow; a mutant no testbench killed would have been tagged no change and dropped from the denominator. A bounded filter would tag `m43` as no change too, correctly, but for a reason it cannot state. The documentation also states a prerequisite: mutation coverage cannot be measured on a design that already fails its tests [@mcy-docs]. That is why this chapter's spine is the repaired FIFO and not the original of @sec-ch01-example.
+
+The examples do not run MCY. MCY's documented equivalence filter runs SymbiYosys, which this book replaced with InFormal, so the examples reproduce MCY's mechanism with Yosys's `mutate` pass and hand-built InFormal miters directly, rather than adding MCY and SymbiYosys to the toolchain. Everything above that is not MCY's own database and tags, the list, the select input, the schema build and the miter, is what the examples run.
+
+::: {.callout-warning title="Pitfall"}
+A harness can kill mutants by itself. Yosys writes each multiplexer cell with a one-hot select, `$pmux`, as a `casez` marked with a `synopsys parallel_case` pragma, and Verilator turns that pragma into a run-time assertion that at most one case matches. A mutation of a select bit that makes two cases match then fails the assertion in any testbench, including one with no checker. The example `harness-pitfalls` takes two such mutations of the counter's multiplexer and runs them under the coverage testbench, which has no checker, built with the default flags and with `--no-assert-case`:
+
+```{.text include="examples/ch25-mutation-testing/harness-pitfalls/run.out" lines="2-10"}
+```
+
+The checkless testbench "kills" both, until the pragma's assertions are turned off; the concurrent assertions of the checking testbench are not affected by the flag. Over a whole population the effect is not two mutations but every select-bit mutation of every multiplexer, credited to whichever testbench happens to drive the select. The rule: a kill you cannot explain is a harness bug until shown otherwise, and a testbench with no checker is the control that exposes one. The library builds every netlist with the flag:
+
+```{.python include="examples/ch25-mutation-testing/common/yosysmut.py" lines="97-104"}
+```
+:::
+
+::: {.callout-warning title="Pitfall"}
+A harness can also hide kills. `$value$plusargs` returns the first match on the command line, so a harness that sweeps seeds by appending `+seed=S` after a testbench's own `+seed=1` runs seed 1 every time:
+
+```{.systemverilog include="examples/ch25-mutation-testing/harness-pitfalls/tb_plusarg.sv"}
+```
+
+```{.text include="examples/ch25-mutation-testing/harness-pitfalls/run.out" lines="11-14"}
+```
+
+The random test kills `m35` at seed 2, and does not when seed 2 follows seed 1 on the command line. A seed sweep built that way reports the same count at every seed, and the only symptom is that a sweep which adds nothing is implausible. Give each plusarg once, and print the seed the testbench actually used.
+:::
+
+## Sampling: kill rate, equivalent fraction, score {#sec-ch25-sampling}
+
+The population of @sec-ch25-netlist was small enough to run in full. A larger design's is not, and even this one is too large to classify in full with a miter, given a limit of two minutes of rIC3 for each mutation. A population that cannot be run or classified is sampled, and a sampled kill rate is an estimate with an error.
+
+The error does not depend on the size of the population. Gopinath, Alipour, Ahmed, Jensen and Groce made the point for software: the kill rate of a uniform random sample of $n$ mutants is a binomial estimate, so its error is set by $n$ alone; at $n = 1000$ the worst case is about 7% by Chebyshev's inequality and about 3% by the normal approximation, at 95%. On one program with 122,484 mutants and a true score of 74.03%, 95% of their samples of 1,000 mutants scored between 71.3% and 76.7% [@gopinath2015hard]. The interval this book uses for a binomial count is the Clopper-Pearson interval of @sec-ch21-clean, exact and conservative, and it is not re-derived here.
+
+Because the FIFO's population was run in full, the truth is known, and the sampling can be checked against it. The example `netlist-sample` draws 1,000 mutations uniformly without replacement, with Python's generator at seed 1, builds a netlist holding only those, and runs the four testbenches:
+
+```{.text include="examples/ch25-mutation-testing/netlist-sample/run.out" lines="2-7"}
+```
+
+```{.text include="examples/ch25-mutation-testing/netlist-sample/run.out" lines="14-19"}
+```
+
+```{.text include="examples/ch25-mutation-testing/netlist-sample/run.out" lines="26-33"}
+```
+
+The first 100 of the draw are themselves a uniform sample of 100, so the samples at 30, 100, 300 and 1,000 are nested. At 100, the directed test's 30 kills give an interval from 0.212 to 0.400, which holds the population's 0.2936; the random test's 89 give 0.812 to 0.944, which holds 0.8905. The coverage testbench's zero gives an upper bound of 0.036 at $n = 100$ and 0.004 at 1,000: correct bounds on a rate that is zero by construction, because the testbench has no checker. And every sampled verdict is the population file's verdict for that mutation, which checks the harness as well as the arithmetic.
+
+One sample checks nothing about the interval's coverage, which is a statement about many samples. `netlist-population` draws 2,000 samples at each size from the population file and counts how often the 95% interval holds the population rate:
+
+```{.text include="examples/ch25-mutation-testing/netlist-population/run.out" lines="50-55"}
+```
+
+```{.text include="examples/ch25-mutation-testing/netlist-population/run.out" lines="62-68"}
+```
+
+The interval holds the truth at least 94.5% of the time at every size and for every testbench, and more often for most, as a conservative interval should. Its width falls with $n$ as $1/\sqrt{n}$ does: about 0.19 for the directed test at 100 and 0.06 at 1,000. The worst-case half-widths on each block's first line are Gopinath and colleagues' two bounds for $p = 0.5$, computed for these sizes; at 1,000 they are the 7% and 3% of their paper. @fig-ch25-sampling draws the intervals of one sample against the population rates.
+
+![The 95% Clopper-Pearson interval of the kill rate from one nested uniform sample (seed 1) at $n$ = 30, 100, 300 and 1,000, for three testbenches, with the population rate over all 9,281 netlist mutations as a horizontal line. The coverage testbench, at zero throughout, is left out. Data from the `netlist-sample` and `netlist-population` examples.](../figures/ch25-sampling.svg){#fig-ch25-sampling fig-alt="Three panels side by side, one per testbench: the directed test, the random test and the checking testbench. Each has sample size on a horizontal axis at 30, 100, 300 and 1000, and kill rate on the vertical. Each shows four vertical interval bars with a point estimate, narrowing as the sample grows, and a dashed horizontal line at the population rate: 0.294 for the directed test, 0.891 for the random test and 0.038 for the checking testbench. Every bar crosses its line."}
+
+What the binomial model assumes is a uniform draw from the full list. `mutate -list N` with N below the population is not one: as @sec-ch25-netlist said, it chooses candidates with weights. Its output may be a good set of mutations to run, but an interval computed on it has no binomial justification, and the examples therefore list the whole population and draw from it in Python. A second assumption is quieter. Mutations of adjacent bits of one cell tend to be killed together, so per-line or per-cell reports built from a sample are less informative than their counts suggest; a uniform sample's overall rate is unbiased all the same, because each mutation had the same chance to be drawn.
+
+::: {.callout-warning title="Pitfall"}
+A sample drawn by the tool's own heuristic is not a uniform sample, and an interval computed on it is decoration. Draw uniformly from the complete list, record the generator and its seed, and print both beside the result.
+:::
+
+A kill rate over all mutants is not a score. The score divides by the non-equivalent mutants, so it needs a second estimate, the equivalent fraction, and only a formal sample gives one. `netlist-formal`'s opt-in run draws 100 mutations at seed 25 and runs, for each, the property set and the miter of @sec-ch25-equiv, bounded search first and rIC3 after; the default run recomputes the summary from the committed output and the population file, and reruns four rows:
+
+```{.text include="examples/ch25-mutation-testing/netlist-formal/run.out" lines="3-21"}
+```
+
+Six of the hundred are equivalent, an equivalent fraction of 0.060 with an interval from 0.022 to 0.126, and nothing kills any of the six. The score is computed on the same sample: a uniform sample's non-equivalent members are a uniform sample of the non-equivalent population, so the kills among those 94 estimate the score directly, with their own interval. The formal sample is a different draw from the simulation sample, at a different seed, because it was sized for the cost of a miter rather than of a run; what matters is that each estimate is computed on one uniform draw, and that the score uses the draw on which both the kills and the equivalence are known. The random test scores 93 of 94. The checking testbench scores 7 of 94, the property set 80 of 94, and simulation and formal together kill all 94.
+
+::: {.callout-note title="Definition"}
+For a sampled population, report three numbers, each with its $n$, its interval and the seed of its draw. The **kill rate**, kills over all sampled mutants, from as large a uniform sample as can be run. The **equivalent fraction**, equivalent over all, from a uniform sample classified by a miter with an unbounded engine. The **score**, kills over non-equivalent, computed on the jointly classified sample.
+:::
+
+The tempting shortcut is to divide. The population kill rate of the random test is 0.8905, and $0.8905/(1-0.060) = 0.947$, a reasonable point estimate. But at the upper end of the equivalent fraction's interval the same division gives $0.8905/(1-0.126) = 1.019$, a "score" above one. The ratio of two estimates is not bounded by the ratio of their intervals' ends, and an interval for a derived quantity has to be derived, or the quantity estimated directly, as the joint sample does.
+
+The fourteen non-equivalent mutations that the property set misses are not gaps in the specification. The miter separates them only at depth 16 to 31:
+
+```{.text include="examples/ch25-mutation-testing/netlist-formal/measure.out" lines="83-94"}
+```
+
+The two that the default run reruns are mutations of multiplexers on the memory's write path, source lines 42 and 43. A mutation there shows at the ports only after a word has been written to the affected slot and the FIFO has gone round to read it, which takes many cycles, and the property set's three seconds of bounded search for each property did not reach that deep. The two at depth 31 were found by rIC3, not by the ten seconds of bounded search, and the default run finds them again. A formal "survivor" here is a bound, and simulation's 400-cycle traces reach these mutations cheaply: the random test kills them. This is the In Practice of @sec-ch25-formal, measured.
+
+::: {.callout-tip title="In Practice"}
+Budget mutation the way Gopinath and colleagues' arithmetic says. About a thousand uniformly drawn mutants give a kill rate to within a few points, for a design of any size, and the cost is a thousand runs of each testbench against one schema build. The equivalent fraction is the expensive number: it needs a formal sample, and a hundred miters with an unbounded engine took this machine:
+
+```{.text include="examples/ch25-mutation-testing/netlist-formal/measure.out" lines="3-4"}
+```
+
+That is the real cost of a mutation score, and the reason to report kill rate, equivalent fraction and score separately: the first is cheap and can run every night, and the other two can be refreshed when the design or the fault model changes.
+:::
+
+## Do mutants stand for real bugs? {#sec-ch25-evidence}
+
+A kill rate is worth measuring only if killing mutants has something to do with catching real bugs. That is an empirical question, and its answers so far are about software.
+
+Just, Jalali, Inozemtseva, Ernst, Holmes and Fraser took 357 real faults from five Java programs, each with the developer's fix, and asked whether tests that detect mutants also detect the real faults. They found 73% of the real faults coupled to at least one mutant, in the sense that a test detecting the mutant detects the fault, and found mutant detection correlated with real-fault detection even with code coverage held fixed. The other 27% were coupled to no mutant, and most of those needed changes that no mutation operator makes, such as a changed algorithm. The operators most often coupled were those of conditional operators, relational operators and statement deletion [@just2014mutants].
+
+Papadakis, Shin, Yoo and Bae then controlled for the size of the test suite, which grows with both its mutation score and its fault detection. With size controlled, the correlation between score and real-fault detection fell from the range of about 0.35 to 0.75 to about 0.05 to 0.20: most of the association had been size. But suites in the top 10% by mutation score did detect significantly more faults, for 138 of 231 Defects4J faults and 59 of 68 CoREBench faults [@papadakis2018correlated]. Chekam, Papadakis, Le Traon and Harman found the same shape as a threshold: strong mutation helped fault revelation only at high scores, about 5% more faults for suites in the top 20% of attainable score and about 18% in the top 5%, and below the threshold no criterion they studied made much difference; strong mutation alone was uniquely coupled to 21 faults [@chekam2017threshold]. Inozemtseva and Holmes, cited in @sec-ch08-where for coverage, found that coverage is not strongly correlated with test-suite effectiveness once size is controlled [@inozemtseva2014coverage].
+
+Mutation of hardware descriptions has a peer-reviewed history of its own. Al Hayek and Robach's *From Specification Validation to Hardware Testing: A Unified Method* [@alhayek1996unified] and Serrestou, Beroulle and Robach's *Functional Verification of RTL Designs Driven by Mutation Testing Metrics* [@serrestou2007rtl] applied it to HDL descriptions. Lin and colleagues, working with a commercial tool's mutants, describe them in three classes, operator changes, dead assignments and conditions stuck at true or false, and estimate statically whether each mutant's effect can propagate so as to skip simulations that cannot kill it, saving about 14% of CPU time against weak-mutation preprocessing on three OpenCores designs [@lin2012epa]. Huang, Zhu, Yan and Yan qualify functional testbenches by mutation analysis and state that coverage-based approaches neglect propagation and detection [@huang2015mutation]. The commercial tool those papers use, Certitude, is described by its vendors: in a peer-reviewed workshop paper by the vendor's staff [@hampton2007certitude], in a technical brief by the original vendor's chief technology officer [@hampton2009fq], in an undated article from a later owner [@springsoft-fq], and on the current owner's product page [@synopsys-certitude]. Those are the vendor's descriptions, and none of them gives a figure that could be checked.
+
+There is no hardware counterpart of the software studies: no collection of real RTL bugs with their fixes, at the scale of Defects4J, against which a hardware kill rate has been correlated with real-bug detection. No number from the software studies transfers to RTL, and this chapter quotes none as if it did. What transfers is the shape of the findings. Compare kill rates only between testbenches of comparable cost, because the size confound applies to a testbench's seeds and cycles as it does to a suite's tests; the seed sweep of @sec-ch25-survivors is the confound on the FIFO. Read a kill rate at the top and not in the middle, because the threshold effect says the difference between 40% and 60% may mean little and the difference between 95% and 100% may mean much. And prefer the operators that coupled best in software, conditions, relational operators and deletions, which is what the FIFO's set is mostly made of.
+
+What a hardware counterpart would need is easy to state and hard to build: a public collection of real RTL bugs, each with the design before and after its fix and a testbench that the fix makes pass, large enough that mutant kills and real-bug detection can be correlated with test-suite size held fixed. No such collection was found in writing this chapter. Until one exists, a hardware kill rate is a measurement of a testbench against a stated fault model, which is useful in itself, and not a predictor of escapes.
+
+Software practice also shows how to make mutation affordable. At Google, mutants are generated for the lines a code change touched, with heuristics that suppress mutants unlikely to be useful, and a few are surfaced to the author and reviewer during code review; developers rated 89% of the reported mutants as productive once the filtering was refined [@petrovic2021mutation]. The cost scales with the change, not with the code base.
+
+::: {.callout-tip title="In Practice"}
+Run mutation on the diff. When a change to the RTL is reviewed, mutate the lines it touched with the project's operator set, run the regression's fastest checking tests against those mutants as a schema, and put the survivors in the review beside the coverage delta. A survivor on a changed line is a question for the author: which check would have noticed if this line were wrong?
+:::
+
+## Worked example: closing the gap with a data check {#sec-ch25-example}
+
+The matrix of @sec-ch25-survivors named a checking gap in the checking testbench: fifteen mutants that change the data the FIFO returns, and that it never notices because nothing in it compares data. The netlist of @sec-ch25-netlist said how large that gap is: most of the design. This section closes it in the order an engineer would, and measures the result.
+
+**Step 1, the smallest check that closes it.** The missing check is the one the random test has and the checking testbench lacks: a model of the queue, and a comparison of every popped word with the model's oldest. It is written as a module bound to the FIFO beside the temporal-properties chapter's checker, which is read by path and not edited. It judges pushes and pops by the contract at the ports, as that checker does:
+
+```{.systemverilog include="examples/ch25-mutation-testing/fifth-tb/fifo_data_sva.sv" lines="22-37"}
+```
+
+```{.systemverilog include="examples/ch25-mutation-testing/fifth-tb/fifo_data_bind.sv"}
+```
+
+The traffic is the checking testbench's own, unchanged. The data check reads no internal signal, so a kill it makes is a kill at the ports, not one of the white-box kills of @sec-ch25-equiv. Its formal counterpart is the tracked-word check of @sec-ch19-track, which follows one arbitrary word instead of all of them.
+
+**Step 2, the control.** A check that cannot fail closes nothing. The fifth testbench, the checking testbench with the data check bound beside its checker, must pass the repaired FIFO and fail the original of @sec-ch01-example, as the control runs of @sec-ch21-example did for that chapter's bound:
+
+```{.text include="examples/ch25-mutation-testing/fifth-tb/run.out" lines="1-6"}
+```
+
+**Step 3, the mutants again.** The 44 source mutants as a schema, at the simulator's default initial values and with randomized ones under seeds 1 to 5, and the uniform sample of 1,000 netlist mutations of @sec-ch25-sampling:
+
+```{.text include="examples/ch25-mutation-testing/fifth-tb/run.out" lines="7-24"}
+```
+
+**Step 4, reading the new matrix.** All fifteen data-path mutants now die, and nothing else changes. `m35` was already killed, because the checking testbench's traffic drains the FIFO. The three reset deletions `m09`, `m11` and `m13` still survive at default initial values and die with randomized ones; the data check sees `m09` and `m11` once their pointers start somewhere other than zero. The four equivalent mutants survive, as they must, and `m44` is still killed by `Sync_A`. On the netlist sample the kill rate rises from 39 to 899 of 1,000, level with the random test's 896 within any interval. @tbl-ch25-report is the before and after.
+
+{{< include /examples/ch25-mutation-testing/fifth-tb/tbl-ch25-report.md >}}
+
+**Step 5, the sentence.** The result is written with everything that qualifies it: on the repaired FIFO, the checking testbench with the data check kills 37 of the 44 source mutants of this chapter's operator set at the simulator's default initial values and 40 of 44 with randomized initial values under five seeds, the four survivors being mutants that a miter proves equivalent at the ports (one of them only under the formal tool's reset model); it kills 899 of a uniform sample of 1,000 of the 9,281 netlist mutations Yosys 0.68 makes of the file, interval 0.879 to 0.917; and the equivalent fraction of that population is 0.060, interval 0.022 to 0.126, from a formal sample of 100. Coverage goes beside it, unchanged by the new check, because the stimulus is unchanged.
+
+"Closes the gap" means the data-path gap. It does not mean a perfect score. Three of the remaining seven survivors at default initial values are real bugs, missing resets, that this testbench catches only when the simulator's initial values are randomized, and the step that closes that gap is a change to how the regression runs, not to the testbench.
+
+The netlist sample has survivors too, about one in ten of the thousand, and the formal sample of @sec-ch25-sampling says what to expect among them: some equivalent mutations, which nothing can kill, and deep mutations of the memory that a longer or differently shaped run would reach. The next step would be to classify the survivors of this sample with the miter, not to add checks until the number moves. The report also has a home beyond this chapter. Reproducible Verification treats the seeds, plusargs and initial-value modes that the result depends on as inputs of the build, and Metrics, Closure and Sign-off treats kill rate as a column of the sign-off table beside coverage, with the same qualifiers this section wrote into its sentence.
+
+::: {.callout-note title="Worked Example"}
+Qualifying a testbench in six steps. (1) Control: show that the testbench passes the design and fails a known-bad version of it. (2) Mutate under a stated fault model, at every site, or as a uniform sample of a stated size from the complete list. (3) Run the mutants as a schema, with randomized initial values and recorded seeds, and with a checkless testbench beside the real ones as the control that exposes kills made by the harness. (4) Classify the survivors with a miter that compares what the contract specifies: equivalent outright, under an invariant, or under a tool's model; or not equivalent, and then a stimulus gap or a checking gap. (5) Fix the gap the survivors name, not the score. (6) Report kill rate, equivalent fraction and score, each with its interval, its $n$ and its seeds, with the fault model, beside coverage.
+:::
+
+## Future directions {#sec-ch25-future}
+
+::: {.callout-important title="Future Directions"}
+Large language models now appear on both sides of mutation testing, and the results so far are measured on software, or reported in preprints, and none is compared with a formal miter. As *generators*, Foster and colleagues, industrial authors at Meta, report a system that writes mutants aimed at a stated concern, privacy, and then tests that kill them: over 10,795 Kotlin classes it produced 9,095 mutants and 571 tests, of which engineers accepted 73% [@foster2025ach]. For RTL, the BugGen preprint uses a pipeline of language-model agents to insert functional bugs into five OpenTitan IP blocks, 500 bugs at 17.7 validated bugs per hour [@jasper2025buggen]. As *classifiers* of equivalence, Tian and colleagues report that language-model techniques improved F1 by 35.69% on average over earlier techniques on 3,302 pairs of Java mutants [@tian2024llmequiv], and Foster and colleagues' equivalence detector reached a precision of 0.79 and a recall of 0.47, rising to 0.95 and 0.96 with pre-processing their abstract does not describe [@foster2025ach]. And as an *audit*, the single-author GateTruth preprint uses mutation kill rate to judge the testbenches of an LLM RTL benchmark, and reports that 72% of 46 auditable RTLLM v2.0 designs fall below a 95% kill threshold [@bhadra2026gatetruth]: the coverage testbench's zero of @sec-ch25-motivation, found in a benchmark. For finite-state hardware a miter is the exact classifier whenever its proof finishes, so an LLM's equivalence verdicts can be scored against ground truth on populations like this chapter's; that experiment belongs to Machine Learning in Verification and to @sec-ch34, whose @sec-ch34-evaluation already names mutation kill rate as the hidden metric that a generated testbench should be judged by. Three further directions stay open here. Higher-order mutants, several changes at once, are where the coupling effect would be tested on hardware. The DMA of @sec-ch11, with its protocol properties, is the natural next population, with a richer state space and a bus contract to compare in its miter. And Safety and Security Verification asks the same question of the silicon instead of the testbench, through fault injection.
+:::
+
+## Summary {#sec-ch25-summary}
+
+- Kill rate and coverage are different axes. On the repaired FIFO, the coverage testbench reaches every line, branch and expression point and kills none of 44 mutants, and the random test with the same coverage kills 35. Coverage cannot tell a testbench with a checker from one without.
+- A kill needs four things: reach the mutated point, infect the state, propagate to a port, and reveal through a check. Code coverage measures part of the first, and nothing in a coverage report measures the other three.
+- An operator set applied at every site is a fault model, and a kill rate means nothing without it. The FIFO's ten operators make 44 mutants; lint kills seven before any simulation; mutants of one comparison are not independent evidence.
+- A survivor is a stimulus gap, a checking gap, an artifact of a tool's model, or an equivalent mutant, and the matrix alone cannot say which. The checking testbench's fifteen data-path survivors are a checking gap; the random test's `m35` is a stimulus gap of one seed.
+- Equivalence is what the miter compares, and only an unbounded proof establishes it. The FIFO's five equivalent mutants are of three kinds: outright, under a reachable-state invariant, and only under the formal tool's reset model. A white-box assertion such as `Sync_A` can kill a mutant that is equivalent at the ports; report such kills apart.
+- The simulator's initial values are part of the oracle: three missing resets survive every testbench at the default and die when initial values are randomized.
+- The formal property set kills every non-equivalent source mutant it can read; on the netlist its fourteen misses are bounds of the search, not gaps in the specification, and simulation's deep traces kill them.
+- The fault model sets the score: the checking testbench kills half the source mutants and under four percent of the netlist mutations, three quarters of which lie on the memory.
+- Sample uniformly from the complete list, and report kill rate, equivalent fraction and score separately, each with its interval: on the netlist, 0.060 equivalent [0.022, 0.126] and a random-test score of 93 of 94. The ratio of two estimates is not bounded by the ratio of their intervals.
+- The software evidence licenses the method, not its numbers: mutants couple to most real faults, a score's correlation with fault detection is mostly suite size, and high scores matter most.
+- A harness that kills by itself, or a seed sweep that runs one seed, is the first thing to rule out, and a checkless testbench is the control that finds it.
+
+## Exercises {#sec-ch25-exercises}
+
+::: {.callout-note title="Exercise"}
+1. A uniform sample of 100 netlist mutations is run, and the directed test kills 30. Give the two-sided 95% Clopper-Pearson interval for its kill rate, and say whether it contains the population rate of 2,725 kills in 9,281.
+2. A formal sample of 100 mutations finds 6 equivalent. Give the two-sided 95% Clopper-Pearson interval for the equivalent fraction.
+3. The random test's population kill rate is 0.8905, and the equivalent fraction is estimated at 0.060 with interval [0.022, 0.126]. Compute $k/(1-e)$ at $e = 0.060$ and at both ends of the interval. What does the value at the upper end show?
+4. For a sample of 1,000 mutants and the worst case $p = 0.5$, give the half-width of a 95% interval for the kill rate by Chebyshev's inequality and by the normal approximation.
+5. Two of the FIFO's equivalent mutants are equivalent outright, `m32` and `m36`. Synthesis with one Yosys script finds only one of them identical to the original. Which, and why not the other?
+6. Why can no bounded search ever report `m43` equivalent? k-induction proves the flag half of `m43`'s miter with no helper invariant, but not the whole miter even with `count <= 16` assumed on both copies. What does the comparison of `rd_data` need that the flags do not?
+7. Under `m44`, starting from reset, apply five pushes and then two pops, one operation per cycle. What value does the mutant's `count` hold, and what are `full` and `empty`? What does the repaired FIFO show at the ports?
+8. Is `m44` killed under weak mutation, comparing the state immediately after the mutated statement executes? If so, after how many accepted operations from reset?
+9. Change the miter to compare `rd_data` on every cycle, and run it on the repaired FIFO against an unmodified copy of itself. What does it report, and why?
+10. Write a testbench that drops `rst_n` between two clock edges and checks `empty` before the next edge. Does it kill `m05`?
+11. The random test misses `m35` at seed 1. What is the smallest seed at which it kills `m35`?
+12. The coverage testbench killed 0 of 1,000 sampled netlist mutations. Give the exact one-sided 95% upper bound on its kill rate, by the formula of @sec-ch21-clean, and say why the bound, though correct, says nothing about whether this testbench could ever kill a mutant.
+:::
+
+## Further reading {#sec-ch25-reading}
+
+- Yue Jia and Mark Harman, *An Analysis and Survey of the Development of Mutation Testing*, IEEE Transactions on Software Engineering, 2011 [@jia2011survey].
+- Mike Papadakis, Marinos Kintis, Jie Zhang, Yue Jia, Yves Le Traon and Mark Harman, *Mutation Testing Advances: An Analysis and Survey*, Advances in Computers, 2019 [@papadakis2019advances].
+- Richard A. DeMillo, Richard J. Lipton and Frederick G. Sayward, *Hints on Test Data Selection: Help for the Practicing Programmer*, Computer, 1978 [@demillo1978mutation].
+- René Just, Darioush Jalali, Laura Inozemtseva, Michael D. Ernst, Reid Holmes and Gordon Fraser, *Are Mutants a Valid Substitute for Real Faults in Software Testing?*, FSE 2014 [@just2014mutants].
+- Rahul Gopinath, Amin Alipour, Iftekhar Ahmed, Carlos Jensen and Alex Groce, *How Hard Does Mutation Analysis Have to Be, Anyway?*, ISSRE 2015 [@gopinath2015hard].
+- Roland H. Untch, A. Jefferson Offutt and Mary Jean Harrold, *Mutation Analysis Using Mutant Schemata*, ISSTA 1993 [@untch1993schemata].
+- Hana Chockler, Orna Kupferman, Robert P. Kurshan and Moshe Y. Vardi, *A Practical Approach to Coverage in Model Checking*, CAV 2001 [@chockler2001practical].
+- Daniel Große, Ulrich Kühne and Rolf Drechsler, *Estimating Functional Coverage in Bounded Model Checking*, DATE 2007 [@grosse2007bmccoverage].
+- The MCY documentation [@mcy-docs], and YosysHQ's application note *Introduction to Mutation Coverage with Yosys (MCY)*, a vendor document [@yosys-ap400].

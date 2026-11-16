@@ -34,6 +34,9 @@ book:
         - chapters/ch18-formal-property-verification.qmd
         - chapters/ch19-formal-techniques.qmd
         - chapters/ch21-statistics-random-testing.qmd
+    - part: "Part V · Borrowed from Software"
+      chapters:
+        - chapters/ch25-mutation-testing.qmd
     - part: "Part VII · The Future of Verification"
       chapters:
         - chapters/ch34-generative-ai-agentic-dv.qmd

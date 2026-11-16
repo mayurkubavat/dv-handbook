@@ -185,6 +185,9 @@ Discovery probability
 DPLL
 : Search for a satisfying assignment by unit propagation, a decision when propagation stops, and backtracking on a conflict. See @sec-ch17-dpll.
 
+Duplicate mutant
+: Two mutants that behave identically to each other, so that killing one kills the other and counting both inflates the score. Synthesizing each mutant and comparing netlists finds some of them. See @sec-ch25-equiv.
+
 Dynamic array
 : A SystemVerilog array with an integer index and a size decided at run time. See @sec-ch05-aggregates.
 
@@ -194,11 +197,20 @@ Effective number of values
 Entropy
 : The average information, in bits, in one draw from a distribution: $-\sum_i p_i \log_2 p_i$. Largest when every value is equally likely. Measures spread, not coverage. See @sec-ch21-info.
 
+EQGAP
+: MCY's tag for a mutation that some test kills although its bounded formal filter found no difference. It signals either a broken setup or a filter too shallow for the difference. See @sec-ch25-netlist.
+
 Equisatisfiable
 : Of two formulas: both satisfiable or both not. Weaker than equivalent, and what an encoding with extra variables preserves. See @sec-ch17-tseitin.
 
 Equivalence checking
 : Formal comparison of two descriptions of the same design, typically RTL and the netlist synthesized from it, to show that they compute the same function. See @sec-ch01-definitions.
+
+Equivalent fraction
+: The fraction of a mutant population equivalent to the original, estimated from a uniform sample classified by miters with an unbounded engine and reported with its interval. See @sec-ch25-sampling.
+
+Equivalent mutant
+: A mutant that no test can kill, because it changes the text and not the behavior at the observed ports. This book decides it with a miter whose comparison is part of the definition. See @sec-ch25-equiv.
 
 Event
 : Something that wakes a process or updates a value in a simulation. See @sec-ch04-model.
@@ -208,6 +220,12 @@ Evidence pointer
 
 Fairness assumption
 : An assumption that some condition holds infinitely often, such as `s_eventually !stall`. It removes liveness counterexamples whose loop never satisfies the condition. See @sec-ch18-liveness.
+
+Fault model (mutation)
+: The operator set together with the rule that chooses sites, so that the population of mutants is fixed by the file and the operators. A kill rate means nothing without it. See @sec-ch25-source.
+
+First-order mutant
+: A mutant with one change to the original. A mutant with several is higher-order. See @sec-ch25-concepts.
 
 Formal verification
 : Comparison of a design against properties by proof rather than by simulation. It can show that something never happens, which simulation cannot. See @sec-ch01-definitions.
@@ -286,6 +304,12 @@ Iteration within a timestep
 k-induction
 : A proof of a safety property by a base case, no counterexample of fewer than $k$ steps, and a step case, no $k$ good states in a row followed by a bad one. See @sec-ch18-induction.
 
+Kill (mutant)
+: A test kills a mutant when its verdict on the mutant differs from its verdict on the original; for a testbench that passes the original, a kill is a fail. A mutant no test kills survives. See @sec-ch25-concepts.
+
+Kill rate
+: Killed mutants over all mutants, equivalent ones included. Compare mutation score. See @sec-ch25-concepts.
+
 KL divergence (Kullback-Leibler divergence)
 : A measure of how far a distribution P is from a reference Q: $\sum_i p_i \log (p_i/q_i)$. Zero only when they agree, not symmetric. Twice n times it, in natural logarithms, is the G statistic of a goodness-of-fit test. See @sec-ch21-info.
 
@@ -324,6 +348,15 @@ Monitor register
 
 Mutant (design)
 : A copy of the design with one planted bug, used to check that some property of a set can fail. A mutant that every property passes is a gap in the set or an equivalent mutant. See @sec-ch19-mutation.
+
+Mutant schema
+: One build that contains every mutant behind a run-time select, the value 0 being the unmutated design, so that a testbench is compiled once and run once per mutant. See @sec-ch25-netlist.
+
+Mutation operator
+: A rule that makes one small change of a stated kind at one site of a description, such as replacing a relational operator or deleting an assignment. See @sec-ch25-source.
+
+Mutation score
+: Killed mutants over the mutants that are not equivalent to the original. Compare kill rate and equivalent fraction. See @sec-ch25-concepts.
 
 Mutual information
 : The information one variable, such as a randomization knob, carries about another, such as a bin's hit: zero when they are independent. Estimated from samples it is biased upward, so it is read against a permutation baseline. See @sec-ch21-info.
@@ -387,6 +420,9 @@ Proof obligation
 Property
 : A set of traces: the ones a requirement permits. A design satisfies it when every trace it can produce is in the set. See @sec-ch09-what.
 
+Property-set kill
+: A counterexample to some property of a set on a mutant, within the stated bound. A proof of every property on the mutant says that the set cannot kill it. See @sec-ch25-formal.
+
 Prophecy variable
 : A free value that guesses something about the future, together with a check, made when the future arrives, that the guess was right. Without care it can rule out behaviors and so hide a bug. See @sec-ch19-history.
 
@@ -404,6 +440,9 @@ Race condition
 
 Random stability
 : The resistance of random results to code changes. In SystemVerilog it comes from every thread and object having its own random number generator, so that an object's sequence depends only on the thread that constructed it and on its own earlier calls. See @sec-ch07-seeds.
+
+Reach, infect, propagate, reveal
+: The four conditions for a kill: execute the changed point, make some state differ, carry the difference to an observed output, and have a check fail on it. The first three are the reachability, infection and propagation conditions of the mutation literature. See @sec-ch25-concepts.
 
 Reachable state
 : A state to which a sequence of transitions leads from an initial state. See @sec-ch18-reach.
@@ -470,6 +509,9 @@ Side condition
 Step case
 : The half of a k-induction proof that asks for $k$ good states in a row followed by a bad one, starting from any state. See @sec-ch18-induction.
 
+Strong mutation
+: Mutation in which the verdict compares the outputs, as a testbench's pass or fail does. Compare weak mutation. See @sec-ch25-concepts.
+
 Structural hashing
 : Keeping a table of the AND gates of a graph, keyed on their inputs, so that a gate with the same inputs is built once. See @sec-ch17-aig.
 
@@ -508,6 +550,9 @@ Trace
 
 Transition system
 : A sequential design as a model checker sees it: its initial states, the relation between a state and the next, and the states that are bad. See @sec-ch17-example.
+
+Trivial compiler equivalence
+: Detecting equivalent and duplicate mutants by compiling, or for hardware synthesizing, each one and comparing the result with the original's. It is cheap and incomplete. See @sec-ch25-equiv.
 
 Tseitin encoding
 : The translation of a circuit to clauses that gives every wire a variable and every gate the clauses defining its output. Linear in the circuit; equisatisfiable with it, not equivalent. See @sec-ch17-tseitin.
@@ -568,6 +613,9 @@ Virtual interface
 
 Virtual method
 : A method dispatched on the run-time class of the object rather than the declared class of the handle, so a call through a base handle runs the most-derived override. See @sec-ch06-virtual.
+
+Weak mutation
+: Mutation in which the verdict compares the state immediately after the mutated point is executed, rather than the outputs; firm mutation compares at some point in between. See @sec-ch25-concepts.
 
 Witness cover
 : A cover of the situation an assertion is about, at least its antecedent. An assertion proved while its witness is unreachable holds vacuously. See @sec-ch18-cover.
