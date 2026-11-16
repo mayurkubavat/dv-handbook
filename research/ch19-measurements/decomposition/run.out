@@ -1,0 +1,28 @@
+=== A: each property alone, each engine
+--- informal-kind, limit 60s for each property
+property                     type    status        engine     detail
+E2E_A                        assert  undetermined             no engine reached a verdict
+L1_A                         assert  undetermined             no engine reached a verdict
+L2_A                         assert  undetermined             no engine reached a verdict
+Done3_C                      cover   covered       informal-kind depth 15
+--- informal-ic3, limit 60s for each property
+property                     type    status        engine     detail
+E2E_A                        assert  undetermined             no engine reached a verdict
+L1_A                         assert  undetermined             no engine reached a verdict
+L2_A                         assert  undetermined             no engine reached a verdict
+Done3_C                      cover   covered       informal-ic3 depth 15
+--- ric3-ic3, limit 60s for each property
+property                     type    status        engine     detail
+E2E_A                        assert  undetermined             no engine reached a verdict
+L1_A                         assert  undetermined             no engine reached a verdict
+L2_A                         assert  undetermined             no engine reached a verdict
+Done3_C                      cover   covered       ric3-ic3   depth 15
+=== B: the end-to-end property with L1 and L2 assumed
+--- informal-kind, limit 60s for each property
+property                     type    status        engine     detail
+E2E_A                        assert  proven        informal-kind
+L1_A                         assert  disabled
+L2_A                         assert  disabled
+Done3_C                      cover   covered       informal-kind depth 15
+L1_M                         assume  unprocessed
+L2_M                         assume  unprocessed

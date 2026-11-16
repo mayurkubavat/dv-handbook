@@ -1,0 +1,24 @@
+=== A: safety, one block, its neighbor's guarantee assumed
+--- informal-kind, limit 30s for each property
+property                     type    status        engine     detail
+M_in                         assume  unprocessed              
+G_out                        assert  proven        informal-kind 0.02 s
+--- informal-kind, limit 30s for each property
+property                     type    status        engine     detail
+M_in                         assume  unprocessed              
+G_out                        assert  cex           informal-kind depth 1 in 0.02 s
+=== B: safety, the ring
+--- informal-kind, limit 30s for each property
+property                     type    status        engine     detail
+G_x                          assert  proven        informal-kind 0.02 s
+G_y                          assert  proven        informal-kind 0.02 s
+=== C: liveness, one block, its neighbor's guarantee assumed
+--- informal-ic3, limit 30s for each property
+property                     type    status        engine     detail
+M_in                         assume  unprocessed              
+G_out                        assert  proven        informal-ic3 0.02 s
+=== D: liveness, the ring
+--- informal-ic3, limit 30s for each property
+property                     type    status        engine     detail
+G_x                          assert  cex           informal-ic3 depth 3 in 0.02 s
+wall: 0.2 s; exit status 0

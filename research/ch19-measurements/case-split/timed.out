@@ -1,0 +1,78 @@
+=== A: whole, W = 8
+--- informal-kind, limit 60s for each property
+property                     type    status        engine     detail
+A_eq                         assert  proven        informal-kind 18.52 s
+=== B: four cases, W = 8
+--- case a[7:6] == 0
+--- informal-kind, limit 60s for each property
+property                     type    status        engine     detail
+M_case                       assume  unprocessed              
+A_eq                         assert  proven        informal-kind 3.12 s
+--- case a[7:6] == 1
+--- informal-kind, limit 60s for each property
+property                     type    status        engine     detail
+M_case                       assume  unprocessed              
+A_eq                         assert  proven        informal-kind 4.60 s
+--- case a[7:6] == 2
+--- informal-kind, limit 60s for each property
+property                     type    status        engine     detail
+M_case                       assume  unprocessed              
+A_eq                         assert  proven        informal-kind 4.83 s
+--- case a[7:6] == 3
+--- informal-kind, limit 60s for each property
+property                     type    status        engine     detail
+M_case                       assume  unprocessed              
+A_eq                         assert  proven        informal-kind 5.01 s
+--- completeness: the four case conditions cover every value
+--- informal-kind, limit 10s for each property
+property                     type    status        engine     detail
+A_cover4                     assert  proven        informal-kind 0.02 s
+=== C: the bug in case 3; a case list that forgot case 3
+--- case a[7:6] == 0
+--- informal-kind, limit 60s for each property
+property                     type    status        engine     detail
+M_case                       assume  unprocessed              
+A_eq                         assert  proven        informal-kind 3.12 s
+--- case a[7:6] == 1
+--- informal-kind, limit 60s for each property
+property                     type    status        engine     detail
+M_case                       assume  unprocessed              
+A_eq                         assert  proven        informal-kind 5.27 s
+--- case a[7:6] == 2
+--- informal-kind, limit 60s for each property
+property                     type    status        engine     detail
+M_case                       assume  unprocessed              
+A_eq                         assert  proven        informal-kind 4.59 s
+--- case a[7:6] == 3
+--- informal-kind, limit 60s for each property
+property                     type    status        engine     detail
+M_case                       assume  unprocessed              
+A_eq                         assert  cex           informal-kind depth 0 in 0.02 s
+--- informal-kind, limit 10s for each property
+property                     type    status        engine     detail
+A_cover3                     assert  cex           informal-kind depth 0 in 0.02 s
+=== D: W = 10, whole and in four cases
+--- informal-kind, limit 60s for each property
+property                     type    status        engine     detail
+A_eq                         assert  undetermined             no engine reached a verdict
+--- case a[9:8] == 0
+--- informal-kind, limit 60s for each property
+property                     type    status        engine     detail
+M_case                       assume  unprocessed              
+A_eq                         assert  undetermined             no engine reached a verdict
+--- case a[9:8] == 1
+--- informal-kind, limit 60s for each property
+property                     type    status        engine     detail
+M_case                       assume  unprocessed              
+A_eq                         assert  undetermined             no engine reached a verdict
+--- case a[9:8] == 2
+--- informal-kind, limit 60s for each property
+property                     type    status        engine     detail
+M_case                       assume  unprocessed              
+A_eq                         assert  undetermined             no engine reached a verdict
+--- case a[9:8] == 3
+--- informal-kind, limit 60s for each property
+property                     type    status        engine     detail
+M_case                       assume  unprocessed              
+A_eq                         assert  undetermined             no engine reached a verdict
+wall: 349.3 s; exit status 0

@@ -1,0 +1,97 @@
+=== A: flag form, DEPTH 4
+--- ric3-ic3, limit 30s for each property
+property                     type    status        engine     detail
+m_d                          assume  unprocessed
+m_one1                       assume  unprocessed
+m_one2                       assume  unprocessed
+a_order                      assert  undetermined             no engine reached a verdict
+a_once1                      assert  undetermined             no engine reached a verdict
+a_once2                      assert  undetermined             no engine reached a verdict
+c_both                       cover   covered       ric3-ic3   depth 3
+=== B: position form
+--- informal-kind, limit 60s for each property
+property                     type    status        engine     detail
+m_d                          assume  unprocessed
+m_one1                       assume  unprocessed
+m_one2                       assume  unprocessed
+p_head1                      assert  undetermined             no engine reached a verdict
+p_head2                      assert  undetermined             no engine reached a verdict
+p_ahead                      assert  undetermined             no engine reached a verdict
+c_both                       cover   covered       informal-kind depth 3
+--- ric3-ic3, limit 60s for each property
+property                     type    status        engine     detail
+m_d                          assume  unprocessed
+m_one1                       assume  unprocessed
+m_one2                       assume  unprocessed
+p_head1                      assert  proven        ric3-ic3
+p_head2                      assert  proven        ric3-ic3
+p_ahead                      assert  undetermined             no engine reached a verdict
+c_both                       cover   covered       ric3-ic3   depth 3
+--- informal-kind, limit 60s for each property
+property                     type    status        engine     detail
+m_d                          assume  unprocessed
+m_one1                       assume  unprocessed
+m_one2                       assume  unprocessed
+p_head1                      assert  undetermined             no engine reached a verdict
+p_head2                      assert  undetermined             no engine reached a verdict
+p_ahead                      assert  undetermined             no engine reached a verdict
+c_both                       cover   covered       informal-kind depth 3
+--- ric3-ic3, limit 60s for each property
+property                     type    status        engine     detail
+m_d                          assume  unprocessed
+m_one1                       assume  unprocessed
+m_one2                       assume  unprocessed
+p_head1                      assert  undetermined             no engine reached a verdict
+p_head2                      assert  undetermined             no engine reached a verdict
+p_ahead                      assert  undetermined             no engine reached a verdict
+c_both                       cover   covered       ric3-ic3   depth 3
+=== C: flag form with the position properties assumed, DEPTH 4
+--- informal-kind, limit 60s for each property
+property                     type    status        engine     detail
+m_d                          assume  unprocessed
+m_one1                       assume  unprocessed
+m_one2                       assume  unprocessed
+a_order                      assert  undetermined             no engine reached a verdict
+a_once1                      assert  undetermined             no engine reached a verdict
+a_once2                      assert  undetermined             no engine reached a verdict
+c_both                       cover   covered       informal-kind depth 3
+m_head1                      assume  unprocessed
+m_head2                      assume  unprocessed
+m_ahead                      assume  unprocessed
+--- ric3-ic3, limit 60s for each property
+property                     type    status        engine     detail
+m_d                          assume  unprocessed
+m_one1                       assume  unprocessed
+m_one2                       assume  unprocessed
+a_order                      assert  undetermined             no engine reached a verdict
+a_once1                      assert  undetermined             no engine reached a verdict
+a_once2                      assert  undetermined             no engine reached a verdict
+c_both                       cover   covered       ric3-ic3   depth 3
+m_head1                      assume  unprocessed
+m_head2                      assume  unprocessed
+m_ahead                      assume  unprocessed
+=== D: the mutant that reads a word twice
+--- informal-bmc, limit 30s for each property
+property                     type    status        engine     detail
+m_d                          assume  unprocessed
+m_one1                       assume  unprocessed
+m_one2                       assume  unprocessed
+a_order                      assert  cex           informal-bmc depth 6
+a_once1                      assert  cex           informal-bmc depth 3
+a_once2                      assert  cex           informal-bmc depth 5
+c_both                       cover   covered       informal-bmc depth 4
+p_head1                      assert  cex           informal-bmc depth 3
+p_head2                      assert  cex           informal-bmc depth 3
+p_ahead                      assert  cex           informal-bmc depth 4
+--- informal-bmc, limit 30s for each property
+property                     type    status        engine     detail
+m_d                          assume  unprocessed
+m_one1                       assume  unprocessed
+m_one2                       assume  unprocessed
+a_order                      assert  cex           informal-bmc depth 18
+a_once1                      assert  cex           informal-bmc depth 3
+a_once2                      assert  cex           informal-bmc depth 5
+c_both                       cover   covered       informal-bmc depth 4
+p_head1                      assert  cex           informal-bmc depth 3
+p_head2                      assert  cex           informal-bmc depth 3
+p_ahead                      assert  cex           informal-bmc depth 4

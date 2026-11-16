@@ -1,0 +1,46 @@
+=== A: three cycles of $past in place of a history variable
+--- informal-bmc, limit 30s for each property
+property                     type    status        engine     detail
+a_past3                      assert  cex           informal-bmc depth 5
+=== B: the history variable
+--- informal-kind, limit 30s for each property
+property                     type    status        engine     detail
+a_seen                       assert  proven        informal-kind
+c_late                       cover   covered       informal-kind depth 5
+--- informal-kind, limit 30s for each property
+property                     type    status        engine     detail
+a_seen                       assert  cex           informal-kind depth 1
+c_late                       cover   covered       informal-kind depth 3
+=== C: k-th word out equals k-th word in, history variable
+--- informal-kind, limit 30s for each property
+property                     type    status        engine     detail
+m_k                          assume  unprocessed
+a_hist                       assert  undetermined             no engine reached a verdict
+c_popk                       cover   covered       informal-kind depth 11
+--- ric3-ic3, limit 60s for each property
+property                     type    status        engine     detail
+m_k                          assume  unprocessed
+a_hist                       assert  proven        ric3-ic3
+c_popk                       cover   covered       informal-kind depth 11
+=== D: prophecy checked at the pop, asserted at the push
+--- informal-bmc, limit 30s for each property
+property                     type    status        engine     detail
+m_k                          assume  unprocessed
+m_pv                         assume  unprocessed
+m_check                      assume  unprocessed
+a_proph                      assert  cex           informal-bmc depth 1
+=== E: the same prophecy, asserted at the pop
+--- informal-kind, limit 30s for each property
+property                     type    status        engine     detail
+m_k                          assume  unprocessed
+m_pv                         assume  unprocessed
+m_check                      assume  unprocessed
+a_proph_late                 assert  undetermined             no engine reached a verdict
+c_popk                       cover   covered       informal-kind depth 11
+--- ric3-ic3, limit 60s for each property
+property                     type    status        engine     detail
+m_k                          assume  unprocessed
+m_pv                         assume  unprocessed
+m_check                      assume  unprocessed
+a_proph_late                 assert  proven        ric3-ic3
+c_popk                       cover   covered       informal-kind depth 11

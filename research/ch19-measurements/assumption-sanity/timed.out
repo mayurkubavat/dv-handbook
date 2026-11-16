@@ -1,0 +1,21 @@
+=== A: no assumption
+--- informal-kind, limit 30s for each property
+property                     type    status        engine     detail
+A_mode                       assert  cex           informal-kind depth 10 in 0.02 s
+Deep_C                       cover   covered       informal-kind depth 51 in 0.02 s
+Witness_C                    cover   covered       informal-kind depth 9 in 0.02 s
+=== B: every trace ends at cnt == 5
+--- informal-kind, limit 30s for each property
+property                     type    status        engine     detail
+M_dead                       assume  unprocessed              
+A_mode                       assert  proven        informal-kind 0.02 s
+Deep_C                       cover   unreachable   informal-kind 0.02 s
+Witness_C                    cover   unreachable   informal-kind 0.02 s
+=== C: mode-1 traces end at cnt == 5
+--- informal-kind, limit 30s for each property
+property                     type    status        engine     detail
+M_dead1                      assume  unprocessed              
+A_mode                       assert  proven        informal-kind 0.02 s
+Deep_C                       cover   covered       informal-kind depth 51 in 0.02 s
+Witness_C                    cover   unreachable   informal-kind 0.02 s
+wall: 0.2 s; exit status 0

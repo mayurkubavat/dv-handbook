@@ -1,0 +1,77 @@
+=== A: whole, W = 8
+--- informal-kind, limit 60s for each property
+property                     type    status        engine     detail
+A_eq                         assert  proven        informal-kind
+=== B: four cases, W = 8
+--- case a[7:6] == 0
+--- informal-kind, limit 60s for each property
+property                     type    status        engine     detail
+M_case                       assume  unprocessed
+A_eq                         assert  proven        informal-kind
+--- case a[7:6] == 1
+--- informal-kind, limit 60s for each property
+property                     type    status        engine     detail
+M_case                       assume  unprocessed
+A_eq                         assert  proven        informal-kind
+--- case a[7:6] == 2
+--- informal-kind, limit 60s for each property
+property                     type    status        engine     detail
+M_case                       assume  unprocessed
+A_eq                         assert  proven        informal-kind
+--- case a[7:6] == 3
+--- informal-kind, limit 60s for each property
+property                     type    status        engine     detail
+M_case                       assume  unprocessed
+A_eq                         assert  proven        informal-kind
+--- completeness: the four case conditions cover every value
+--- informal-kind, limit 10s for each property
+property                     type    status        engine     detail
+A_cover4                     assert  proven        informal-kind
+=== C: the bug in case 3; a case list that forgot case 3
+--- case a[7:6] == 0
+--- informal-kind, limit 60s for each property
+property                     type    status        engine     detail
+M_case                       assume  unprocessed
+A_eq                         assert  proven        informal-kind
+--- case a[7:6] == 1
+--- informal-kind, limit 60s for each property
+property                     type    status        engine     detail
+M_case                       assume  unprocessed
+A_eq                         assert  proven        informal-kind
+--- case a[7:6] == 2
+--- informal-kind, limit 60s for each property
+property                     type    status        engine     detail
+M_case                       assume  unprocessed
+A_eq                         assert  proven        informal-kind
+--- case a[7:6] == 3
+--- informal-kind, limit 60s for each property
+property                     type    status        engine     detail
+M_case                       assume  unprocessed
+A_eq                         assert  cex           informal-kind depth 0
+--- informal-kind, limit 10s for each property
+property                     type    status        engine     detail
+A_cover3                     assert  cex           informal-kind depth 0
+=== D: W = 10, whole and in four cases
+--- informal-kind, limit 60s for each property
+property                     type    status        engine     detail
+A_eq                         assert  undetermined             no engine reached a verdict
+--- case a[9:8] == 0
+--- informal-kind, limit 60s for each property
+property                     type    status        engine     detail
+M_case                       assume  unprocessed
+A_eq                         assert  undetermined             no engine reached a verdict
+--- case a[9:8] == 1
+--- informal-kind, limit 60s for each property
+property                     type    status        engine     detail
+M_case                       assume  unprocessed
+A_eq                         assert  undetermined             no engine reached a verdict
+--- case a[9:8] == 2
+--- informal-kind, limit 60s for each property
+property                     type    status        engine     detail
+M_case                       assume  unprocessed
+A_eq                         assert  undetermined             no engine reached a verdict
+--- case a[9:8] == 3
+--- informal-kind, limit 60s for each property
+property                     type    status        engine     detail
+M_case                       assume  unprocessed
+A_eq                         assert  undetermined             no engine reached a verdict

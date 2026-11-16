@@ -1,0 +1,58 @@
+=== A: wire stage, input free
+--- informal-bmc, limit 30s for each property
+property                     type    status        engine     detail
+vr_top.u_out.g_chk.Held_A    assert  cex           informal-bmc depth 2
+vr_top.u_out.g_chk.Stable_A  assert  cex           informal-bmc depth 2
+vr_top.u_out.g_chk.Wait_C    cover   covered       informal-bmc depth 2
+=== B: wire stage, input rules assumed
+--- informal-kind, limit 30s for each property
+property                     type    status        engine     detail
+vr_top.u_out.g_chk.Held_A    assert  proven        informal-kind
+vr_top.u_out.g_chk.Stable_A  assert  proven        informal-kind
+vr_top.u_out.g_chk.Wait_C    cover   covered       informal-kind depth 2
+vr_top.g_env.u_in.g_env.Held_M assume  unprocessed
+vr_top.g_env.u_in.g_env.Stable_M assume  unprocessed
+=== C: register stage, input free
+--- informal-kind, limit 30s for each property
+property                     type    status        engine     detail
+vr_top.u_out.g_chk.Held_A    assert  proven        informal-kind
+vr_top.u_out.g_chk.Stable_A  assert  proven        informal-kind
+vr_top.u_out.g_chk.Wait_C    cover   covered       informal-kind depth 3
+=== D: wire stage, the output's rules assumed by mistake
+--- informal-kind, limit 30s for each property
+property                     type    status        engine     detail
+vr_top.u_out.g_env.Held_M    assume  unprocessed
+vr_top.u_out.g_env.Stable_M  assume  unprocessed
+a_in_held                    assert  proven        informal-kind
+c_in_drop                    cover   unreachable   informal-kind
+=== E: DMA version 2, outputs asserted, inputs assumed
+--- informal-kind, limit 60s for each property
+property                     type    status        engine     detail
+dma_v2.u_ar.g_chk.Held_A     assert  proven        informal-kind
+dma_v2.u_ar.g_chk.Stable_A   assert  undetermined             no engine reached a verdict
+dma_v2.u_ar.g_chk.Wait_C     cover   covered       informal-kind depth 5
+dma_v2.u_aw.g_chk.Held_A     assert  proven        informal-kind
+dma_v2.u_aw.g_chk.Stable_A   assert  undetermined             no engine reached a verdict
+dma_v2.u_aw.g_chk.Wait_C     cover   covered       informal-kind depth 8
+dma_v2.u_w.g_chk.Held_A      assert  proven        informal-kind
+dma_v2.u_w.g_chk.Stable_A    assert  undetermined             no engine reached a verdict
+dma_v2.u_w.g_chk.Wait_C      cover   covered       informal-kind depth 8
+dma_v2.u_r.g_env.Held_M      assume  unprocessed
+dma_v2.u_r.g_env.Stable_M    assume  unprocessed
+dma_v2.u_b.g_env.Held_M      assume  unprocessed
+dma_v2.u_b.g_env.Stable_M    assume  unprocessed
+--- ric3-ic3, limit 60s for each property
+property                     type    status        engine     detail
+dma_v2.u_ar.g_chk.Held_A     assert  proven        ric3-ic3
+dma_v2.u_ar.g_chk.Stable_A   assert  proven        ric3-ic3
+dma_v2.u_ar.g_chk.Wait_C     cover   covered       ric3-ic3   depth 5
+dma_v2.u_aw.g_chk.Held_A     assert  proven        ric3-ic3
+dma_v2.u_aw.g_chk.Stable_A   assert  proven        ric3-ic3
+dma_v2.u_aw.g_chk.Wait_C     cover   covered       ric3-ic3   depth 12
+dma_v2.u_w.g_chk.Held_A      assert  proven        ric3-ic3
+dma_v2.u_w.g_chk.Stable_A    assert  proven        ric3-ic3
+dma_v2.u_w.g_chk.Wait_C      cover   covered       ric3-ic3   depth 12
+dma_v2.u_r.g_env.Held_M      assume  unprocessed
+dma_v2.u_r.g_env.Stable_M    assume  unprocessed
+dma_v2.u_b.g_env.Held_M      assume  unprocessed
+dma_v2.u_b.g_env.Stable_M    assume  unprocessed

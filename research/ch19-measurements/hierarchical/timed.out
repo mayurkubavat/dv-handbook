@@ -1,0 +1,253 @@
+=== A: the contract on one FIFO, DEPTH 16
+--- informal-kind, limit 30s for each property
+property                     type    status        engine     detail
+CE_A                         assert  proven        informal-kind 3.34 s
+CF_A                         assert  proven        informal-kind 3.08 s
+H_A                          assert  proven        informal-kind 0.02 s
+--- ric3-ic3, limit 60s for each property
+property                     type    status        engine     detail
+CE_A                         assert  proven        ric3-ic3   0.04 s
+CF_A                         assert  proven        informal-kind 3.08 s
+H_A                          assert  proven        informal-kind 0.02 s
+--- ric3-ic3, limit 60s for each property
+property                     type    status        engine     detail
+CE_A                         assert  proven        ric3-ic3   0.04 s
+CF_A                         assert  proven        ric3-ic3   0.04 s
+H_A                          assert  proven        informal-kind 0.02 s
+--- with H_A assumed
+--- informal-kind, limit 30s for each property
+property                     type    status        engine     detail
+CE_A                         assert  proven        informal-kind 0.02 s
+CF_A                         assert  proven        informal-kind 0.02 s
+H_A                          assert  disabled      informal-kind 0.02 s
+H_M                          assume  unprocessed              
+=== A: the contract on one FIFO, DEPTH 64
+--- informal-kind, limit 30s for each property
+property                     type    status        engine     detail
+CE_A                         assert  undetermined             no engine reached a verdict
+CF_A                         assert  undetermined             no engine reached a verdict
+H_A                          assert  proven        informal-kind 0.02 s
+--- ric3-ic3, limit 60s for each property
+property                     type    status        engine     detail
+CE_A                         assert  proven        ric3-ic3   0.04 s
+CF_A                         assert  undetermined             no engine reached a verdict
+H_A                          assert  proven        informal-kind 0.02 s
+--- ric3-ic3, limit 60s for each property
+property                     type    status        engine     detail
+CE_A                         assert  proven        ric3-ic3   0.04 s
+CF_A                         assert  proven        ric3-ic3   0.06 s
+H_A                          assert  proven        informal-kind 0.02 s
+--- with H_A assumed
+--- informal-kind, limit 30s for each property
+property                     type    status        engine     detail
+CE_A                         assert  proven        informal-kind 0.02 s
+CF_A                         assert  proven        informal-kind 0.02 s
+H_A                          assert  disabled      informal-kind 0.02 s
+H_M                          assume  unprocessed              
+=== B: the pipe, FIFOs black-boxed, contract assumed, DEPTH 16
+--- informal-kind, limit 30s for each property
+informal: black boxes in this model (outputs free, contents not modelled): fifo. A proof holds for the design; a counterexample may use output values the boxed logic cannot produce
+property                     type    status        engine     detail
+u0_CE                        assume  unprocessed              
+u0_CF                        assume  unprocessed              
+u1_CE                        assume  unprocessed              
+u1_CF                        assume  unprocessed              
+P1_A                         assert  undetermined             no engine reached a verdict
+P2_A                         assert  undetermined             no engine reached a verdict
+Both_C                       cover   covered       informal-kind depth 33 in 0.28 s
+--- ric3-ic3, limit 60s for each property
+informal: black boxes in this model (outputs free, contents not modelled): fifo. A proof holds for the design; a counterexample may use output values the boxed logic cannot produce
+property                     type    status        engine     detail
+u0_CE                        assume  unprocessed              
+u0_CF                        assume  unprocessed              
+u1_CE                        assume  unprocessed              
+u1_CF                        assume  unprocessed              
+P1_A                         assert  proven        ric3-ic3   1.10 s
+P2_A                         assert  undetermined             no engine reached a verdict
+Both_C                       cover   covered       informal-kind depth 33 in 0.28 s
+--- ric3-ic3, limit 60s for each property
+informal: black boxes in this model (outputs free, contents not modelled): fifo. A proof holds for the design; a counterexample may use output values the boxed logic cannot produce
+property                     type    status        engine     detail
+u0_CE                        assume  unprocessed              
+u0_CF                        assume  unprocessed              
+u1_CE                        assume  unprocessed              
+u1_CF                        assume  unprocessed              
+P1_A                         assert  proven        ric3-ic3   1.10 s
+P2_A                         assert  proven        ric3-ic3   0.48 s
+Both_C                       cover   covered       informal-kind depth 33 in 0.28 s
+=== B: the pipe, FIFOs black-boxed, contract assumed, DEPTH 64
+--- informal-kind, limit 30s for each property
+informal: black boxes in this model (outputs free, contents not modelled): fifo. A proof holds for the design; a counterexample may use output values the boxed logic cannot produce
+property                     type    status        engine     detail
+u0_CE                        assume  unprocessed              
+u0_CF                        assume  unprocessed              
+u1_CE                        assume  unprocessed              
+u1_CF                        assume  unprocessed              
+P1_A                         assert  undetermined             no engine reached a verdict
+P2_A                         assert  undetermined             no engine reached a verdict
+Both_C                       cover   covered       informal-kind depth 129 in 24.35 s
+--- ric3-ic3, limit 60s for each property
+informal: black boxes in this model (outputs free, contents not modelled): fifo. A proof holds for the design; a counterexample may use output values the boxed logic cannot produce
+property                     type    status        engine     detail
+u0_CE                        assume  unprocessed              
+u0_CF                        assume  unprocessed              
+u1_CE                        assume  unprocessed              
+u1_CF                        assume  unprocessed              
+P1_A                         assert  proven        ric3-ic3   31.16 s
+P2_A                         assert  undetermined             no engine reached a verdict
+Both_C                       cover   covered       informal-kind depth 129 in 24.35 s
+--- ric3-ic3, limit 60s for each property
+informal: black boxes in this model (outputs free, contents not modelled): fifo. A proof holds for the design; a counterexample may use output values the boxed logic cannot produce
+property                     type    status        engine     detail
+u0_CE                        assume  unprocessed              
+u0_CF                        assume  unprocessed              
+u1_CE                        assume  unprocessed              
+u1_CF                        assume  unprocessed              
+P1_A                         assert  proven        ric3-ic3   31.16 s
+P2_A                         assert  proven        ric3-ic3   9.83 s
+Both_C                       cover   covered       informal-kind depth 129 in 24.35 s
+=== B: the pipe, FIFOs black-boxed, contract assumed, DEPTH 256
+--- informal-kind, limit 30s for each property
+informal: black boxes in this model (outputs free, contents not modelled): fifo. A proof holds for the design; a counterexample may use output values the boxed logic cannot produce
+property                     type    status        engine     detail
+u0_CE                        assume  unprocessed              
+u0_CF                        assume  unprocessed              
+u1_CE                        assume  unprocessed              
+u1_CF                        assume  unprocessed              
+P1_A                         assert  undetermined             no engine reached a verdict
+P2_A                         assert  undetermined             no engine reached a verdict
+Both_C                       cover   undetermined             no engine reached a verdict
+--- ric3-ic3, limit 60s for each property
+informal: black boxes in this model (outputs free, contents not modelled): fifo. A proof holds for the design; a counterexample may use output values the boxed logic cannot produce
+property                     type    status        engine     detail
+u0_CE                        assume  unprocessed              
+u0_CF                        assume  unprocessed              
+u1_CE                        assume  unprocessed              
+u1_CF                        assume  unprocessed              
+P1_A                         assert  undetermined             no engine reached a verdict
+P2_A                         assert  undetermined             no engine reached a verdict
+Both_C                       cover   undetermined             no engine reached a verdict
+--- ric3-ic3, limit 60s for each property
+informal: black boxes in this model (outputs free, contents not modelled): fifo. A proof holds for the design; a counterexample may use output values the boxed logic cannot produce
+property                     type    status        engine     detail
+u0_CE                        assume  unprocessed              
+u0_CF                        assume  unprocessed              
+u1_CE                        assume  unprocessed              
+u1_CF                        assume  unprocessed              
+P1_A                         assert  undetermined             no engine reached a verdict
+P2_A                         assert  undetermined             no engine reached a verdict
+Both_C                       cover   undetermined             no engine reached a verdict
+=== C: half the contract (empty only), DEPTH 16
+--- informal-bmc, limit 30s for each property
+informal: black boxes in this model (outputs free, contents not modelled): fifo. A proof holds for the design; a counterexample may use output values the boxed logic cannot produce
+property                     type    status        engine     detail
+u0_CE                        assume  unprocessed              
+u1_CE                        assume  unprocessed              
+P1_A                         assert  undetermined             no engine reached a verdict
+P2_A                         assert  cex           informal-bmc depth 1 in 0.02 s
+Both_C                       cover   covered       informal-bmc depth 33 in 0.36 s
+=== D: the pipe flat, DEPTH 16
+--- informal-kind, limit 30s for each property
+property                     type    status        engine     detail
+P1_A                         assert  undetermined             no engine reached a verdict
+P2_A                         assert  undetermined             no engine reached a verdict
+Both_C                       cover   covered       informal-kind depth 33 in 1.29 s
+--- ric3-ic3, limit 60s for each property
+property                     type    status        engine     detail
+P1_A                         assert  proven        ric3-ic3   1.31 s
+P2_A                         assert  undetermined             no engine reached a verdict
+Both_C                       cover   covered       informal-kind depth 33 in 1.29 s
+--- ric3-ic3, limit 60s for each property
+property                     type    status        engine     detail
+P1_A                         assert  proven        ric3-ic3   1.31 s
+P2_A                         assert  proven        ric3-ic3   2.75 s
+Both_C                       cover   covered       informal-kind depth 33 in 1.29 s
+=== D: the pipe flat, DEPTH 64
+--- informal-kind, limit 30s for each property
+property                     type    status        engine     detail
+P1_A                         assert  undetermined             no engine reached a verdict
+P2_A                         assert  undetermined             no engine reached a verdict
+Both_C                       cover   undetermined             no engine reached a verdict
+--- ric3-ic3, limit 60s for each property
+property                     type    status        engine     detail
+P1_A                         assert  proven        ric3-ic3   25.73 s
+P2_A                         assert  undetermined             no engine reached a verdict
+Both_C                       cover   undetermined             no engine reached a verdict
+--- ric3-ic3, limit 60s for each property
+property                     type    status        engine     detail
+P1_A                         assert  proven        ric3-ic3   25.73 s
+P2_A                         assert  undetermined             no engine reached a verdict
+Both_C                       cover   undetermined             no engine reached a verdict
+=== E: boxed pipe, parent helper, DEPTH 16
+--- informal-kind, limit 30s for each property
+informal: black boxes in this model (outputs free, contents not modelled): fifo. A proof holds for the design; a counterexample may use output values the boxed logic cannot produce
+property                     type    status        engine     detail
+u0_CE                        assume  unprocessed              
+u0_CF                        assume  unprocessed              
+u1_CE                        assume  unprocessed              
+u1_CF                        assume  unprocessed              
+P1_A                         assert  disabled                 
+P2_A                         assert  disabled                 
+Both_C                       cover   disabled                 
+HP_A                         assert  proven        informal-kind 0.04 s
+--- informal-kind, limit 30s for each property
+informal: black boxes in this model (outputs free, contents not modelled): fifo. A proof holds for the design; a counterexample may use output values the boxed logic cannot produce
+property                     type    status        engine     detail
+u0_CE                        assume  unprocessed              
+u0_CF                        assume  unprocessed              
+u1_CE                        assume  unprocessed              
+u1_CF                        assume  unprocessed              
+P1_A                         assert  proven        informal-kind 0.02 s
+P2_A                         assert  proven        informal-kind 0.02 s
+Both_C                       cover   covered       informal-kind depth 33 in 0.58 s
+HP_A                         assert  disabled      informal-kind 0.04 s
+HP_M                         assume  unprocessed              
+=== E: boxed pipe, parent helper, DEPTH 64
+--- informal-kind, limit 30s for each property
+informal: black boxes in this model (outputs free, contents not modelled): fifo. A proof holds for the design; a counterexample may use output values the boxed logic cannot produce
+property                     type    status        engine     detail
+u0_CE                        assume  unprocessed              
+u0_CF                        assume  unprocessed              
+u1_CE                        assume  unprocessed              
+u1_CF                        assume  unprocessed              
+P1_A                         assert  disabled                 
+P2_A                         assert  disabled                 
+Both_C                       cover   disabled                 
+HP_A                         assert  proven        informal-kind 0.06 s
+--- informal-kind, limit 30s for each property
+informal: black boxes in this model (outputs free, contents not modelled): fifo. A proof holds for the design; a counterexample may use output values the boxed logic cannot produce
+property                     type    status        engine     detail
+u0_CE                        assume  unprocessed              
+u0_CF                        assume  unprocessed              
+u1_CE                        assume  unprocessed              
+u1_CF                        assume  unprocessed              
+P1_A                         assert  proven        informal-kind 0.02 s
+P2_A                         assert  proven        informal-kind 0.02 s
+Both_C                       cover   undetermined             no engine reached a verdict
+HP_A                         assert  disabled      informal-kind 0.06 s
+HP_M                         assume  unprocessed              
+=== E: boxed pipe, parent helper, DEPTH 256
+--- informal-kind, limit 30s for each property
+informal: black boxes in this model (outputs free, contents not modelled): fifo. A proof holds for the design; a counterexample may use output values the boxed logic cannot produce
+property                     type    status        engine     detail
+u0_CE                        assume  unprocessed              
+u0_CF                        assume  unprocessed              
+u1_CE                        assume  unprocessed              
+u1_CF                        assume  unprocessed              
+P1_A                         assert  disabled                 
+P2_A                         assert  disabled                 
+Both_C                       cover   disabled                 
+HP_A                         assert  proven        informal-kind 0.14 s
+--- informal-kind, limit 30s for each property
+informal: black boxes in this model (outputs free, contents not modelled): fifo. A proof holds for the design; a counterexample may use output values the boxed logic cannot produce
+property                     type    status        engine     detail
+u0_CE                        assume  unprocessed              
+u0_CF                        assume  unprocessed              
+u1_CE                        assume  unprocessed              
+u1_CF                        assume  unprocessed              
+P1_A                         assert  proven        informal-kind 0.02 s
+P2_A                         assert  proven        informal-kind 0.02 s
+Both_C                       cover   undetermined             no engine reached a verdict
+HP_A                         assert  disabled      informal-kind 0.14 s
+HP_M                         assume  unprocessed              
+wall: 798.6 s; exit status 0

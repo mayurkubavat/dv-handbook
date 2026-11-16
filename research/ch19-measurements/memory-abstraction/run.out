@@ -1,0 +1,97 @@
+=== A: whole design, 16 words
+--- informal-kind, limit 20s for each property
+property                     type    status        engine     detail
+m_sa                         assume  unprocessed
+a_read                       assert  undetermined             no engine reached a verdict
+c_read                       cover   covered       informal-kind depth 2
+--- ric3-ic3, limit 60s for each property
+property                     type    status        engine     detail
+m_sa                         assume  unprocessed
+a_read                       assert  proven        ric3-ic3
+c_read                       cover   covered       informal-kind depth 2
+--- the helper, proved alone and then assumed
+--- informal-kind, limit 20s for each property
+property                     type    status        engine     detail
+m_sa                         assume  unprocessed
+a_read                       assert  disabled      ric3-ic3
+c_read                       cover   covered       informal-kind depth 2
+h_mem                        assert  proven        informal-kind
+--- informal-kind, limit 20s for each property
+property                     type    status        engine     detail
+m_sa                         assume  unprocessed
+a_read                       assert  proven        informal-kind
+c_read                       cover   covered       informal-kind depth 2
+h_mem                        assert  disabled      informal-kind
+m_mem                        assume  unprocessed
+=== B: whole design, 256 words
+--- informal-kind, limit 20s for each property
+property                     type    status        engine     detail
+m_sa                         assume  unprocessed
+a_read                       assert  undetermined             no engine reached a verdict
+c_read                       cover   covered       informal-kind depth 2
+--- ric3-ic3, limit 60s for each property
+property                     type    status        engine     detail
+m_sa                         assume  unprocessed
+a_read                       assert  proven        ric3-ic3
+c_read                       cover   covered       informal-kind depth 2
+--- informal-kind, limit 30s for each property
+property                     type    status        engine     detail
+m_sa                         assume  unprocessed
+a_read                       assert  proven        ric3-ic3
+c_read                       cover   covered       informal-kind depth 2
+h_mem                        assert  proven        informal-kind
+=== C: 256 words, storage black-boxed, contract assumed
+--- informal-kind, limit 30s for each property
+informal: black boxes in this model (outputs free, contents not modelled): mem_store. A proof holds for the design; a counterexample may use output values the boxed logic cannot produce
+property                     type    status        engine     detail
+m_sa                         assume  unprocessed
+a_read                       assert  proven        informal-kind
+c_read                       cover   covered       informal-kind depth 2
+m_store                      assume  unprocessed
+=== D: 256 words, storage black-boxed, no contract
+--- informal-bmc, limit 30s for each property
+informal: black boxes in this model (outputs free, contents not modelled): mem_store. A proof holds for the design; a counterexample may use output values the boxed logic cannot produce
+property                     type    status        engine     detail
+m_sa                         assume  unprocessed
+a_read                       assert  cex           informal-bmc depth 3
+c_read                       cover   covered       informal-bmc depth 2
+=== E: the contract as an assertion on the storage
+--- informal-kind, limit 20s for each property
+property                     type    status        engine     detail
+m_sa                         assume  unprocessed
+a_store                      assert  undetermined             no engine reached a verdict
+--- ric3-ic3, limit 60s for each property
+property                     type    status        engine     detail
+m_sa                         assume  unprocessed
+a_store                      assert  proven        ric3-ic3
+--- informal-kind, limit 20s for each property
+property                     type    status        engine     detail
+m_sa                         assume  unprocessed
+a_store                      assert  proven        informal-kind
+m_mem                        assume  unprocessed
+--- informal-kind, limit 20s for each property
+property                     type    status        engine     detail
+m_sa                         assume  unprocessed
+a_store                      assert  undetermined             no engine reached a verdict
+--- ric3-ic3, limit 60s for each property
+property                     type    status        engine     detail
+m_sa                         assume  unprocessed
+a_store                      assert  proven        ric3-ic3
+--- informal-kind, limit 20s for each property
+property                     type    status        engine     detail
+m_sa                         assume  unprocessed
+a_store                      assert  proven        informal-kind
+m_mem                        assume  unprocessed
+=== F: the forwarding bug
+--- informal-bmc, limit 30s for each property
+informal: black boxes in this model (outputs free, contents not modelled): mem_store. A proof holds for the design; a counterexample may use output values the boxed logic cannot produce
+property                     type    status        engine     detail
+m_sa                         assume  unprocessed
+a_read                       assert  cex           informal-bmc depth 3
+c_read                       cover   covered       informal-bmc depth 2
+m_store                      assume  unprocessed
+--- informal-bmc, limit 30s for each property
+property                     type    status        engine     detail
+m_sa                         assume  unprocessed
+a_read                       assert  cex           informal-bmc depth 3
+c_read                       cover   covered       informal-bmc depth 2

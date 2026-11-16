@@ -1,0 +1,41 @@
+=== A: the mutant from reset, DEPTH 16
+--- informal-bmc, limit 60s for each property
+property                     type    status        engine     detail
+P_A                          assert  cex           informal-bmc depth 16
+=== A: the mutant from reset, DEPTH 256
+--- informal-bmc, limit 60s for each property
+property                     type    status        engine     detail
+P_A                          assert  undetermined             no engine reached a verdict
+=== B: the mutant from INV states, DEPTH 256
+--- informal-bmc, limit 60s for each property
+property                     type    status        engine     detail
+M_start                      assume  unprocessed
+P_A                          assert  cex           informal-bmc depth 1
+=== C: the correct FIFO from INV states, DEPTH 256
+--- informal-kind, limit 20s for each property
+property                     type    status        engine     detail
+M_start                      assume  unprocessed
+P_A                          assert  undetermined             no engine reached a verdict
+--- ric3-ic3, limit 60s for each property
+property                     type    status        engine     detail
+M_start                      assume  unprocessed
+P_A                          assert  proven        ric3-ic3
+--- INV from reset (the side condition)
+--- informal-kind, limit 30s for each property
+property                     type    status        engine     detail
+INV_A                        assert  proven        informal-kind
+=== D: a weaker start set (count <= DEPTH only), DEPTH 256
+--- informal-bmc, limit 30s for each property
+property                     type    status        engine     detail
+M_start                      assume  unprocessed
+P_A                          assert  cex           informal-bmc depth 0
+=== E: the FIFO full, as a cover, DEPTH 256
+--- informal-bmc, limit 60s for each property
+informal: svlang: the design has no assertions
+property                     type    status        engine     detail
+Full_C                       cover   covered       informal-bmc depth 257
+--- informal-bmc, limit 60s for each property
+informal: svlang: the design has no assertions
+property                     type    status        engine     detail
+M_start                      assume  unprocessed
+Full_C                       cover   covered       informal-bmc depth 0

@@ -1,0 +1,44 @@
+=== A: round robin
+--- informal-kind, limit 30s for each property
+property                     type    status        engine     detail
+m_hold0                      assume  unprocessed              
+a_wait0                      assert  proven        informal-kind 0.02 s
+m_hold1                      assume  unprocessed              
+a_wait1                      assert  proven        informal-kind 0.02 s
+m_hold2                      assume  unprocessed              
+a_wait2                      assert  proven        informal-kind 0.02 s
+m_hold3                      assume  unprocessed              
+a_wait3                      assert  proven        informal-kind 0.02 s
+=== B: fixed priority
+--- informal-kind, limit 30s for each property
+property                     type    status        engine     detail
+m_hold0                      assume  unprocessed              
+a_wait0                      assert  proven        informal-kind 0.02 s
+m_hold1                      assume  unprocessed              
+a_wait1                      assert  cex           informal-kind depth 5 in 0.02 s
+m_hold2                      assume  unprocessed              
+a_wait2                      assert  cex           informal-kind depth 5 in 0.02 s
+m_hold3                      assume  unprocessed              
+a_wait3                      assert  cex           informal-kind depth 5 in 0.02 s
+=== C: DMA version 2, channel 0 and channel 1
+--- informal-kind, limit 60s for each property
+property                     type    status        engine     detail
+a_excl0                      assert  proven        informal-kind 0.08 s
+a_fly0                       assert  undetermined             no engine reached a verdict
+a_room0                      assert  undetermined             no engine reached a verdict
+c_done0                      cover   covered       informal-kind depth 2 in 0.04 s
+a_excl1                      assert  proven        informal-kind 0.06 s
+a_fly1                       assert  undetermined             no engine reached a verdict
+a_room1                      assert  undetermined             no engine reached a verdict
+c_done1                      cover   covered       informal-kind depth 2 in 0.04 s
+--- ric3-ic3, limit 60s for each property
+property                     type    status        engine     detail
+a_excl0                      assert  proven        ric3-ic3   0.06 s
+a_fly0                       assert  undetermined             no engine reached a verdict
+a_room0                      assert  proven        ric3-ic3   0.08 s
+c_done0                      cover   covered       ric3-ic3   depth 2 in 0.06 s
+a_excl1                      assert  proven        ric3-ic3   0.06 s
+a_fly1                       assert  undetermined             no engine reached a verdict
+a_room1                      assert  proven        ric3-ic3   0.08 s
+c_done1                      cover   covered       ric3-ic3   depth 2 in 0.06 s
+wall: 361.1 s; exit status 0
