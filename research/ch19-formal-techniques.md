@@ -1159,7 +1159,10 @@ records fetched and are left out rather than given from memory.
   publisher = {Springer},
   pages     = {68--80},
   year      = {1994},
-  doi       = {10.1007/3-540-58179-0_44}
+  doi       = {10.1007/3-540-58179-0_44},
+  note      = {Read 2026-11-16 in the authors' extended version (with
+               an appendix the conference version lacks), hosted at
+               cs.uwaterloo.ca; cite claims present in both}
 }
 
 @article{bryant2001positive,
@@ -1253,7 +1256,10 @@ records fetched and are left out rather than given from memory.
   number  = {2},
   pages   = {253--284},
   year    = {1991},
-  doi     = {10.1016/0304-3975(91)90224-P}
+  doi     = {10.1016/0304-3975(91)90224-P},
+  note    = {Read 2026-11-16 in the report version, DEC SRC Research
+             Report 29 (1988), sections 1 and 5; the journal text was
+             not opened}
 }
 
 @article{misra1981proofs,
@@ -1277,7 +1283,10 @@ records fetched and are left out rather than given from memory.
   number  = {3},
   pages   = {507--535},
   year    = {1995},
-  doi     = {10.1145/203095.201069}
+  doi     = {10.1145/203095.201069},
+  note    = {Read 2026-11-16 in the author-hosted copy, sections 1, 2.2
+             and 5; that copy's header prints pp. 507--533, Crossref
+             gives 507--535 (kept)}
 }
 
 @inproceedings{mcmillan1999circular,
@@ -1287,9 +1296,12 @@ records fetched and are left out rather than given from memory.
                (CHARME '99)},
   series    = {Lecture Notes in Computer Science},
   publisher = {Springer},
+  volume    = {1703},
   pages     = {342--346},
   year      = {1999},
-  doi       = {10.1007/3-540-48153-2_30}
+  doi       = {10.1007/3-540-48153-2_30},
+  note      = {Text read 2026-11-16 (publisher PDF): the paper prints
+               the author as K. L. McMillan; volume 1703 as printed}
 }
 
 @inproceedings{mcmillan1999compositional,
@@ -1300,9 +1312,12 @@ records fetched and are left out rather than given from memory.
                (CHARME '99)},
   series    = {Lecture Notes in Computer Science},
   publisher = {Springer},
+  volume    = {1703},
   pages     = {219--237},
   year      = {1999},
-  doi       = {10.1007/3-540-48153-2_17}
+  doi       = {10.1007/3-540-48153-2_17},
+  note      = {Text read 2026-11-16 (publisher PDF): author printed as
+               K.L. McMillan; volume 1703 as printed}
 }
 
 @inproceedings{hoskote1999coverage,
@@ -1477,6 +1492,36 @@ records fetched and are left out rather than given from memory.
              newstaging.cadence.com (Korean edition) [check en_US]}
 }
 ```
+
+```bibtex
+@techreport{emerson2000cutoff,
+  author      = {E. Allen Emerson and Vineet Kahlon},
+  title       = {Reducing Model Checking of the Many to the Few},
+  institution = {Department of Computer Sciences, University of Texas
+                 at Austin},
+  number      = {TR-00-03},
+  year        = {2000},
+  url         = {https://www.cs.utexas.edu/ftp/techreports/tr00-03.pdf},
+  urldate     = {2026-11-16},
+  note        = {Report dated 2000-01-31, read 2026-11-16 (abstract,
+                 section 1). The CADE 2000 version's volume and pages
+                 were not checked; cite the report}
+}
+```
+
+Corrections made on 2026-11-16 while outlining (research/ch19-outline.md,
+section 8): the two McMillan 1999 entries gained the LNCS volume
+printed on the papers; Abadi and Lamport 1991 and 1995 and Burch and
+Dill gained notes on which copy was read; Emerson and Kahlon gained
+an entry (read). No author name or URL in the entries above was found
+wrong against a document opened. One claim in section 3 was found
+wrong against its source: T15 attributes to `gisselquist2021axirules`
+"one file with a parameter that swaps assume and assert"; that key is
+a blog post on the handshake rules, and the ZipCPU property file
+`bench/formal/faxil_slave.v` hard-codes `SLAVE_ASSUME` as `assume` and
+`SLAVE_ASSERT` as `assert` with no switch (read 2026-11-16). The
+one-module-with-a-role-parameter source is `opentitan-tlul-assert`,
+already cited by Chapter 9.
 
 Not given an entry because not opened: Kurshan 1994 (localization
 reduction), Emerson and Kahlon 2000 (cutoffs), IEEE 1685 (IP-XACT),
