@@ -1,0 +1,46 @@
+id	ch01-directed	ch01-random	ch08-coverage	ch09-sva	lint
+orig	survived	survived	survived	survived	clean
+m01	killed	killed	survived	killed	clean
+m02	killed	killed	survived	killed	clean
+m03	killed	killed	survived	killed	clean
+m04	killed	killed	survived	killed	clean
+m05	survived	survived	survived	survived	clean
+m06	killed	killed	survived	killed	clean
+m07	killed	killed	survived	killed	clean
+m08	killed	killed	survived	survived	clean
+m09	survived	survived	survived	survived	clean
+m10	killed	killed	survived	survived	clean
+m11	survived	survived	survived	survived	clean
+m12	survived	killed	survived	killed	clean
+m13	survived	survived	survived	survived	clean
+m14	killed	killed	survived	survived	clean
+m15	killed	killed	survived	survived	rejected UNDRIVEN
+m16	killed	killed	survived	survived	clean
+m17	killed	killed	survived	survived	clean
+m18	killed	killed	survived	survived	rejected WIDTHEXPAND
+m19	killed	killed	survived	survived	clean
+m20	killed	killed	survived	survived	clean
+m21	killed	killed	survived	survived	clean
+m22	killed	killed	survived	survived	clean
+m23	killed	killed	survived	survived	rejected WIDTHEXPAND
+m24	killed	killed	survived	survived	clean
+m25	killed	killed	survived	survived	clean
+m26	killed	killed	survived	killed	clean
+m27	killed	killed	survived	killed	rejected WIDTHEXPAND
+m28	killed	killed	survived	killed	clean
+m29	killed	killed	survived	killed	clean
+m30	killed	killed	survived	killed	rejected WIDTHEXPAND
+m31	killed	killed	survived	killed	clean
+m32	survived	survived	survived	survived	clean
+m33	killed	killed	survived	survived	clean
+m34	killed	killed	survived	killed	clean
+m35	killed	survived	survived	killed	rejected UNSIGNED
+m36	survived	survived	survived	survived	clean
+m37	killed	killed	survived	killed	clean
+m38	killed	killed	survived	killed	rejected UNSIGNED
+m39	killed	killed	survived	killed	clean
+m40	killed	killed	survived	killed	clean
+m41	killed	killed	survived	killed	clean
+m42	survived	killed	survived	killed	clean
+m43	survived	survived	survived	survived	clean
+m44	survived	survived	survived	killed	clean

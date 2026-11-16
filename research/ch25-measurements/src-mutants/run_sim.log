@@ -1,0 +1,12 @@
+control (repaired FIFO): ch01-directed survived, ch01-random survived, ch08-coverage survived, ch09-sva survived
+mutants: 44, compiled: 44
+  ch01-directed  killed 34 of 44 ( 77.3%)
+  ch01-random    killed 35 of 44 ( 79.5%)
+  ch08-coverage  killed  0 of 44 (  0.0%)
+  ch09-sva       killed 22 of 44 ( 50.0%)
+  union          killed 37 of 44 ( 84.1%)
+builds: 180, build time 1704 s, run time 1.1 s (summed over 4 workers), wall 433 s
+
+real	7m13.072s
+user	26m20.982s
+sys	1m40.291s

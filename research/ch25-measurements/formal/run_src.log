@@ -1,0 +1,11 @@
+control: - (expected '-')
+property set kills 40 of 44 source mutants
+  miter differs: 37
+  miter equivalent: 5
+  miter unknown: 0
+  miter error: 0
+wall 468 s, 4 workers
+
+real	7m48.153s
+user	25m35.894s
+sys	1m38.747s

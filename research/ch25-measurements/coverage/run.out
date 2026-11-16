@@ -1,0 +1,14 @@
+  ch01-directed: PASS: 8 entries written and read back
+ch01-directed  branch 6/6 (100%)  expr 7/8 (88%)  line 4/4 (100%)  toggle 80/330 (24%)
+  ch01-random: coverage: 16 of 17 occupancy levels reached, max 16
+  ch01-random: PASS: 400 cycles, 193 writes
+ch01-random    branch 6/6 (100%)  expr 8/8 (100%)  line 4/4 (100%)  toggle 329/330 (100%)
+  ch08-coverage: +bias=even +n=200: fifo_cg get_inst_coverage = 75.86
+  ch08-coverage: +bias=push +n=200: fifo_cg get_inst_coverage = 89.66
+ch08-coverage  branch 6/6 (100%)  expr 8/8 (100%)  line 4/4 (100%)  toggle 326/330 (99%)
+  ch09-sva: PASS: 400 cycles, no assertion failed
+ch09-sva       branch 6/6 (100%)  expr 8/8 (100%)  line 4/4 (100%)  toggle 327/330 (99%)
+  ch09-sva: cover FullReached_C = 113
+  ch09-sva: cover PushFull_C = 69
+  ch09-sva: cover PopEmpty_C = 51
+  ch09-sva: cover Drained_C = 96

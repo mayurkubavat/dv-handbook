@@ -1,0 +1,36 @@
+population: 9281 mutations
+  ch01-directed  population kill rate  2725/9281 = 0.2936
+  ch01-random    population kill rate  8265/9281 = 0.8905
+  ch08-coverage  population kill rate     0/9281 = 0.0000
+  ch09-sva       population kill rate   351/9281 = 0.0378
+  union          population kill rate  8300/9281 = 0.8943
+s.1 one uniform sample per n (seed 1), 95% Clopper-Pearson
+  n=  30: ch01-directed 13/30 [0.255,0.626]; ch01-random 25/30 [0.653,0.944]; ch08-coverage 0/30 [0.000,0.116]; ch09-sva 1/30 [0.001,0.172]; union 25/30 [0.653,0.944]
+  n= 100: ch01-directed 30/100 [0.212,0.400]; ch01-random 89/100 [0.812,0.944]; ch08-coverage 0/100 [0.000,0.036]; ch09-sva 4/100 [0.011,0.099]; union 89/100 [0.812,0.944]
+  n= 300: ch01-directed 88/300 [0.242,0.348]; ch01-random 266/300 [0.845,0.920]; ch08-coverage 0/300 [0.000,0.012]; ch09-sva 15/300 [0.028,0.081]; union 267/300 [0.849,0.923]
+  n=1000: ch01-directed 302/1000 [0.274,0.332]; ch01-random 896/1000 [0.875,0.914]; ch08-coverage 0/1000 [0.000,0.004]; ch09-sva 39/1000 [0.028,0.053]; union 900/1000 [0.880,0.918]
+s.2 2000 samples per n: coverage of the 95% CP interval, mean width
+  n=  30: ch01-directed 0.983 w=0.339; ch01-random 0.983 w=0.246; ch08-coverage 1.000 w=0.116; ch09-sva 0.998 w=0.170; union 0.985 w=0.243; worst-case half-width Chebyshev 0.408, normal 0.179
+  n= 100: ch01-directed 0.945 w=0.185; ch01-random 0.970 w=0.130; ch08-coverage 1.000 w=0.036; ch09-sva 0.969 w=0.084; union 0.972 w=0.128; worst-case half-width Chebyshev 0.224, normal 0.098
+  n= 300: ch01-directed 0.964 w=0.106; ch01-random 0.964 w=0.074; ch08-coverage 1.000 w=0.012; ch09-sva 0.972 w=0.046; union 0.959 w=0.073; worst-case half-width Chebyshev 0.129, normal 0.057
+  n=1000: ch01-directed 0.958 w=0.057; ch01-random 0.970 w=0.040; ch08-coverage 1.000 w=0.004; ch09-sva 0.973 w=0.025; union 0.971 w=0.039; worst-case half-width Chebyshev 0.071, normal 0.031
+s.3 population kill rate by mutation mode
+  cnot0    1573: ch01-directed 0.257  ch01-random 0.869  ch08-coverage 0.000  ch09-sva 0.034  union 0.880
+  cnot1    1570: ch01-directed 0.166  ch01-random 0.871  ch08-coverage 0.000  ch09-sva 0.025  union 0.876
+  const0   2046: ch01-directed 0.261  ch01-random 0.894  ch08-coverage 0.000  ch09-sva 0.039  union 0.895
+  const1   2046: ch01-directed 0.320  ch01-random 0.883  ch08-coverage 0.000  ch09-sva 0.042  union 0.888
+  inv      2046: ch01-directed 0.426  ch01-random 0.925  ch08-coverage 0.000  ch09-sva 0.045  union 0.925
+s.4 formal sample (../formal/ysample.tsv)
+  100 sampled; equivalent 6, undecided 0; equivalent fraction 0.060 [0.022,0.126]
+  ch01-directed  kills 26/94 non-equivalent = 0.277 [0.189,0.378]
+  ch01-random    kills 93/94 non-equivalent = 0.989 [0.942,1.000]
+  ch08-coverage  kills 0/94 non-equivalent = 0.000 [0.000,0.038]
+  ch09-sva       kills 7/94 non-equivalent = 0.074 [0.030,0.147]
+  union          kills 93/94 non-equivalent = 0.989 [0.942,1.000]
+  property set   kills 79/94 non-equivalent = 0.840 [0.750,0.908]
+  sim + formal   kills 94/94 non-equivalent
+  equivalent mutants killed by some check: 0 
+
+real	0m27.384s
+user	0m26.558s
+sys	0m0.036s

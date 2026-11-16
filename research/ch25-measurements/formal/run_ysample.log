@@ -1,0 +1,11 @@
+sample: 100 of 9281 mutations, seed 25
+property set kills 79 of 100
+  miter differs: 94
+  miter equivalent: 6
+  miter unknown: 0
+  miter error: 0
+wall 780 s, 4 workers
+
+real	13m0.078s
+user	49m12.216s
+sys	1m23.962s

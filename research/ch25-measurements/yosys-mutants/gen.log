@@ -1,0 +1,6 @@
+Warning: 100000 mutations requested but only 9281 could be created!
+mutations: 9281, netlist: 48016 lines, 22 s
+
+real	0m22.106s
+user	0m58.338s
+sys	0m1.918s
