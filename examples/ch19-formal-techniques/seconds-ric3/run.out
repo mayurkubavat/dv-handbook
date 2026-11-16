@@ -1,0 +1,21 @@
+limit: 60 s for each run; the seconds are in tbl-seconds.md and not here
+  RAM of 256 words, storage boxed, contract assumed    a_read        informal-kind  proven
+  RAM of 256 words, the helper at the slot             h_mem         informal-kind  proven
+  RAM of 256 words, the contract, helper assumed       a_store       informal-kind  proven
+  RAM of 16 words, whole design                        a_read        ric3-ic3       proven
+  RAM of 256 words, whole design                       a_read        ric3-ic3       proven
+  pipe of two FIFOs of 16, boxed, the parent helper    HP_A          informal-kind  proven
+  pipe of two FIFOs of 16, boxed, helper assumed       P1_A          informal-kind  proven
+  pipe of two FIFOs of 16, boxed, helper assumed       P2_A          informal-kind  proven
+  pipe of two FIFOs of 16, boxed, no helper            P1_A          ric3-ic3       proven
+  pipe of two FIFOs of 16, boxed, no helper            P2_A          ric3-ic3       proven
+  pipe of two FIFOs of 16, flat, no helper             P1_A          ric3-ic3       proven
+  pipe of two FIFOs of 16, flat, no helper             P2_A          ric3-ic3       proven
+  8-bit multiplier miter, whole                        A_eq          informal-kind  proven
+  8-bit multiplier miter, case a[7:6] == 0             A_eq          informal-kind  proven
+  8-bit multiplier miter, case a[7:6] == 1             A_eq          informal-kind  proven
+  8-bit multiplier miter, case a[7:6] == 2             A_eq          informal-kind  proven
+  8-bit multiplier miter, case a[7:6] == 3             A_eq          informal-kind  proven
+  k-th word of a FIFO of 4, history variable           a_hist        ric3-ic3       proven
+  k-th word of a FIFO of 4, prophecy at the pop        a_proph_late  ric3-ic3       proven
+verdict: every run proven, as the chapter states

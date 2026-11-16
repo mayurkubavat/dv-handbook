@@ -1,0 +1,43 @@
+=== A: the position form alone
+--- informal-kind, limit 5s for each property
+property                     type    status        engine     detail
+m_d                          assume  unprocessed
+m_one1                       assume  unprocessed
+m_one2                       assume  unprocessed
+p_head1                      assert  undetermined             no engine reached a verdict
+p_head2                      assert  undetermined             no engine reached a verdict
+p_ahead                      assert  undetermined             no engine reached a verdict
+=== B: the slot helpers and the ordering, alone
+--- informal-kind, limit 5s for each property
+property                     type    status        engine     detail
+m_d                          assume  unprocessed
+m_one1                       assume  unprocessed
+m_one2                       assume  unprocessed
+h_slots                      assert  proven        informal-kind
+=== C: both forms, the helpers assumed
+--- informal-kind, limit 5s for each property
+property                     type    status        engine     detail
+m_d                          assume  unprocessed
+m_one1                       assume  unprocessed
+m_one2                       assume  unprocessed
+m_slots                      assume  unprocessed
+p_head1                      assert  proven        informal-kind
+p_head2                      assert  proven        informal-kind
+p_ahead                      assert  proven        informal-kind
+a_order                      assert  proven        informal-kind
+a_once1                      assert  undetermined             no engine reached a verdict
+a_once2                      assert  undetermined             no engine reached a verdict
+c_both                       cover   covered       informal-kind depth 3
+=== D: the mutant that reads a word twice
+--- informal-bmc, limit 5s for each property
+property                     type    status        engine     detail
+m_d                          assume  unprocessed
+m_one1                       assume  unprocessed
+m_one2                       assume  unprocessed
+p_head1                      assert  cex           informal-bmc depth 3
+p_head2                      assert  cex           informal-bmc depth 3
+p_ahead                      assert  cex           informal-bmc depth 4
+a_order                      assert  cex           informal-bmc depth 6
+a_once1                      assert  cex           informal-bmc depth 3
+a_once2                      assert  cex           informal-bmc depth 5
+verdict: order proven by position with slot helpers; the flag form's once-only checks still need an invariant over every slot

@@ -1,0 +1,26 @@
+=== A: safety, one block, its neighbor's guarantee assumed
+--- RST1 = 0
+--- informal-kind, limit 5s for each property
+property                     type    status        engine     detail
+M_in                         assume  unprocessed
+G_out                        assert  proven        informal-kind
+--- RST1 = 1
+--- informal-kind, limit 5s for each property
+property                     type    status        engine     detail
+M_in                         assume  unprocessed
+G_out                        assert  cex           informal-kind depth 1
+=== B: safety, the ring
+--- informal-kind, limit 5s for each property
+property                     type    status        engine     detail
+G_x                          assert  proven        informal-kind
+G_y                          assert  proven        informal-kind
+=== C: liveness, one block, its neighbor's guarantee assumed
+--- informal-ic3, limit 5s for each property
+property                     type    status        engine     detail
+M_in                         assume  unprocessed
+G_out                        assert  proven        informal-ic3
+=== D: liveness, the ring
+--- informal-ic3, limit 5s for each property
+property                     type    status        engine     detail
+G_x                          assert  cex           informal-ic3 depth 3
+verdict: the circular argument holds for safety and fails for liveness, where the ring never starts

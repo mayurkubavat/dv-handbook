@@ -1,0 +1,52 @@
+=== A: the mutant from reset
+--- informal-bmc, limit 5s for each property
+property                     type    status        engine     detail
+P_A                          assert  cex           informal-bmc depth 16
+--- informal-bmc, limit 5s for each property
+property                     type    status        engine     detail
+P_A                          assert  undetermined             no engine reached a verdict
+=== B: the mutant from INV states, DEPTH 256
+--- informal-bmc, limit 5s for each property
+property                     type    status        engine     detail
+M_start                      assume  unprocessed
+P_A                          assert  cex           informal-bmc depth 1
+=== C: the correct FIFO from INV states
+--- DEPTH 16, induction and IC3
+--- informal-kind, limit 5s for each property
+property                     type    status        engine     detail
+M_start                      assume  unprocessed
+P_A                          assert  undetermined             no engine reached a verdict
+--- informal-ic3, limit 5s for each property
+property                     type    status        engine     detail
+M_start                      assume  unprocessed
+P_A                          assert  proven        informal-ic3
+--- DEPTH 256, induction with the helper assumed in every cycle
+--- informal-kind, limit 5s for each property
+property                     type    status        engine     detail
+M_start                      assume  unprocessed
+M_H                          assume  unprocessed
+P_A                          assert  proven        informal-kind
+--- the side conditions: INV holds from reset, and is inductive
+--- informal-kind, limit 5s for each property
+property                     type    status        engine     detail
+INV_A                        assert  proven        informal-kind
+--- informal-kind, limit 5s for each property
+property                     type    status        engine     detail
+M_start                      assume  unprocessed
+INV_A                        assert  proven        informal-kind
+=== D: a weaker start set (the count in range only), DEPTH 256
+--- informal-bmc, limit 5s for each property
+property                     type    status        engine     detail
+M_start                      assume  unprocessed
+P_A                          assert  cex           informal-bmc depth 0
+=== E: the FIFO full, as a cover, DEPTH 256
+--- informal-bmc, limit 20s for each property
+informal: svlang: the design has no assertions
+property                     type    status        engine     detail
+Full_C                       cover   covered       informal-bmc depth 257
+--- informal-bmc, limit 20s for each property
+informal: svlang: the design has no assertions
+property                     type    status        engine     detail
+M_start                      assume  unprocessed
+Full_C                       cover   covered       informal-bmc depth 0
+verdict: a bug 256 pushes deep found at depth 1 from INV states, with INV proven from reset and inductive

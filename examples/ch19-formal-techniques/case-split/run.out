@@ -1,0 +1,39 @@
+=== A: whole
+--- informal-kind, limit 40s for each property
+property                     type    status        engine     detail
+A_eq                         assert  proven        informal-kind
+=== B: four cases
+--- case a[7:6] == 0
+--- informal-kind, limit 30s for each property
+property                     type    status        engine     detail
+A_eq                         assert  proven        informal-kind
+M_case                       assume  unprocessed
+--- case a[7:6] == 1
+--- informal-kind, limit 30s for each property
+property                     type    status        engine     detail
+A_eq                         assert  proven        informal-kind
+M_case                       assume  unprocessed
+--- case a[7:6] == 2
+--- informal-kind, limit 30s for each property
+property                     type    status        engine     detail
+A_eq                         assert  proven        informal-kind
+M_case                       assume  unprocessed
+--- case a[7:6] == 3
+--- informal-kind, limit 30s for each property
+property                     type    status        engine     detail
+A_eq                         assert  proven        informal-kind
+M_case                       assume  unprocessed
+--- completeness: the four case conditions cover every value
+--- informal-kind, limit 5s for each property
+property                     type    status        engine     detail
+A_cover4                     assert  proven        informal-kind
+=== C: the bug in case 3, and a case list that forgot case 3
+--- case a[7:6] == 3
+--- informal-kind, limit 30s for each property
+property                     type    status        engine     detail
+A_eq                         assert  cex           informal-kind depth 0
+M_case                       assume  unprocessed
+--- informal-kind, limit 5s for each property
+property                     type    status        engine     detail
+A_cover3                     assert  cex           informal-kind depth 0
+verdict: four cases and their completeness proven; the case list that forgot case 3 fails its completeness check

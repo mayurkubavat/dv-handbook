@@ -1287,3 +1287,81 @@ Gate-1 verdict proposed for `STATUS.md` (to be written by the
 session that records the gate, not by this outline): passes under
 the delegation on 2026-11-16, with the measurements of section 4's
 list as preconditions for drafting the entries that need them.
+
+## 9. Pre-draft measurements
+
+Run 2026-11-16 with InFormal 0.1.0 at `5114330` and rIC3 1.5.2,
+through the book's wrapper (`examples/mk/informal.sh`), one engine
+selected for each `prove` and a fresh session (`design`, from
+`examples/ch19-formal-techniques/common/ch19.tcl`) before each one,
+so that no report row carries a verdict from an earlier engine (C1).
+Every result below is now a row of an example's `run.out` under
+`examples/ch19-formal-techniques/`, checked there with `expect`;
+the command for each is `scripts/check-examples.sh
+ch19-formal-techniques/<dir>`. Section 4's table changes as follows:
+`track-word-ric3/` is replaced by an in-house `track-word/`;
+`two-word-ric3/` keeps the rIC3-alone rows and an in-house
+`two-word/` is added; `init-value-ric3/` is folded into
+`init-value/`; the optional `conn-irq/` and `reg-readback/` were not
+built (R1 and R2 stay prose). Twenty-four directories, five of them
+`REQUIRES := ric3` (`mem-abs-ric3`, `two-word-ric3`, `history-ric3`,
+`hier-ric3`, `seconds-ric3`).
+
+**Two tool findings met on the way, both affecting the text.**
+(i) An assumption whose consequent spans several cycles
+(`req && !busy |=> !u_timer.expired [*199]`) constrains only traces
+long enough to hold its whole window: under the cut it does not remove
+the depth-3 trace of `a_no_early`, although the one-cycle form
+(`$rose(busy) |-> !u_timer.expired`) does (`cut-timer/run.out`, block
+F, with the trace table). This is the prophecy trap of T16 met in an
+ordinary assumption; T4 and T16 should say it once and point to each
+other. (ii) A `parameter string ROLE` compared in a generate `if`
+(`ROLE == "SENDER"`) elaborates without error and yields an empty
+property table, and `-parameter OUT_ROLE "RECEIVER"` is rejected as
+an invalid override; `hs_rules.sv` uses an enum from a package
+(`hs_role_pkg::SENDER`, `RECEIVER`) instead. Another silent loss of
+properties of the kind C5 describes.
+
+| # | measurement | command (example, block) | verdict | entry |
+|---|---|---|---|---|
+| 1 | 1.2(1) free-`last` arbiter | `symmetry/`, A and B | free start (`FREE_LAST = 1`): `a_wait0` proven (kind); rotation check `rr_rot` (second copy fed rotated requests, `last` one more in the first cycle) `a_rot` proven, its start covered at depth 1; reset state inside the free start: `c_reset` covered at depth 1. With `last` reset to 3 in both copies the rotation check is refuted at depth 2; the four ports are proven one by one; fixed priority as before (ports 1-3 refuted at depth 5); DMA `a_excl0`, `a_excl1` proven in-house | **stands**, and gains a run: "the rotation is a symmetry" is now a proof (`a_rot`), and "reset breaks it" a counterexample, not only an argument. Exercise 5 keeps both parts |
+| 2 | 1.2(2) DMA rules, `informal-ic3`, slave rules assumed | `protocol-dma/`, A | `hs_rules` bound as SENDER on AR, AW, W (asserted) and RECEIVER on R, B (assumed), `ANSWER = 0`: all six master rules proven by `informal-ic3`, three waits covered (depths 5, 8, 8); about a second | **stands**: no `REQUIRES := ric3`; D5's DMA clause is withdrawn. `ANSWER = 0` is needed because AXI lets ready come first, and Chapter 9's `Answer_A` would over-constrain the slave; T15's text says so |
+| 3 | 1.2(3) a slave-dependent DMA property | `protocol-dma/`, B | `RFirst_A` (the R response the DMA takes after waiting is the one first offered; ghost `r_first.sv`): cex at depth 6 with no rules assumed, proven by `informal-ic3` with only the R/B rules assumed; `RWait_C` covered (6, 5) | **stands**: the DMA stays in T15 with this property and a pointer to `@sec-ch09-axi` |
+| 4 | 1.2(5) slot-indexed helper, T9 | `track-word/`, A-C | DEPTH 16: `a_integrity` no verdict in 5 s by kind and by IC3; the helper (`!in_q || mem[rd_ptr + ahead] == sd && ahead < count`, with the pointer helper and `count <= DEPTH`, one conjunction) proven by kind; `a_integrity` proven with it assumed; `c_out` covered at depth 10; read-pointer mutant refuted at depth 3. (At DEPTH 256 the helper proves in about 10 s; not in the example) | **changes**: T9 is in-house; `track-word-ric3/` is dropped and `track-word/` teaches the helper. "rIC3 only" in C3 is cut for T9 |
+| 5 | 1.2(5) slot-indexed helper, `p_ahead` | `two-word/`, A-C | DEPTH 4: position form alone, no verdict in 5 s (kind); slot helpers for both words plus the pointer helper plus the ordering, one conjunction, proven by kind (< 1 s); under it `p_head1`, `p_head2`, `p_ahead` and the flag form's `a_order` proven, `a_once1`, `a_once2` no verdict in 5 s; duplicating mutant caught by all six (depths 3, 3, 4, 6, 3, 5). At DEPTH 16 the same conjunction had no verdict in 20 s (probe, not in an example) | **changes**: the sentence "neither ordering assertion was proved" is cut. Ordering is proved, in-house, at DEPTH 4, in the position form with slot helpers, and `a_order` follows; what stays unproved is the flag form's once-only checks, which need "no other slot holds d1", the quantified invariant. `two-word/` (in-house) is new; `two-word-ric3/` keeps rIC3 alone: flag form no verdict in 5 s, `p_head1`/`p_head2` proven, `p_ahead` no verdict in 10 s |
+| 6 | T4 gap assumption and its discharge | `cut-timer/`, C-F | under the cut, `$rose(busy) |-> !u_timer.expired` assumed: `a_no_early` proven, `c_gnt` covered at depth 4; the same proven as an assertion on the real timer (kind). The 199-cycle form leaves the depth-3 trace (finding (i)) | **stands**, with the one-cycle gap; the pitfall of finding (i) is added |
+| 7 | T3 width probe | `param-width/` | Chapter 1's FIFO: `full |-> occ == DEPTH` refuted at depth 4 (DEPTH 4) and 16 (DEPTH 16), `occ == DEPTH` unreachable at both; repaired FIFO against a five-bit count (Chapter 9's width): proven at 16, refuted at 32 (depths 2, 1); `wr_ptr < DEPTH && rd_ptr < DEPTH` proven at 4 and 8, refuted at 5 (depth 6) | **changes**: "at the smaller depth the bug is absent" is cut: Chapter 1's bug is at every depth, and its small-size counterexample is the large one's. The non-transfer of proofs is shown by the five-bit count (16 to 32) and by `$clog2(5)` |
+| 8 | T6 correct FIFO from INV, in-house | `init-value/`, C | DEPTH 16 from INV states: kind no verdict in 5 s, `informal-ic3` proven; DEPTH 256 from INV states with the pointer helper assumed every cycle: kind proven; INV proven from reset and from INV states (inductive). Other rows as in the research: wrap mutant cex 16 (DEPTH 16), no verdict in 5 s at 256, cex at depth 1 from INV, weak start cex at depth 0, `Full_C` at 257 and 0 | **changes**: `init-value-ric3/` is folded into `init-value/`; the text says that starting from INV does not make P inductive (kind fails at 16) and that the helper does |
+| 9 | T9 at DEPTH 4 | `track-word/`, A | `a_integrity` alone proven by `informal-ic3` (about 2 s; rIC3 0.3 s in the probe) | **changes**: in-house at DEPTH 4 without a helper; the example prints it as the row before the DEPTH-16 rows |
+| 10 | T20 bounded block | `decomp/`, A | `informal-bmc`, 5 s each: E2E, L1, L2 no counterexample (`undetermined`), `Done3_C` covered at depth 15; kind and IC3 no verdict in 5 s; E2E proven with L1, L2 assumed. About 50 s | **stands**, at a 5 s limit (not 8 s) |
+| 11 | T30 combined mutant table | `mutants/` | 2 s bounded search per property, Chapter 9 checker (bound) + `EmptyPtrs_A` + `a_integrity`: dup killed by `a_integrity` (3) and `EmptyPtrs_A` (4); wrap by `EmptyExact_A`, `Sync_A`, `EmptyPtrs_A` (16), `FullForward_A` (17), `NoOverflow_A` (18); skip by `a_integrity`, `EmptyPtrs_A` (3). Chapter 9's checker kills only the wrap mutant; `a_integrity` does not kill wrap within 2 s | **stands**; the text can add that the occupancy checker alone misses both data mutants |
+| 12 | worked-example contract and covers at 256 | `pipe-256/` | child: `H_A` proven, `CE_A`/`CF_A` proven with it assumed (kind, well under a second); boxed parent: `Drain_C` (depth 4), `Both1_C` (3), `U1Full_C` (258, about 7 s) covered, `Full_C` (P2's antecedent, 513 deep) no verdict in 10 s; P1/P2 no verdict in 5 s; `HP_A` proven; P1/P2 proven under it; wrap-mutant child refutes `H_A` at depth 256 (about 8 s; `CE_A`/`CF_A` themselves gave no counterexample in 10 s, so step 7 names the helper, not the contract) | **changes** in two sentences: step 1 says P2's own witness is out of reach and uses `U1Full_C` and the two shallow covers; step 7 says the mutant is caught by the child's ghost helper. About 37 s, not 25 |
+| 13 | C6 `$stable` in cycle 0 | `symconst/`, C | `first |-> sa0 == sa` (sa0 holds sa from the reset cycle) proven; `first && sa0 != sa` unreachable; `first` covered at depth 1 | **changes**: C6's third clause is cut. A `$stable` assumption does bind the reset cycle to the next one in this tool; T8's pitfall becomes "a stable value is stable across a mid-trace reset too" only |
+| 14 | C10 boxed assertions | `cut-timer/`, A and B (`timer_chk.sv` bound into `timer`) | unboxed: `Range_A` proven; with `-bbox_m {timer}` it stays in the report with status `error`, detail "not in the model (inside a black box)"; the same for Chapter 9's checker bound into a boxed `fifo` (probe) | **changes**: RN T1(3) "silently leaves the table" is wrong; the sentence becomes "stays listed as an error, unchecked", from `run.out` |
+| 15 | C5 `$anyconst`, re-run | `symconst/`, A | with only the RTL assertion: zero properties listed, an empty table, no message. (A property added by Tcl to the same design gets status `error` naming `$anyconst`; its detail prints the absolute file path, so that block is left out of the example) | **stands** for RTL properties; the Exercise 4 answer holds. Add: a Tcl property in the same session does get an error |
+
+Times measured by the second clean run of every example are in
+section 4's terms: see the table below, which replaces section 4's
+"time" column.
+
+| directory | needs | time (s) | directory | needs | time (s) |
+|---|---|---|---|---|---|
+| `cut-timer/` | informal | 8.9 | `protocol-dma/` | informal | 1.8 |
+| `param-width/` | informal | 4.8 | `history/` | informal | 0.5 |
+| `mem-abs/` | informal | 29.9 | `history-ric3/` | ric3 | 21.1 |
+| `mem-abs-ric3/` | ric3 | 9.5 | `ag/` | informal | 0.5 |
+| `init-value/` | informal | 17.2 | `case-split/` | informal | 35.7 |
+| `symconst/` | informal | 0.5 | `hier/` | informal | 11.9 |
+| `track-word/` | informal | 12.8 | `hier-ric3/` | ric3 | 6.1 |
+| `two-word/` | informal | 27.5 | `decomp/` | informal | 46.5 |
+| `two-word-ric3/` | ric3 | 31.1 | `sanity/` | informal | 0.6 |
+| `symmetry/` | informal | 0.9 | `mutants/` | informal | 38.0 |
+| `contract/` | informal | 17.0 | `pipe-256/` | informal | 36.4 |
+| `protocol/` | informal | 0.7 | `seconds-ric3/` | ric3 | 88.8 |
+
+Wall-clock of `scripts/check-examples.sh` from `make clean`, lint
+included. In-house total about 5 minutes (longest `decomp/`, 47 s);
+the five rIC3 directories about 2.5 minutes more, of which
+`seconds-ric3/` is 89 s (it is skipped in CI and regenerates
+`tbl-seconds.md` only with `MEASURE=1`). Two clean runs gave
+byte-identical `run.out` in every directory.

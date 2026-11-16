@@ -1,0 +1,40 @@
+# ag.tcl -- each block proved under the other's guarantee, then the
+# ring. A: safety, one block with its neighbor's guarantee assumed,
+# and a block whose reset value breaks its own guarantee; B: the
+# safety ring, flat; C: liveness, one block under its neighbor's
+# "eventually"; D: the liveness ring, flat.
+set here [file dirname [info script]]
+source $here/../common/ch19.tcl
+set f $here/ag.sv
+
+puts "=== A: safety, one block, its neighbor's guarantee assumed"
+foreach r {0 1} {
+  puts "--- RST1 = $r"
+  design $f blk -parameter RST1 $r
+  assume -name M_in  {in == 1'b0}
+  assert -name G_out {out == 1'b0}
+  one informal-kind 5s -all
+  expect [expr {$r ? "cex" : "proven"}] G_out
+  if {$r} {expect_depth 1 G_out}
+}
+puts "=== B: safety, the ring"
+design $f ag_top
+assert -name G_x {x == 1'b0}
+assert -name G_y {y == 1'b0}
+one informal-kind 5s -all
+expect proven G_x G_y
+puts "=== C: liveness, one block, its neighbor's guarantee assumed"
+design $f blk
+assume -name M_in  {s_eventually in}
+assert -name G_out {s_eventually out}
+one informal-ic3 5s -all
+expect proven G_out
+puts "=== D: liveness, the ring"
+design $f ag_top
+assert -name G_x {s_eventually x}
+one informal-ic3 5s -all
+expect cex     G_x
+expect_depth 3 G_x
+puts "verdict: the circular argument holds for safety and fails for\
+ liveness, where the ring never starts"
+finish

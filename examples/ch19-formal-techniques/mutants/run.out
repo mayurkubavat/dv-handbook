@@ -1,0 +1,65 @@
+=== mutant dup: the read pointer stays put when a push and a pop meet
+--- informal-bmc, limit 2s for each property
+property                     type    status        engine     detail
+track.u.u_sva.NoOverflow_A   assert  undetermined             no engine reached a verdict
+track.u.u_sva.FullForward_A  assert  undetermined             no engine reached a verdict
+track.u.u_sva.FullBackward_A assert  undetermined             no engine reached a verdict
+track.u.u_sva.EmptyExact_A   assert  undetermined             no engine reached a verdict
+track.u.u_sva.PushFull_A     assert  undetermined             no engine reached a verdict
+track.u.u_sva.PopEmpty_A     assert  undetermined             no engine reached a verdict
+track.u.u_sva.Sync_A         assert  undetermined             no engine reached a verdict
+track.u.u_sva.FullReached_C  cover   disabled
+track.u.u_sva.PushFull_C     cover   disabled
+track.u.u_sva.PopEmpty_C     cover   disabled
+track.u.u_sva.Drained_C      cover   disabled
+m_sd                         assume  unprocessed
+a_integrity                  assert  cex           informal-bmc depth 3
+EmptyPtrs_A                  assert  cex           informal-bmc depth 4
+=== mutant wrap: the count wraps to 0 one push short of full
+--- informal-bmc, limit 2s for each property
+property                     type    status        engine     detail
+track.u.u_sva.NoOverflow_A   assert  cex           informal-bmc depth 18
+track.u.u_sva.FullForward_A  assert  cex           informal-bmc depth 17
+track.u.u_sva.FullBackward_A assert  undetermined             no engine reached a verdict
+track.u.u_sva.EmptyExact_A   assert  cex           informal-bmc depth 16
+track.u.u_sva.PushFull_A     assert  undetermined             no engine reached a verdict
+track.u.u_sva.PopEmpty_A     assert  undetermined             no engine reached a verdict
+track.u.u_sva.Sync_A         assert  cex           informal-bmc depth 16
+track.u.u_sva.FullReached_C  cover   disabled
+track.u.u_sva.PushFull_C     cover   disabled
+track.u.u_sva.PopEmpty_C     cover   disabled
+track.u.u_sva.Drained_C      cover   disabled
+m_sd                         assume  unprocessed
+a_integrity                  assert  undetermined             no engine reached a verdict
+EmptyPtrs_A                  assert  cex           informal-bmc depth 16
+=== mutant skip: the read pointer steps by two
+--- informal-bmc, limit 2s for each property
+property                     type    status        engine     detail
+track.u.u_sva.NoOverflow_A   assert  undetermined             no engine reached a verdict
+track.u.u_sva.FullForward_A  assert  undetermined             no engine reached a verdict
+track.u.u_sva.FullBackward_A assert  undetermined             no engine reached a verdict
+track.u.u_sva.EmptyExact_A   assert  undetermined             no engine reached a verdict
+track.u.u_sva.PushFull_A     assert  undetermined             no engine reached a verdict
+track.u.u_sva.PopEmpty_A     assert  undetermined             no engine reached a verdict
+track.u.u_sva.Sync_A         assert  undetermined             no engine reached a verdict
+track.u.u_sva.FullReached_C  cover   disabled
+track.u.u_sva.PushFull_C     cover   disabled
+track.u.u_sva.PopEmpty_C     cover   disabled
+track.u.u_sva.Drained_C      cover   disabled
+m_sd                         assume  unprocessed
+a_integrity                  assert  cex           informal-bmc depth 3
+EmptyPtrs_A                  assert  cex           informal-bmc depth 3
+=== summary: mutant, property that killed it, depth
+  dup   a_integrity    depth 3
+  dup   EmptyPtrs_A    depth 4
+  dup   7 other properties: no counterexample in 2 s
+  wrap  NoOverflow_A   depth 18
+  wrap  FullForward_A  depth 17
+  wrap  EmptyExact_A   depth 16
+  wrap  Sync_A         depth 16
+  wrap  EmptyPtrs_A    depth 16
+  wrap  4 other properties: no counterexample in 2 s
+  skip  a_integrity    depth 3
+  skip  EmptyPtrs_A    depth 3
+  skip  7 other properties: no counterexample in 2 s
+verdict: every mutant killed; Chapter 9's checker kills only the one that breaks the count

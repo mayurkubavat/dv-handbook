@@ -1,0 +1,26 @@
+=== A: each property alone
+--- informal-bmc, limit 5s for each property
+property                     type    status        engine     detail
+E2E_A                        assert  undetermined             no engine reached a verdict
+Done3_C                      cover   covered       informal-bmc depth 15
+L1_A                         assert  undetermined             no engine reached a verdict
+L2_A                         assert  undetermined             no engine reached a verdict
+--- informal-kind, limit 5s for each property
+property                     type    status        engine     detail
+E2E_A                        assert  undetermined             no engine reached a verdict
+Done3_C                      cover   covered       informal-kind depth 15
+L1_A                         assert  undetermined             no engine reached a verdict
+L2_A                         assert  undetermined             no engine reached a verdict
+--- informal-ic3, limit 5s for each property
+property                     type    status        engine     detail
+E2E_A                        assert  undetermined             no engine reached a verdict
+L1_A                         assert  undetermined             no engine reached a verdict
+L2_A                         assert  undetermined             no engine reached a verdict
+=== B: E2E with L1 and L2 assumed
+--- informal-kind, limit 5s for each property
+property                     type    status        engine     detail
+E2E_A                        assert  proven        informal-kind
+Done3_C                      cover   covered       informal-kind depth 15
+L1_M                         assume  unprocessed
+L2_M                         assume  unprocessed
+verdict: the chain closes (E2E follows from L1 and L2); the lemmas themselves have no verdict in 5 s

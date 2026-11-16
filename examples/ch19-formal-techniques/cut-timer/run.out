@@ -1,0 +1,74 @@
+=== A: the whole design
+--- informal-kind, limit 10s for each property
+property                     type    status        engine     detail
+handshake.u_timer.u_chk.Range_A assert  proven        informal-kind
+a_hold_q                     assert  proven        informal-kind
+a_gnt_once                   assert  proven        informal-kind
+a_no_early                   assert  proven        informal-kind
+c_gnt                        cover   covered       informal-kind depth 202
+=== B: the timer black-boxed
+--- informal-kind, limit 10s for each property
+informal: black boxes in this model (outputs free, contents not modelled): timer. A proof holds for the design; a counterexample may use output values the boxed logic cannot produce
+property                     type    status        engine     detail
+handshake.u_timer.u_chk.Range_A assert  error                    not in the model (inside a black box)
+a_hold_q                     assert  proven        informal-kind
+a_gnt_once                   assert  proven        informal-kind
+a_no_early                   assert  cex           informal-kind depth 3
+c_gnt                        cover   covered       informal-kind depth 3
+--- a name inside the box: accepted by assert, refused at prove
+assert -name a_inside: accepted
+--- informal-kind, limit 10s for each property
+informal: black boxes in this model (outputs free, contents not modelled): timer. A proof holds for the design; a counterexample may use output values the boxed logic cannot produce
+informal: svlang: assert a_inside is not checked: internal: missing signal slot for symbol SymbolId(13) is not supported yet
+property                     type    status        engine     detail
+handshake.u_timer.u_chk.Range_A assert  unprocessed
+a_hold_q                     assert  unprocessed
+a_gnt_once                   assert  unprocessed
+a_no_early                   assert  unprocessed
+c_gnt                        cover   unprocessed
+a_inside                     assert  error                    not supported yet: internal: missing signal slot for symbol SymbolId(13)
+=== C: u_timer.expired as a cut point
+stopat -list: u_timer.expired
+--- informal-kind, limit 10s for each property
+informal: 1 cut point(s) (stopat) are free in this model: u_timer.expired. A proof holds for the design; a counterexample may use values the design cannot produce there
+property                     type    status        engine     detail
+handshake.u_timer.u_chk.Range_A assert  proven        informal-kind
+a_hold_q                     assert  proven        informal-kind
+a_gnt_once                   assert  proven        informal-kind
+a_no_early                   assert  cex           informal-kind depth 3
+c_gnt                        cover   covered       informal-kind depth 3
+=== D: the cut, with the gap the property needs assumed
+--- informal-kind, limit 10s for each property
+informal: 1 cut point(s) (stopat) are free in this model: u_timer.expired. A proof holds for the design; a counterexample may use values the design cannot produce there
+property                     type    status        engine     detail
+handshake.u_timer.u_chk.Range_A assert  proven        informal-kind
+a_hold_q                     assert  proven        informal-kind
+a_gnt_once                   assert  proven        informal-kind
+a_no_early                   assert  proven        informal-kind
+c_gnt                        cover   covered       informal-kind depth 4
+m_gap                        assume  unprocessed
+=== E: the gap, proved on the real timer (no cut)
+--- informal-kind, limit 10s for each property
+property                     type    status        engine     detail
+a_gap                        assert  proven        informal-kind
+=== F: a gap over 199 cycles, assumed under the cut
+--- informal-kind, limit 10s for each property
+informal: 1 cut point(s) (stopat) are free in this model: u_timer.expired. A proof holds for the design; a counterexample may use values the design cannot produce there
+property                     type    status        engine     detail
+m_gap199                     assume  unprocessed
+a_no_early                   assert  cex           informal-kind depth 3
+cycle    rst    req   busy  expired    gnt
+    0      1      0      0        0      0
+    1      0      1      0        0      0
+    2      0      0      1        1      0
+    3      0      0      0        0      1
+=== G: the delay itself, with the real timer and under the cut
+--- informal-kind, limit 10s for each property
+property                     type    status        engine     detail
+a_201                        assert  proven        informal-kind
+a_200                        assert  cex           informal-kind depth 201
+--- informal-kind, limit 10s for each property
+informal: 1 cut point(s) (stopat) are free in this model: u_timer.expired. A proof holds for the design; a counterexample may use values the design cannot produce there
+property                     type    status        engine     detail
+a_201                        assert  cex           informal-kind depth 202
+verdict: each cut keeps the proofs; its counterexamples and covers needed the gap, which the real timer proves

@@ -1,0 +1,33 @@
+=== A: wire stage, input free
+--- informal-kind, limit 5s for each property
+property                     type    status        engine     detail
+vr_top.u_out.g_snd.Held_A    assert  cex           informal-kind depth 2
+vr_top.u_out.g_snd.Stable_A  assert  cex           informal-kind depth 2
+vr_top.u_out.g_snd.Wait_C    cover   covered       informal-kind depth 2
+vr_top.u_out.g_snd.g_ans.Answer_M assume  unprocessed
+=== B: wire stage, the input's rules assumed
+--- informal-kind, limit 5s for each property
+property                     type    status        engine     detail
+vr_top.u_out.g_snd.Held_A    assert  proven        informal-kind
+vr_top.u_out.g_snd.Stable_A  assert  proven        informal-kind
+vr_top.u_out.g_snd.Wait_C    cover   covered       informal-kind depth 2
+vr_top.u_out.g_snd.g_ans.Answer_M assume  unprocessed
+vr_top.g_env.u_in.g_rcv.Held_M assume  unprocessed
+vr_top.g_env.u_in.g_rcv.Stable_M assume  unprocessed
+vr_top.g_env.u_in.g_rcv.g_ans.Answer_A assert  proven        informal-kind
+=== C: register stage, input free
+--- informal-kind, limit 5s for each property
+property                     type    status        engine     detail
+vr_top.u_out.g_snd.Held_A    assert  proven        informal-kind
+vr_top.u_out.g_snd.Stable_A  assert  proven        informal-kind
+vr_top.u_out.g_snd.Wait_C    cover   covered       informal-kind depth 3
+vr_top.u_out.g_snd.g_ans.Answer_M assume  unprocessed
+=== D: wire stage, the output's checker in the receiver's role
+--- informal-kind, limit 5s for each property
+property                     type    status        engine     detail
+vr_top.u_out.g_rcv.Held_M    assume  unprocessed
+vr_top.u_out.g_rcv.Stable_M  assume  unprocessed
+vr_top.u_out.g_rcv.g_ans.Answer_A assert  cex           informal-kind depth 1
+a_in_held                    assert  proven        informal-kind
+c_in_drop                    cover   unreachable   informal-kind
+verdict: the role decides which rules bind; the wrong role proves a rule about the input that nothing enforces

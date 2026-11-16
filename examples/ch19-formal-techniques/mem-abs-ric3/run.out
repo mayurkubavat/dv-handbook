@@ -1,0 +1,13 @@
+=== the whole design, 16 words
+--- ric3-ic3, limit 30s for each property
+property                     type    status        engine     detail
+m_sa                         assume  unprocessed
+a_read                       assert  proven        ric3-ic3
+c_read                       cover   covered       ric3-ic3   depth 2
+=== the whole design, 256 words
+--- ric3-ic3, limit 30s for each property
+property                     type    status        engine     detail
+m_sa                         assume  unprocessed
+a_read                       assert  proven        ric3-ic3
+c_read                       cover   covered       ric3-ic3   depth 2
+verdict: the flat design proven by rIC3 at both sizes

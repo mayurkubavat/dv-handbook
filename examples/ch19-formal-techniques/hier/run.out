@@ -1,0 +1,41 @@
+=== A: both FIFOs boxed, the contract assumed
+--- informal-kind, limit 5s for each property
+informal: black boxes in this model (outputs free, contents not modelled): fifo. A proof holds for the design; a counterexample may use output values the boxed logic cannot produce
+property                     type    status        engine     detail
+u0_CE                        assume  unprocessed
+u0_CF                        assume  unprocessed
+u1_CE                        assume  unprocessed
+u1_CF                        assume  unprocessed
+P1_A                         assert  undetermined             no engine reached a verdict
+P2_A                         assert  undetermined             no engine reached a verdict
+Both_C                       cover   covered       informal-kind depth 33
+=== B: half the contract (empty only)
+--- informal-kind, limit 5s for each property
+informal: black boxes in this model (outputs free, contents not modelled): fifo. A proof holds for the design; a counterexample may use output values the boxed logic cannot produce
+property                     type    status        engine     detail
+u0_CE                        assume  unprocessed
+u1_CE                        assume  unprocessed
+P2_A                         assert  cex           informal-kind depth 1
+=== C: the parent's helper
+--- alone
+--- informal-kind, limit 5s for each property
+informal: black boxes in this model (outputs free, contents not modelled): fifo. A proof holds for the design; a counterexample may use output values the boxed logic cannot produce
+property                     type    status        engine     detail
+u0_CE                        assume  unprocessed
+u0_CF                        assume  unprocessed
+u1_CE                        assume  unprocessed
+u1_CF                        assume  unprocessed
+HP_A                         assert  proven        informal-kind
+--- assumed
+--- informal-kind, limit 5s for each property
+informal: black boxes in this model (outputs free, contents not modelled): fifo. A proof holds for the design; a counterexample may use output values the boxed logic cannot produce
+property                     type    status        engine     detail
+u0_CE                        assume  unprocessed
+u0_CF                        assume  unprocessed
+u1_CE                        assume  unprocessed
+u1_CF                        assume  unprocessed
+HP_M                         assume  unprocessed
+P1_A                         assert  proven        informal-kind
+P2_A                         assert  proven        informal-kind
+Both_C                       cover   covered       informal-kind depth 33
+verdict: the boxed pipe proven with its children's contracts and one parent helper

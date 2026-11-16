@@ -1,0 +1,13 @@
+=== A: a history variable
+--- ric3-ic3, limit 30s for each property
+property                     type    status        engine     detail
+m_k                          assume  unprocessed
+a_hist                       assert  proven        ric3-ic3
+=== B: a prophecy, asserted at the pop
+--- ric3-ic3, limit 30s for each property
+property                     type    status        engine     detail
+m_k                          assume  unprocessed
+m_pv                         assume  unprocessed
+m_check                      assume  unprocessed
+a_proph_late                 assert  proven        ric3-ic3
+verdict: the k-th word proven by history, and by a prophecy read only at the pop

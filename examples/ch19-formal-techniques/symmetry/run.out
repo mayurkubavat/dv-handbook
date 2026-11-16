@@ -1,0 +1,49 @@
+=== A: round robin, free start
+--- port 0
+--- informal-kind, limit 10s for each property
+property                     type    status        engine     detail
+m_hold0                      assume  unprocessed
+a_wait0                      assert  proven        informal-kind
+--- the rotation check: rotated requests give rotated grants
+--- informal-kind, limit 10s for each property
+property                     type    status        engine     detail
+m_rot                        assume  unprocessed
+a_rot                        assert  proven        informal-kind
+c_start                      cover   covered       informal-kind depth 1
+--- the reset state is one of the free starts
+--- informal-kind, limit 10s for each property
+property                     type    status        engine     detail
+a_gnt0                       assert  proven        informal-kind
+c_reset                      cover   covered       informal-kind depth 1
+=== B: round robin, last reset to 3
+--- informal-kind, limit 10s for each property
+property                     type    status        engine     detail
+m_hold0                      assume  unprocessed
+a_wait0                      assert  proven        informal-kind
+m_hold1                      assume  unprocessed
+a_wait1                      assert  proven        informal-kind
+m_hold2                      assume  unprocessed
+a_wait2                      assert  proven        informal-kind
+m_hold3                      assume  unprocessed
+a_wait3                      assert  proven        informal-kind
+--- the rotation check, both copies reset
+--- informal-kind, limit 10s for each property
+property                     type    status        engine     detail
+a_rot                        assert  cex           informal-kind depth 2
+=== C: fixed priority
+--- informal-kind, limit 10s for each property
+property                     type    status        engine     detail
+m_hold0                      assume  unprocessed
+a_wait0                      assert  proven        informal-kind
+m_hold1                      assume  unprocessed
+a_wait1                      assert  cex           informal-kind depth 5
+m_hold2                      assume  unprocessed
+a_wait2                      assert  cex           informal-kind depth 5
+m_hold3                      assume  unprocessed
+a_wait3                      assert  cex           informal-kind depth 5
+=== D: DMA version 2, each channel proved on its own
+--- informal-kind, limit 10s for each property
+property                     type    status        engine     detail
+a_excl0                      assert  proven        informal-kind
+a_excl1                      assert  proven        informal-kind
+verdict: a symmetry argument holds for the free start, which covers reset; with last reset to 3 every port needs its own proof

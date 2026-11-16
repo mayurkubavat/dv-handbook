@@ -1,0 +1,33 @@
+=== A: three cycles of $past in place of a history variable
+--- informal-bmc, limit 5s for each property
+property                     type    status        engine     detail
+a_past3                      assert  cex           informal-bmc depth 5
+=== B: the history variable
+--- BUG = 0
+--- informal-kind, limit 5s for each property
+property                     type    status        engine     detail
+a_seen                       assert  proven        informal-kind
+c_late                       cover   covered       informal-kind depth 5
+--- BUG = 1
+--- informal-kind, limit 5s for each property
+property                     type    status        engine     detail
+a_seen                       assert  cex           informal-kind depth 1
+c_late                       cover   covered       informal-kind depth 3
+=== C: the k-th word: its witness cover, and a prophecy asserted where it is guessed
+--- the ninth pop happens (the proofs are in history-ric3/)
+--- informal-kind, limit 5s for each property
+informal: svlang: the design has no assertions
+property                     type    status        engine     detail
+m_k                          assume  unprocessed
+c_popk                       cover   covered       informal-kind depth 11
+--- the prophecy
+--- informal-bmc, limit 5s for each property
+property                     type    status        engine     detail
+m_k                          assume  unprocessed
+m_pv                         assume  unprocessed
+m_check                      assume  unprocessed
+a_proph                      assert  cex           informal-bmc depth 1
+cycle  rst_n  wr_en  push_k  pop_k
+    0      0      0       0      0
+    1      1      1       1      0
+verdict: the history bit proves what three cycles of $past cannot; the prophecy fails at depth 1 on a correct FIFO

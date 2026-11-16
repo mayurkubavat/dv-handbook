@@ -1,6 +1,6 @@
 {
-  "checked": "2026-11-16T02:38:38Z",
-  "pass": 115,
+  "checked": "2026-11-16T05:29:25Z",
+  "pass": 139,
   "fail": 0,
   "skipped_run": 3,
   "examples": [
@@ -807,6 +807,174 @@
       "lint": "pass",
       "run": "pass",
       "requires": "informal",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch19-formal-techniques/ag",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "informal",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch19-formal-techniques/case-split",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "informal",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch19-formal-techniques/contract",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "informal",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch19-formal-techniques/cut-timer",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "informal",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch19-formal-techniques/decomp",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "informal",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch19-formal-techniques/hier",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "informal",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch19-formal-techniques/hier-ric3",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "ric3",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch19-formal-techniques/history",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "informal",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch19-formal-techniques/history-ric3",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "ric3",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch19-formal-techniques/init-value",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "informal",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch19-formal-techniques/mem-abs",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "informal",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch19-formal-techniques/mem-abs-ric3",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "ric3",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch19-formal-techniques/mutants",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "informal",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch19-formal-techniques/param-width",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "informal",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch19-formal-techniques/pipe-256",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "informal",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch19-formal-techniques/protocol",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "informal",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch19-formal-techniques/protocol-dma",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "informal",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch19-formal-techniques/sanity",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "informal",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch19-formal-techniques/seconds-ric3",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "ric3",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch19-formal-techniques/symconst",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "informal",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch19-formal-techniques/symmetry",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "informal",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch19-formal-techniques/track-word",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "informal",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch19-formal-techniques/two-word",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "informal",
+      "expect": "pass"
+    },
+    {
+      "dir": "examples/ch19-formal-techniques/two-word-ric3",
+      "lint": "pass",
+      "run": "pass",
+      "requires": "ric3",
       "expect": "pass"
     }
   ]

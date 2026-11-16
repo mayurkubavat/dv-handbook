@@ -1,0 +1,34 @@
+=== A: the check alone
+--- DEPTH 16
+--- informal-kind, limit 5s for each property
+property                     type    status        engine     detail
+m_sd                         assume  unprocessed
+a_integrity                  assert  undetermined             no engine reached a verdict
+--- DEPTH 16
+--- informal-ic3, limit 5s for each property
+property                     type    status        engine     detail
+m_sd                         assume  unprocessed
+a_integrity                  assert  undetermined             no engine reached a verdict
+--- DEPTH 4
+--- informal-ic3, limit 5s for each property
+property                     type    status        engine     detail
+m_sd                         assume  unprocessed
+a_integrity                  assert  proven        informal-ic3
+=== B: the slot helper, alone, DEPTH 16
+--- informal-kind, limit 5s for each property
+property                     type    status        engine     detail
+m_sd                         assume  unprocessed
+h_slot                       assert  proven        informal-kind
+=== C: the check with the helper assumed, DEPTH 16
+--- informal-kind, limit 5s for each property
+property                     type    status        engine     detail
+m_sd                         assume  unprocessed
+m_slot                       assume  unprocessed
+a_integrity                  assert  proven        informal-kind
+c_out                        cover   covered       informal-kind depth 10
+=== D: the read pointer steps by two
+--- informal-bmc, limit 5s for each property
+property                     type    status        engine     detail
+m_sd                         assume  unprocessed
+a_integrity                  assert  cex           informal-bmc depth 3
+verdict: integrity proven through one tracked word and one slot helper, and the mutant caught

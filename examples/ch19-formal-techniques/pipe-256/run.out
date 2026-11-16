@@ -1,0 +1,77 @@
+=== step 1: witness covers, on the boxed pipe
+--- informal-bmc, limit 10s for each property
+informal: black boxes in this model (outputs free, contents not modelled): fifo. A proof holds for the design; a counterexample may use output values the boxed logic cannot produce
+informal: svlang: the design has no assertions
+property                     type    status        engine     detail
+u0_CE                        assume  unprocessed
+u0_CF                        assume  unprocessed
+u1_CE                        assume  unprocessed
+u1_CF                        assume  unprocessed
+Drain_C                      cover   covered       informal-bmc depth 4
+Both1_C                      cover   covered       informal-bmc depth 3
+U1Full_C                     cover   covered       informal-bmc depth 258
+Full_C                       cover   undetermined             no engine reached a verdict
+=== step 2: the child's contract, with its ghost helper
+--- informal-kind, limit 5s for each property
+property                     type    status        engine     detail
+H_A                          assert  proven        informal-kind
+--- informal-kind, limit 5s for each property
+property                     type    status        engine     detail
+H_M                          assume  unprocessed
+CE_A                         assert  proven        informal-kind
+CF_A                         assert  proven        informal-kind
+=== steps 3 and 4: both children boxed, induction on the parent
+--- informal-kind, limit 5s for each property
+informal: black boxes in this model (outputs free, contents not modelled): fifo. A proof holds for the design; a counterexample may use output values the boxed logic cannot produce
+property                     type    status        engine     detail
+u0_CE                        assume  unprocessed
+u0_CF                        assume  unprocessed
+u1_CE                        assume  unprocessed
+u1_CF                        assume  unprocessed
+P1_A                         assert  undetermined             no engine reached a verdict
+P2_A                         assert  undetermined             no engine reached a verdict
+=== step 5: the parent helper
+--- informal-kind, limit 5s for each property
+informal: black boxes in this model (outputs free, contents not modelled): fifo. A proof holds for the design; a counterexample may use output values the boxed logic cannot produce
+property                     type    status        engine     detail
+u0_CE                        assume  unprocessed
+u0_CF                        assume  unprocessed
+u1_CE                        assume  unprocessed
+u1_CF                        assume  unprocessed
+HP_A                         assert  proven        informal-kind
+=== step 6: P1 and P2 with the parent helper assumed
+--- informal-kind, limit 5s for each property
+informal: black boxes in this model (outputs free, contents not modelled): fifo. A proof holds for the design; a counterexample may use output values the boxed logic cannot produce
+property                     type    status        engine     detail
+u0_CE                        assume  unprocessed
+u0_CF                        assume  unprocessed
+u1_CE                        assume  unprocessed
+u1_CF                        assume  unprocessed
+HP_M                         assume  unprocessed
+P1_A                         assert  proven        informal-kind
+P2_A                         assert  proven        informal-kind
+Drain_C                      cover   covered       informal-kind depth 4
+Both1_C                      cover   covered       informal-kind depth 3
+=== step 7: the mutant child (count wraps one push short of full)
+--- informal-bmc, limit 20s for each property
+property                     type    status        engine     detail
+H_A                          assert  cex           informal-bmc depth 256
+=== step 8: the record: step, engine, limit, property, answer
+  1  informal-bmc  10s  Drain_C   covered, depth 4
+  1  informal-bmc  10s  Both1_C   covered, depth 3
+  1  informal-bmc  10s  U1Full_C  covered, depth 258
+  1  informal-bmc  10s  Full_C    undetermined
+  2  informal-kind 5s   H_A       proven
+  2  informal-kind 5s   CE_A      proven
+  2  informal-kind 5s   CF_A      proven
+  4  informal-kind 5s   P1_A      undetermined
+  4  informal-kind 5s   P2_A      undetermined
+  5  informal-kind 5s   HP_A      proven
+  6  informal-kind 5s   P1_A      proven
+  6  informal-kind 5s   P2_A      proven
+  6  informal-kind 5s   Drain_C   covered, depth 4
+  6  informal-kind 5s   Both1_C   covered, depth 3
+  7  informal-bmc  20s  H_A       cex, depth 256
+  assumed: u0_CE u0_CF u1_CE u1_CF, proven as CE_A CF_A (step 2)
+  assumed: HP_M, proven as HP_A (step 5)
+verdict: P1 and P2 proven at 256 entries by induction, on two contracts and one helper, each proven

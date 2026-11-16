@@ -1,0 +1,52 @@
+=== A: the whole design, 256 words
+--- informal-kind, limit 5s for each property
+property                     type    status        engine     detail
+m_sa                         assume  unprocessed
+a_read                       assert  undetermined             no engine reached a verdict
+c_read                       cover   covered       informal-kind depth 2
+=== B: storage black-boxed, contract assumed
+--- informal-kind, limit 5s for each property
+informal: black boxes in this model (outputs free, contents not modelled): mem_store. A proof holds for the design; a counterexample may use output values the boxed logic cannot produce
+property                     type    status        engine     detail
+m_sa                         assume  unprocessed
+a_read                       assert  proven        informal-kind
+c_read                       cover   covered       informal-kind depth 2
+m_store                      assume  unprocessed
+=== C: storage black-boxed, no contract
+--- informal-kind, limit 5s for each property
+informal: black boxes in this model (outputs free, contents not modelled): mem_store. A proof holds for the design; a counterexample may use output values the boxed logic cannot produce
+property                     type    status        engine     detail
+m_sa                         assume  unprocessed
+a_read                       assert  cex           informal-kind depth 3
+c_read                       cover   covered       informal-kind depth 2
+=== D: the contract, proved on the real storage
+--- informal-kind, limit 5s for each property
+property                     type    status        engine     detail
+m_sa                         assume  unprocessed
+a_store                      assert  undetermined             no engine reached a verdict
+--- the helper, alone
+--- informal-kind, limit 20s for each property
+property                     type    status        engine     detail
+m_sa                         assume  unprocessed
+h_mem                        assert  proven        informal-kind
+--- the contract with the helper assumed
+--- informal-kind, limit 20s for each property
+property                     type    status        engine     detail
+m_sa                         assume  unprocessed
+m_mem                        assume  unprocessed
+a_store                      assert  proven        informal-kind
+=== E: the forwarding bug (BUG = 1)
+--- informal-kind, limit 5s for each property
+informal: black boxes in this model (outputs free, contents not modelled): mem_store. A proof holds for the design; a counterexample may use output values the boxed logic cannot produce
+property                     type    status        engine     detail
+m_sa                         assume  unprocessed
+a_read                       assert  cex           informal-kind depth 3
+c_read                       cover   covered       informal-kind depth 2
+m_store                      assume  unprocessed
+--- the whole design, 16 words
+--- informal-kind, limit 5s for each property
+property                     type    status        engine     detail
+m_sa                         assume  unprocessed
+a_read                       assert  cex           informal-kind depth 3
+c_read                       cover   covered       informal-kind depth 2
+verdict: 256 words proven through one slot, its contract proven on the storage, and the bug found both ways

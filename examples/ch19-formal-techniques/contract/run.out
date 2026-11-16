@@ -1,0 +1,23 @@
+=== A: DEPTH 16
+--- informal-kind, limit 5s for each property
+property                     type    status        engine     detail
+CE_A                         assert  proven        informal-kind
+CF_A                         assert  proven        informal-kind
+H_A                          assert  proven        informal-kind
+=== B: DEPTH 64
+--- the contract alone
+--- informal-kind, limit 5s for each property
+property                     type    status        engine     detail
+CE_A                         assert  undetermined             no engine reached a verdict
+CF_A                         assert  undetermined             no engine reached a verdict
+--- the ghost helper alone
+--- informal-kind, limit 5s for each property
+property                     type    status        engine     detail
+H_A                          assert  proven        informal-kind
+--- the contract with the helper assumed
+--- informal-kind, limit 5s for each property
+property                     type    status        engine     detail
+CE_A                         assert  proven        informal-kind
+CF_A                         assert  proven        informal-kind
+H_M                          assume  unprocessed
+verdict: the contract proven on its ghost count at 16 and, with the ghost helper, at 64

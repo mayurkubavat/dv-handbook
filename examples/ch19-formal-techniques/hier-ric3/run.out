@@ -1,0 +1,16 @@
+=== boxed
+--- ric3-ic3, limit 30s for each property
+informal: black boxes in this model (outputs free, contents not modelled): fifo. A proof holds for the design; a counterexample may use output values the boxed logic cannot produce
+property                     type    status        engine     detail
+u0_CE                        assume  unprocessed
+u0_CF                        assume  unprocessed
+u1_CE                        assume  unprocessed
+u1_CF                        assume  unprocessed
+P1_A                         assert  proven        ric3-ic3
+P2_A                         assert  proven        ric3-ic3
+=== flat
+--- ric3-ic3, limit 30s for each property
+property                     type    status        engine     detail
+P1_A                         assert  proven        ric3-ic3
+P2_A                         assert  proven        ric3-ic3
+verdict: rIC3 proves the pipe boxed and flat without the helper

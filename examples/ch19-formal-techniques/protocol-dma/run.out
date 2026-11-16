@@ -1,0 +1,32 @@
+=== A: the six master rules, the slave's rules assumed
+--- informal-ic3, limit 30s for each property
+property                     type    status        engine     detail
+dma_v2.u_ar.g_snd.Held_A     assert  proven        informal-ic3
+dma_v2.u_ar.g_snd.Stable_A   assert  proven        informal-ic3
+dma_v2.u_ar.g_snd.Wait_C     cover   covered       informal-ic3 depth 5
+dma_v2.u_aw.g_snd.Held_A     assert  proven        informal-ic3
+dma_v2.u_aw.g_snd.Stable_A   assert  proven        informal-ic3
+dma_v2.u_aw.g_snd.Wait_C     cover   covered       informal-ic3 depth 8
+dma_v2.u_w.g_snd.Held_A      assert  proven        informal-ic3
+dma_v2.u_w.g_snd.Stable_A    assert  proven        informal-ic3
+dma_v2.u_w.g_snd.Wait_C      cover   covered       informal-ic3 depth 8
+dma_v2.u_r.g_rcv.Held_M      assume  unprocessed
+dma_v2.u_r.g_rcv.Stable_M    assume  unprocessed
+dma_v2.u_b.g_rcv.Held_M      assume  unprocessed
+dma_v2.u_b.g_rcv.Stable_M    assume  unprocessed
+=== B: the first response offered is the one taken
+--- no rules assumed
+--- informal-ic3, limit 30s for each property
+property                     type    status        engine     detail
+RFirst_A                     assert  cex           informal-ic3 depth 6
+RWait_C                      cover   covered       informal-ic3 depth 6
+--- the slave's rules assumed
+--- informal-ic3, limit 30s for each property
+property                     type    status        engine     detail
+dma_v2.u_r.g_rcv.Held_M      assume  unprocessed
+dma_v2.u_r.g_rcv.Stable_M    assume  unprocessed
+dma_v2.u_b.g_rcv.Held_M      assume  unprocessed
+dma_v2.u_b.g_rcv.Stable_M    assume  unprocessed
+RFirst_A                     assert  proven        informal-ic3
+RWait_C                      cover   covered       informal-ic3 depth 5
+verdict: the master rules hold under the slave's, and one property holds only because of them

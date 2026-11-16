@@ -1,0 +1,19 @@
+=== A: $anyconst
+properties listed: 0
+--- informal-kind, limit 5s for each property
+property                     type    status        engine     detail
+=== B: a free input, held by an assumption
+properties listed: 2
+--- informal-kind, limit 5s for each property
+property                     type    status        engine     detail
+sc_free.Slot_A               assert  proven        informal-kind
+m_sa                         assume  unprocessed
+=== C: the reset cycle
+--- informal-kind, limit 5s for each property
+property                     type    status        engine     detail
+sc_free.Slot_A               assert  disabled
+m_sa                         assume  unprocessed
+C0_A                         assert  proven        informal-kind
+C0_C                         cover   unreachable   informal-kind
+C1_C                         cover   covered       informal-kind depth 1
+verdict: the anyconst spelling leaves no RTL property; the free input keeps them, and $stable binds the reset cycle too
