@@ -367,9 +367,30 @@ def summary(rows, vnext):
 def cell(c):
     verdict, why = c
     # A bare dollar in a note would open inline math in the book's
-    # Markdown, so it is escaped along with the column separator.
-    why = why.replace("|", "\\|").replace("$", "\\$")
+    # Markdown, so it is escaped. A pipe is left alone: the table is a
+    # grid table (see grid below).
+    why = why.replace("$", "\\$")
     return verdict + (" — " + why if why else "")
+
+
+def grid(header, rows):
+    """A grid table, one line to a cell. In a pipe table a pipe ends a
+    cell even inside a code span, and its escape is printed with the
+    backslash inside the span (pandoc 3.1.3); a grid table finds its
+    cells by position, so `a |-> b` is written as it is."""
+    every = [header] + rows
+    for c in (c for r in every for c in r):
+        # A grid cell is a block: this text would open one.
+        assert not re.match(r"([-+*] |[0-9]+[.)] |#|>|: )", c), c
+    width = [max(len(r[i]) for r in every) for i in range(len(header))]
+    rule = "+" + "+".join("-" * (w + 2) for w in width) + "+"
+
+    def line(r):
+        return "| " + " | ".join(c.ljust(w) for c, w in zip(r, width)) + " |"
+    md = [rule, line(header), rule.replace("-", "=")]
+    for r in rows:
+        md += [line(r), rule]
+    return md
 
 
 def table(rows, vers, vnext, what, label):
@@ -379,12 +400,8 @@ def table(rows, vers, vnext, what, label):
              "f": f"InFormal {vers.get('f', '')}"}
     cols = [k for k, _ in columns(vnext)]
     head = [names[k] for k in cols]
-    md = ["| Construct | " + " | ".join(head) + " |",
-          "|---|" + "---|" * len(head)]
-    for lab, _, c in rows:
-        # A pipe ends a table cell even inside a code span.
-        md.append(f"| {lab.replace('|', chr(92) + '|')} | "
-                  + " | ".join(cell(c[k]) for k in cols) + " |")
+    md = grid(["Construct"] + head,
+              [[lab] + [cell(c[k]) for k in cols] for lab, _, c in rows])
     counts = "; ".join(f"{h}: {count(rows, k)}"
                        for h, k in zip(head, cols))
     tried, n, w = flag_counts(rows)

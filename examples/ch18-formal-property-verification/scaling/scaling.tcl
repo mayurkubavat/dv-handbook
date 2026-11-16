@@ -6,6 +6,8 @@ set here [file dirname [info script]]
 source $here/../common/proof.tcl
 set engines {informal-kind informal-ic3 ric3-ic3}
 array set limit {informal-kind 5s informal-ic3 5s ric3-ic3 20s}
+# The helper, typed once: asserted, then assumed.
+set helper {count[$clog2(DEPTH)-1:0] == wr_ptr - rd_ptr}
 
 # The verdicts expected, by size: one letter for each engine in the
 # order above, P for proven and - for no verdict within the limit.
@@ -21,7 +23,7 @@ foreach depth {2 4 8 64} {
   clock clk
   reset -expression {!rst_n}
   assert -name EmptyPtrs_A {empty |-> wr_ptr == rd_ptr}
-  assert -name CountPtrs_A {count[$clog2(DEPTH)-1:0] == wr_ptr - rd_ptr}
+  assert -name CountPtrs_A $helper
   puts "=== $depth entries"
   set i 0
   foreach engine $engines {
@@ -35,7 +37,7 @@ foreach depth {2 4 8 64} {
   }
   puts "=== $depth entries, CountPtrs_A assumed"
   assert -disable CountPtrs_A
-  assume -name CountPtrs_M {count[$clog2(DEPTH)-1:0] == wr_ptr - rd_ptr}
+  assume -name CountPtrs_M $helper
   foreach engine $engines {
     one $engine $limit($engine) -all
     expect proven EmptyPtrs_A

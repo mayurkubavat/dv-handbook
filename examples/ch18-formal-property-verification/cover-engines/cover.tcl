@@ -7,11 +7,12 @@ source $here/../common/proof.tcl
 set name fifo.u_sva.FullReached_C
 set summary {}
 
-# note DESIGN ENGINE LIMIT -- one line of the summary printed last.
-proc note {design engine limit} {
+# note DESIGN -- one line of the summary printed last, naming the
+# engine and the limit of the last `one`.
+proc note {design} {
   set d [depth $::name]
-  lappend ::summary [format "  %-14s %-14s %-6s %s" $design $engine \
-      $limit "[get_status $::name][expr {$d < 0 ? "" : ", depth $d"}]"]
+  lappend ::summary [format "  %-14s %-14s %-6s %s" $design $::one_engine \
+      $::one_limit "[get_status $::name][expr {$d < 0 ? "" : ", depth $d"}]"]
 }
 
 # load RTL -- the FIFO with the temporal-properties chapter's checker.
@@ -28,11 +29,11 @@ puts "=== the first chapter's FIFO: full is raised at fifteen"
 load $here/../../ch01-what-is-dv/rtl/fifo.sv
 one informal-bmc 3s -property $name
 expect undetermined $name
-note "first chapter" informal-bmc 3s
+note "first chapter"
 foreach engine {informal-kind informal-ic3} {
   one $engine 20s -property $name
   expect unreachable $name
-  note "first chapter" $engine 20s
+  note "first chapter"
 }
 
 puts "=== the repaired FIFO"
@@ -41,7 +42,7 @@ foreach engine {informal-bmc informal-kind informal-ic3} {
   one $engine 20s -property $name
   expect covered $name
   expect_depth 17 $name
-  note repaired $engine 20s
+  note repaired
 }
 puts "=== FullReached_C: the FIFO, the engine, its limit, the answer"
 puts [join $summary "\n"]

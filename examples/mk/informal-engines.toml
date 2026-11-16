@@ -9,11 +9,15 @@
 # is not there.
 #
 # One external engine is listed: rIC3, run as `ric3 ... ic3`. An entry
-# changes nothing for a `prove` that selects another engine, and
-# nothing is run until a script selects `ric3-ic3` by name. A script
-# that does so belongs to an example with REQUIRES := ric3, which is
-# skipped where the program is not installed. The tool does not run
-# external engines on liveness properties.
+# changes nothing for a `prove` that selects another engine by name.
+# It does join every `prove` that runs with no engine selected (the
+# tool's portfolio), and `set_engine_mode` discards a selection made
+# with `informal::set_engines`; so every example selects its engine
+# before each `prove` and puts no `set_engine_mode` before one. A
+# script that selects `ric3-ic3` belongs to an example with
+# REQUIRES := ric3, which is skipped where the program is not
+# installed. The tool does not run external engines on liveness
+# properties.
 #
 # `{model}` is replaced with the model's path. rIC3 exits with status
 # 0 whatever it found, so the verdict is read from its output: a line

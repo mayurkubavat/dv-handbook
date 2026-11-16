@@ -22,11 +22,11 @@ get_property_list -include {type cover} ## names filtered by type
 set_prove_time_limit 5s ## limit for each property; units s, m, h
 set_prove_time_limit 500ms ## a unit the tool does not read
 informal::set_engines informal-kind ## select engines by name (tool extension)
-set_engine_mode {Ht} ## a vendor engine code
 prove -all ## prove every enabled property
 prove -property deep.a_never ## prove one property, by its full name
 prove -property a_never ## a short name for a property of the RTL
 prove -bg -all ## a vendor option that has no meaning here
+set_engine_mode {Ht} ## a vendor engine code
 == Results
 get_status a_step ## one status word
 get_status deep.a_never ## the same for a failing property

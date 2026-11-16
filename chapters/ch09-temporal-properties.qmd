@@ -87,21 +87,35 @@ The practical consequence is the one device this chapter uses for "must happen".
 
 The concurrent-assertion language builds properties out of *sequences*, and a sequence is a regular expression whose letters are clock ticks [@ieee1800-2023, clause 16.7]. A boolean expression matches one tick on which it is true. Everything else combines matches. This section is a reading guide. Of everything in the table the chapter's examples use the two implications and, in their covers, a fixed delay of one tick, and the third column says why a reader should be careful with the rest on the book's simulator.
 
-| Written | Read as | On the simulator measured | On the formal tool measured |
-|---|---|---|---|
-| `a ##2 b` | a, then b two ticks later: concatenation with a fixed gap | right | right |
-| `a ##[1:3] b` | a, then b one, two or three ticks later: a union of gaps | right in a consequent; matches lost in an antecedent | right |
-| `a[*3]` | a on three consecutive ticks | right | right |
-| `a[*1:3]`, `a[*]`, `a[+]` | a bounded or unbounded run of a, the Kleene star | wrong: false failures on the range, missed failures on the unbounded forms | right on the range; unbounded forms refused |
-| `b[->2]` | ticks up to and including the second b: *goto* repetition | wrong: missed failure | refused |
-| `b[=2]` | the same, and the match may run on past the second b | does not build in the form measured | refused |
-| `e throughout s` | e holds on every tick of a match of s | right | right |
-| `s1 within s2` | a match of s1 inside a match of s2 | wrong: missed failure | right |
-| `s1 intersect s2` | both match over the same ticks | does not build with a variable-length operand | right |
-| `s1 and s2`, `s1 or s2` | both match from one start; either matches | `or` never fails; `and` reports one failure twice | right |
-| `first_match(s)` | only the match of s that ends first | wrong with a ranged delay inside | right |
-| `s \|-> p` | wherever s matches, p holds starting on the tick s ends | right for the antecedents above that are right | right |
-| `s \|=> p` | the same, starting one tick after s ends | right; pass actions miscounted | right |
++---------------------------+-----------------------------------------------------------+----------------------------------------------------------------------------+---------------------------------------------+
+| Written                   | Read as                                                   | On the simulator measured                                                  | On the formal tool measured                 |
++===========================+===========================================================+============================================================================+=============================================+
+| `a ##2 b`                 | a, then b two ticks later: concatenation with a fixed gap | right                                                                      | right                                       |
++---------------------------+-----------------------------------------------------------+----------------------------------------------------------------------------+---------------------------------------------+
+| `a ##[1:3] b`             | a, then b one, two or three ticks later: a union of gaps  | right in a consequent; matches lost in an antecedent                       | right                                       |
++---------------------------+-----------------------------------------------------------+----------------------------------------------------------------------------+---------------------------------------------+
+| `a[*3]`                   | a on three consecutive ticks                              | right                                                                      | right                                       |
++---------------------------+-----------------------------------------------------------+----------------------------------------------------------------------------+---------------------------------------------+
+| `a[*1:3]`, `a[*]`, `a[+]` | a bounded or unbounded run of a, the Kleene star          | wrong: false failures on the range, missed failures on the unbounded forms | right on the range; unbounded forms refused |
++---------------------------+-----------------------------------------------------------+----------------------------------------------------------------------------+---------------------------------------------+
+| `b[->2]`                  | ticks up to and including the second b: *goto* repetition | wrong: missed failure                                                      | refused                                     |
++---------------------------+-----------------------------------------------------------+----------------------------------------------------------------------------+---------------------------------------------+
+| `b[=2]`                   | the same, and the match may run on past the second b      | does not build in the form measured                                        | refused                                     |
++---------------------------+-----------------------------------------------------------+----------------------------------------------------------------------------+---------------------------------------------+
+| `e throughout s`          | e holds on every tick of a match of s                     | right                                                                      | right                                       |
++---------------------------+-----------------------------------------------------------+----------------------------------------------------------------------------+---------------------------------------------+
+| `s1 within s2`            | a match of s1 inside a match of s2                        | wrong: missed failure                                                      | right                                       |
++---------------------------+-----------------------------------------------------------+----------------------------------------------------------------------------+---------------------------------------------+
+| `s1 intersect s2`         | both match over the same ticks                            | does not build with a variable-length operand                              | right                                       |
++---------------------------+-----------------------------------------------------------+----------------------------------------------------------------------------+---------------------------------------------+
+| `s1 and s2`, `s1 or s2`   | both match from one start; either matches                 | `or` never fails; `and` reports one failure twice                          | right                                       |
++---------------------------+-----------------------------------------------------------+----------------------------------------------------------------------------+---------------------------------------------+
+| `first_match(s)`          | only the match of s that ends first                       | wrong with a ranged delay inside                                           | right                                       |
++---------------------------+-----------------------------------------------------------+----------------------------------------------------------------------------+---------------------------------------------+
+| `s |-> p`                 | wherever s matches, p holds starting on the tick s ends   | right for the antecedents above that are right                             | right                                       |
++---------------------------+-----------------------------------------------------------+----------------------------------------------------------------------------+---------------------------------------------+
+| `s |=> p`                 | the same, starting one tick after s ends                  | right; pass actions miscounted                                             | right                                       |
++---------------------------+-----------------------------------------------------------+----------------------------------------------------------------------------+---------------------------------------------+
 
 : The sequence operators as regular expressions over clock ticks, with what Verilator 5.052 and InFormal 0.1.0 did with one probe of each. *Refused* means the tool named the operator as one it does not support. The verdicts are summarized from @tbl-ch09-support and @tbl-ch09-support-x, which carry the detail. {#tbl-ch09-seq}
 

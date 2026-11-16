@@ -29,7 +29,7 @@ a cover that is reachable (repaired FIFO of 16, FullReached_C)
     informal-ic3   covered, depth 17
     ric3-ic3       covered
     first choice   informal-bmc
-a cover that is not (first chapter's FIFO, FullReached_C)
+a cover that is not (FIFO of @sec-ch01-example, FullReached_C)
     informal-bmc   no verdict in 4 s
     informal-kind  unreachable
     informal-ic3   unreachable
@@ -39,7 +39,7 @@ liveness under a fairness assumption (requester, s_eventually gnt)
     informal-bmc   no verdict in 4 s
     informal-kind  proven
     informal-ic3   proven
-    ric3-ic3       no verdict in 4 s
+    ric3-ic3       not run
     first choice   informal-ic3
 a rule of a larger design (DMA, ArStable_A)
     informal-bmc   no verdict in 4 s

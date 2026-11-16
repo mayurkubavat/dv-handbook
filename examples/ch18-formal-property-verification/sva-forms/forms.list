@@ -155,7 +155,7 @@ p key coverseq kind cover label {`cover` of a sequence} \
 group "Where a property is written"
 p key tcl kind assert label {a shell command, `assert -name N {...}`} \
   good {done |-> q == LIM} bad {done |-> q != LIM}
-p key module kind rtl label {`assert property`, labelled, in a module} \
+p key module kind rtl label {`assert property`, labeled, in a module} \
   good in_module_t bad in_module_f
 p key nolabel kind rtl label {the same with no label} \
   good no_label_t bad no_label_f

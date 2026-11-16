@@ -126,13 +126,10 @@ if tally != COUNTS:
 
 # The other chapter's table, last column: runs / no build / wrong.
 theirs = {}
-for line in MATRIX.read_text().splitlines():
-    if line.startswith("| ") and not line.startswith("| Construct"):
-        cells = [c.strip().replace("\\|", "|").replace("\\$", "$")
-                 for c in re.split(r"(?<!\\)\|", line)[1:-1]]
-        word = cells[-1].split(" — ")[0]
-        theirs[cells[0]] = {"runs": "yes", "no build": "refused",
-                            "wrong": "dropped"}.get(word, word)
+for cells in tables.read(MATRIX):
+    word = cells[-1].split(" — ")[0]
+    theirs[cells[0]] = {"runs": "yes", "no build": "refused",
+                        "wrong": "dropped"}.get(word, word)
 differ = 0
 for key, label in CH09.items():
     mine = "refused" if klass[key] == "error" else klass[key]
@@ -155,5 +152,5 @@ tables.write(
     "one that does not, each in a session of its own with three "
     "seconds and one engine. *Accepted* is *yes* only when both "
     "verdicts are right. A depth counts the reset cycle as 0. "
-    "{#tbl-ch18-sva}")
+    "{#tbl-ch18-sva}", grid=True)
 print("wrote tbl-sva.md")

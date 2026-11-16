@@ -12,7 +12,7 @@ module cnt (
     else if (en && q != 4'd9) q <= q + 4'd1;
 endmodule
 
-// A labelled concurrent assertion in the module itself.
+// A labeled concurrent assertion in the module itself.
 module in_module_t (input logic clk, rst, en, output logic [3:0] q);
   cnt u (.*);
   Bound_A: assert property (@(posedge clk) disable iff (rst) q <= 4'd9);

@@ -6,8 +6,12 @@ set ::ch09   $::common/../../ch09-temporal-properties
 # one ENGINE LIMIT ARGS -- one `prove` with one engine selected and
 # the time limit set, under a heading that names both. The limit is
 # for each property, and it is printed because an `undetermined` row
-# means "no verdict within this limit" and nothing else.
+# means "no verdict within this limit" and nothing else. Both are
+# kept in ::one_engine and ::one_limit, so that a summary line can
+# name them without typing them again.
 proc one {engine limit args} {
+  set ::one_engine $engine
+  set ::one_limit $limit
   informal::set_engines $engine
   set_prove_time_limit $limit
   puts "--- $engine, limit $limit for each property"

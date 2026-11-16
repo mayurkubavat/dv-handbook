@@ -9,7 +9,7 @@ After this chapter you will be able to:
 2. Say what a bounded search establishes and what it leaves open, and read a depth, a bound and `undetermined` in a report without over-reading any of them.
 3. Write the base case and the step case of k-induction, read a counterexample to induction, and tell a property that is false from one that is true and not inductive.
 4. Strengthen a property with a helper invariant, and list what the proof then rests on.
-5. Follow IC3 on a small design through frames, its three queries, blocking and generalizing a state, propagation and the fixed point, and check the invariant it returns with three satisfiability queries.
+5. Follow IC3 on a small design through frames, its three queries, blocking and generalizing a state, propagation and the fixed point, and check the invariant it returns with three satisfiability checks.
 6. State what an assumption does to every engine's question, detect an over-constraint, and say why the same over-constraint reads `proven` under one engine and `undetermined` under another.
 7. Use covers as reachability questions, and a witness cover for each property as the check that a proof is not vacuous.
 8. Read a liveness counterexample as a lasso, write the fairness assumption that removes an unfair one, and say what a bounded rewrite of the property promises that the eventual form does not.
@@ -20,18 +20,18 @@ After this chapter you will be able to:
 
 In @sec-ch09-example a formal tool was given the repaired FIFO and one property of its registers: when the FIFO is empty, the write pointer equals the read pointer. The property is true. The report had four blocks for it, and the text moved on:
 
-```{.text include="examples/ch09-temporal-properties/fifo-proof/run.out" lines="13-29"}
+```{.text include="examples/ch09-temporal-properties/fifo-proof/run.out" lines="14-29"}
 ```
 
 Read the rows for `EmptyPtrs_A` one at a time. Bounded search: `undetermined`. Induction: `undetermined`. Induction again, with a second property assumed: `proven`. A third engine, alone: `proven`. Two of these rows are statements about the design. A `proven` says that no trace of the design, of any length, under the stated assumptions, violates the property. The other two are statements about an engine and a clock: neither engine finished within the limit that script set, and that is all `undetermined` says. The report prints the same word for a search that was about to find a bug and for a search that would never have ended.
 
-That chapter could not show what happened inside, because the shell prints no bound, no induction depth and no invariant (@sec-ch09-formal). The chapter before this one built the machinery underneath, a solver and an unrolled circuit, and stopped at the sentence that a bound is not a proof (@sec-ch17-example). This chapter opens the four rows. It does so on a FIFO of two entries, whose model has five state bits, so that every state can be listed, every query counted and every engine written in a page of Python on top of the solver of @sec-ch17-cdcl. Then it goes back to the tool and to 64 entries, where nothing can be listed, and asks the reader to predict the rows before running them.
+That chapter could not show what happened inside, because the shell prints no bound, no induction depth and no invariant (@sec-ch09-formal). The chapter before this one built the machinery underneath, a solver and an unrolled circuit, and stopped at the sentence that a bound is not a proof (@sec-ch17-example). This chapter opens the four rows. It does so on a FIFO of two entries, whose model has five state bits, so that every state can be listed, every query counted and every engine written in a few hundred lines of Python or less on top of the solver of @sec-ch17-cdcl. Then it goes back to the tool and to 64 entries, where nothing can be listed, and asks the reader to predict the rows before running them.
 
 ![The chapter in one picture. Each method turns the question into satisfiability queries of the kind built in @sec-ch17-example; they differ in what they ask and so in what they can hand back.](../figures/ch18-map.svg){#fig-ch18-map fig-alt="Three rows. Bounded model checking asks a solver about k steps from reset followed by a bad state, and returns a trace or nothing up to depth k. k-induction also asks about k good steps followed by a bad one, and returns a proof, a trace or a counterexample to induction. IC3 asks about one step relative to what is known, and returns a proof with an inductive invariant or a trace."}
 
 @fig-ch18-map is the plan. Bounded model checking searches forward from reset. Induction asks whether the property can be left in a step. IC3 builds, one clause at a time, a set of states that contains everything reachable and nothing bad. The second half of the chapter is about the parts of a formal result that no engine supplies: the assumptions, the covers that show a proof was not empty, and the properties that say *eventually*.
 
-The method was introduced under the name *model checking* in the early 1980s by Clarke and Emerson and, independently, by Queille and Sifakis [@clarke1981modelchecking; @queille1982cesar]. *Formal property verification* is the industry's name for model checking applied to RTL with properties written in an assertion language.
+The method now called model checking was introduced in the early 1980s by Clarke and Emerson and, independently, by Queille and Sifakis [@clarke1981modelchecking; @queille1982cesar]. *Formal property verification* is the industry's name for model checking applied to RTL with properties written in an assertion language.
 
 ## States, reachability and invariants {#sec-ch18-reach}
 
@@ -68,7 +68,7 @@ Every inductive invariant is an invariant: the reachable states are built from t
 ```{.text include="examples/ch18-formal-property-verification/reach/run.out" lines="28-36"}
 ```
 
-The property itself, taken as a set of fourteen states, is an invariant, since no bad state is reachable. It is not inductive: one of the white states, with `count` at one and equal pointers, steps into a bad state by a read. That step is real logic. The design does exactly that when it is in that state. It is never in that state. The set of six reachable states is inductive, as the reachable set of any system is, and it proves the property. So does a set of eight, the blue outline of the figure. A proof of a safety property is the exhibition of an inductive invariant between the reachable states and the bad ones, and the three proof methods of this chapter are three ways to find one or to do without finding one.
+Each candidate is counted after reset and taken together with the sixteen states of the reset cycle, which are initial and satisfy every candidate here. The property itself, taken as a set of fourteen states, is an invariant, since no bad state is reachable. It is not inductive: one of the white states, with `count` at one and equal pointers, steps into a bad state by a read. That step is real logic. The design does exactly that when it is in that state. It is never in that state. The set of six reachable states is inductive, as the reachable set of any system is, and it proves the property. So does a set of eight, the blue outline of the figure. A proof of a safety property is the exhibition of an inductive invariant between the reachable states and the bad ones, and the three proof methods of this chapter are three ways to find one or to do without finding one.
 
 ::: {.callout-warning title="Pitfall"}
 *True* and *inductive* are different words. A property that fails an induction check is not thereby false, and the state the tool shows for the failure need not be reachable. Before debugging the design from such a state, ask whether the design can get there.
@@ -96,7 +96,7 @@ Three things in this report are worth a sentence each.
 
 The depths are 17, 65 and 129: one more than `BUG`, because this tool numbers the reset cycle 0, so the counter holds zero in cycle 1 and `BUG` after that many enabled cycles more. A depth is the index of the cycle in which the property fails. When the engine tries the bounds in order, the first satisfiable one is the shortest counterexample, and that is a real service to whoever debugs it: no test hits a bug in fewer cycles.
 
-The fourth block uses the tool's engine `informal-bmc-10`, which according to the tool's engine documentation adds ten frames between solver calls [@informal-tool]. It reports depth 66 for a bug whose shortest trace has depth 65. Both are counterexamples. An engine that does not try every bound may return a trace that is longer than necessary, and the script checks only what can be promised: the depth is not below 65.
+The fourth block uses the tool's engine `informal-bmc-10`, which according to the tool's engine documentation adds ten frames between solver calls [@informal-tool]. It reports a depth above 65, here 66, for a bug whose shortest trace has depth 65. Both are counterexamples. An engine that does not try every bound may return a trace that is longer than necessary, and the script checks only what can be promised: the depth is not below 65.
 
 The last two blocks print the same row, `undetermined`, for two opposite situations. In one the property is true: with `en` assumed low the counter never moves, and a bounded search would run forever without finding or proving anything. In the other the property is false and the bug is 1,024 steps away; three seconds were not enough to unroll that far. Nothing in the row tells the two apart.
 
@@ -110,7 +110,7 @@ Can a bounded search ever prove a property? In principle, yes. If no bad state i
 A **completeness threshold** for a transition system and a safety property is a bound $k$ such that, if no counterexample of at most $k$ steps exists, none exists at all.
 :::
 
-The term is from Clarke, Kroening, Ouaknine and Strichman [@clarke2004completeness]. For the two-entry FIFO the script of the last section computed a threshold directly: the deepest reachable state is first reached at step 4, so a search through bound 4 has visited every reachable state. Nobody computes it this way for a real design, because finding the deepest reachable state is the reachability problem the search was meant to avoid. For the counter above with its 16-bit register, the threshold is of the order of 65,536, and the run above did not reach depth 1,025 in three seconds. A bounded search is a bug finder with a guarantee attached: what it finds is real and, tried in order, shortest. What it does not find, it says nothing about beyond the bound it reached, and this tool's report does not print that bound.
+Clarke, Kroening, Ouaknine and Strichman call such a bound the completeness threshold and study how large it must be [@clarke2004completeness]. A threshold is not one number: for a true property every bound is one. The useful kind is one that works for every safety property of the design, so that it can be used without knowing the answer, and the depth of the deepest reachable state is such a bound. For the two-entry FIFO the script of the last section computed it directly: the deepest reachable state is first reached at step 4, so a search through bound 4 has visited every reachable state. Nobody computes it this way for a real design, because finding the deepest reachable state is the reachability problem the search was meant to avoid. The deepest reachable state of the counter above, with its 16-bit register, is about 65,536 steps from reset, and the run above did not reach depth 1,025 in three seconds. A bounded search is a bug finder with a guarantee attached: what it finds is real and, tried in order, shortest. What it does not find, it says nothing about beyond the bound it reached, and this tool's report does not print that bound.
 
 ::: {.callout-tip title="In Practice"}
 A bounded result is worth recording only with its bound. "No counterexample to depth 40, and the deepest behavior the block has, a full queue drained, takes 33 cycles" (the depth of the `Drained_C` cover in @sec-ch09-example) is an argument a reviewer can weigh. "BMC passed" is not. The covers of @sec-ch18-cover are how the second half of that sentence is measured and not guessed.
@@ -128,17 +128,17 @@ The second part is one satisfiability query about one copy of the logic: is ther
 
 The argument: suppose a bad state were reachable, and take a shortest path to one. By the base case it has at least $k$ steps, so its last $k + 1$ states exist, and all but the last are good because the path is shortest. That is a model of the step case, which has none. Induction on the depth of a path with a satisfiability solver was published by Sheeran, Singh and Stålmarck [@sheeran2000checking], and an incremental formulation by Eén and Sörensson under the name temporal induction [@een2003temporal].
 
-The chapter's engine is thirty lines on the unrolling class of the last chapter. It raises $k$ from zero, and at each value asks first the base query and then the step query:
+The chapter's engine is thirty lines on this chapter's unrolling class, `Frame`, built on the solver of the last chapter. It raises $k$ from zero, and at each value asks first the base query and then the step query:
 
 ```{.python include="examples/ch18-formal-property-verification/kind/kind.py" lines="33-62"}
 ```
 
-The script's `k` is the definition's, with two additions. It starts at zero, where the step query is simply "is there a bad state at all". And its base query at `k` asks for a bad state exactly `k` steps from reset, the earlier depths having been asked in earlier rounds, which is one depth more than the definition needs. On the two-entry FIFO:
+The script's `k` is the definition's, with two additions. It starts at zero, where the step query is simply "is there a bad state at all"; its model there is a single bad state, which is not a counterexample to induction in the sense defined below. And its base query at `k` asks for a bad state exactly `k` steps from reset, the earlier depths having been asked in earlier rounds, which is one depth more than the definition needs. On the two-entry FIFO:
 
 ```{.text include="examples/ch18-formal-property-verification/kind/run.out" lines="1-18"}
 ```
 
-Every base case is unsatisfiable: there is no counterexample, as the enumeration already showed. Every step case is satisfiable, at every $k$ up to 8 and, by the argument below, at every larger one. The decoded path says why. It starts in a state with `count` at three, which a two-entry FIFO never holds; a simultaneous read and write move both pointers and leave the count alone; the same again brings the path back to its first state; and then a read with the count somehow at zero and the pointers apart is the bad state. All four states are unreachable. The solver was asked for any states that fit the transition relation, and it found some.
+Every base case is unsatisfiable: there is no counterexample, as the enumeration already showed. Every step case is satisfiable, at every $k$ up to 8 and, by the argument below, at every larger one. The decoded path says why. It starts in a state with `count` at three, which a two-entry FIFO never holds; a simultaneous read and write move both pointers and leave the count alone; the same again brings the path back to its first state; and then a write, accepted because a count of three is not *full*, moves the write pointer alone and wraps the two-bit count from three to zero: empty, with the pointers apart, the bad state. All four states are unreachable. The solver was asked for any states that fit the transition relation, and it found some.
 
 ::: {.callout-note title="Definition"}
 A **counterexample to induction** is a model of the step case: a sequence of states joined by transitions, good in all but the last, with no requirement that the first be reachable. It shows that the property is not k-inductive for that $k$. It does not show that the property is false.
@@ -152,7 +152,7 @@ Why did raising $k$ not help? Because states 0 and 2 of the path are the same st
 The **unique-states constraint**, also called the **simple-path** or loop-free constraint, adds to the step case that $s_i \ne s_j$ for all $i < j \le k$. With it, k-induction is **complete** for finite systems: for every true safety property there is a $k$ at which the step case is unsatisfiable.
 :::
 
-Completeness has a short proof. A system with $n$ state bits has $2^n$ states, so a path of pairwise different states has at most $2^n$ of them. At $k = 2^n$ the step case asks for $2^n + 1$ different states and has no model, whatever the property. If the property is true the base case never has one either. Removing a repeated stretch from a path does not lose a counterexample, since the shorter path still ends in the same bad state, so the constraint is sound. In `kind.py` it is the function `differ`, a few clauses for each pair of copies, switched on by an argument:
+Completeness has a short proof. A system with $n$ state bits has $2^n$ states, so a path of pairwise different states has at most $2^n$ of them. At $k = 2^n$ the step case asks for $2^n + 1$ different states and has no model, whatever the property. If the property is true the base case never has one either. The constraint is sound because a shortest counterexample never visits a state twice, so its last $k + 1$ states are still a model of the constrained step case. The bound can be made exact. The step case at $k$ has a model exactly when some path of $k$ pairwise different good states ends with a step into a bad state, so the least $k$ that works is one more than the number of good states on the longest such path. That path with its bad state is itself a path of pairwise different states, and the longest path of pairwise different states in a system, counted in steps, is called its *recurrence diameter*; the least $k$ is never more than the recurrence diameter plus one. In `kind.py` it is the function `differ`, a few clauses for each pair of copies, switched on by an argument:
 
 ```{.text include="examples/ch18-formal-property-verification/kind/run.out" lines="19-38"}
 ```
@@ -163,7 +163,7 @@ Proven at $k = 7$, with a model that has 32 states. @fig-ch18-cti puts the two p
 
 The last block of the output is the method on a design with a bug, the FIFO of @sec-ch01-example in the model of @sec-ch17-example: the base case becomes satisfiable at 16, as bounded search found there. Induction contains bounded search as its base case, which is why an induction engine reports counterexamples as well as proofs.
 
-Complete does not mean practical. The bound from the argument above is $2^n$, the same exponential as listing the states, and nothing promises that the $k$ which works is much smaller. On two entries it was 7. The tool's induction engine, which its documentation describes as k-induction with unique-state constraints added as needed [@informal-tool], proves this property at two entries and gave no verdict at four entries within its limit in the measurements of @sec-ch18-engines. That is one design and one limit, and no rule; it is also the common experience that a property whose proof depends on *which states are reachable* is not one for induction alone.
+Complete does not mean practical. The bound from the argument above is $2^n$, the same exponential as listing the states, and nothing promises that the $k$ which works is much smaller. On two entries it was 7. The tool's induction engine, which its documentation describes as k-induction with unique-state constraints added as needed [@informal-tool], proves this property at two entries and gave no verdict at four entries within its limit in the measurements of @sec-ch18-engines. That is one design and one limit, and no rule. This book's advice is not to expect induction alone to prove a property whose proof depends on *which states are reachable*.
 
 ::: {.callout-warning title="Pitfall"}
 The $k$ in this chapter's script, the depth a tool prints with a counterexample, and the bound an induction engine reports while it runs are three numbers with three conventions: whether the reset cycle counts, whether $k$ counts states or transitions, whether the base case at $k$ includes depth $k$. Compare them only after working out each convention on a design whose answer you know, as the counter above allows.
@@ -212,6 +212,8 @@ The engine keeps a sequence of sets $F_0, F_1, \ldots, F_k$, each a conjunction 
 A **frame** $F_i$ is a set of states, held as a set of lemmas, that contains every state reachable in at most $i$ steps and possibly more. IC3 maintains four facts about its frames: $F_0$ is the set of initial states; each frame is contained in the next, $F_i \subseteq F_{i+1}$; every transition from a state of $F_i$ ends in $F_{i+1}$; and no frame below the last contains a bad state. The last frame, $F_k$, is the **frontier**.
 :::
 
+The word *frame* means a set of states only in this section. The unrolling of @sec-ch17-example called each copy of the logic a frame, and the tool's trace comments call a cycle of a trace a frame.
+
 Bradley's paper states invariants of this kind for its sequence [@bradley2011sat]; the wording here describes this chapter's script, `ic3.py`, which stores each lemma once, at the highest level $i$ for which it is known to hold in $F_1$ to $F_i$. That storage makes the second fact true by construction, and Eén, Mishchenko and Brayton describe the same arrangement [@een2011pdr].
 
 The four facts say that the frames are over-approximations that get looser with distance: $F_1$ may claim a lot, since little is reachable in one step, and $F_5$ must allow more. They also say when to stop. If two neighboring frames are equal, $F_i = F_{i+1}$, then by the third fact a step from $F_i$ stays in $F_i$, by the first two it contains the initial states, and by the fourth it contains no bad state. It is an inductive invariant that proves the property.
@@ -259,7 +261,7 @@ The first two frontiers of the run on the two-entry FIFO:
 ```{.text include="examples/ch18-formal-property-verification/ic3/run.out" lines="1-23"}
 ```
 
-The output leaves `started=1` out of every cube. At frontier 1 the engine finds a bad state in $F_1$, which so far has no lemmas and is every state. It has no predecessor in $F_0$, the reset cycle, so it is blocked, and generalization shrinks the five-literal state to a single literal: *never `wr_ptr=1`*. That is false of the design, and it is not claimed of the design. It is claimed of $F_1$, the states within one step of reset, where the only post-reset state is the empty one.
+The output leaves `started=1` out of every cube. At frontier 1 the engine finds a bad state in $F_1$, which so far has no lemmas and is every state. It has no predecessor in $F_0$, the reset cycle, so it is blocked, and generalization shrinks the five-literal state to one literal besides `started`: *never `wr_ptr=1`*. That is false of the design, and it is not claimed of the design. It is claimed of $F_1$, the states within one step of reset, where the only post-reset state is the empty one.
 
 At frontier 2 the same bad state is found in $F_2$, and now it has a predecessor in $F_1$: `count=3` with both pointers at zero. It is a white state of the kind that defeated induction. IC3 does not walk around it. It takes it as an obligation one frame down, finds that nothing in $F_0$ steps into it, and learns *never `count[1]=1`* at level 1; then the original state is blocked at level 2. After each frontier comes propagation: every lemma is asked the third question and moves up a level if it passes. The run needs five frontiers:
 
@@ -283,7 +285,7 @@ IC3 finds counterexamples too, and pays for them: 1,462 single-step queries for 
 IC3 is the engine to reach for when a property's truth depends on which states are reachable and nobody has written the helper. It is also an engine whose running time is hard to predict, because it depends on how well each lemma generalizes. A helper that a designer can state in one line is still worth stating: @sec-ch18-engines measures the difference.
 :::
 
-Between induction and IC3 in history stands a third idea, which this book describes and does not run. McMillan showed in 2003 that the solver's refutation of a bounded unrolling can be turned into a formula over the state after one step, an *interpolant*, that contains every state reachable in one step and still cannot reach a bad state within the bound; iterating the construction reaches a fixed point, which is an inductive invariant [@mcmillan2003interpolation]. The tool this book runs has no interpolation engine at the pinned commit, according to its engine documentation [@informal-tool].
+Between induction and IC3 in history stands a third idea, which this book describes and does not run. McMillan showed in 2003 that the solver's refutation of a bounded unrolling can be turned into a formula over the state after one step, an *interpolant*, that contains every state reachable in one step and still cannot reach a bad state within the bound; iterating the construction reaches a fixed point, which is an inductive invariant [@mcmillan2003interpolation]. The tool this book runs has no interpolation engine of its own at the pinned commit; its documentation lists one external checker that has one, which this book did not build [@informal-tool].
 
 ## What the tool shows of all this {#sec-ch18-trust}
 
@@ -292,9 +294,9 @@ The chapter's engines are for reading. They are checked, so that what was read i
 ```{.text include="examples/ch18-formal-property-verification/ic3-fuzz/run.out"}
 ```
 
-Plain induction leaves some true properties undecided at the bound the test allows; induction with unique states and IC3 decide every case, as both must on a finite system.
+Plain induction leaves some true properties undecided at the bound the test allows; induction with unique states and IC3 decide every case here, and both must on a finite system given a large enough bound.
 
-The tool's engines are for use, and show much less. Its report has a status and, for a trace, a depth. With an environment variable set, its IC3 engine prints one line of statistics, of which the example keeps three counts, and its induction engine, run as a separate process on the model file, prints the bounds it passes:
+The tool's engines are for use, and show much less. Its report has a status and, for a trace, a depth. With an environment variable set, its IC3 engine prints statistics, of which the example keeps one line and three counts, and its induction engine, run as a separate process on the model file, prints the bounds it passes:
 
 ```{.text include="examples/ch18-formal-property-verification/engine-view/run.out" lines="15-25"}
 ```
@@ -307,7 +309,7 @@ The line `certificate: Ok` matters more than the counts. A verdict from a large 
 A **certificate** for a verdict is evidence that a simple, independent program can check. For a counterexample it is the trace: replay the inputs on the model and watch the bad state arrive. For a proof it is an inductive invariant: three satisfiability queries, each over at most one step, confirm that it holds in every initial state, is closed under a transition, and contains no bad state.
 :::
 
-The function `certify` at the end of `ic3.py` is those three checks in ten lines, and the IC3 output above ends with their result. The tool's documentation says its IC3 engine's invariant is checked before `proven` is reported [@informal-tool], and the line above is that check's result. The 2024 edition of the hardware model checking competition made certificates mandatory in its bit-level tracks [@hwmcc2024]; certifying model checking results in a common format is the subject of work by Yu, Biere and Heljanko [@yu2021progress]. The tool at this commit writes no certificate file. A k-induction proof has a certificate too, but not as directly: the property is not itself an inductive invariant, which was the whole difficulty.
+The function `certify` at the end of `ic3.py` is those three checks in ten lines, and the IC3 output above ends with their result; it counts seven queries for them, because the script asks the closure question once for each lemma. The tool's documentation says its IC3 engine's invariant is checked before `proven` is reported [@informal-tool], and the line above is that check's result. The 2024 edition of the hardware model checking competition made certificates mandatory in its bit-level tracks [@hwmcc2024]; certifying model checking results is the subject of work by Yu, Biere and Heljanko [@yu2021progress]. The tool at this commit writes no certificate file. A k-induction proof has a certificate too, but not as directly: the property is not itself an inductive invariant, which was the whole difficulty.
 
 ## Assumptions are part of the question {#sec-ch18-assume}
 
@@ -326,10 +328,10 @@ With no assumptions, the tool proves the first and refutes the second, with a tr
 In each of the three, `a_false` is *proven*. The proof is correct. Under `assume {!req}` no request ever arrives, so no grant is ever given, so "never a grant" holds in every trace that the assumption allows.
 
 ::: {.callout-note title="Definition"}
-A set of assumptions is an **over-constraint** if it excludes behavior that the real environment can produce. A property proved under an over-constraint is proved only for the behavior that remains. Assumptions are **contradictory** if no trace satisfies all of them; then every assertion is proved and every cover is unreachable.
+A set of assumptions is an **over-constraint** if it excludes behavior that the real environment can produce. A property proved under an over-constraint is proved only for the behavior that remains. Assumptions are **contradictory** if no trace satisfies all of them; then every assertion is proved and every cover is unreachable. A **dead end** is a reachable state at which every trace that satisfies the assumptions stops.
 :::
 
-The three cases are three degrees of the same failure. The first is a plain over-constraint: traces exist, and none of them does anything. The second is a contradiction in one cycle, a data value below eight and above nine, and it leaves no trace at all: even the cover of the constant `1'b1` is unreachable. The third is the kind that reaches real projects. Each assumption is reasonable alone, *always request* and *never request while busy*; together they have no continuation once the first request has made the design busy. A trace counts only if every assumption holds in every one of its cycles, so the traces under this pair all end before `busy` is ever seen high. The constant cover is still reached, at depth 1, which is why a single always-true cover does not detect a contradiction that takes time to bite.
+The three cases are three degrees of the same failure. The first is a plain over-constraint: traces exist, and none of them does anything. The second is a contradiction in one cycle, a data value below eight and above nine, and it leaves no trace at all: even the cover of the constant `1'b1` is unreachable. The third is the kind this book would expect to meet in practice. Each assumption is reasonable alone, *always request* and *never request while busy*; together they have no continuation once the first request has made the design busy. A trace counts only if every assumption holds in every one of its cycles, so the traces under this pair all end before `busy` is ever seen high. Every trace under this pair stops at a dead end, the last cycle before `busy` rises. The constant cover is still reached, at depth 1, which is why a single always-true cover does not detect a contradiction that takes time to bite. That verdict is this tool's behavior at this commit: it counts a trace that stops at a dead end, and a tool that counted only traces that can be continued for ever would call the cover unreachable.
 
 Look for what is the same in the three reports. The assertion rows all read *proven*. The row that changed is a cover. Nothing else in a report shows an over-constraint, and this is the general statement:
 
@@ -373,9 +375,9 @@ The second use of covers is the one the last section led to. A proof needs a com
 A **witness cover** for an assertion is a cover of the situation the assertion is about: for an implication, its antecedent, together with enough of the consequent to show the interesting case occurring. An assertion that is proved while its witness cover is unreachable holds **vacuously**.
 :::
 
-Vacuity was defined in @sec-ch09-vacuity for a single trace in simulation, where an implication whose antecedent never matched passes without having checked anything; the notion comes from the model-checking literature [@beer2001vacuity]. In formal verification it is sharper. An unreachable witness is a proof that the antecedent can never match in *any* trace, so the assertion will never check anything, in this environment, on this design. The cause is either the design, as with the FIFO that never fills, or the assumptions, as in the last section. Either way the *proven* row above it is worth nothing until someone has explained the unreachable row.
+Vacuity was defined in @sec-ch09-vacuity for a single trace in simulation, where an implication whose antecedent never matched passes without having checked anything; the notion comes from the model-checking literature, where it is wider than an antecedent that never matches [@beer2001vacuity]; that case is the one this chapter means. In formal verification it is sharper. An unreachable witness is a proof that the antecedent can never match in *any* trace, so the assertion will never check anything, in this environment, on this design. The cause is either the design, as with the FIFO that never fills, or the assumptions, as in the last section. Either way the *proven* row above it is worth nothing until someone has explained the unreachable row.
 
-A witness should be chosen with a little care. The cover of the bare antecedent is the minimum. For `EmptyPtrs_A`, whose antecedent is `empty`, the bare cover is reached in the first cycle after reset and shows nothing about a FIFO that has been used; the worked example covers *empty again, with the write pointer moved* instead. A depth printed beside a covered cover is also information: it is the length of the shortest trace to the situation, and so a lower limit on the bound a bounded check of the matching assertion needs before it has examined that situation even once.
+A witness should be chosen with a little care. The cover of the bare antecedent is the minimum. For `EmptyPtrs_A`, whose antecedent is `empty`, the bare cover is reached in the first cycle after reset and shows nothing about a FIFO that has been used; the worked example covers *empty again, with the write pointer moved* instead. A depth printed beside a covered cover is also information. When the cover was found by a bounded search that tries every bound in order, as `informal-bmc` does, the depth is the length of the shortest trace to the situation, and so a lower limit on the bound a bounded check of the matching assertion needs before it has examined that situation even once; from another engine it is only the length of a trace.
 
 ::: {.callout-warning title="Pitfall"}
 A covered witness shows that the antecedent can occur. It does not show that the assertion is strong enough, or that the interesting consequent occurs in more than one way. Formal coverage of the property set, which asks what part of the design the proofs actually depend on, is a subject of a later chapter on formal techniques.
@@ -392,13 +394,13 @@ The design takes a request, works for two cycles and grants. An input `stall` ho
 
 The property is `req && n == 2'd0 |-> s_eventually gnt`: every request taken while idle is eventually granted. The tool refutes it:
 
-```{.text include="examples/ch18-formal-property-verification/lasso/run.out" lines="1-11"}
+```{.text include="examples/ch18-formal-property-verification/lasso/run.out" lines="1-14"}
 ```
 
 A counterexample to *eventually* has to be an infinite trace on which the grant never comes. A finite-state design cannot produce an infinite trace without repeating a state, and once a state repeats, the inputs that led from its first occurrence to its second can be applied again, for ever.
 
 ::: {.callout-note title="Definition"}
-A **lasso** is a finite trace whose last state equals one of its earlier states. The part before the repeated state is the **stem**; the part from its first occurrence to its second is the **loop**. A lasso stands for the infinite trace that follows the stem once and the loop for ever. A liveness property over a finite-state system is false exactly when some lasso violates it: the awaited event does not occur anywhere in the loop.
+A **lasso** is a finite trace whose last state equals one of its earlier states. The part before the repeated state is the **stem**; the part from its first occurrence to its second is the **loop**. A lasso stands for the infinite trace that follows the stem once and the loop for ever. A liveness property written in SVA, over a finite-state system, is false exactly when some lasso violates it. For `a |-> s_eventually b` that is a lasso on which `a` holds in some cycle and `b` holds in no later cycle of the stem and in no cycle of the loop. The state that repeats includes the registers the tool adds to follow the property.
 :::
 
 The tool's comment under the report names the lasso: frame 4 has the state of frame 3 again. @fig-ch18-lasso draws it. The request arrives in cycle 1, the design works through cycles 2 and 3, and in cycle 3 `stall` is high, so in cycle 4 the register `n` is 2 again. The loop is one cycle long and `stall` sustains it.
@@ -409,7 +411,7 @@ The tool's comment under the report names the lasso: frame 4 has the state of fr
 Read a liveness trace by its loop, not by its last row. The last row is the state in which the loop closes; the inputs that drive the loop are in the rows before it. Here `stall` is 1 in the row of cycle 3 and 0 in the last row, and it is the 1 that matters. The depth can mislead as well: with a second property in the same session the tool printed this counterexample at depth 7 and not 4, as the example's second block shows, because the loop has to close in every register of the model, including the ones the other property added.
 :::
 
-How does an engine built for safety find a loop? By a construction due to Biere, Artho and Schuppan that turns the liveness question into a safety question on a larger design [@biere2002liveness]. Add a copy of every register. Add an input that, at a moment the solver chooses, saves the current state into the copy. Add a flag that records whether the awaited event has occurred since the save. The bad state of the new design is: the current state equals the saved one, and the flag says the event has not occurred. A trace to that bad state is a lasso, and the paper notes that the translation handles fairness too. The price is a model with twice the state bits. The tool's shell documentation says it reduces `s_eventually` this way, with a shadow copy of the state [@informal-tool]. After the reduction the property is a safety property, and bounded search, induction and IC3 apply to it as to any other.
+How does an engine built for safety find a loop? By a construction due to Biere, Artho and Schuppan that turns the liveness question into a safety question on a larger design [@biere2002liveness]. Add a copy of every register. Add an input that, at a moment the solver chooses, saves the current state into the copy. Add a flag that records whether the awaited event has occurred since the save. The bad state of the new design is: a save has happened, a request is still waiting for its event, the current state equals the saved one, and the flag says the event has not occurred. A trace to that bad state is a lasso, and the paper notes that the translation handles fairness too. The price is a model with twice the state bits. The tool's shell documentation says it reduces `s_eventually` this way, with a shadow copy of the state, although the overview in its README at the same commit still lists liveness as unfinished [@informal-tool]. After the reduction the property is a safety property, and bounded search, induction and IC3 apply to it as to any other.
 
 ### Fair and unfair counterexamples
 
@@ -429,7 +431,7 @@ There is a second remedy, which is to bound the environment: assume that a stall
 
 Six results, and the pattern among them is the lesson. With no assumption both forms fail. Fairness proves the eventual form and does not prove the bounded one: an environment that stalls for two cycles and then stops is fair, and the grant arrives in the fifth cycle after the request, one too late. The bound on the environment proves both.
 
-So the two forms promise different things and need different things. *Eventually* with fairness says the design never deadlocks or starves, provided the environment keeps moving; it says nothing about how long anything takes, and its proof survives any change to the design's latency. A bounded property says how long, is a safety property with a finite counterexample that any engine can find, and needs an environment bounded in time to be true at all. Performance requirements are of the second form. "The arbiter never starves a requester" is of the first, and rewriting it with a generous bound, as teams without a liveness engine do, changes its meaning: the bound becomes a number that someone has to maintain, and a failure of the rewritten property may be a latency change and not a deadlock.
+So the two forms promise different things and need different things. *Eventually* with fairness says the design never deadlocks or starves, provided the environment keeps moving; it says nothing about how long anything takes, and its proof survives any change to the design's latency. A bounded property says how long, is a safety property with a finite counterexample that any engine can find, and needs an environment bounded in time to be true at all. Performance requirements are of the second form. "The arbiter never starves a requester" is of the first, and rewriting it with a generous bound, the obvious move for a team without a liveness engine, changes its meaning: the bound becomes a number that someone has to maintain, and a failure of the rewritten property may be a latency change and not a deadlock.
 
 ::: {.callout-tip title="In Practice"}
 Write the liveness property first, because it is the requirement. Prove it under fairness assumptions that name what the environment owes: every `ready` eventually rises, every stall eventually ends. Then, if the specification gives a latency, write the bounded property as a second, separate assertion with its own assumptions. And give each fairness assumption the review of @sec-ch18-assume: `s_eventually !stall` is an assumption on an input, and someone has to guarantee it.
@@ -441,7 +443,7 @@ The engines differ in the kind of answer they can give, and that, more than spee
 
 {{< include /examples/ch18-formal-property-verification/engine-guide/tbl-engines.md >}}
 
-The rule in the last column is applied by the script, which fails if the engine it names gave no answer. The table is small, and each row is one design and one limit; what it shows is a pattern, not a ranking. Bounded search gave a verdict on every row whose answer is a trace and on no other. Induction and IC3 found every trace as well, at the same depths, since both contain a search from reset. The one-step fact was proved by all three proving engines, and so was the unreachable cover. The pointer property and the rule of the larger design of @sec-ch11 were proved by the two IC3 engines only. On the liveness row both in-house proving engines returned a proof within the limit, and the external engine returned none.
+The rule in the last column is applied by the script, which fails if the engine it names gave no answer. The table is small, and each row is one design and one limit; what it shows is a pattern, not a ranking. Bounded search gave a verdict on every row whose answer is a trace and on no other. Induction and IC3 found every trace as well, at the same depths: induction's base case is a bounded search, and IC3 clears each frontier before opening the next, so the chain of proof obligations that reaches frame 0 has as many steps as the shortest trace. The one-step fact was proved by all three proving engines, and so was the unreachable cover. The pointer property and the rule of the larger design of @sec-ch11 were proved by the two IC3 engines only. On the liveness row both in-house proving engines returned a proof within the limit. The external engine has no answer there because it was never asked: the tool does not send liveness properties to external engines [@informal-tool], and the session it records lists no engine for that property, which is what the script reads to print *not run*.
 
 The fourth engine is rIC3, an IC3 implementation by Su and others [@su2025ric3], which the tool can call as an external program. It is named here to identify what the examples ran, and nothing in this book describes its internals. A script that selects it declares so, and the example is skipped where the program is not installed.
 
@@ -464,20 +466,20 @@ Read it for orders of magnitude. Bounded search slows quickly with depth, becaus
 A workable order for a new property: covers first, by bounded search, to learn the depths at which things happen. Then bounded search on the assertion, for the cheap bugs. Then a proving engine; if it returns no verdict, look at a counterexample to induction before raising the time limit, and write the helper it suggests. Running several engines at once and taking the first answer is what this tool does when no engine is selected, and is the right default; selecting one engine, as every example here does, is for learning what each can do and for keeping a regression's output the same from run to run.
 :::
 
-Other tools draw the same lines under other names. SymbiYosys, the open-source front end, has the modes `bmc`, `prove`, `live` and `cover`; in `prove` mode its `depth` option is the induction depth, and its default depth is 20 [@sby-docs]. The commercial property checkers are listed in @tbl-ch09-formal-tools, with what their vendors' pages state; their engines are not public and this book does not characterize them.
+Other tools draw the same lines under other names. SymbiYosys, the open-source front end, has the modes `bmc`, `prove`, `live` and `cover`; in `prove` mode its `depth` option is the induction depth, and its default depth is 20 [@sby-docs]. The commercial property checkers are listed in @tbl-ch09-formal-tools, with what their vendors' pages state; their user guides are not public and this book does not characterize their engines.
 
 ## Worked example: the pointer property at 64 entries {#sec-ch18-example}
 
 Now the opening report can be predicted and not merely read. The design is the repaired FIFO at 64 entries. The property is the same, the pointers are equal when the FIFO is empty; the model is too large to enumerate, and the deepest behavior, a full FIFO drained, is over a hundred cycles from reset. The script is the whole method of the chapter as a procedure in seven steps. Its setup declares the property, the helper and three covers:
 
-```{.tcl include="examples/ch18-formal-property-verification/fifo-64/fifo64.tcl" lines="6-17"}
+```{.tcl include="examples/ch18-formal-property-verification/fifo-64/fifo64.tcl" lines="6-19"}
 ```
 
 Before reading on, predict the verdict of each step: bounded search on the covers; bounded search, induction and IC3 on the property alone; induction on the helper; induction and IC3 on the property with the helper assumed; the covers again.
 
 Steps 4 to 6 in the script:
 
-```{.tcl include="examples/ch18-formal-property-verification/fifo-64/fifo64.tcl" lines="52-77"}
+```{.tcl include="examples/ch18-formal-property-verification/fifo-64/fifo64.tcl" lines="55-79"}
 ```
 
 Each `expect` line is the prediction, checked: the run fails if a verdict differs. The summary the script prints at its end:
@@ -495,7 +497,7 @@ Each `expect` line is the prediction, checked: the run fails if a verdict differ
 
 **Step 5, the helper alone.** One step of the design shows it: a write moves the write pointer and the count together, a read moves the read pointer and the count together. Induction proves it at once, at any size.
 
-**Step 6, the property with the helper assumed.** With `count` tied to the pointers, an empty FIFO has equal pointers by arithmetic. Both in-house engines prove it within their limits. The assertion `CountPtrs_A` is disabled and the assumption `CountPtrs_M` is added with the same expression, so the two cannot drift apart.
+**Step 6, the property with the helper assumed.** With `count` tied to the pointers, an empty FIFO has equal pointers by arithmetic. Both in-house engines prove it within their limits. The assertion `CountPtrs_A` is disabled and the assumption `CountPtrs_M` is added with the same expression, which the script types once, as `helper`, so the two cannot drift apart.
 
 **Step 7, the covers again.** An assumption was added in step 6, so the question of @sec-ch18-assume is open again: did it remove behavior? The three covers are reached at the same three depths. For a proved helper the answer was certain in advance, since a true invariant removes no reachable state; the step is in the procedure because the habit should not depend on that argument having been made correctly.
 
@@ -513,7 +515,7 @@ The first lists property forms. A probe for each form is run twice, as a propert
 
 {{< include /examples/ch18-formal-property-verification/sva-forms/tbl-sva.md >}}
 
-Of the 65 forms, 50 are accepted. Six are refused when the command is given and five when `prove` runs, each with a message. The four to worry about are the ones marked as dropped: the tool reads the file, omits the property from its report and prints nothing. An assertion that is not in the report cannot fail.
+Of the 65 forms, 50 are accepted. Six are refused when the command is given and five when `prove` runs, each with a message. The four to worry about are the ones marked as dropped: the tool reads the file, omits the property from its report and prints nothing. An assertion that is not in the report cannot fail. The immediate assertions of this chapter's wrappers are not affected: the models built from them are made by the tool's command for writing a model file, not by the shell this table measures.
 
 ::: {.callout-warning title="Pitfall"}
 After loading a design, compare the number of properties the tool lists with the number in the source. A property the front end did not understand may be missing without a message, and a missing assertion looks exactly like a passing regression. The example's script fails if the count of dropped forms changes, in either direction.
@@ -549,12 +551,12 @@ Three developments are visible from here, and this chapter's examples touch each
 
 ::: {.callout-note title="Exercise"}
 1. From the output of the `reach` example: of the 16 states after the reset cycle, how many are reachable, how many are bad, and how many satisfy the property without being reachable? Which of the three kinds can be the first state of a counterexample to induction for a true property?
-2. Take the property itself as a candidate inductive invariant of the two-entry FIFO. Which of the three checks fails, and what is the witness? Which check fails for the candidate "the six reachable post-reset states and one bad state"?
-3. In the plain path at $k = 3$ printed by the `kind` example, which two states are the same? Which of the six lemmas in the `ic3` example's invariant excludes that state?
+2. Take the property itself as a candidate inductive invariant of the two-entry FIFO. Which of the three checks fails, and what is the witness? Which check fails for the candidate "the six reachable post-reset states", taken this time without the sixteen states of the reset cycle, and how many states does that check find missing?
+3. In the plain path at $k = 3$ printed by the `kind` example, which two states are the same? Exactly two of the six lemmas in the `ic3` example's invariant exclude that state. Which of those two would still exclude it if its `count` were 1 instead of 3?
 4. With the unique-states constraint the two-entry model is proved at $k = 7$. Give a $k$, from the number of state bits alone, at which the step case must be unsatisfiable for any property of this model. Why is that bound of no use for a model with 146 state bits?
 5. Rewrite the six lemmas of the `ic3` example as two SystemVerilog expressions over `count`, `wr_ptr` and `rd_ptr`, and name the lemma that adds nothing. How many of the 16 post-reset states do the two expressions allow?
 6. The frontier $F_2$ contains the bad state `wr_ptr=0 rd_ptr=1 count=0`. Say which query IC3 asks next, and what each of its two possible answers leads to. Check your answer against the lines of the run that follow that state.
-7. For `deep.sv` with `BUG` set to 100, at what depth does `informal-bmc` report the counterexample? May `informal-bmc-10` report that depth? May it report one less? Run both.
+7. For `deep.sv` with `BUG` set to 100, at what depth does `informal-bmc` report the counterexample? May `informal-bmc-10` report that depth? May it report one less? Run both: this needs an edit to `bmc_depth.tcl`, whose runs use the bugs 16, 64 and 128 only.
 8. In the over-constraint example under `assume {!req}`, which rows show that `a_false` was proved vacuously, and which cover does not show it? Why does the last block of that output say `undetermined` where the block before it says `proven`?
 9. For each of `cex`, `proven`, `covered` and `unreachable`, say whether a bounded search can return it, and name a row of the `cover-engines` summary or of @tbl-ch18-engines that shows it.
 10. Using the output of the `fairness` example: under `assume {s_eventually !stall}`, is `##[1:4] gnt` proved? Give a pattern of `stall`, cycle by cycle from the request, that satisfies the fairness assumption and violates the bounded property. Which assumption proves both forms, and why?
@@ -564,11 +566,11 @@ Three developments are visible from here, and this chapter's examples touch each
 
 ## Further reading
 
-- Armin Biere and Daniel Kroening, *SAT-Based Model Checking*, in the *Handbook of Model Checking*, Springer, 2018: the survey to read next for the engines of this chapter [@bierekroening2018sat].
+- Armin Biere and Daniel Kroening, *SAT-Based Model Checking*, in the *Handbook of Model Checking*, Springer, 2018 [@bierekroening2018sat].
 - Aaron R. Bradley, *SAT-Based Model Checking without Unrolling*, VMCAI 2011: the IC3 paper; its third section walks through the algorithm informally [@bradley2011sat].
 - Niklas Eén, Alan Mishchenko and Robert Brayton, *Efficient Implementation of Property Directed Reachability*, FMCAD 2011: the algorithm restated as an implementation [@een2011pdr].
 - Mary Sheeran, Satnam Singh and Gunnar Stålmarck, *Checking Safety Properties Using Induction and a SAT-Solver*, FMCAD 2000 [@sheeran2000checking].
 - K. L. McMillan, *Interpolation and SAT-Based Model Checking*, CAV 2003 [@mcmillan2003interpolation].
 - Armin Biere, Cyrille Artho and Viktor Schuppan, *Liveness Checking as Safety Checking*, 2002 [@biere2002liveness]: the reduction used in @sec-ch18-liveness.
-- Aaron R. Bradley and Zohar Manna, *Checking Safety by Inductive Generalization of Counterexamples to Induction*, FMCAD 2007: the predecessor of IC3, listed here by its record and not read for this chapter [@bradleymanna2007checking].
+- Aaron R. Bradley and Zohar Manna, *Checking Safety by Inductive Generalization of Counterexamples to Induction*, FMCAD 2007 [@bradleymanna2007checking].
 - The documentation of SymbiYosys, for a second open tool with the same four modes [@sby-docs].

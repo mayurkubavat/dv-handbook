@@ -33,8 +33,6 @@ tool: informal 0.1.0; one session, 42 commands
       error: bad time unit in '500ms'
   informal::set_engines informal-kind
       runs: accepted; returns nothing
-  set_engine_mode {Ht}
-      runs: accepted; returns nothing
   prove -all
       runs: prints the property table; returns the counts proven 1 cex 1 covered 2 unreachable 0 undetermined 0 error 0
   prove -property deep.a_never
@@ -43,6 +41,8 @@ tool: informal 0.1.0; one session, 42 commands
       error: no property matches 'a_never'
   prove -bg -all
       ignored: says: prove: ignoring -bg (vendor engine/GUI option); prints the property table; returns the counts proven 1 cex 1 covered 2 unreachable 0 undetermined 0 error 0
+  set_engine_mode {Ht}
+      runs: accepted; returns nothing
 == Results
   get_status a_step
       runs: returns proven

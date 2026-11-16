@@ -73,7 +73,7 @@ tool: informal 0.1.0; 3 s for each property; informal-kind, and informal-ic3 on 
   cover of a sequence                              yes                                    covered  unreachable
 == Where a property is written
   a shell command, assert -name N {...}            yes                                    proven   cex, depth 10
-  assert property, labelled, in a module           yes                                    proven   cex, depth 10
+  assert property, labeled, in a module            yes                                    proven   cex, depth 10
   the same with no label                           yes                                    proven   cex, depth 10
   in a checker attached with bind                  yes                                    proven   cex, depth 10
   under default clocking and default disable iff   yes                                    proven   cex, depth 10

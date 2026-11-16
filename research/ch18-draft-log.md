@@ -221,3 +221,172 @@ clean, `run.out` byte-identical. `ch09` and `ch17` rerun after the
   inspected as rasters.
 - Not done: a full `quarto render` (quarto is not installed on the
   drafting machine).
+
+## 8. Round 1 fixes
+
+Inputs: `docs/reviews/ch18-gate2a-2026-11-15.md` (A: B1-B12, N1-N20)
+and `docs/reviews/ch18-gate2b-2026-11-15.md` (C: B1-B2, N1-N13).
+One line per finding id, appended as each is done.
+
+Blocking, review A (text and theory):
+
+- A-B1: line 141 now narrates the last step as a write, accepted
+  because count 3 is not full, wrapping the count to 0; checked
+  against `kind/run.out` states 2 and 3 and `fifo_fixed.sv`.
+- A-B2: lasso splice `1-14`; lines 9-14 are header and cycles 0-4.
+- A-B3: `guide.tcl` reads each property's list of engine outcomes from
+  `informal::session` (new proc `ran`); an `undetermined` with an
+  empty list is the status `notrun`, expected explicitly for the
+  liveness row, printed "not run" by `guide.py`. Caption and line 444
+  say why, citing the tool's docs. Measured first: ric3-ic3 on
+  `Grant_A` gives `"engines": []`, informal-bmc gives one `timeout`
+  entry.
+- A-B4: covered-cover depth sentence limited to engines that try every
+  bound in order (`informal-bmc`); otherwise only a trace's length.
+- A-B5: equal depths explained by the base case and by IC3 clearing
+  each frontier first.
+- A-B6: (a) Clarke et al. 2004: abstract and introduction now read
+  (author-hosted copy, 2026-11-16); the sentence says they call the
+  bound the completeness threshold and study its size, not that the
+  term is theirs; bib note updated. (b) "The method now called model
+  checking was introduced ..." (c) "in a common format" dropped.
+  (d) `een2011pdr`: URL of the conference-hosted copy (title, authors,
+  section III-B checked there 2026-11-16) and access date in the note,
+  following the bib's "Accessed" convention.
+- A-B7: lasso Definition replaced by the reviewer's wording (SVA, the
+  trigger with no later `b` on stem or loop, added registers).
+- A-B8: "no interpolation engine of its own; its documentation lists
+  one external checker that has one, which this book did not build".
+- A-B9: exercise 2's second candidate is now the six reachable states
+  without the reset cycle's sixteen (only the initial-states check
+  fails); exercise 3 says two lemmas exclude the state and asks which
+  of them still does at count 1 (lemma 6 only; lemma 1 needs count 3).
+- A-B10: see "B10 tests" below.
+- A-B11: opening splice `14-29`.
+- A-B12: "labeled" in `forms.list` (and a comment in `where.sv`);
+  "modelled" in `tbl-shell.md` is the tool's message and stays.
+
+Blocking, review C (code):
+
+- C-B1: as A-B1.
+- C-B2: as A-B3; the cell is now detected from the run.
+
+Non-blocking, review A:
+
+- A-N1: threshold reworded: not one number; the deepest reachable
+  state is the bound usable without knowing the answer; counter "about
+  65,536 steps".
+- A-N2: least k for unique-states induction stated exactly and bounded
+  by the recurrence diameter plus one, named once, unattributed.
+- A-N3: one sentence at line 71: candidates are counted after reset and
+  taken with the sixteen reset-cycle states.
+- A-N4: soundness argument now via a shortest counterexample's last
+  k + 1 states.
+- A-N5: one sentence after the frame Definition on the three meanings.
+- A-N6: *dead end* defined in the over-constraint Definition; the
+  covered constant cover is called this tool's behavior at this commit.
+- A-N7: `fuzz.py` prints an IC3 line (verdict counts) per family.
+- A-N8: objective says "three satisfiability checks"; the seven
+  queries explained at the `certify` sentence.
+- A-N9: sentence added after the forms count.
+- A-N10: k = 0 row explained at line 136; reach line 27 left
+  unexplained (harmless).
+- A-N11: the four generalizations reworded as the book's advice or
+  limited to what was established (user guides not public).
+- A-N12: characterizations of the two unread works removed from
+  further reading.
+- A-N13: `tbl-engines.md` says "FIFO of @sec-ch01-example"; the
+  run.out files of `kind` and `cover-engines` keep their wording
+  (program output, not prose).
+- A-N14: vacuity sentence says the literature's notion is wider.
+- A-N15: liveness-to-safety bad state now requires a save and a
+  pending request.
+- A-N16: as C-N7.
+- A-N17: clause that the README at the commit still lists liveness as
+  unfinished.
+- A-N18: exercise 7 says the script needs an edit.
+- A-N19: no change (each repetition is short and points back).
+- A-N20: not checked; Quarto is not installed here.
+
+Non-blocking, review C:
+
+- C-N1: as A-B2.
+- C-N2: `fifo64.tcl` and `scaling.tcl` set `helper` once and use it in
+  both the assert and the assume; chapter splice ranges moved to
+  `6-19` and `55-79`; the "cannot drift apart" sentence says how.
+- C-N3: `informal-engines.toml` comment corrected (an unselected
+  `prove` and `set_engine_mode` bring rIC3 in); in `commands.list` the
+  `set_engine_mode {Ht}` row moved after the last `prove`.
+- C-N4: `fuzz.py` computes by enumeration (`plain_k`) the k at which
+  plain induction must prove each safe system and fails on any other
+  k. Mutation check: `[-step.bad(t - 1)]` replaced by `pass` in
+  `kind.py` gives 15 disagreements and exit 1; restored.
+- C-N5: "a depth above 65, here 66".
+- C-N6: `one` keeps its engine and limit in `::one_engine` and
+  `::one_limit`; `note` in `fifo64.tcl` and `cover.tcl` reads them.
+- C-N7: "one literal besides `started`".
+- C-N8: "prints statistics, of which the example keeps one line and
+  three counts".
+- C-N9: "a few hundred lines of Python or less"; `kind.py` is on this
+  chapter's `Frame`.
+- C-N10: "decide every case here, and both must ... given a large
+  enough bound".
+- C-N11: not done: the sets figure is computed from the model by
+  design; a cross-check is extra machinery.
+- C-N12: not done: margin note left for the author; no failure seen.
+- C-N13: not done: the arbiter measurement is the reviewer's, not a
+  book example.
+
+B10 tests (pandoc 3.1.3, `-f markdown`, to HTML and to LaTeX; Quarto
+is not installed here, so its newer pandoc was not run):
+
+- Pipe table, `` `a \|-> b` ``: HTML `<code>a \|-&gt; b</code>`, LaTeX
+  `\texttt{a\ \textbackslash{}\textbar{}-\textgreater{}\ b}`. Backslash
+  printed in both: the defect is confirmed.
+- Pipe table, raw `<code>a &#124;-> b</code>`: right in HTML, plain
+  text (no code font) in LaTeX. Rejected.
+- Pipe table, `` `a`&#124;`-> b` ``: bare pipe in both, but the pipe is
+  outside the code font. Rejected.
+- Grid table, `` `a |-> b` `` and `` `s |=> $p` ``: HTML
+  `<code>a |-&gt; b</code>`, LaTeX `\texttt{a\ \textbar{}-\textgreater{}\ b}`
+  and `\texttt{s\ \textbar{}=\textgreater{}\ \$p}`; an em dash and a
+  pipe outside code in the same table also render. Chosen. Grid tables
+  are a documented pandoc Markdown extension (`grid_tables`, current
+  manual read), on by default in pandoc's and so Quarto's Markdown;
+  the cells are found from the `+` positions of the rules, so the
+  current parser reads them the same way.
+- Applied: `common/tables.py` `write(..., grid=True)` (a pipe in a pipe
+  table's cell is now an assertion failure; a cell that would open a
+  Markdown block fails too) and `read` for grid tables; `forms.py` and
+  `commands.py` write grid tables; `forms.py` reads the ch09 matrix with
+  `tables.read`. Ch09: `matrix.py` writes grid tables; the hand-typed
+  table at lines ~89-104 of `ch09-temporal-properties.qmd` converted to
+  a grid table by script (pipe cells parsed, `\|` unescaped).
+- Equivalence: each old and new table converted to HTML, column widths
+  stripped, and diffed. ch09 `matrix.md` (regenerated by
+  `scripts/check-examples.sh ch09-temporal-properties/support-matrix`,
+  pass; `run.out` byte-identical): only the cells with `\|` in
+  code differ, now a bare `|`. ch09 qmd: only `s |-> p` and `s |=> p`.
+  `tbl-sva.md`: the two implication cells and "labeled". `tbl-shell.md`:
+  the two `|=>` cells and the moved `set_engine_mode` row.
+- Column widths in LaTeX now follow the source widths of a grid table
+  (e.g. the shell table 18/21/61 percent); page fit not checked.
+
+Final checks:
+
+- `make clean` in all 18 ch18 examples, `scripts/check-examples.sh ch18`
+  twice: 18 pass, 0 fail, 0 skipped each time; all 22 tracked
+  `run.out` and `tbl-*.md` files byte-identical between the two runs.
+  Changed outputs against the commit: `engine-guide` (run.out, table:
+  "not run", @sec label, caption), `ic3-fuzz/run.out` (two IC3 lines),
+  `shell-commands` (row order), `sva-forms` ("labeled"), the two grid
+  tables; `fifo-64` and `cover-engines` outputs unchanged by the
+  `one`/`note` change.
+- Figures: `python3 figures/gen_ch18_figures.py`, all SVGs unchanged
+  (no spliced number moved).
+- `scripts/check-structure.sh`, `scripts/check-citations.sh`: pass.
+- Pandoc LaTeX pass over ch18 and ch09 with every include expanded: no
+  warnings; every inline math span in ch18 is an intended formula, none
+  in ch09; no `\textbackslash{}\textbar{}`; the only `\textbackslash{}`
+  are shell line continuations inside code blocks.
+- Build directories and `__pycache__` removed.

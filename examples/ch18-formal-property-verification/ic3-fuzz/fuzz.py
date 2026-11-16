@@ -11,7 +11,9 @@ solver. Every verdict must agree with it; every counterexample must
 replay step by step and be a shortest one; every invariant must
 contain the reachable states, be closed under a step and exclude the
 bad states, checked by enumeration and again by the three queries.
-One disagreement and the run fails.
+On a safe system plain induction must stop at exactly the k that
+enumeration predicts (see plain_k), so a step case that loses its
+hypothesis fails the run. One disagreement and the run fails.
 """
 import copy
 import pathlib
@@ -141,6 +143,25 @@ def invariant_ok(aig, inv, reach):
     return True
 
 
+def plain_k(aig):
+    """The k at which plain induction must prove a true property, by
+    enumeration and no solver: the step case at k has a model exactly
+    when some walk of k steps through good states ends in a state that
+    is bad. W holds the states such a walk can start from; W shrinks
+    as k grows, and the answer is the first k at which it is empty,
+    or None if that is beyond PLAIN_K."""
+    every = [(s, x) for s in range(1 << len(aig.latches))
+             for x in range(1 << len(aig.inputs))]
+    step = {sx: evaluate(aig, *sx) for sx in every}
+    w = {s for (s, _), (_, ok, bad) in step.items() if ok and bad}
+    for k in range(PLAIN_K + 1):
+        if not w:
+            return k
+        w = {s for (s, _), (nxt, ok, bad) in step.items()
+             if ok and not bad and nxt in w}
+    return None
+
+
 def pack(bits):
     return sum(b << i for i, b in enumerate(bits))
 
@@ -151,6 +172,7 @@ class Tally:
         self.deepest = self.largest = 0
         self.plain = {"proven": 0, "cex": 0, "undetermined": 0}
         self.simple = {"proven": 0, "cex": 0, "undetermined": 0}
+        self.ic3 = {"proven": 0, "cex": 0}
 
     def case(self, aig, label):
         reach, depth = explicit(aig)
@@ -161,6 +183,7 @@ class Tally:
         self.deepest = max(self.deepest, depth or 0)
         bad = []
         verdict, what = Ic3(aig).run()
+        self.ic3[verdict] = self.ic3.get(verdict, 0) + 1
         if verdict != want:
             bad.append(f"ic3 says {verdict}")
         elif verdict == "cex":
@@ -187,6 +210,12 @@ class Tally:
             elif verdict == "cex" and (
                     k != depth or not replays(aig, [pack(s) for s in path])):
                 bad.append(f"{name} counterexample")
+            if not simple and want == "proven":
+                expect = plain_k(aig)
+                got = k if verdict == "proven" else None
+                if got != expect:
+                    bad.append(f"induction stopped at {got}, "
+                               f"enumeration says {expect}")
         for b in bad:
             print(f"WRONG: {label}: {b}; the referee says {want}"
                   + (f" at step {depth}" if depth is not None else ""))
@@ -197,6 +226,8 @@ class Tally:
               f"{self.proven} safe and {self.cex} unsafe")
         print(f"  deepest counterexample {self.deepest} steps; "
               f"largest invariant {self.largest} lemmas")
+        print(f"  IC3: {self.ic3['proven']} proven, "
+              f"{self.ic3['cex']} counterexamples")
         for name, c in (("induction", self.plain),
                         ("simple-path induction", self.simple)):
             print(f"  {name}: {c['proven']} proven, {c['cex']} "

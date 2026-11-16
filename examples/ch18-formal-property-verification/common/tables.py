@@ -2,11 +2,16 @@
 reference tables as Markdown.
 
 A generated table is a file the chapter includes, so its cells must
-survive two readers: Markdown, where a pipe ends a cell even inside a
-code span, and LaTeX by way of pandoc, where a bare dollar sign opens
-inline math and takes the text up to the next one with it.
+survive two readers: Markdown, and LaTeX by way of pandoc, where a bare
+dollar sign opens inline math and takes the text up to the next one
+with it. A pipe ends a cell of a pipe table even inside a code span,
+and the escape `\\|` is then printed with its backslash inside the
+span (pandoc 3.1.3, HTML and LaTeX alike). A table whose cells hold an
+operator such as `|->` is therefore written as a grid table, where
+the cells are found by position and a pipe inside one is plain text.
 """
 import pathlib
+import re
 import shutil
 import subprocess
 import sys
@@ -31,23 +36,67 @@ def version(program):
 
 
 def cell(text):
-    """One table cell. A pipe is escaped everywhere, because it ends
-    a cell even inside a code span. A dollar sign is escaped outside
-    code spans only: inside one it is already literal, and a
-    backslash there would be printed."""
-    parts = str(text).replace("|", "\\|").split("`")
+    """One table cell. A dollar sign is escaped outside code spans
+    only: inside one it is already literal, and a backslash there
+    would be printed. A pipe is left alone; `write` refuses a pipe
+    table that has one and writes a grid table instead."""
+    parts = str(text).split("`")
     for i in range(0, len(parts), 2):       # the parts outside spans
         parts[i] = parts[i].replace("$", "\\$")
     return "`".join(parts)
 
 
-def write(path, header, rows, caption, align=None):
-    """Write a pipe table with a caption and its label below it."""
+# A grid cell is a block, so text that opens a list, a heading, a
+# quotation or a definition would be read as one.
+BLOCK = re.compile(r"([-+*] |[0-9]+[.)] |#|>|: )")
+
+
+def write(path, header, rows, caption, align=None, grid=False):
+    """Write a pipe table, or with grid=True a grid table, with a
+    caption and its label below it. Each cell is one line."""
     align = align or ["---"] * len(header)
-    lines = ["| " + " | ".join(header) + " |",
-             "|" + "|".join(align) + "|"]
-    lines += ["| " + " | ".join(row) + " |" for row in rows]
+    every = [header] + rows
+    if not grid:
+        assert not any("|" in c for r in every for c in r), \
+            "a pipe in a pipe table's cell: write it with grid=True"
+        lines = ["| " + " | ".join(header) + " |",
+                 "|" + "|".join(align) + "|"]
+        lines += ["| " + " | ".join(row) + " |" for row in rows]
+    else:
+        for c in (c for r in every for c in r):
+            assert "\n" not in c and not BLOCK.match(c), repr(c)
+        width = [max(len(r[i]) for r in every) for i in range(len(header))]
+        rule = "+" + "+".join("-" * (w + 2) for w in width) + "+"
+        head = "+" + "+".join(
+            (":" if a.startswith(":") else "=") + "=" * w
+            + (":" if a.endswith(":") else "=")
+            for a, w in zip(align, width)) + "+"
+
+        def line(r):
+            return "| " + " | ".join(
+                c.ljust(w) for c, w in zip(r, width)) + " |"
+        lines = [rule, line(header), head]
+        for r in rows:
+            lines += [line(r), rule]
     pathlib.Path(path).write_text("\n".join(lines) + f"\n\n: {caption}\n")
+
+
+def read(path):
+    """The body rows of the grid tables in a Markdown file, each a
+    list of stripped cells; rules and header rows are left out."""
+    rows, cuts, header, inside = [], [], False, False
+    for text in pathlib.Path(path).read_text().splitlines():
+        if text.startswith("+"):
+            cuts = [i for i, ch in enumerate(text) if ch == "+"]
+            header = not inside or (header and "=" not in text)
+            inside = True
+        elif text.startswith("|") and inside:
+            if not header:
+                rows.append([text[a + 1:b].strip()
+                             for a, b in zip(cuts, cuts[1:])])
+        else:
+            inside = False
+    return rows
 
 
 def shell(script, work, env=None):
