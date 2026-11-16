@@ -1,0 +1,58 @@
+python seed 2026
+== 1. constructions that meet the bound ==
+   10 binary factors:  6 rows, every pair covered: yes
+   20 binary factors:  8 rows, every pair covered: yes
+   35 binary factors:  8 rows, every pair covered: yes
+  126 binary factors: 10 rows, every pair covered: yes
+  4 three-level factors: rows (a, b, a+b, a+2b) mod 3: 9 rows, every pair: yes
+== 2. the DMA transfer space (version 2), constraints built in ==
+  factors: len 5, out 3, pos 4, style 4, ch 2
+  without constraints, as xfer_cg's bins count it (len 6, pos 3): 432 rows;
+  trivial pairwise bound 24
+  legal rows under the constraints: 200
+  t=2: 115 legal tuples; lower bound 20 (largest factor set); this greedy
+       construction found 23 rows, every legal tuple covered: yes
+  t=3: 331 legal tuples; lower bound 60 (largest factor set); this greedy
+       construction found 68 rows, every legal tuple covered: yes
+== 3. random selection of the same space ==
+  t=2, uniform over the 200 legal rows: to cover every legal tuple,
+       median 200 tests (q90 364); union bound for 99%: 597;
+       greedy 23; ratio 8.7
+  t=2, factor by factor (length first): median 89 tests (q90 136); ratio 3.9
+  t=2, the architecture chapter's generator: 13 of 115 legal tuples
+       have probability zero (every one with len=max); the other 102 take
+       a median of 137 tests
+       formula against 201 simulated runs, uniform: largest gap 0.005
+  t=3, uniform over the 200 legal rows: to cover every legal tuple,
+       median 551 tests (q90 1052); union bound for 99%: 1336;
+       greedy 68; ratio 8.1
+  t=3, factor by factor (length first): median 378 tests (q90 559); ratio 5.6
+  t=3, the architecture chapter's generator: 57 of 331 legal tuples
+       have probability zero (every one with len=max); the other 274 take
+       a median of 437 tests
+       formula against 201 simulated runs, uniform: largest gap 0.003
+  plateau under the architecture chapter's generator: 0.887 of pairs, 0.828
+  of triples, however many tests
+== 4. Verilator 5.052: that chapter's tb_v2 +test=random +n=10, seeds 1..50 ==
+  cell of len_x_out     model P(hit in 20 transfers)  measured  z
+  few_x_ok                    0.996                       1.000   0.46
+  few_x_rd_err                0.811                       0.740  -1.29
+  few_x_wr_err                0.811                       0.820   0.16
+  many_x_ok                   0.981                       0.980  -0.06
+  many_x_rd_err               0.710                       0.700  -0.15
+  many_x_wr_err               0.710                       0.720   0.16
+  max_x_ok                    0.000                       0.000   0.00
+  max_x_rd_err                0.000                       0.000   0.00
+  max_x_wr_err                0.000                       0.000   0.00
+  one_x_ok                    0.922                       0.980   1.52
+  one_x_rd_err                0.558                       0.520  -0.54
+  one_x_wr_err                0.558                       0.520  -0.54
+  over_x_ok                   0.000                       0.000   0.00
+  over_x_rd_err               0.000                       0.000   0.00
+  over_x_wr_err               0.000                       0.000   0.00
+  zero_x_ok                   0.878                       0.920   0.90
+  zero_x_rd_err               0.000                       0.000   0.00
+  zero_x_wr_err               0.000                       0.000   0.00
+  largest |z| over the cells the model gives a chance: 1.52
+checks: 33 of 33 hold
+verdict: greedy 23 rows for every legal pair, 68 for every triple

@@ -1,0 +1,46 @@
+Verilator 5.052; the coverage chapter's testbench, +bias=even +n=200
+== 1. pilot: seeds 5001..5200 ==
+bin (rarest first)         per seed  95% CP
+op_x_full.idle_x_full         0.160  [0.112, 0.218]
+op_x_full.push_x_full         0.175  [0.125, 0.235]
+op_x_full.both_x_full         0.180  [0.129, 0.240]
+op_x_full.pop_x_full          0.205  [0.151, 0.268]
+full_cp.full                  0.230  [0.174, 0.295]
+occupancy.almost              0.230  [0.174, 0.295]
+occupancy.high                0.800  [0.738, 0.853]
+op_x_empty.pop_x_empty        0.875  [0.821, 0.917]
+op_x_empty.idle_x_empty       0.900  [0.850, 0.938]
+op_x_empty.push_x_empty       0.905  [0.856, 0.942]
+op_x_empty.both_x_empty       0.935  [0.891, 0.965]
+17 further bins hit by every seed; never hit: occupancy.full_16 (the coverage
+chapter's exclusion review: unreachable on this RTL)
+== 2. size: union bound for every reached bin, 99% ==
+smallest n with sum_i (1 - p_i)^n <= 0.01: 32 seeds
+the bins that set it, by their share of the bound at n:
+  op_x_full.idle_x_full      0.0038  (43%)
+  op_x_full.push_x_full      0.0021  (24%)
+  op_x_full.both_x_full      0.0017  (20%)
+  op_x_full.pop_x_full       0.0006  (7%)
+bound at n: 0.0088
+== 3. fresh run: seeds 6001..6032, merged ==
+verilator_coverage --write merged.dat (32 files)
+fifo_cg bins at zero after the merge: occupancy.full_16
+every bin the pilot reached is hit: yes
+== 4. unseen bins over the fresh run ==
+bins seen 28; Q1 0, Q2 0; Chao2 28.0; Good-Turing chance the next seed adds
+a bin: 0.000
+== 5. the driver's stimulus as a law: op_cp against 1/4 each ==
+idle 1603, push 1612, pop 1622, both 1563: X2 1.25, 3 df, p 0.740
+(each cycle's request is drawn afresh, so cycles are independent draws here)
+== 6. the clean-seed sentence ==
+the temporal-properties chapter's tb_fifo_sva.sv, 400 cycles (push 0.8, pop
+0.3 for 200 cycles, then 0.3 and 0.8), its assertions bound to the design
+repaired FIFO: 1000 of 1000 seeds clean; 95% upper bound 0.0030 (3/n 0.0030)
+original FIFO, same seeds: 1000 of 1000 fail; 95% CP [0.9963, 1.0000];
+  the chain's chance of reaching 15 entries in 400 cycles of this mix: 1.000000
+release note: after 1000 clean seeds of this test, the per-seed failure
+probability under this generator is below 0.0030 at 95%.
+  qualifier: a 30-cycle even generator gives 250 clean seeds with probability
+  0.98 on the original FIFO; the bound speaks for the generator, not the design
+checks: 10 of 10 hold
+verdict: 32 seeds closed fifo_cg; 1000 of 1000 clean on the repaired FIFO

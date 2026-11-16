@@ -1,0 +1,47 @@
+python seed 2026
+== 1. the constrained-random chapter's laws, in bits ==
+  v uniform 0..255   H  8.000 of  8.000; 2^H  256.0; KL to uniform 0.0000
+  v dist := {1,1,2}  H  7.929 of  8.000; 2^H  243.7; KL to uniform 0.0708
+  v dist :/ {1,1,2}  H  7.596 of  8.000; 2^H  193.5; KL to uniform 0.4039
+  kind 6:3:1         H  1.295 of  1.585; 2^H    2.5; KL to uniform 0.2895
+  kind uniform 0..2  H  1.585 of  1.585; 2^H    3.0; KL to uniform 0.0000
+== 2. G = 2 n KL (nats) is Pearson's statistic's cousin ==
+  dist :/      n=10000 KL 0.000255 nats; G 5.101 (p 0.078); X2 5.097 (p 0.078)
+  dist :=      n=10000 KL 0.000025 nats; G 0.492 (p 0.782); X2 0.485 (p 0.785)
+  packet kinds n=  128 KL 0.006109 nats; G 1.564 (p 0.458); X2 1.687 (p 0.430)
+== 3. plug-in entropy is biased low on small samples ==
+    100 draws: plug-in 6.253, with the (k-1)/2n correction 6.833; true 7.929
+    300 draws: plug-in 7.234, with the (k-1)/2n correction 7.644; true 7.929
+   1000 draws: plug-in 7.732, with the (k-1)/2n correction 7.908; true 7.929
+   3000 draws: plug-in 7.866, with the (k-1)/2n correction 7.927; true 7.929
+== 4. eight generators from the coverage chapter's two knobs ==
+Verilator 5.052; 250 seeds each; fifo_cg's 29 bins
+  generator   H bits    2^H  bins/seed   trigger
+  even 50      3.917   15.1      20.26     0.000
+  even 100     3.929   15.2      21.09     0.060
+  even 200     3.942   15.4      22.55     0.224
+  even 400     3.959   15.6      24.86     0.568
+  push 50      3.877   14.7      23.02     1.000
+  push 100     3.816   14.1      24.19     1.000
+  push 200     3.749   13.4      24.86     1.000
+  push 400     3.708   13.1      25.04     1.000
+  highest entropy: even 400; most bins per seed: push 400;
+  highest trigger rate (1.000): push 50, push 100, push 200, push 400
+  the three measures rank the eight generators the same way: no
+  wrote tbl-ch21-knob.md
+== 5. which knob moves which bin: I(knob; bin hit), bits ==
+  bin                      generator    bias       n
+  op_x_full.push_x_full        0.745   0.650   0.027
+  op_x_full.both_x_full        0.712   0.610   0.033
+  full_cp.full                 0.695   0.576   0.042
+  occupancy.almost             0.695   0.576   0.042
+  op_x_full.idle_x_full        0.642   0.482   0.054
+  op_x_empty.pop_x_empty       0.535   0.519   0.006
+  empty_cp.empty               0.000   0.000   0.000
+  empty_cp.not_empty           0.000   0.000   0.000
+  full_cp.not_full             0.000   0.000   0.000
+  permutation baseline, 95th percentile of the largest over the 29 bins:
+  0.0075
+  I(generator; trigger) = 0.707 bits
+checks: 20 of 20 hold
+verdict: entropy peaks at even 400, bins per seed at push 400

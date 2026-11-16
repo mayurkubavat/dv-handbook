@@ -1188,3 +1188,285 @@ Results:
 8. Open IEEE 1800-2023 18.5.9 (IEEE GET) and the Clopper-Pearson and
    Goel-Okumoto papers if the chapter is to print their wording or
    formula beyond what section 7 allows.
+
+## 10. Pre-draft measurements
+
+Date: 2026-11-16. Made by the examples under
+`examples/ch21-statistics-random-testing/`, each run with
+`PATH=/opt/dvtools/bin:/opt/dvtools/venv/bin:$PATH
+scripts/check-examples.sh ch21-statistics-random-testing/<name>`
+(Verilator 5.052, z3 5.4.1 from the venv, Python 3.13.18). Every
+number below is a line of the named example's `run.out`, and each
+example pins or bounds it (`statlib.Checks`: a drift fails the run).
+All ten directories of section 4 were built; none was dropped or
+merged. `worked/` did not need the `worked-signoff/` split (about 42
+s). Times measured through the checker from clean: `common/` 0.4 s,
+`hit-prob/` 0.4, `coupon/` 2, `seed-unit/` 24, `clean-seeds/` 18,
+`uniformity/` 38, `t-way/` 32, `unseen/` 1, `info/` 38, `worked/` 42.
+The whole set was run three times; the last two runs, each from
+clean, gave byte-identical `run.out`, `.tsv` and `.md` files, and no
+tracked file changed but the timestamp of `examples/status.json`.
+`common/` has its own Makefile, which runs a self-test of the
+library and computes the twelve exercise answers of section 5 (all
+twelve stand as written).
+
+**Summary of what changes in the outline.** (a) Section 9.1's "union
+bound 39" is the split form (risk 0.01/k per bin); the union bound of
+D5's Definition, sum_i (1-p_i)^n <= delta, gives 27 on `fifo_cg`, equal
+to the product, and 44 on the packet mix, equal to the exact answer
+(3.4 changes). (b) The first chapter's `tb_fifo_random.sv` fails on the
+repaired FIFO in every seed because its reference model is wrong at
+16 entries; **this is a finding about an approved earlier chapter and
+goes to the author** (item 7). Step (6) of 3.11 uses the
+temporal-properties chapter's checking testbench instead. (c) On
+Chapter 11's constrained space random selection costs 3.9 to 8.7
+times the greedy array, not 2 to 4, and under Chapter 11's own
+generator the `max` row is never reached (3.7 changes). (d) The
+Jeffreys bound does not converge to the exact bound (3.5 changes).
+(e) First-trigger windows come from the chain, not from a run (3.3
+changes). (f) The 30-cycle generator leaves Chao2 blind, not unstable
+(3.8 changes).
+
+### 10.1 `seed-unit/`: the 9.1 numbers, the streak check, first-trigger windows
+
+Command: `scripts/check-examples.sh ch21-statistics-random-testing/seed-unit`
+(`run_seeds.sh`: Chapter 8's `tb_fifo_cov.sv`, `lint.vlt` and Chapter
+1's `fifo.sv` by path, `--coverage`, seeds 1..1000, `+bias=even
++n=200`; `seed_unit.py`). About 25 s.
+
+Result: 247 of 1000 seeds push while full, 95% CP [0.2205, 0.2750],
+chain 0.2421 inside; the trigger line agrees with
+`push_x_full`/`both_x_full` in every `.dat`. `fifo_cg` 29 bins, 28
+reachable (`full_16` never). Rarest per seed: `push_x_full` 0.187,
+`idle_x_full` 0.190, `pop_x_full` 0.218, `both_x_full` 0.235, `full`
+and `almost` 0.271, `high` 0.815, `*_x_empty` 0.848-0.935. `almost`
+1.13% per cycle, iid prediction 0.898 against 0.271 measured; the
+iid model over-predicts all 11 bins not hit by every seed. Seeds to
+close the 28 bins at 99%: union bound (sum form) 27, union bound
+split 0.01/28 per bin 39, independent-bins product 27, resampled
+(2000 orders, Python seed 2026) median 5, q99 **26**; with `climb`
+median 9, q99 43. Cycle-level model: 10.6 seeds (product and sum
+form), 15.1 (split form); measured q99 over the cycle-level product
+2.4 times. Streaks: 247, longest 16, mean 3.04 against the geometric
+3.05. Cross cell: per seed `push_x_full` 0.187 against P(push) x
+P(full) = 0.271; per cycle the request is independent of the flag
+(525 pushes in 2266 full cycles, z = -1.88 against 1/4).
+First-trigger windows: the testbench prints no cycle, so the line is
+computed from the chain (`common/fifo_chain.py`): earliest possible
+cycle 16, P(before cycle 40 | trigger) 0.0031, median 137, shares by
+50-cycle window 0.015/0.218/0.373/0.394, per-cycle hazard 0.00038 at
+cycle 50 rising to 0.00245 at 200.
+
+Dependent sentences. 3.3 evidence one: **changes** in one number:
+"about 11 seeds where 26 are needed" (factor 2.4 stands). 3.3
+evidence two: **changes**: "no exposure before cycle 40, median 135"
+(research log) becomes the chain's "earliest cycle 16, 0.3% before
+cycle 40, median 137", labelled as computed from the chain. 3.4's
+"union bound for 99% (PO 39 seeds), independent-bins product (PO 27)"
+**changes**: the sum-form union bound is 27, equal to the product,
+against a measured q99 of 26 ("never under-states" stands, barely);
+39 is printed as the cruder split form. 3.3's streak check **stands**
+(3.04 against 3.05 for `fifo_cg`). 3.2's cross-cell sentence
+**stands** (0.187 against 0.271). Exercises 4 (39) and 6 (0.897; 15)
+stand.
+
+### 10.2 `unseen/`: Chao1 on cycles against Chao2 on seeds for `fifo_cg`
+
+Command: `scripts/check-examples.sh ch21-statistics-random-testing/unseen`
+(reads `seed-unit/counts.tsv` and `clean-seeds/counts.tsv`, 200
+resamples per row, Python seed 2026). About 1 s.
+
+Result, even mix, 200 cycles: at 4 seeds, seen 25.7, Chao1 over
+cycles 26.0, Chao2 over seeds median 28.1 [10-90%: 22.0, 39.2],
+reachable 28; by 16 seeds all three reach 28. Even mix, 30 cycles,
+250 seeds: 22 bins seen, Q1 = Q2 = 0, Chao2 22.0, Chao1 over cycles
+22.0, Good-Turing 0.000, while 6 reachable bins (`almost`, `full`,
+the four `*_x_full`) are missing; the chain's chance that a 30-cycle
+seed reaches 15 entries is 1.8e-4. Synthetic Zipf check: Good-Turing
+0.2287 against a true missing mass 0.2319 (200 draws), 0.0211 against
+0.0218 (1600); Chao1 154.5 and 198.8 against 200.
+
+Dependent sentences. 3.3 evidence three **stands in a weaker form**:
+the contrast is visible on `fifo_cg` only at a few seeds of the even
+generator (the 4-seed line above); the research grid's figures are
+not needed and not quoted. The low-reach comparison (research: cycle
+49.5 against seed median 59) **is cut from 3.3**: on `fifo_cg` both
+estimators are blind, because the missing bins arrive together or
+not at all. 3.8's "Chao2 is unstable (medians and spread)" for the
+30-cycle generator **changes** to "Chao2 equals the seen count: no
+bin was seen once or twice", and the same lines become the evidence
+for 3.8's Pitfall (a small chance that the next seed adds a bin, here
+zero, is not evidence that few bins are missing: six are).
+
+### 10.3 `clean-seeds/`: 250 seeds at `+bias=even +n=30`
+
+Command: `scripts/check-examples.sh ch21-statistics-random-testing/clean-seeds`.
+About 20 s.
+
+Result: 0 of 250 seeds trigger (all clean, the 0.979-probability
+outcome; nothing reseeded). Bound 0.0119 (3/n 0.0120); chain 8.45e-5;
+35,462 seeds for a 95% chance of one trigger; the bound is 141 times
+the truth. The 250 seeds never hit 7 `fifo_cg` bins (`full_16` and
+the six full-related cells). Bounds table: exact 0.00498 after 600
+(exercise 2), 0.0119 after 250; the uniform-prior bound is within 1%
+of the exact from n = 300; the **Jeffreys bound stays at 0.64 of the
+exact bound** at every n (1.92/n against 3/n). Coverage of the exact
+bound in simulation 0.959-1.000 (2000 trials). Seeds for a target:
+299, 2995, 2,995,731 at 95%.
+
+Dependent sentences. D7's Pitfall **stands** with the example's
+numbers. 3.5's "the Bayesian bounds (uniform and Jeffreys priors)
+for comparison, converging by n = 300" **changes**: the uniform-prior
+bound converges to the exact one; the Jeffreys bound is about a third
+lower at every n, because its prior puts more weight near zero.
+
+### 10.4 `info/`: the eight generators
+
+Command: `scripts/check-examples.sh ch21-statistics-random-testing/info`
+({even, push} x {50, 100, 200, 400}, 250 seeds each). About 38 s.
+
+Result: entropy of the bin-hit shares over `fifo_cg`'s 29 bins
+3.708-3.959 bits (13.1-15.6 effective bins), highest at even/400;
+bins per seed highest at push/400 (25.04; even/400 24.86); trigger
+rate 1.000 for every push generator, 0.568 at even/400, 0.000 at
+even/50. The three rankings differ. Mutual information: `push_x_full`
+0.745 bits with the generator (0.650 with `+bias`, 0.027 with `+n`),
+`almost` and `full` 0.695; permutation baseline 0.0075; I(generator;
+trigger) 0.707. Chapter 7's laws: 243.7, 193.5 and 2.45 effective
+values. G against X^2 on Chapter 7's printed counts: 5.101 against
+5.097 and 0.492 against 0.485 (10,000 draws each), 1.564 against
+1.687 on the 128 packet kinds.
+
+Dependent sentences. 3.9's "rank the generators differently"
+**stands**, with this shape: entropy is nearly flat and prefers the
+even mix at every length, while reach and the trigger prefer the push
+mix. "Which knob moves which bin" **stands**: `+bias` moves the full
+cells, `+n` adds little. "Equal to it to 0.005 on the kind counts"
+**changes**: the book's own kind counts are 128 packets, where G and
+X^2 differ by 0.12; on the 10,000-draw `dist` counts they agree to
+0.007.
+
+### 10.5 `t-way/`: Chapter 11's space, and the run time of its version-2 test
+
+Commands: `cd examples/ch11-architecture-to-verification/v2-tests &&
+. ../tb/common.sh && verilator $VFLAGS --coverage --top-module tb_v2
+-Mdir <scratch> $V2_SRC` (25 s), then one seed `+test=random +n=300`
+(0.47 s); then `scripts/check-examples.sh
+ch21-statistics-random-testing/t-way`. About 35 s.
+
+Result: factors len 5 (version 2's 16-bit length cannot express
+`over`), out 3, pos 4 (with "none" on success), style 4, channel 2;
+432 rows and trivial bound 24 without constraints as `xfer_cg` counts
+its bins; 200 legal rows. Pairs: 115 legal, lower bound 20, this
+greedy construction 23 rows; triples: 331, bound 60, greedy 68.
+Random to cover every legal tuple (201 runs, Python seed 2026):
+uniform over legal rows, median 200 tests for pairs (8.7 times the
+greedy) and 551 for triples (8.1); factor by factor with the length
+first, 89 (3.9 times) and 378 (5.6); union bound for 99% under the
+uniform generator 597 and 1336. Under Chapter 11's own generator
+(length randcase 1:2:4:3 over 0, 1, [2:15], [16:48]) 13 of 115 pairs
+and 57 of 331 triples have probability zero (every tuple with
+`len=max`), coverage plateaus at 0.887 and 0.828; the reachable ones
+take a median of 137 and 437 tests. Formula against simulation:
+largest gap 0.005. Binary construction: 6, 8, 8, 10 rows for 10, 20,
+35, 126 factors (exercise 12: 8); orthogonal array 9 rows. Verilator
+confrontation (1.2(4)): the run fits, so it was made: Chapter 11's
+`tb_v2 +test=random +n=10`, seeds 1..50, `len_x_out` per-seed hit
+rates against the model, largest |z| 1.52; `max_*` and `over_*` zero
+in every seed, as the model says.
+
+Dependent sentences. "Random needs about 2-4 times the tests of a
+greedy array for full coverage" **changes** for the worked space:
+3.9 to 8.7 times, set by the generator, which is Arcuri and Briand's
+"arbitrarily worse under constraints" in numbers; SP 800-142's
+averages stay as the outside figure for unconstrained spaces.
+"Random selection under Chapter 11's own length generator leaves the
+`max` row for a long time (to be measured)" **changes** to "never":
+its probability is zero, and the `max=1` in Chapter 11's output comes
+from its directed `maxlen` test; this is 3.4's zero-rate Pitfall in
+the t-way setting. 1.2(4) is settled in favor of the Verilator run.
+
+### 10.6 `uniformity/`: 2000 draws per class on 5.052 with z3
+
+Command: `scripts/check-examples.sh ch21-statistics-random-testing/uniformity`.
+About 37 s: build 14 s, then the six classes drawn in parallel, one
+process per class (`+cls=<name>`), about 22 s (serially it would be
+about 50 s: 4.2 ms per `randomize()`).
+
+Result: `forms.sv` compiles into a new top by path, with the
+`-Wno-UNDRIVEN` Chapter 7's own Makefile uses; the packet class needs
+Chapter 6's `env.sv` and `fifo_if.sv` beside `rand_packet.sv`. Of ten
+tests on the fresh draws only `solve s before v` is rejected (s = 1 in
+0 of 2000, the ordering asks 1000); without the ordering s = 1 in 10
+of 2000 (1/257 asks 7.8); the other p-values 0.31-0.89. Control: 7 of
+200 p-values below 0.05. Power, computed exactly from the binomial
+law: 113, 1047, 26,265 draws for 90% power at q = 0.65, 0.55, 0.51.
+On Chapter 7's printed counts: `forms.sv`'s `dist :=` 148/52 against
+4:1 gives p = 0.034, below 0.05 alone and not below the Bonferroni
+threshold 0.0083 for the six tests; `solve before` 0 of 2000 against
+1/2, p = 10^-602.
+
+Dependent sentences. 3.6 **stands**; the 4:1 line is a ready example
+for its multiple-testing Pitfall, from the book's own output. The
+table `tbl-ch21-uniform` is written as `uniformity/tbl-ch21-uniform.md`
+(a grid table, through Chapter 18's `common/tables.py` by path).
+
+### 10.7 `worked/`: the first chapter's checking testbench, chain, time
+
+Commands: `verilator --binary ... --top-module tb_fifo_random
+examples/ch09-temporal-properties/rtl/fifo_fixed.sv
+examples/ch01-what-is-dv/sv-random/tb_fifo_random.sv` (8.6 s), then
+`+seed=1..500` (1.2 s); a scratch copy printing the model size and
+the DUT count each cycle located the cause. Then
+`scripts/check-examples.sh ch21-statistics-random-testing/worked`.
+
+Result: `tb_fifo_random.sv` is seed-driven (`+seed=`, `$urandom(seed)`)
+and its `PASS:`/`FAIL:` lines are greppable, but **against the
+repaired FIFO it fails in 500 of 500 seeds** ("full=0 with 16
+entries"). Its reference model, on a cycle with both requests at 16
+entries, pops first and then accepts the push because the queue now
+holds 15; the design, as the contract in `fifo.sv` says ("a push while
+full is ignored"), ignores the push, because full was set before the
+edge. The original FIFO never reaches 16, so the defect is hidden in
+Chapter 1's own run. Nothing was edited. **Escalate to the author**
+(AGENTS.md: a finding that suggests an earlier approved chapter is
+wrong); the fix would be to apply the push only when the model was
+not full before the pop.
+
+Settled for 3.11 step (6): the temporal-properties chapter's own
+checking testbench, `fifo-checker/tb_fifo_sva.sv` with `fifo_sva.sv`
+and `fifo_bind.sv` by path (seed-driven by `+verilator+seed+`; pass
+line "PASS: 400 cycles"). Repaired FIFO: 1000 of 1000 seeds clean,
+bound 0.0030. Original: 1000 of 1000 fail, 95% CP [0.9963, 1]; the
+chain's P(reaching 15 entries in 400 cycles of its 0.8/0.3-then-0.3/0.8
+mix) 1.000000. Pilot 200 seeds (5001..5200): union bound 32 seeds,
+set by the four `*_x_full` cells (94% of the bound); fresh run of 32
+seeds (6001..6032) merged with `verilator_coverage --write`: every
+reached bin hit, `full_16` zero; Chao2 28.0, Q1 = Q2 = 0; `op_cp` X^2
+1.25, p 0.74. One directory, about 42 s.
+
+Dependent sentences. 3.11's constraint paragraph **changes**: the
+checking testbench is Chapter 9's, not Chapter 1's, and the chain
+check of the original FIFO is a near-certainty (1.000000 against 1000
+of 1000), not a rate. The rest of 3.11 stands.
+
+### 10.8 IEEE 1800-2023 18.5.9, Clopper-Pearson, Goel-Okumoto
+
+Not opened (no IEEE GET account in this environment; the two papers
+were not retrieved). Sentences **stand as section 7 allows them**:
+the standard at clause level only, the zero-failure Clopper-Pearson
+case derived in the text and the general interval cited, no
+Goel-Okumoto formula printed.
+
+### 10.9 Smaller corrections found on the way
+
+- 3.4's packet specimen: "99% at 44 exact, 55 union, 47 Poisson"
+  **changes** to 44 exact, 44 by the union bound (sum form), 55 by
+  the split form, 47 Poisson; E[T] 11.0.
+- 3.4's "equal-p formula 27-37% low" **changes** to: E[T] exceeds
+  k H_k by 37% (`:=`) and 29% (`:/`); equivalently k H_k is 27% and
+  23% low.
+- z3 here is 5.4.1 (`STATUS.md` lists 5.1.0 in `dvbook`). The
+  uniformity example prints the z3 version beside Verilator's, and
+  its pinned counts will fail on a z3 that draws differently, which is
+  the intended behavior.

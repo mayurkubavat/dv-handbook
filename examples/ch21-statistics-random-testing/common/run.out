@@ -1,0 +1,32 @@
+== special functions against tabulated values ==
+chi-square sf at 5.9915, 2 df (0.05)                 0.05
+chi-square sf at 3.8415, 1 df (0.05)                 0.05
+chi-square sf at 82.529, 63 df (0.05)                0.0500002
+Kolmogorov sf at 1.3581 (0.05)                       0.0499999
+== binomial bounds ==
+CP upper, 0 of 30, 95%                               0.0950339
+CP upper, 0 of 250, 95%                              0.0119114
+CP upper, 0 of 600, 95%                              0.00498044
+CP 95% interval for 5 of 20, lower (0.0866)          0.0865715
+CP 95% interval for 5 of 20, upper (0.4910)          0.491046
+seeds to hit a 1% bin with 95% chance                299
+== coupon collector ==
+E[T], six equal bins, 6 H_6                          14.7
+E[T], six equal bins, by the integral                14.7
+P(all of 6:3:1 in 44), inclusion-exclusion           0.990302
+union bound, 28 bins at 0.187, 99%                   39
+== the FIFO chain ==
+P(push while full in 200 cycles), even mix           0.24206
+pmf of the first trigger sums to P(trigger)          0.24206
+P(reach 16) with full at 15 is zero                  0
+== estimators and information ==
+Chao2, 10 seeds, 60 seen, Q1 4, Q2 2                 63.6
+Good-Turing, 3 singletons in 200 seeds               0.015
+entropy of 6:3:1, bits                               1.29546
+effective number of values, 2^H                      2.45456
+Pearson X2 of 6076, 2940, 984 against 6:3:1          2.41867
+G of the same counts                                 2.42408
+mutual information of a bit with itself              1
+pairwise lower bound for levels 6, 4, 3, 3, 2        24
+checks: 25 of 25 hold
+self-test: the library reproduces every tabulated value

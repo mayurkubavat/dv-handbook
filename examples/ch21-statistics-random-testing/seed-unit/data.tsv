@@ -1,0 +1,32 @@
+# per bin of fifo_cg: per-cycle rate, the per-seed rate a
+# model of independent cycles predicts from it, and the
+# measured per-seed rate; +bias=even +n=200, 1000 seeds
+bin	p_cycle	iid_seed	measured_seed
+op_x_full.push_x_full	0.002625	0.408853	0.187000
+op_x_full.idle_x_full	0.002980	0.449479	0.190000
+op_x_full.pop_x_full	0.002815	0.430954	0.218000
+op_x_full.both_x_full	0.002910	0.441694	0.235000
+full_cp.full	0.011330	0.897607	0.271000
+occupancy.almost	0.011330	0.897607	0.271000
+occupancy.high	0.242045	1.000000	0.815000
+op_x_empty.idle_x_empty	0.019215	0.979357	0.848000
+op_x_empty.pop_x_empty	0.019010	0.978476	0.850000
+op_x_empty.both_x_empty	0.019370	0.980000	0.911000
+op_x_empty.push_x_empty	0.019200	0.979294	0.935000
+empty_cp.empty	0.076795	1.000000	1.000000
+empty_cp.not_empty	0.923205	1.000000	1.000000
+full_cp.not_full	0.988670	1.000000	1.000000
+occupancy.empty	0.076795	1.000000	1.000000
+occupancy.low	0.669830	1.000000	1.000000
+op_cp.both	0.251810	1.000000	1.000000
+op_cp.idle	0.252040	1.000000	1.000000
+op_cp.pop	0.247345	1.000000	1.000000
+op_cp.push	0.248805	1.000000	1.000000
+op_x_empty.both_x_not_empty	0.232440	1.000000	1.000000
+op_x_empty.idle_x_not_empty	0.232825	1.000000	1.000000
+op_x_empty.pop_x_not_empty	0.228335	1.000000	1.000000
+op_x_empty.push_x_not_empty	0.229605	1.000000	1.000000
+op_x_full.both_x_not_full	0.248900	1.000000	1.000000
+op_x_full.idle_x_not_full	0.249060	1.000000	1.000000
+op_x_full.pop_x_not_full	0.244530	1.000000	1.000000
+op_x_full.push_x_not_full	0.246180	1.000000	1.000000

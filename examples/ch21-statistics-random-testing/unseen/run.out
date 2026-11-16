@@ -1,0 +1,46 @@
+python seed 2026; 200 resamples per row
+== 1. synthetic: 200 bins, p_i proportional to 1/i ==
+ draws  seen   Chao1   GT miss true miss
+    50    33    94.2    0.5000    0.3946
+   200    71   108.9    0.1800    0.2511
+   800   157   213.3    0.0762    0.0682
+  3200   196   196.7    0.0019    0.0038
+  mean of 300 runs of 200 draws: Good-Turing 0.2287, true missing mass 0.2319;
+  Chao1 154.5 against a truth of 200
+  mean of 300 runs of 1600 draws: Good-Turing 0.0211, true missing mass 0.0218;
+  Chao1 198.8 against a truth of 200
+== 2. fifo_cg, +bias=even +n=200 ==
+1000 seeds of 200 cycles; fifo_cg has 29 bins, 28 reachable on this RTL
+seeds  seen Chao2 med [10,90]  Q1/Q2 Chao1cy    Q1/T pred new  P(new)
+    1  22.7  22.0 [21.0,27.0]   23/0    23.7  22.715    0.000   0.525
+    2  24.1  22.1 [22.0,28.6]   3/21    24.5   1.437    0.160   0.265
+    4  25.7  28.1 [22.0,39.2]    2/2    26.0   0.601    0.475   0.185
+    8  27.1  28.0 [22.0,41.1]    2/2    27.4   0.221    0.189   0.050
+   16  27.9  28.0 [28.0,28.5]    0/1    27.9   0.025    0.021   0.020
+   32  28.0  28.0 [28.0,28.0]    0/0    28.0   0.000    0.000   0.000
+   64  28.0  28.0 [28.0,28.0]    0/0    28.0   0.000    0.000   0.000
+  128  28.0  28.0 [28.0,28.0]    0/0    28.0   0.000    0.000   0.000
+== 3. fifo_cg, +bias=even +n=30 ==
+250 seeds of 30 cycles; fifo_cg has 29 bins, 28 reachable on this RTL
+seeds  seen Chao2 med [10,90]  Q1/Q2 Chao1cy    Q1/T pred new  P(new)
+    1  19.7  20.0 [18.0,21.0]   20/0    21.2  19.710    0.000   0.600
+    2  20.8  21.0 [20.0,21.2]   2/19    21.2   0.855    0.054   0.265
+    4  21.2  21.0 [21.0,22.5]    1/1    21.3   0.136    0.070   0.085
+    8  21.5  21.0 [21.0,22.0]    0/0    21.5   0.044    0.004   0.035
+   16  21.7  22.0 [21.0,22.0]    0/0    21.7   0.022    0.000   0.010
+   32  21.9  22.0 [22.0,22.0]    0/0    21.9   0.006    0.000   0.005
+   64  22.0  22.0 [22.0,22.0]    0/0    22.0   0.000    0.000   0.000
+  128  22.0  22.0 [22.0,22.0]    0/0    22.0   0.000    0.000   0.000
+(seen, Chao1cy, Q1/T, pred new and P(new) are means over the resamples;
+ Chao1cy takes every cycle as a draw; Q1/T is Good-Turing for seeds, the
+ expected new bins in one more seed; pred new is Chao2's extrapolation of
+ the same; P(new) is measured on a held-out seed)
+all 250 seeds of 30 cycles: 22 bins seen, Q1 0, Q2 0, Chao2 22.0; Good-Turing
+P(next seed adds a bin) = 0.0000
+the chain's chance that a 30-cycle seed reaches 15 entries, where the 6
+unseen reachable bins live: 0.00018; and 6 reachable bins are missing
+the unit of independence: at 4 seeds of 200 cycles, 25.7 seen, Chao1 over
+cycles 26.0, Chao2 over seeds 28.1 (median); at 128 seeds of 30 cycles,
+22.0 seen, Chao1 over cycles 22.0, Chao2 22.0 (median), reachable 28
+checks: 11 of 11 hold
+verdict: 250 seeds of 30 cycles saw 22 of 28 reachable bins; Good-Turing 0.000

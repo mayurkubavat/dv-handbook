@@ -1,0 +1,28 @@
+== 1. seeds to hit one bin: n >= ln(delta) / ln(1 - p) ==
+      p mean 1/p |      90%      95%      99% | 99% by ln(100)/p
+    0.5        2 |        4        5        7 | 9.2
+   0.25        4 |        9       11       17 | 18.4
+    0.1       10 |       22       29       44 | 46.1
+   0.01      100 |      230      299      459 | 460.5
+  0.001     1000 |     2302     2995     4603 | 4605.2
+== 2. the FIFO's bug trigger, exact chain (full shown at 15) ==
+push and pop each requested with probability 1/2 per cycle:
+   30 cycles: P(push while full) = 8.45e-05; seeds for 95%: 35462
+   35 cycles: P(push while full) = 0.000332; seeds for 95%: 9020
+   40 cycles: P(push while full) = 0.000903; seeds for 95%: 3316
+   45 cycles: P(push while full) = 0.00195; seeds for 95%: 1539
+   50 cycles: P(push while full) = 0.00358; seeds for 95%: 836
+   60 cycles: P(push while full) = 0.00891; seeds for 95%: 335
+  100 cycles: P(push while full) = 0.0563; seeds for 95%: 52
+  200 cycles: P(push while full) = 0.242; seeds for 95%: 11
+  400 cycles: P(push while full) = 0.544; seeds for 95%: 4
+push-biased (+bias=push: push 0.90, pop 0.25), 200 cycles: 1.000000
+repaired FIFO (full at 16), even mix, 200 cycles: 0.1976
+== 3. the packet stream's rarest kind ==
+kind 2 drawn with probability 0.1 per packet: P(none in 64) = 0.9^64 = 0.00118
+packets for a 99% chance of at least one kind 2: 44
+== 4. a per-cycle rate is not a per-seed rate ==
+a bin hit in 1.13% of cycles: independent 200-cycle seeds would
+hit it with probability 1 - (1 - 0.0113)^200 = 0.897
+checks: 10 of 10 hold
+verdict: chain gives 0.2421 for 200 even cycles, 8.45e-05 for 30

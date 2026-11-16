@@ -1,0 +1,40 @@
+python seed 2026
+== 1. one-sided 95% upper bounds on p after n clean seeds ==
+     n       3/n     exact   uniform  Jeffreys
+    10   0.30000   0.25887   0.23840   0.17077
+    30   0.10000   0.09503   0.09211   0.06152
+   100   0.03000   0.02951   0.02923   0.01898
+   250   0.01200   0.01191   0.01186   0.00765
+   300   0.01000   0.00994   0.00990   0.00638
+   600   0.00500   0.00498   0.00497   0.00319
+  1000   0.00300   0.00299   0.00299   0.00192
+  3000   0.00100   0.00100   0.00100   0.00064
+ 10000   0.00030   0.00030   0.00030   0.00019
+(exact: 1 - 0.05^(1/n), Clopper-Pearson at zero failures; uniform and
+ Jeffreys: the posterior's 95% point under that prior)
+== 2. how often the 95% bound covers the true p (2000 trials) ==
+ true p      n  exact CP   3/n, x=0   P(x=0)
+  0.001    100     1.000      1.000    0.898
+  0.001   1000     1.000      1.000    0.369
+  0.010    100     1.000      1.000    0.381
+  0.010   1000     0.971          -    0.000
+  0.050    100     0.959      0.000    0.005
+  0.050   1000     0.962          -    0.000
+(3/n is scored only on the trials with no failure, the only ones it
+ applies to)
+== 3. clean seeds needed for a target bound ==
+  p <= 0.01     95%:      299   99%:      459
+  p <= 0.001    95%:     2995   99%:     4603
+  p <= 0.0001   95%:    29956   99%:    46050
+  p <= 1e-06    95%:  2995731   99%:  4605168
+== 4. the FIFO, +bias=even +n=30, Verilator 5.052 ==
+seeds that pushed while full: 0 of 250
+95% upper bound on the per-seed trigger probability: 0.0119 (3/n = 0.0120)
+exact chain for this generator: p = 8.45e-05
+  P(all 250 seeds clean) = 0.979; seeds for a 95% chance of one trigger: 35462
+  the bound is 141 times the truth, and the bug is in every seed's RTL
+fifo_cg bins this generator never hit in 250 seeds: 7
+  occupancy.almost occupancy.full_16 full_cp.full op_x_full.both_x_full
+  op_x_full.idle_x_full op_x_full.pop_x_full op_x_full.push_x_full
+checks: 31 of 31 hold
+verdict: 250 of 250 seeds clean; bound 0.0119 against a true 8.4e-05

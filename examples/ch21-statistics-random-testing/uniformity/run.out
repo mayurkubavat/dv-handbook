@@ -1,0 +1,40 @@
+== 1. the constrained-random chapter's printed counts ==
+  dist :/ 2430/2459/5111 vs 1:1:2          chi-square X2=5.10 df=2  p=0.0782
+  dist := 232/2187/7581 vs 10:90:312       chi-square X2=0.49 df=2  p=0.785
+  kinds 72/39/17, seeds 3, 4, vs 6:3:1     chi-square X2=1.69 df=2  p=0.43
+  forms dist := 148/52 vs 4:1              chi-square X2=4.50 df=1  p=0.0339
+  forms dist :/ 99/101 vs 1:1              chi-square X2=0.02 df=1  p=0.888
+  s=1 8 of 2000, no ordering, vs 1/257     binomial                 p=1
+  s=1 0 of 2000, solve before, vs 1/2      binomial                 p=10^-602
+  every law but solve...before: smallest p 0.0339 of 6 tests; Bonferroni
+  threshold 0.05/6 = 0.0083
+checks: 11 of 11 hold
+== 2. 2000 fresh draws per class, seed 1 ==
+Verilator 5.052 with Z3 version 5.4.1
+  range v < 16'h8000     chi-square, 64 buckets    X2 = 62.7, 63 df   0.486
+  range v < 16'h8000     KS against uniform        D = 0.0215         0.308
+  range v < 16'h8000     15 bit tests, Bonferroni  min raw p 0.0736   1
+  range v < 16'h8000     serial pairs, 8 x 8       X2 = 50.4, 63 df   0.875
+  dist := (forms.sv)     chi-square, 5 values      X2 = 2.1, 4 df     0.724
+  dist :/ (forms.sv)     chi-square, 5 values      X2 = 2.7, 4 df     0.613
+  packet kind 6:3:1      chi-square                X2 = 1.8, 2 df     0.411
+  packet kind 6:3:1      consecutive pairs         X2 = 1.2, 4 df     0.885
+  s -> v == 0            chi-square, 257 solutions X2 = 248.0, 256 df 0.629
+  with solve s before v  s = 1 asked 1/2           0 of 2000          < 1e-300
+  10 tests; below 0.05: 1; below the Bonferroni threshold 0.05/10 = 0.0050: 1
+  s = 1 without ordering: 10 of 2000 (1/257 asks 7.8)
+  s = 1 with solve s before v: 0 of 2000 (the ordering asks 1000)
+  wrote tbl-ch21-uniform.md
+== 3. control: Python's generator drawing the asked-for law ==
+  20 samples of 2000 draws, 10 tests each: 7 of 200 p-values below
+  0.05 (10.0 expected)
+  below the Bonferroni threshold: 1
+== 4. power: draws a bit test needs to see a biased bit ==
+  a bit set with probability q instead of 1/2; two-sided test at 0.05;
+  power computed exactly from the binomial law
+      q n=25     n=100    n=400    n=1600   n=6400     n for 90%
+   0.65 0.306    0.875    1.000    1.000    1.000      113
+   0.55 0.070    0.185    0.521    0.979    1.000      1047
+   0.51 0.044    0.062    0.070    0.123    0.359      26265
+checks: 13 of 13 hold
+verdict: solve...before drew s = 1 in 0 of 2000; every other law held
