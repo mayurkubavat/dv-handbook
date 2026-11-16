@@ -1,4 +1,4 @@
-=== A: Chapter 1's FIFO, full against the ghost count
+=== A: the first FIFO, full against the ghost count
 --- informal-kind, limit 5s for each property
 property                     type    status        engine     detail
 Full_A                       assert  cex           informal-kind depth 4

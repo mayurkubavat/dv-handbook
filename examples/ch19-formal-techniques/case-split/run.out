@@ -1,5 +1,5 @@
 === A: whole
---- informal-kind, limit 40s for each property
+--- informal-kind, limit 80s for each property
 property                     type    status        engine     detail
 A_eq                         assert  proven        informal-kind
 === B: four cases

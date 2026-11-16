@@ -2,8 +2,9 @@
 # handshake (a request, a 200-cycle timer, a grant): the timer
 # black-boxed, its `expired` output made a cut point, and the cut
 # with a gap assumption that is then proved on the real timer. Then
-# a gap assumption that spans many cycles and so binds too late, and
-# the bounded response that only the real timer can prove.
+# a gap assumption over a window of several cycles, which this tool
+# judges only once the whole window lies inside a trace, and the
+# bounded response that only the real timer can prove.
 set here [file dirname [info script]]
 source $here/../common/ch19.tcl
 set hs  $ch18/over-constraint/handshake.sv
@@ -51,7 +52,7 @@ expect covered c_gnt
 expect_depth 3 a_no_early c_gnt
 # The assertion written in the timer stays in the table, as an error.
 expect error   Range_A
-puts "--- a name inside the box: accepted by assert, refused at prove"
+puts "--- a name inside the box: accepted by assert, an error at prove"
 handshake -bbox_m {timer}
 assert -name a_inside {u_timer.t <= 16'd200}
 puts "assert -name a_inside: accepted"
@@ -81,23 +82,36 @@ expect covered c_gnt
 puts "=== E: the gap, proved on the real timer (no cut)"
 bare
 assert -name a_gap $gap
+cover  -name c_rose {$rose(busy)}
 one informal-kind 10s -all
 expect proven  a_gap
+expect covered c_rose
 
-puts "=== F: a gap over 199 cycles, assumed under the cut"
-# True of the real timer, and stronger than D's, yet the depth-3
-# trace survives it: the assumption's window runs past the end of
-# that trace, and it constrains only traces that contain the whole
-# window.
-bare
-stopat u_timer.expired
-assume -name m_gap199 {req && !busy |=> !u_timer.expired [*199]}
-assert -name a_no_early {$rose(busy) |=> !gnt}
-one informal-kind 10s -all
-expect cex     a_no_early
-expect_depth 3 a_no_early
-puts [exec python3 $ex/ch09-temporal-properties/common/vcdtable.py \
-    [trace a_no_early] rst req busy u_timer.expired gnt]
+puts "=== F: a gap over a window of N cycles, assumed under the cut"
+# Both windows are true of the real timer, and stronger than D's gap.
+# The depth-3 trace raises expired in cycle 2, inside both windows.
+# InFormal judges a multi-cycle implication only once its whole window
+# lies inside the trace: the window of 2 does, and removes the trace;
+# the window of 199 does not, and the trace survives it.
+foreach n {2 199} {
+  puts "--- window $n"
+  bare
+  stopat u_timer.expired
+  assume -name m_gap$n \
+      [format {req && !busy |=> !u_timer.expired [*%d]} $n]
+  assert -name a_no_early {$rose(busy) |=> !gnt}
+  cover  -name c_rose {$rose(busy)}
+  one informal-kind 10s -all
+  expect covered c_rose
+  if {$n == 2} {
+    expect proven  a_no_early
+  } else {
+    expect cex     a_no_early
+    expect_depth 3 a_no_early
+    puts [exec python3 $ex/ch09-temporal-properties/common/vcdtable.py \
+        [trace a_no_early] rst req busy u_timer.expired gnt]
+  }
+}
 
 puts "=== G: the delay itself, with the real timer and under the cut"
 foreach cut {0 1} {
@@ -105,12 +119,14 @@ foreach cut {0 1} {
   if {$cut} {stopat u_timer.expired}
   assert -name a_201 {req && !busy |-> ##[1:201] gnt}
   if {!$cut} {assert -name a_200 {req && !busy |-> ##[1:200] gnt}}
+  if {!$cut} {cover  -name c_req {req && !busy}}
   one informal-kind 10s -all
   if {$cut} {
     expect cex a_201
   } else {
-    expect proven a_201
-    expect cex    a_200
+    expect proven  a_201
+    expect cex     a_200
+    expect covered c_req
     expect_depth 201 a_200
   }
 }

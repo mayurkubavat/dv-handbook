@@ -16,9 +16,12 @@ set bad [list $wrap $iv]
 set P   {empty |-> u.wr_ptr == u.rd_ptr}
 set H   {u.count[$clog2(DEPTH)-1:0] == u.wr_ptr - u.rd_ptr}
 set INV "$H && u.count <= DEPTH"
+# The witness cover of P: the FIFO becomes empty after holding words.
+set C   {empty && !$past(empty)}
 
 # from_inv FILES DEPTH START -- a new session with the shell's reset
-# off, so that every register is free in the first cycle, and START
+# off, so that every register without an initial value is free in
+# the first cycle, and START
 # assumed in that cycle only (first is 1 there and 0 after).
 proc from_inv {files d start} {
   clear -all
@@ -57,14 +60,18 @@ one informal-kind 5s -all
 expect undetermined P_A
 from_inv $ok 16 $INV
 assert -name P_A $P
+cover  -name P_C $C
 one informal-ic3 5s -all
-expect proven P_A
+expect proven  P_A
+expect covered P_C
 puts "--- DEPTH 256, induction with the helper assumed in every cycle"
 from_inv $ok 256 $INV
 assume -name M_H $H
 assert -name P_A $P
+cover  -name P_C $C
 one informal-kind 5s -all
-expect proven P_A
+expect proven  P_A
+expect covered P_C
 puts "--- the side conditions: INV holds from reset, and is inductive"
 design $ok iv_top -parameter DEPTH 256
 assert -name INV_A $INV
@@ -93,6 +100,6 @@ cover -name Full_C {full}
 one informal-bmc 20s -all
 expect covered  Full_C
 expect_depth 0  Full_C
-puts "verdict: a bug 256 pushes deep found at depth 1 from INV states,\
+puts "verdict: a bug 255 pushes deep found at depth 1 from INV states,\
  with INV proven from reset and inductive"
 finish

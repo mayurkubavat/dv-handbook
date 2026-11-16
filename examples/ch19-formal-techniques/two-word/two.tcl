@@ -59,8 +59,10 @@ expect undetermined p_head1 p_head2 p_ahead
 puts "=== B: the slot helpers and the ordering, alone"
 words $fifo
 assert -name h_slots $helper
+cover  -name c_inside {in1 && !out1 && in2 && !out2}
 one informal-kind 5s -all
-expect proven h_slots
+expect proven  h_slots
+expect covered c_inside
 
 puts "=== C: both forms, the helpers assumed"
 words $fifo

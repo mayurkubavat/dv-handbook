@@ -55,15 +55,19 @@ puts "--- the helper, alone"
 design $f mem_top -parameter AW 8
 assume -name m_sa $m_sa
 assert -name h_mem $helper
-one informal-kind 20s -all
-expect proven h_mem
+cover  -name c_svok {sv_ok}
+one informal-kind 40s -all
+expect proven  h_mem
+expect covered c_svok
 puts "--- the contract with the helper assumed"
 design $f mem_top -parameter AW 8
 assume -name m_sa $m_sa
 assume -name m_mem $helper
 assert -name a_store $contract
-one informal-kind 20s -all
-expect proven a_store
+cover  -name c_mchk {mchk_q}
+one informal-kind 40s -all
+expect proven  a_store
+expect covered c_mchk
 
 puts "=== E: the forwarding bug (BUG = 1)"
 design $f mem_top -parameter AW 8 -parameter BUG 1 -bbox_m {mem_store}

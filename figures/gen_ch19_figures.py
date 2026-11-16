@@ -343,10 +343,11 @@ def fig_track():
            "500")
     d.text(x0 + 10 * cw + 16, 372, "flag form: \"no other", 12.5, AMBER,
            "600")
-    d.text(x0 + 10 * cw + 16, 390, "slot holds d1\", about", 12.5,
+    d.text(x0 + 10 * cw + 16, 390, "occupied slot holds", 12.5,
            AMBER, "600")
-    d.text(x0 + 10 * cw + 16, 408, "every shaded slot", 12.5, AMBER,
+    d.text(x0 + 10 * cw + 16, 408, "d1\", about every", 12.5, AMBER,
            "600")
+    d.text(x0 + 10 * cw + 16, 426, "shaded slot", 12.5, AMBER, "600")
     d.text(30, 455, "Verdicts from the track-word example (16 entries) "
            "and the two-word example (4 entries), helpers assumed.",
            12.5, DIM)
@@ -377,7 +378,10 @@ def fig_prophecy():
         inside = c <= depth
         d.rect(x + 3, y, cw - 6, 44, TRACE if inside else "white",
                DEEP if inside else RULE, 1.4, 4)
-        d.text(x + cw / 2, y + 27, "..." if c == 10 else str(c), 13,
+        # The gap to pop k is schematic: cell 11 stands for a later
+        # cycle, not for cycle 11.
+        label = {10: "...", 11: "later"}.get(c, str(c))
+        d.text(x + cw / 2, y + 27, label, 13,
                INK if inside else DIM, "600", "middle", MONO)
     d.text(x0 - 10, y + 27, "cycle", 13, DIM, "500", "end")
     px = x0 + push[0] * cw + cw / 2

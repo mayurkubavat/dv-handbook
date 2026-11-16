@@ -15,7 +15,7 @@ a_hold_q                     assert  proven        informal-kind
 a_gnt_once                   assert  proven        informal-kind
 a_no_early                   assert  cex           informal-kind depth 3
 c_gnt                        cover   covered       informal-kind depth 3
---- a name inside the box: accepted by assert, refused at prove
+--- a name inside the box: accepted by assert, an error at prove
 assert -name a_inside: accepted
 --- informal-kind, limit 10s for each property
 informal: black boxes in this model (outputs free, contents not modelled): timer. A proof holds for the design; a counterexample may use output values the boxed logic cannot produce
@@ -51,12 +51,22 @@ m_gap                        assume  unprocessed
 --- informal-kind, limit 10s for each property
 property                     type    status        engine     detail
 a_gap                        assert  proven        informal-kind
-=== F: a gap over 199 cycles, assumed under the cut
+c_rose                       cover   covered       informal-kind depth 2
+=== F: a gap over a window of N cycles, assumed under the cut
+--- window 2
+--- informal-kind, limit 10s for each property
+informal: 1 cut point(s) (stopat) are free in this model: u_timer.expired. A proof holds for the design; a counterexample may use values the design cannot produce there
+property                     type    status        engine     detail
+m_gap2                       assume  unprocessed
+a_no_early                   assert  proven        informal-kind
+c_rose                       cover   covered       informal-kind depth 2
+--- window 199
 --- informal-kind, limit 10s for each property
 informal: 1 cut point(s) (stopat) are free in this model: u_timer.expired. A proof holds for the design; a counterexample may use values the design cannot produce there
 property                     type    status        engine     detail
 m_gap199                     assume  unprocessed
 a_no_early                   assert  cex           informal-kind depth 3
+c_rose                       cover   covered       informal-kind depth 2
 cycle    rst    req   busy  expired    gnt
     0      1      0      0        0      0
     1      0      1      0        0      0
@@ -67,6 +77,7 @@ cycle    rst    req   busy  expired    gnt
 property                     type    status        engine     detail
 a_201                        assert  proven        informal-kind
 a_200                        assert  cex           informal-kind depth 201
+c_req                        cover   covered       informal-kind depth 1
 --- informal-kind, limit 10s for each property
 informal: 1 cut point(s) (stopat) are free in this model: u_timer.expired. A proof holds for the design; a counterexample may use values the design cannot produce there
 property                     type    status        engine     detail

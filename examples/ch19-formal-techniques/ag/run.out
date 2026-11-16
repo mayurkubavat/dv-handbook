@@ -4,11 +4,13 @@
 property                     type    status        engine     detail
 M_in                         assume  unprocessed
 G_out                        assert  proven        informal-kind
+C_run                        cover   covered       informal-kind depth 2
 --- RST1 = 1
 --- informal-kind, limit 5s for each property
 property                     type    status        engine     detail
 M_in                         assume  unprocessed
 G_out                        assert  cex           informal-kind depth 1
+C_run                        cover   covered       informal-kind depth 2
 === B: safety, the ring
 --- informal-kind, limit 5s for each property
 property                     type    status        engine     detail
@@ -19,6 +21,7 @@ G_y                          assert  proven        informal-kind
 property                     type    status        engine     detail
 M_in                         assume  unprocessed
 G_out                        assert  proven        informal-ic3
+C_out                        cover   covered       informal-ic3 depth 2
 === D: liveness, the ring
 --- informal-ic3, limit 5s for each property
 property                     type    status        engine     detail

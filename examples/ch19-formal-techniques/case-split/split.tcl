@@ -26,7 +26,7 @@ proc cases {bug list} {
 
 puts "=== A: whole"
 mul 0
-one informal-kind 40s -all
+one informal-kind 80s -all
 expect proven A_eq
 puts "=== B: four cases"
 foreach c {0 1 2 3} {

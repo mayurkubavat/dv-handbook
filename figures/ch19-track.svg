@@ -45,7 +45,8 @@
 <text x="866.0" y="330.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12.5" font-weight="500" text-anchor="start" fill="#1C1C1C">position: a fact</text>
 <text x="866.0" y="348.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12.5" font-weight="500" text-anchor="start" fill="#1C1C1C">about each blue slot</text>
 <text x="866.0" y="372.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12.5" font-weight="600" text-anchor="start" fill="#B7791F">flag form: &quot;no other</text>
-<text x="866.0" y="390.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12.5" font-weight="600" text-anchor="start" fill="#B7791F">slot holds d1&quot;, about</text>
-<text x="866.0" y="408.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12.5" font-weight="600" text-anchor="start" fill="#B7791F">every shaded slot</text>
+<text x="866.0" y="390.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12.5" font-weight="600" text-anchor="start" fill="#B7791F">occupied slot holds</text>
+<text x="866.0" y="408.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12.5" font-weight="600" text-anchor="start" fill="#B7791F">d1&quot;, about every</text>
+<text x="866.0" y="426.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12.5" font-weight="600" text-anchor="start" fill="#B7791F">shaded slot</text>
 <text x="30.0" y="455.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12.5" font-weight="400" text-anchor="start" fill="#7FA3C0">Verdicts from the track-word example (16 entries) and the two-word example (4 entries), helpers assumed.</text>
 </svg>

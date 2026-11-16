@@ -30,8 +30,12 @@ track.u.u_sva.PushFull_C     cover   disabled
 track.u.u_sva.PopEmpty_C     cover   disabled
 track.u.u_sva.Drained_C      cover   disabled
 m_sd                         assume  unprocessed
-a_integrity                  assert  undetermined             no engine reached a verdict
 EmptyPtrs_A                  assert  cex           informal-bmc depth 16
+--- a_integrity alone, without the checker, 30 s
+--- informal-bmc, limit 30s for each property
+property                     type    status        engine     detail
+m_sd                         assume  unprocessed
+a_integrity                  assert  cex           informal-bmc depth 17
 === mutant skip: the read pointer steps by two
 --- informal-bmc, limit 2s for each property
 property                     type    status        engine     detail
@@ -58,8 +62,9 @@ EmptyPtrs_A                  assert  cex           informal-bmc depth 3
   wrap  EmptyExact_A   depth 16
   wrap  Sync_A         depth 16
   wrap  EmptyPtrs_A    depth 16
-  wrap  4 other properties: no counterexample in 2 s
+  wrap  a_integrity    depth 17 (alone, 30 s)
+  wrap  3 other properties: no counterexample in 2 s
   skip  a_integrity    depth 3
   skip  EmptyPtrs_A    depth 3
   skip  7 other properties: no counterexample in 2 s
-verdict: every mutant killed; Chapter 9's checker kills only the one that breaks the count
+verdict: every mutant killed; the FIFO checker kills only the one that breaks the count

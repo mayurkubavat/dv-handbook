@@ -31,7 +31,7 @@ puts "=== C: the k-th word: its witness cover, and a prophecy asserted\
  where it is guessed"
 # A run with covers only: the tool prints that the design has no
 # assertions, which is true of this session and harmless.
-puts "--- the ninth pop happens (the proofs are in history-ric3/)"
+puts "--- the pop numbered k = 9 happens (the proofs are in history-ric3/)"
 design [list $rtl09/fifo_fixed.sv $f] proph_top
 assume -name m_k    {$stable(k)}
 cover  -name c_popk {pop_k && k == 4'd9}

@@ -12,5 +12,5 @@ SOURCES       := init.tcl ../common/ch19.tcl iv.sv \
 LINT_TOP      := iv_top
 LINT_FLAGS    := -Wall -Wno-DECLFILENAME -Wno-UNUSEDSIGNAL \
                  -Wno-SYNCASYNCNET
-EXPECT_OUTPUT := verdict: a bug 256 pushes deep found at depth 1
+EXPECT_OUTPUT := verdict: a bug 255 pushes deep found at depth 1
 include ../../common.mk

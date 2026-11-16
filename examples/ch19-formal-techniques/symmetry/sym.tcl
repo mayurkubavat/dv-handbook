@@ -9,13 +9,14 @@ set f $here/rr_arb.sv
 
 # arb ROUND FREE PORTS -- a new session on the arbiter; for each port
 # in PORTS, a request held until granted (assumed) is granted within
-# four cycles (asserted).
+# four cycles (asserted), and the witness cover of a waiting request.
 proc arb {round free ports} {
   design $::f rr_arb -parameter ROUND $round -parameter FREE_LAST $free
   foreach i $ports {
     assume -name m_hold$i "req\[$i\] && !gnt\[$i\] |=> req\[$i\]"
     assert -name a_wait$i \
         "req\[$i\] && !gnt\[$i\] |-> ##\[1:4\] gnt\[$i\]"
+    cover  -name c_wait$i "req\[$i\] && !gnt\[$i\]"
   }
 }
 set rot {gnt1 == {gnt0[2:0], gnt0[3]}}
@@ -24,7 +25,8 @@ puts "=== A: round robin, free start"
 puts "--- port 0"
 arb 1 1 0
 one informal-kind 10s -all
-expect proven a_wait0
+expect proven  a_wait0
+expect covered c_wait0
 puts "--- the rotation check: rotated requests give rotated grants"
 design $f rr_rot -parameter FREE_LAST 1
 assume -name m_rot {first |-> u1.last == u0.last + 2'd1}
@@ -44,7 +46,8 @@ expect covered c_reset
 puts "=== B: round robin, last reset to 3"
 arb 1 0 {0 1 2 3}
 one informal-kind 10s -all
-expect proven a_wait0 a_wait1 a_wait2 a_wait3
+expect proven  a_wait0 a_wait1 a_wait2 a_wait3
+expect covered c_wait0 c_wait1 c_wait2 c_wait3
 puts "--- the rotation check, both copies reset"
 design $f rr_rot -parameter FREE_LAST 0
 assert -name a_rot $rot
@@ -57,6 +60,7 @@ one informal-kind 10s -all
 expect proven  a_wait0
 expect cex     a_wait1 a_wait2 a_wait3
 expect_depth 5 a_wait1 a_wait2 a_wait3
+expect covered c_wait0 c_wait1 c_wait2 c_wait3
 
 puts "=== D: DMA version 2, each channel proved on its own"
 clear -all

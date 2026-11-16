@@ -29,21 +29,25 @@ foreach {d engine} {16 informal-kind 16 informal-ic3 4 informal-ic3} {
   puts "--- DEPTH $d"
   tracked $fifo $d
   assert -name a_integrity $a_integrity
+  if {$d == 4} {cover -name c_head {in_q && ahead == '0}}
   one $engine 5s -all
   expect [expr {$d == 4 ? "proven" : "undetermined"}] a_integrity
+  if {$d == 4} {expect covered c_head}
 }
 
 puts "=== B: the slot helper, alone, DEPTH 16"
 tracked $fifo 16
 assert -name h_slot $helper
+cover  -name c_in {in_q}
 one informal-kind 5s -all
-expect proven h_slot
+expect proven  h_slot
+expect covered c_in
 
 puts "=== C: the check with the helper assumed, DEPTH 16"
 tracked $fifo 16
 assume -name m_slot $helper
 assert -name a_integrity $a_integrity
-# The tracked word leaves with nine words behind it.
+# The tracked word leaves with eight words behind it.
 cover  -name c_out {in_q && ahead == '0 && u.do_read && u.count == 9}
 one informal-kind 5s -all
 expect proven   a_integrity

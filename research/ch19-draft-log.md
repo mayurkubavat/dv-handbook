@@ -271,3 +271,109 @@ All per outline section 9 unless noted.
 - `_quarto.yml`: ch19 registered after ch18 in Part IV.
 - `scripts/check-examples.sh` not run: it re-runs the examples and
   rewrites `examples/status.json`, which this task does not touch.
+
+## Round 1 fixes (2026-11-16)
+
+Fixes for `docs/reviews/ch19-gate2a-2026-11-16.md` (A) and
+`docs/reviews/ch19-gate2b-2026-11-16.md` (B). One line per finding.
+Every changed example was run twice with InFormal `5114330` and rIC3
+on the PATH; the two `run.out` files are identical.
+
+Blocking:
+- A-B1 / B-B1: timer pitfall and the prophecy Pitfall rewritten. Block
+  F of `cut-timer/` now assumes the gap with a window of 2 and of 199:
+  the window of 2 (which fits the depth-3 trace) gives `a_no_early`
+  proven, the window of 199 keeps the depth-3 trace. The text presents
+  this as InFormal's measured behavior (a multi-cycle implication is
+  judged only once its window closes; IEEE 1800 would exclude the
+  trace), cites the run, separates it from the prophecy trap, and
+  says "one cycle before it ends" (the trace breaks the assumption in
+  cycle 2 of 0..3). `cut.tcl` header and block comment corrected.
+  The outline's finding (i) is left as written (planning record).
+- A-B2: helper entry and decomposition "What it preserves" now state
+  the side condition (no proof assumes the property it helps, or a
+  lemma whose proof assumed it); the Pitfall that forbade lemmas
+  implying the end-to-end property is replaced by the proof-graph
+  rule, and notes that `L1` and `L2` implying `E2E_A` is the aim.
+  Glossary "Decomposition (property)" gets the same condition.
+- A-B3: objective 9 removed. Teaching CTI shapes would need material
+  no example has (the tool prints no counterexample to induction).
+- A-B4: `[check]` and similar notes removed. `cadence-jasper-csr`,
+  `-xprop`, `-cov`: URL never loaded, dropped; cited by title with
+  `howpublished = {Vendor product page, cadence.com}` and where it was
+  read. `bjesse2008memory`, `misra1981proofs`: working notes removed,
+  fields kept (DOI; Crossref initials). `chockler2001practical`:
+  volume 2102 added, note reduced to where it was read; pages and DOI
+  not added (crossref, doi.org and dblp refused by the proxy, so not
+  verifiable here). `barthe2004selfcomposition`: "DOI not found"
+  removed, no DOI added (the guessed one belongs to another paper).
+  `emerson2000cutoff`: working note removed.
+- A-B5 / B-B2: witness covers added (one line each, with `expect`):
+  `symmetry` A-C (`c_wait<i>`), `ag` A and C (`C_run`, `C_out`),
+  `init-value` C (`P_C` in both proving runs), `mem-abs` D (`c_svok`,
+  `c_mchk`), `symconst` B (`c_slot`), `history-ric3` A and B
+  (`c_popk`), `cut-timer` E, F, G (`c_rose`, `c_req`), `hier-ric3`
+  (`Drain_C`, `Full_C`), `two-word-ric3` B and `two-word` B,
+  `track-word` A (DEPTH 4) and B. A scan of every `run.out` session
+  now finds no proven implication without a cover in its session; the
+  sessions left without one prove invariants, helpers or miter
+  equalities. Text at the opening of the entries and in the witness
+  cover entry says exactly that.
+
+Non-blocking, taken:
+- A-N1: initial-value side condition is the reset state in `INV`;
+  inductiveness explained as what makes the start set contain every
+  reachable state; the second `INV_A` row and `M_H` explained;
+  exercise 3 and the glossary entry adjusted.
+- A-N2: sentence that `track.sv` takes `ahead` from the FIFO's own
+  `count`, which the FIFO checker checks separately.
+- A-N3: param-width refutation at 32 explained by `5'(32)` truncating
+  to 0 (and the count wrapping after 31).
+- A-N4 / B-N3: "eight words behind it" in prose and the script comment.
+- A-N5: `c_late` described per unit (depth 5 correct, depth 3 mutant
+  with no request); script prints "the pop numbered k = 9".
+- A-N6: "no occupied slot holds d1" in prose, figure and alt text.
+- A-N7: loss sentence split between the flag and position forms.
+- A-N8: refinement mappings exist "under conditions the paper states".
+- A-N9: proof-core sentence says "bounded proof", not refutation.
+- A-N10: X-propagation "pessimistic" sentence replaced.
+- A-N11: 255 pushes (problem, summary, `init.tcl` verdict, Makefile).
+- A-N12: forgotten-case sentence reworded (cases proved in block B).
+- A-N13: memory CTI reason: the state can persist, not "more states".
+- A-N14, A-N16, A-N17, A-N18: reworded as suggested; exercise 7 asks
+  for the row about the input.
+- A-N15: `reset -none` frees registers without an initial value
+  (prose and `init.tcl` comment).
+- A-N19: splice `18-29` (now including the unprocessed rows).
+- A-N20: `hier.tcl` `9-27`, `dma_wcount.sv` `4-24`.
+- A-N21: printed strings in `mutants.tcl` and `width.tcl` (and header
+  comments there and in `pw_top.sv`) name no chapter numbers.
+- A-N22: semi-formal sentence without the unsourced commercial claim;
+  "Five of its six entries".
+- A-N23: connectivity rows: one per channel term.
+- A-N25: glossary "Symmetry" maps one part's property onto another's.
+- A-N26: prophecy figure's far cell labeled "later" (schematic); alt
+  text of the preservation figure lists cover-guided search.
+- Worked-example suggestion: one sentence citing `hier`'s `Both_C`.
+- B-N1: `mutants`: `a_integrity` on the wrap mutant runs alone with
+  30 s (refuted at depth 17), so no expected row races the 2 s limit;
+  prose updated. `mem-abs` D limits 20 s to 40 s; `case-split` whole
+  miter 40 s to 80 s (proven rows; the limit costs nothing).
+- B-N2: the DMA lemmas are called unproved and unrefuted, not true.
+- B-N4: black-box sentence calls the message an internal "not
+  supported yet" error, a tool limit; script heading reworded.
+- B-N7: `hp.sv` history bit coinciding with `pend` stated;
+  `seconds-ric3` lint compiles in memory (no `__pycache__` in the
+  previous chapter's tree).
+
+Non-blocking, left:
+- A-N24 (LNCS volumes of five entries): the proxy refuses Crossref,
+  doi.org and dblp, so the volumes could not be verified here.
+- B-N5 (figure generator does not assert depths stated in alt texts):
+  needs a design change to the generator or to check-structure.sh.
+- B-N6 (`assume -disable` on an RTL assumption): belongs in the
+  previous chapter's tool notes; not touched (other chapter).
+- B-N7, mem-abs forwarding cover: optional; the forwarding path is
+  exercised by mutant E.
+- Appendix-F sentence on limits tied to the machine (B-N1 suggestion):
+  other file; the chapter's mutation Pitfall already says it.

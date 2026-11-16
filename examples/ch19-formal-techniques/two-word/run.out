@@ -14,6 +14,7 @@ m_d                          assume  unprocessed
 m_one1                       assume  unprocessed
 m_one2                       assume  unprocessed
 h_slots                      assert  proven        informal-kind
+c_inside                     cover   covered       informal-kind depth 3
 === C: both forms, the helpers assumed
 --- informal-kind, limit 5s for each property
 property                     type    status        engine     detail

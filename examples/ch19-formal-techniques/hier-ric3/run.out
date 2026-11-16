@@ -8,9 +8,13 @@ u1_CE                        assume  unprocessed
 u1_CF                        assume  unprocessed
 P1_A                         assert  proven        ric3-ic3
 P2_A                         assert  proven        ric3-ic3
+Drain_C                      cover   covered       ric3-ic3   depth 4
+Full_C                       cover   covered       ric3-ic3   depth 33
 === flat
 --- ric3-ic3, limit 30s for each property
 property                     type    status        engine     detail
 P1_A                         assert  proven        ric3-ic3
 P2_A                         assert  proven        ric3-ic3
+Drain_C                      cover   covered       ric3-ic3   depth 4
+Full_C                       cover   covered       ric3-ic3   depth 33
 verdict: rIC3 proves the pipe boxed and flat without the helper

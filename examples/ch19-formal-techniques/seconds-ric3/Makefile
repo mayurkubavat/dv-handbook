@@ -12,4 +12,8 @@ TOP           := seconds.py
 SOURCES       := seconds.py \
                  ../../ch18-formal-property-verification/common/tables.py
 EXPECT_OUTPUT := verdict: every run proven, as the chapter states
+# Lint compiles the sources in memory: py_compile would write a
+# __pycache__ into the other chapter's tree.
+LINT_CMD       = python3 -c 'import sys; [compile(open(f).read(), f, \
+                 "exec") for f in sys.argv[1:]]' $(SOURCES)
 include ../../common.mk

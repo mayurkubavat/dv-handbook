@@ -17,8 +17,11 @@ foreach how {boxed flat} {
   }
   assert -name P1_A {G == '0 |-> empty}
   assert -name P2_A {full |-> G >= 16}
+  cover  -name Drain_C {G == 6'd1 ##1 G == '0}
+  cover  -name Full_C  {full}
   one ric3-ic3 30s -all
-  expect proven P1_A P2_A
+  expect proven  P1_A P2_A
+  expect covered Drain_C Full_C
 }
 puts "verdict: rIC3 proves the pipe boxed and flat without the helper"
 finish

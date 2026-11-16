@@ -13,8 +13,10 @@ foreach r {0 1} {
   design $f blk -parameter RST1 $r
   assume -name M_in  {in == 1'b0}
   assert -name G_out {out == 1'b0}
+  cover  -name C_run {rst_n && $past(rst_n)}
   one informal-kind 5s -all
   expect [expr {$r ? "cex" : "proven"}] G_out
+  expect covered C_run
   if {$r} {expect_depth 1 G_out}
 }
 puts "=== B: safety, the ring"
@@ -27,8 +29,10 @@ puts "=== C: liveness, one block, its neighbor's guarantee assumed"
 design $f blk
 assume -name M_in  {s_eventually in}
 assert -name G_out {s_eventually out}
+cover  -name C_out {out}
 one informal-ic3 5s -all
-expect proven G_out
+expect proven  G_out
+expect covered C_out
 puts "=== D: liveness, the ring"
 design $f ag_top
 assert -name G_x {s_eventually x}

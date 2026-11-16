@@ -1,5 +1,5 @@
 # width.tcl -- parameter reduction: what a run at one DEPTH says
-# about another. A: Chapter 1's FIFO, whose full flag rises one entry
+# about another. A: the first FIFO, whose full flag rises one entry
 # early, at DEPTH 4 and 16; B: the repaired FIFO checked against a
 # five-bit occupancy count at DEPTH 16 and 32; C: the repaired FIFO's
 # pointers at DEPTH 4, 5 and 8, where $clog2(5) gives a pointer that
@@ -8,7 +8,7 @@ set here [file dirname [info script]]
 source $here/../common/ch19.tcl
 set wrap $here/pw_top.sv
 
-puts "=== A: Chapter 1's FIFO, full against the ghost count"
+puts "=== A: the first FIFO, full against the ghost count"
 foreach d {4 16} {
   design [list $rtl01/fifo.sv $wrap] pw_top -parameter DEPTH $d
   assert -name Full_A "full |-> occ == $d"

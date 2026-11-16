@@ -14,7 +14,7 @@ property                     type    status        engine     detail
 a_seen                       assert  cex           informal-kind depth 1
 c_late                       cover   covered       informal-kind depth 3
 === C: the k-th word: its witness cover, and a prophecy asserted where it is guessed
---- the ninth pop happens (the proofs are in history-ric3/)
+--- the pop numbered k = 9 happens (the proofs are in history-ric3/)
 --- informal-kind, limit 5s for each property
 informal: svlang: the design has no assertions
 property                     type    status        engine     detail

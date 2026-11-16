@@ -25,16 +25,18 @@ property                     type    status        engine     detail
 m_sa                         assume  unprocessed
 a_store                      assert  undetermined             no engine reached a verdict
 --- the helper, alone
---- informal-kind, limit 20s for each property
+--- informal-kind, limit 40s for each property
 property                     type    status        engine     detail
 m_sa                         assume  unprocessed
 h_mem                        assert  proven        informal-kind
+c_svok                       cover   covered       informal-kind depth 2
 --- the contract with the helper assumed
---- informal-kind, limit 20s for each property
+--- informal-kind, limit 40s for each property
 property                     type    status        engine     detail
 m_sa                         assume  unprocessed
 m_mem                        assume  unprocessed
 a_store                      assert  proven        informal-kind
+c_mchk                       cover   covered       informal-kind depth 3
 === E: the forwarding bug (BUG = 1)
 --- informal-kind, limit 5s for each property
 informal: black boxes in this model (outputs free, contents not modelled): mem_store. A proof holds for the design; a counterexample may use output values the boxed logic cannot produce

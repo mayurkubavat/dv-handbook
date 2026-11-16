@@ -153,7 +153,7 @@ Data independence
 : The property of a design that only stores and moves some data and never computes on it, compares it or branches on it. For such a design a property about one freely chosen data word stands for every word. See @sec-ch19-track.
 
 Decomposition (property)
-: Replacing an end-to-end property by a chain of local lemmas, each closer to the logic that keeps it, and proving that the end-to-end property follows from them. The lemmas are then the work. See @sec-ch19-decomp.
+: Replacing an end-to-end property by a chain of local lemmas, each closer to the logic that keeps it, and proving that the end-to-end property follows from them. The lemmas are then the work, and no lemma's proof may assume the end-to-end property or a lemma whose own proof assumed it. See @sec-ch19-decomp.
 
 Delta cycle
 : VHDL's name for one pass of the simulator's loop within a timestep. This book says *iteration within a timestep*. See @sec-ch04-iteration.
@@ -236,7 +236,7 @@ Inductive strengthening
 : Replacing a property that is true and not inductive by a stronger one that is, by conjoining a helper invariant. See @sec-ch18-helper.
 
 Initial-value abstraction
-: Starting a formal search from every state that satisfies an invariant instead of from reset. Sound when the invariant holds at reset and is inductive. See @sec-ch19-initval.
+: Starting a formal search from every state that satisfies an invariant instead of from reset. A proof carries back when the reset state satisfies the invariant; if the invariant is also inductive, the start set contains every reachable state. See @sec-ch19-initval.
 
 Interface
 : A named bundle of signals with its own ports and its own code, used to connect a testbench to a design. See *modport*, *virtual interface* and @sec-ch05-interfaces.
@@ -426,7 +426,7 @@ Symbolic slot
 : The one memory location, named by a symbolic constant address, that a memory abstraction keeps. See @sec-ch19-memabs.
 
 Symmetry
-: A permutation of a design's identical parts, such as channels, that maps its transitions, its initial states and a property onto themselves. A proof for one part then stands for every part it maps to. See @sec-ch19-symmetry.
+: A permutation of a design's identical parts, such as channels, that maps its transitions and its initial states onto themselves, and maps the property for one part onto the property for another. A proof for one part then stands for every part it maps to. See @sec-ch19-symmetry.
 
 Synchronizer
 : A structure that carries a signal safely into another clock domain. The common two-flop synchronizer samples the signal and waits a clock period before sampling it again, trading metastability for an uncertainty of one cycle in latency. It synchronizes control, not data. See @sec-ch03-cdc.

@@ -17,4 +17,5 @@ m_one2                       assume  unprocessed
 p_head1                      assert  proven        ric3-ic3
 p_head2                      assert  proven        ric3-ic3
 p_ahead                      assert  undetermined             no engine reached a verdict
+c_both                       cover   covered       ric3-ic3   depth 3
 verdict: without the slot helpers rIC3 proves neither ordering property
