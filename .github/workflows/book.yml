@@ -69,7 +69,7 @@ jobs:
       - name: Install cocotb, pyuvm, pytest, jsonschema, the z3 solver and cocotb-coverage
         # Verilator's runtime finds the solver on the PATH; the pip wheel puts
         # a z3 binary next to python.
-        run: pip install cocotb pyuvm pyyaml pytest jsonschema z3-solver cocotb-coverage
+        run: pip install cocotb pyuvm pyyaml pytest jsonschema z3-solver==5.4.1.0 cocotb-coverage
       - name: Lint and run every example
         env:
           SYSTEMC_HOME: /usr
