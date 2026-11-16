@@ -60,6 +60,9 @@ Bit-vector
 Black box
 : A module instance whose contents are removed from the formal model: its outputs become free inputs and its inputs are ignored. The model is an over-approximation, so a proof holds for the design and a counterexample may be spurious. See @sec-ch19-bbox.
 
+Bonferroni correction
+: Running each of m tests at level α/m, so that the chance of any false alarm across all m stays at most α. Needed when a uniformity check is applied to every constraint of a class at once. See @sec-ch21-uniform.
+
 Bound
 : The number of transitions in an unrolling; bound $k$ has $k + 1$ states. Tools differ by one in what they call zero. See @sec-ch17-example.
 
@@ -74,6 +77,9 @@ Case split
 
 Certificate
 : Evidence for a verdict that a simple, independent program can check: a trace for a counterexample, an inductive invariant for a proof. See @sec-ch18-trust.
+
+Chao2
+: An estimate of how many bins a generator can reach, from the number seen so far plus a term built from the bins seen in exactly one and exactly two seeds. A lower bound on the reachable count in expectation, and blind to bins the generator almost never hits. See @sec-ch21-unseen.
 
 Class
 : A SystemVerilog type with data members and methods. Its instances are objects, created by `new` and reached through handles. See @sec-ch05-classes.
@@ -92,6 +98,9 @@ Clock domain crossing (CDC)
 
 Clocking block
 : A SystemVerilog construct that names a clock and states, for each signal it lists, when the testbench reads it and when the testbench's writes land, moving those reads and writes out of the region where the design updates. See @sec-ch05-clocking.
+
+Clopper-Pearson interval
+: The exact confidence interval for a binomial proportion, found by inverting the binomial tail. With zero failures in n trials its one-sided upper bound is $1-\alpha^{1/n}$. See @sec-ch21-clean.
 
 Code coverage
 : Coverage the simulator derives from the RTL itself: line, toggle, FSM state, FSM transition, conditional and branch. It measures what code was exercised, not what the plan asked for. Compare *functional coverage*; see @sec-ch08-why and @sec-ch08-code-coverage.
@@ -126,11 +135,17 @@ Counterexample
 Counterexample to induction
 : A model of the step case of an induction proof: states joined by transitions, good in all but the last, the first not required to be reachable. It shows that a property is not inductive, not that it is false. See @sec-ch18-induction.
 
+Coupon-collector time
+: The number of independent draws needed until every one of k outcomes has appeared at least once; $k H_k$ on average when the outcomes are equally likely. Applied to coverage closure with the seed as the draw. See @sec-ch21-coupon.
+
 Cover (property)
 : A statement that a condition should be observed at least once. A simulator counts the ticks on which it was; a formal tool produces a trace that reaches it or proves it unreachable. Paired with every assertion to show that its antecedent can be true. See @sec-ch09-vacuity.
 
 Covergroup
 : A SystemVerilog type that holds coverpoints, crosses, options and a sampling rule. It is declared once and instantiated with `new`; a covergroup declared in a class must be constructed in that class's `new`, or it collects nothing. See @sec-ch08-covergroup.
+
+Covering array
+: A set of tests in which every combination of values of every t factors appears at least once, t being the strength. A pairwise array has strength 2. See @sec-ch21-tway.
 
 Coverpoint
 : An integral expression a covergroup samples, together with the bins its values are counted into. See @sec-ch08-bins.
@@ -164,11 +179,20 @@ Derived clock
 DIMACS CNF
 : The text format SAT solvers read: a header `p cnf` with the numbers of variables and clauses, then one clause to a line as signed integers ended by 0. See @sec-ch17-tseitin.
 
+Discovery probability
+: The chance that the next seed hits a bin not yet seen. The Good-Turing estimate gives it from the bins seen in exactly one seed so far. See @sec-ch21-unseen.
+
 DPLL
 : Search for a satisfying assignment by unit propagation, a decision when propagation stops, and backtracking on a conflict. See @sec-ch17-dpll.
 
 Dynamic array
 : A SystemVerilog array with an integer index and a size decided at run time. See @sec-ch05-aggregates.
+
+Effective number of values
+: Two raised to the entropy in bits: the number of equally likely values that would have the same entropy as a given distribution. Also called the effective number of bins. See @sec-ch21-info.
+
+Entropy
+: The average information, in bits, in one draw from a distribution: $-\sum_i p_i \log_2 p_i$. Largest when every value is equally likely. Measures spread, not coverage. See @sec-ch21-info.
 
 Equisatisfiable
 : Of two formulas: both satisfiable or both not. Weaker than equivalent, and what an encoding with extra variables preserves. See @sec-ch17-tseitin.
@@ -209,6 +233,12 @@ Generalization
 Ghost state
 : Logic added for verification that reads the design and is never read by it, such as a counter or a shadow register. It does not change what the design can do. See @sec-ch19-ghost.
 
+Good-Turing estimate
+: The estimate, from the number of bins seen in exactly one of n seeds divided by n, of the chance that the next seed shows a new bin. See @sec-ch21-unseen.
+
+Goodness-of-fit test
+: A test of whether observed draws are consistent with a stated distribution, such as Pearson's chi-square on a histogram or Kolmogorov-Smirnov on a continuous range. A pass is the absence of evidence against the law at the test's power, not proof of it. See @sec-ch21-uniform.
+
 Helper invariant
 : A property of a design's state that is proved first and then assumed, so that a later proof starts only from states that satisfy it. See @sec-ch09-example.
 
@@ -223,6 +253,9 @@ Hierarchical contract
 
 History variable
 : Ghost state that records something about the past, so that a property can refer to an unbounded stretch of it. See @sec-ch19-history.
+
+Hit-probability vector
+: For a fixed generator and seed length, the probability per bin that one seed hits that bin. Every question about closing coverage with random seeds is a question about this vector. See @sec-ch21-p.
 
 ## I–N {#sec-appG-i}
 
@@ -252,6 +285,9 @@ Iteration within a timestep
 
 k-induction
 : A proof of a safety property by a base case, no counterexample of fewer than $k$ steps, and a step case, no $k$ good states in a row followed by a bad one. See @sec-ch18-induction.
+
+KL divergence (Kullback-Leibler divergence)
+: A measure of how far a distribution P is from a reference Q: $\sum_i p_i \log (p_i/q_i)$. Zero only when they agree, not symmetric. Twice n times it, in natural logarithms, is the G statistic of a goodness-of-fit test. See @sec-ch21-info.
 
 Lasso
 : A finite trace whose last state equals an earlier one: a stem, then a loop. It stands for the infinite trace that repeats the loop, and is the form of a liveness counterexample. See @sec-ch18-liveness.
@@ -289,6 +325,9 @@ Monitor register
 Mutant (design)
 : A copy of the design with one planted bug, used to check that some property of a set can fail. A mutant that every property passes is a gap in the set or an equivalent mutant. See @sec-ch19-mutation.
 
+Mutual information
+: The information one variable, such as a randomization knob, carries about another, such as a bin's hit: zero when they are independent. Estimated from samples it is biased upward, so it is read against a permutation baseline. See @sec-ch21-info.
+
 Netlist
 : What synthesis produces: the design's behavior expressed as instances of library cells and the wires between them. See @sec-ch03-rtl.
 
@@ -296,6 +335,12 @@ Non-blocking assignment
 : An assignment (`<=`) whose right side is evaluated when the statement executes and whose target is updated later in the same timestep: in the NBA region for design code, in Re-NBA for code that runs in the Reactive set. See @sec-ch04-regions.
 
 ## O–R {#sec-appG-o}
+
+Operational profile
+: The distribution of inputs a design meets in use. A failure probability bounded by clean random tests holds under the test generator's distribution, and says something about use only as far as the two match. See @sec-ch21-growth.
+
+Power (statistical test)
+: The probability that a test rejects a hypothesis that is false by a given amount. Grows with the number of draws; a test without enough draws passes a broken generator. See @sec-ch21-uniform.
 
 `rand`, `randc`
 : Qualifiers on class members that `randomize()` assigns. A `randc` member cycles through every value of its range before repeating one. See @sec-ch07-methods.
@@ -378,8 +423,14 @@ Register-transfer level (RTL)
 Relative induction
 : A lemma is inductive relative to a frame if no initial state violates it and no transition leads from a state of the frame that satisfies it to one that does not. See @sec-ch18-ic3.
 
+Reliability growth
+: The fall in failure rate as bugs are found and fixed, modeled as a function of test time. Its models assume a fixed operational profile and fixed tests, which a changing regression breaks. See @sec-ch21-growth.
+
 Reset domain crossing (RDC)
 : A path whose source and destination registers are reset by different resets. It can cause metastability even when both registers run on one clock, so an analysis that compares only clocks cannot see it. See @sec-ch03-resets.
+
+Rule of three
+: With zero failures in n independent trials, $3/n$ approximates the one-sided 95% upper bound on the failure probability. See @sec-ch21-clean.
 
 ## S–Z {#sec-appG-s}
 
@@ -394,6 +445,9 @@ Sample (generative model)
 
 Sampled-value function
 : `$past` and its relatives `$rose`, `$fell`, `$stable` and `$changed`: functions that compare a signal's value at this clock tick with its value at an earlier one. See @sec-ch09-properties.
+
+Sampling unit
+: The unit whose outcomes are independent of one another, on which counts for estimates and bounds must be taken. For random simulation it is the seed, not the cycle. See @sec-ch21-seed.
 
 SAT solver
 : A program that decides whether a formula in conjunctive normal form is satisfiable, and returns a satisfying assignment when it is. See @sec-ch17-logic.
@@ -431,6 +485,9 @@ Symmetry
 Synchronizer
 : A structure that carries a signal safely into another clock domain. The common two-flop synchronizer samples the signal and waits a clock period before sampling it again, trading metastability for an uncertainty of one cycle in latency. It synchronizes control, not data. See @sec-ch03-cdc.
 
+t-way coverage
+: The fraction of all legal combinations of values of every t factors that a set of tests contains. Pairwise coverage is t = 2. See @sec-ch21-tway.
+
 Test (manufacturing)
 : The check that a particular manufactured die came out of the fab correctly. It looks for manufacturing defects, not design errors. See @sec-ch01-definitions.
 
@@ -466,6 +523,9 @@ Under-approximation
 
 Undetermined
 : A formal tool's report that it neither proved nor refuted a property within its limits. It says nothing about the design. See @sec-ch09-formal.
+
+Union bound
+: The probability that at least one of several events happens is at most the sum of their probabilities. Used to size a regression: n seeds close every bin with probability at least $1-\sum_i (1-p_i)^n$, whatever the dependence between bins. See @sec-ch21-coupon.
 
 Unique-states constraint
 : The requirement that the states of an induction step case be pairwise different, also called the simple-path constraint. With it k-induction is complete on finite systems. See @sec-ch18-induction.

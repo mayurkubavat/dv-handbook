@@ -1,0 +1,119 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 806" width="940" height="806" role="img" aria-label="A model of independent cycles against the seeds">
+<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#7FA3C0"/></marker><marker id="ahj" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#5B3E8E"/></marker><marker id="ahd" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#1B4F72"/></marker><marker id="ahc" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#B7791F"/></marker><marker id="ahg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#1C1C1C"/></marker><pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="6" stroke="#CBD2D9" stroke-width="2"/></pattern></defs>
+<rect width="940" height="806" fill="white"/>
+<text x="30" y="40.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="21" font-weight="700" text-anchor="start" fill="#1B4F72">A model of independent cycles against the seeds</text>
+<text x="30" y="64.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="400" text-anchor="start" fill="#1C1C1C">fifo_cg, even odds, 200 cycles, 1000 seeds: predicted and measured per-seed hit rate</text>
+<line x1="300.0" y1="96.0" x2="300.0" y2="684.0" stroke="#CBD2D9" stroke-width="0.8"/>
+<text x="300.0" y="704.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" text-anchor="middle" fill="#7FA3C0">0.0</text>
+<line x1="420.0" y1="96.0" x2="420.0" y2="684.0" stroke="#CBD2D9" stroke-width="0.8"/>
+<text x="420.0" y="704.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" text-anchor="middle" fill="#7FA3C0">0.2</text>
+<line x1="540.0" y1="96.0" x2="540.0" y2="684.0" stroke="#CBD2D9" stroke-width="0.8"/>
+<text x="540.0" y="704.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" text-anchor="middle" fill="#7FA3C0">0.4</text>
+<line x1="660.0" y1="96.0" x2="660.0" y2="684.0" stroke="#CBD2D9" stroke-width="0.8"/>
+<text x="660.0" y="704.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" text-anchor="middle" fill="#7FA3C0">0.6</text>
+<line x1="780.0" y1="96.0" x2="780.0" y2="684.0" stroke="#CBD2D9" stroke-width="0.8"/>
+<text x="780.0" y="704.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" text-anchor="middle" fill="#7FA3C0">0.8</text>
+<line x1="900.0" y1="96.0" x2="900.0" y2="684.0" stroke="#CBD2D9" stroke-width="0.8"/>
+<text x="900.0" y="704.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" text-anchor="middle" fill="#7FA3C0">1.0</text>
+<line x1="300.0" y1="684.0" x2="900.0" y2="684.0" stroke="#1C1C1C" stroke-width="1.2"/>
+<text x="600.0" y="726.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13.5" font-weight="600" text-anchor="middle" fill="#1C1C1C">per-seed hit rate</text>
+<text x="288.0" y="110.5" font-family="'JetBrains Mono', Menlo, monospace" font-size="11.5" font-weight="400" text-anchor="end" fill="#1C1C1C">op_x_full.push_x_full</text>
+<line x1="412.2" y1="106.5" x2="545.3" y2="106.5" stroke="#7FA3C0" stroke-width="1.4"/>
+<circle cx="545.3" cy="106.5" r="5" fill="white" stroke="#B7791F" stroke-width="2.2"/>
+<circle cx="412.2" cy="106.5" r="4" fill="#1B4F72"/>
+<text x="288.0" y="131.5" font-family="'JetBrains Mono', Menlo, monospace" font-size="11.5" font-weight="400" text-anchor="end" fill="#1C1C1C">op_x_full.idle_x_full</text>
+<line x1="414.0" y1="127.5" x2="569.7" y2="127.5" stroke="#7FA3C0" stroke-width="1.4"/>
+<circle cx="569.7" cy="127.5" r="5" fill="white" stroke="#B7791F" stroke-width="2.2"/>
+<circle cx="414.0" cy="127.5" r="4" fill="#1B4F72"/>
+<text x="288.0" y="152.5" font-family="'JetBrains Mono', Menlo, monospace" font-size="11.5" font-weight="400" text-anchor="end" fill="#1C1C1C">op_x_full.pop_x_full</text>
+<line x1="430.8" y1="148.5" x2="558.6" y2="148.5" stroke="#7FA3C0" stroke-width="1.4"/>
+<circle cx="558.6" cy="148.5" r="5" fill="white" stroke="#B7791F" stroke-width="2.2"/>
+<circle cx="430.8" cy="148.5" r="4" fill="#1B4F72"/>
+<text x="288.0" y="173.5" font-family="'JetBrains Mono', Menlo, monospace" font-size="11.5" font-weight="400" text-anchor="end" fill="#1C1C1C">op_x_full.both_x_full</text>
+<line x1="441.0" y1="169.5" x2="565.0" y2="169.5" stroke="#7FA3C0" stroke-width="1.4"/>
+<circle cx="565.0" cy="169.5" r="5" fill="white" stroke="#B7791F" stroke-width="2.2"/>
+<circle cx="441.0" cy="169.5" r="4" fill="#1B4F72"/>
+<text x="288.0" y="194.5" font-family="'JetBrains Mono', Menlo, monospace" font-size="11.5" font-weight="400" text-anchor="end" fill="#1C1C1C">full_cp.full</text>
+<line x1="462.6" y1="190.5" x2="838.6" y2="190.5" stroke="#7FA3C0" stroke-width="1.4"/>
+<circle cx="838.6" cy="190.5" r="5" fill="white" stroke="#B7791F" stroke-width="2.2"/>
+<circle cx="462.6" cy="190.5" r="4" fill="#1B4F72"/>
+<text x="288.0" y="215.5" font-family="'JetBrains Mono', Menlo, monospace" font-size="11.5" font-weight="400" text-anchor="end" fill="#1C1C1C">occupancy.almost</text>
+<line x1="462.6" y1="211.5" x2="838.6" y2="211.5" stroke="#7FA3C0" stroke-width="1.4"/>
+<circle cx="838.6" cy="211.5" r="5" fill="white" stroke="#B7791F" stroke-width="2.2"/>
+<circle cx="462.6" cy="211.5" r="4" fill="#1B4F72"/>
+<text x="288.0" y="236.5" font-family="'JetBrains Mono', Menlo, monospace" font-size="11.5" font-weight="400" text-anchor="end" fill="#1C1C1C">occupancy.high</text>
+<line x1="789.0" y1="232.5" x2="900.0" y2="232.5" stroke="#7FA3C0" stroke-width="1.4"/>
+<circle cx="900.0" cy="232.5" r="5" fill="white" stroke="#B7791F" stroke-width="2.2"/>
+<circle cx="789.0" cy="232.5" r="4" fill="#1B4F72"/>
+<text x="288.0" y="257.5" font-family="'JetBrains Mono', Menlo, monospace" font-size="11.5" font-weight="400" text-anchor="end" fill="#1C1C1C">op_x_empty.idle_x_empty</text>
+<line x1="808.8" y1="253.5" x2="887.6" y2="253.5" stroke="#7FA3C0" stroke-width="1.4"/>
+<circle cx="887.6" cy="253.5" r="5" fill="white" stroke="#B7791F" stroke-width="2.2"/>
+<circle cx="808.8" cy="253.5" r="4" fill="#1B4F72"/>
+<text x="288.0" y="278.5" font-family="'JetBrains Mono', Menlo, monospace" font-size="11.5" font-weight="400" text-anchor="end" fill="#1C1C1C">op_x_empty.pop_x_empty</text>
+<line x1="810.0" y1="274.5" x2="887.1" y2="274.5" stroke="#7FA3C0" stroke-width="1.4"/>
+<circle cx="887.1" cy="274.5" r="5" fill="white" stroke="#B7791F" stroke-width="2.2"/>
+<circle cx="810.0" cy="274.5" r="4" fill="#1B4F72"/>
+<text x="288.0" y="299.5" font-family="'JetBrains Mono', Menlo, monospace" font-size="11.5" font-weight="400" text-anchor="end" fill="#1C1C1C">op_x_empty.both_x_empty</text>
+<line x1="846.6" y1="295.5" x2="888.0" y2="295.5" stroke="#7FA3C0" stroke-width="1.4"/>
+<circle cx="888.0" cy="295.5" r="5" fill="white" stroke="#B7791F" stroke-width="2.2"/>
+<circle cx="846.6" cy="295.5" r="4" fill="#1B4F72"/>
+<text x="288.0" y="320.5" font-family="'JetBrains Mono', Menlo, monospace" font-size="11.5" font-weight="400" text-anchor="end" fill="#1C1C1C">op_x_empty.push_x_empty</text>
+<line x1="861.0" y1="316.5" x2="887.6" y2="316.5" stroke="#7FA3C0" stroke-width="1.4"/>
+<circle cx="887.6" cy="316.5" r="5" fill="white" stroke="#B7791F" stroke-width="2.2"/>
+<circle cx="861.0" cy="316.5" r="4" fill="#1B4F72"/>
+<text x="288.0" y="341.5" font-family="'JetBrains Mono', Menlo, monospace" font-size="11.5" font-weight="400" text-anchor="end" fill="#1C1C1C">empty_cp.empty</text>
+<circle cx="900.0" cy="337.5" r="5" fill="white" stroke="#B7791F" stroke-width="2.2"/>
+<circle cx="900.0" cy="337.5" r="4" fill="#1B4F72"/>
+<text x="288.0" y="362.5" font-family="'JetBrains Mono', Menlo, monospace" font-size="11.5" font-weight="400" text-anchor="end" fill="#1C1C1C">empty_cp.not_empty</text>
+<circle cx="900.0" cy="358.5" r="5" fill="white" stroke="#B7791F" stroke-width="2.2"/>
+<circle cx="900.0" cy="358.5" r="4" fill="#1B4F72"/>
+<text x="288.0" y="383.5" font-family="'JetBrains Mono', Menlo, monospace" font-size="11.5" font-weight="400" text-anchor="end" fill="#1C1C1C">full_cp.not_full</text>
+<circle cx="900.0" cy="379.5" r="5" fill="white" stroke="#B7791F" stroke-width="2.2"/>
+<circle cx="900.0" cy="379.5" r="4" fill="#1B4F72"/>
+<text x="288.0" y="404.5" font-family="'JetBrains Mono', Menlo, monospace" font-size="11.5" font-weight="400" text-anchor="end" fill="#1C1C1C">occupancy.empty</text>
+<circle cx="900.0" cy="400.5" r="5" fill="white" stroke="#B7791F" stroke-width="2.2"/>
+<circle cx="900.0" cy="400.5" r="4" fill="#1B4F72"/>
+<text x="288.0" y="425.5" font-family="'JetBrains Mono', Menlo, monospace" font-size="11.5" font-weight="400" text-anchor="end" fill="#1C1C1C">occupancy.low</text>
+<circle cx="900.0" cy="421.5" r="5" fill="white" stroke="#B7791F" stroke-width="2.2"/>
+<circle cx="900.0" cy="421.5" r="4" fill="#1B4F72"/>
+<text x="288.0" y="446.5" font-family="'JetBrains Mono', Menlo, monospace" font-size="11.5" font-weight="400" text-anchor="end" fill="#1C1C1C">op_cp.both</text>
+<circle cx="900.0" cy="442.5" r="5" fill="white" stroke="#B7791F" stroke-width="2.2"/>
+<circle cx="900.0" cy="442.5" r="4" fill="#1B4F72"/>
+<text x="288.0" y="467.5" font-family="'JetBrains Mono', Menlo, monospace" font-size="11.5" font-weight="400" text-anchor="end" fill="#1C1C1C">op_cp.idle</text>
+<circle cx="900.0" cy="463.5" r="5" fill="white" stroke="#B7791F" stroke-width="2.2"/>
+<circle cx="900.0" cy="463.5" r="4" fill="#1B4F72"/>
+<text x="288.0" y="488.5" font-family="'JetBrains Mono', Menlo, monospace" font-size="11.5" font-weight="400" text-anchor="end" fill="#1C1C1C">op_cp.pop</text>
+<circle cx="900.0" cy="484.5" r="5" fill="white" stroke="#B7791F" stroke-width="2.2"/>
+<circle cx="900.0" cy="484.5" r="4" fill="#1B4F72"/>
+<text x="288.0" y="509.5" font-family="'JetBrains Mono', Menlo, monospace" font-size="11.5" font-weight="400" text-anchor="end" fill="#1C1C1C">op_cp.push</text>
+<circle cx="900.0" cy="505.5" r="5" fill="white" stroke="#B7791F" stroke-width="2.2"/>
+<circle cx="900.0" cy="505.5" r="4" fill="#1B4F72"/>
+<text x="288.0" y="530.5" font-family="'JetBrains Mono', Menlo, monospace" font-size="11.5" font-weight="400" text-anchor="end" fill="#1C1C1C">op_x_empty.both_x_not_empty</text>
+<circle cx="900.0" cy="526.5" r="5" fill="white" stroke="#B7791F" stroke-width="2.2"/>
+<circle cx="900.0" cy="526.5" r="4" fill="#1B4F72"/>
+<text x="288.0" y="551.5" font-family="'JetBrains Mono', Menlo, monospace" font-size="11.5" font-weight="400" text-anchor="end" fill="#1C1C1C">op_x_empty.idle_x_not_empty</text>
+<circle cx="900.0" cy="547.5" r="5" fill="white" stroke="#B7791F" stroke-width="2.2"/>
+<circle cx="900.0" cy="547.5" r="4" fill="#1B4F72"/>
+<text x="288.0" y="572.5" font-family="'JetBrains Mono', Menlo, monospace" font-size="11.5" font-weight="400" text-anchor="end" fill="#1C1C1C">op_x_empty.pop_x_not_empty</text>
+<circle cx="900.0" cy="568.5" r="5" fill="white" stroke="#B7791F" stroke-width="2.2"/>
+<circle cx="900.0" cy="568.5" r="4" fill="#1B4F72"/>
+<text x="288.0" y="593.5" font-family="'JetBrains Mono', Menlo, monospace" font-size="11.5" font-weight="400" text-anchor="end" fill="#1C1C1C">op_x_empty.push_x_not_empty</text>
+<circle cx="900.0" cy="589.5" r="5" fill="white" stroke="#B7791F" stroke-width="2.2"/>
+<circle cx="900.0" cy="589.5" r="4" fill="#1B4F72"/>
+<text x="288.0" y="614.5" font-family="'JetBrains Mono', Menlo, monospace" font-size="11.5" font-weight="400" text-anchor="end" fill="#1C1C1C">op_x_full.both_x_not_full</text>
+<circle cx="900.0" cy="610.5" r="5" fill="white" stroke="#B7791F" stroke-width="2.2"/>
+<circle cx="900.0" cy="610.5" r="4" fill="#1B4F72"/>
+<text x="288.0" y="635.5" font-family="'JetBrains Mono', Menlo, monospace" font-size="11.5" font-weight="400" text-anchor="end" fill="#1C1C1C">op_x_full.idle_x_not_full</text>
+<circle cx="900.0" cy="631.5" r="5" fill="white" stroke="#B7791F" stroke-width="2.2"/>
+<circle cx="900.0" cy="631.5" r="4" fill="#1B4F72"/>
+<text x="288.0" y="656.5" font-family="'JetBrains Mono', Menlo, monospace" font-size="11.5" font-weight="400" text-anchor="end" fill="#1C1C1C">op_x_full.pop_x_not_full</text>
+<circle cx="900.0" cy="652.5" r="5" fill="white" stroke="#B7791F" stroke-width="2.2"/>
+<circle cx="900.0" cy="652.5" r="4" fill="#1B4F72"/>
+<text x="288.0" y="677.5" font-family="'JetBrains Mono', Menlo, monospace" font-size="11.5" font-weight="400" text-anchor="end" fill="#1C1C1C">op_x_full.push_x_not_full</text>
+<circle cx="900.0" cy="673.5" r="5" fill="white" stroke="#B7791F" stroke-width="2.2"/>
+<circle cx="900.0" cy="673.5" r="4" fill="#1B4F72"/>
+<circle cx="310" cy="786" r="5" fill="white" stroke="#B7791F" stroke-width="2.2"/>
+<text x="322.0" y="790.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="400" text-anchor="start" fill="#1C1C1C">predicted from the per-cycle rate, cycles taken as independent</text>
+<circle cx="310" cy="764" r="4" fill="#1B4F72"/>
+<text x="322.0" y="768.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="400" text-anchor="start" fill="#1C1C1C">measured: fraction of the 1000 seeds that hit the bin</text>
+</svg>

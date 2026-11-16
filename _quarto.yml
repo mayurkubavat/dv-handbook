@@ -33,6 +33,7 @@ book:
         - chapters/ch17-logic-and-solvers.qmd
         - chapters/ch18-formal-property-verification.qmd
         - chapters/ch19-formal-techniques.qmd
+        - chapters/ch21-statistics-random-testing.qmd
     - part: "Part VII · The Future of Verification"
       chapters:
         - chapters/ch34-generative-ai-agentic-dv.qmd

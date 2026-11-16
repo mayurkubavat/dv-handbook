@@ -1,0 +1,92 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 520" width="960" height="520" role="img" aria-label="How many bins will this generator reach?">
+<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#7FA3C0"/></marker><marker id="ahj" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#5B3E8E"/></marker><marker id="ahd" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#1B4F72"/></marker><marker id="ahc" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#B7791F"/></marker><marker id="ahg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#1C1C1C"/></marker><pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="6" stroke="#CBD2D9" stroke-width="2"/></pattern></defs>
+<rect width="960" height="520" fill="white"/>
+<text x="30" y="40.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="21" font-weight="700" text-anchor="start" fill="#1B4F72">How many bins will this generator reach?</text>
+<text x="30" y="64.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="400" text-anchor="start" fill="#1C1C1C">fifo_cg: bins seen and the Chao2 estimate (median, 10 to 90% band) against seeds</text>
+<line x1="90.0" y1="400.0" x2="450.0" y2="400.0" stroke="#CBD2D9" stroke-width="0.8"/>
+<text x="82.0" y="404.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" text-anchor="end" fill="#7FA3C0">15</text>
+<line x1="90.0" y1="346.3" x2="450.0" y2="346.3" stroke="#CBD2D9" stroke-width="0.8"/>
+<text x="82.0" y="350.3" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" text-anchor="end" fill="#7FA3C0">20</text>
+<line x1="90.0" y1="292.6" x2="450.0" y2="292.6" stroke="#CBD2D9" stroke-width="0.8"/>
+<text x="82.0" y="296.6" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" text-anchor="end" fill="#7FA3C0">25</text>
+<line x1="90.0" y1="260.4" x2="450.0" y2="260.4" stroke="#CBD2D9" stroke-width="0.8"/>
+<text x="82.0" y="264.4" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" text-anchor="end" fill="#7FA3C0">28</text>
+<line x1="90.0" y1="238.9" x2="450.0" y2="238.9" stroke="#CBD2D9" stroke-width="0.8"/>
+<text x="82.0" y="242.9" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" text-anchor="end" fill="#7FA3C0">30</text>
+<line x1="90.0" y1="185.2" x2="450.0" y2="185.2" stroke="#CBD2D9" stroke-width="0.8"/>
+<text x="82.0" y="189.2" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" text-anchor="end" fill="#7FA3C0">35</text>
+<line x1="90.0" y1="131.5" x2="450.0" y2="131.5" stroke="#CBD2D9" stroke-width="0.8"/>
+<text x="82.0" y="135.5" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" text-anchor="end" fill="#7FA3C0">40</text>
+<line x1="90.0" y1="400.0" x2="90.0" y2="405.0" stroke="#1C1C1C" stroke-width="1"/>
+<text x="90.0" y="420.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" text-anchor="middle" fill="#7FA3C0">1</text>
+<line x1="141.4" y1="400.0" x2="141.4" y2="405.0" stroke="#1C1C1C" stroke-width="1"/>
+<text x="141.4" y="420.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" text-anchor="middle" fill="#7FA3C0">2</text>
+<line x1="192.9" y1="400.0" x2="192.9" y2="405.0" stroke="#1C1C1C" stroke-width="1"/>
+<text x="192.9" y="420.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" text-anchor="middle" fill="#7FA3C0">4</text>
+<line x1="244.3" y1="400.0" x2="244.3" y2="405.0" stroke="#1C1C1C" stroke-width="1"/>
+<text x="244.3" y="420.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" text-anchor="middle" fill="#7FA3C0">8</text>
+<line x1="295.7" y1="400.0" x2="295.7" y2="405.0" stroke="#1C1C1C" stroke-width="1"/>
+<text x="295.7" y="420.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" text-anchor="middle" fill="#7FA3C0">16</text>
+<line x1="347.1" y1="400.0" x2="347.1" y2="405.0" stroke="#1C1C1C" stroke-width="1"/>
+<text x="347.1" y="420.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" text-anchor="middle" fill="#7FA3C0">32</text>
+<line x1="398.6" y1="400.0" x2="398.6" y2="405.0" stroke="#1C1C1C" stroke-width="1"/>
+<text x="398.6" y="420.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" text-anchor="middle" fill="#7FA3C0">64</text>
+<line x1="450.0" y1="400.0" x2="450.0" y2="405.0" stroke="#1C1C1C" stroke-width="1"/>
+<text x="450.0" y="420.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" text-anchor="middle" fill="#7FA3C0">128</text>
+<line x1="90.0" y1="400.0" x2="450.0" y2="400.0" stroke="#1C1C1C" stroke-width="1.2"/>
+<line x1="90.0" y1="110.0" x2="90.0" y2="400.0" stroke="#1C1C1C" stroke-width="1.2"/>
+<text x="270.0" y="442.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13.5" font-weight="600" text-anchor="middle" fill="#1C1C1C">seeds (log scale)</text>
+<text x="38.0" y="255.0" font-family="'Source Sans 3', Arial, sans-serif" font-size="13.5" font-weight="600" fill="#1C1C1C" text-anchor="middle" transform="rotate(-90 38.0 255.0)">bins</text>
+<text x="270.0" y="100.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="14.5" font-weight="700" text-anchor="middle" fill="#1C1C1C">even odds, 200 cycles</text>
+<line x1="90.0" y1="260.4" x2="450.0" y2="260.4" stroke="#1C1C1C" stroke-width="1.2" stroke-dasharray="2 4"/>
+<text x="446.0" y="253.4" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="600" text-anchor="end" fill="#1C1C1C">reachable: 28</text>
+<path d="M90.0,335.6 L141.4,324.8 L192.9,324.8 L244.3,324.8 L295.7,260.4 L347.1,260.4 L398.6,260.4 L450.0,260.4 L450.0,260.4 L398.6,260.4 L347.1,260.4 L295.7,255.3 L244.3,119.5 L192.9,139.5 L141.4,254.1 L90.0,271.1 Z" fill="#5B3E8E" fill-opacity="0.22" stroke="none"/>
+<path d="M90.0,324.8 L141.4,324.3 L192.9,259.6 L244.3,260.4 L295.7,260.4 L347.1,260.4 L398.6,260.4 L450.0,260.4" fill="none" stroke="#5B3E8E" stroke-width="2.4" stroke-linejoin="round" stroke-dasharray="6 4"/>
+<path d="M90.0,317.2 L141.4,302.7 L192.9,285.5 L244.3,269.9 L295.7,261.6 L347.1,260.4 L398.6,260.4 L450.0,260.4" fill="none" stroke="#1B4F72" stroke-width="3.0" stroke-linejoin="round"/>
+<line x1="560.0" y1="400.0" x2="920.0" y2="400.0" stroke="#CBD2D9" stroke-width="0.8"/>
+<text x="552.0" y="404.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" text-anchor="end" fill="#7FA3C0">15</text>
+<line x1="560.0" y1="346.3" x2="920.0" y2="346.3" stroke="#CBD2D9" stroke-width="0.8"/>
+<text x="552.0" y="350.3" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" text-anchor="end" fill="#7FA3C0">20</text>
+<line x1="560.0" y1="292.6" x2="920.0" y2="292.6" stroke="#CBD2D9" stroke-width="0.8"/>
+<text x="552.0" y="296.6" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" text-anchor="end" fill="#7FA3C0">25</text>
+<line x1="560.0" y1="260.4" x2="920.0" y2="260.4" stroke="#CBD2D9" stroke-width="0.8"/>
+<text x="552.0" y="264.4" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" text-anchor="end" fill="#7FA3C0">28</text>
+<line x1="560.0" y1="238.9" x2="920.0" y2="238.9" stroke="#CBD2D9" stroke-width="0.8"/>
+<text x="552.0" y="242.9" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" text-anchor="end" fill="#7FA3C0">30</text>
+<line x1="560.0" y1="185.2" x2="920.0" y2="185.2" stroke="#CBD2D9" stroke-width="0.8"/>
+<text x="552.0" y="189.2" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" text-anchor="end" fill="#7FA3C0">35</text>
+<line x1="560.0" y1="131.5" x2="920.0" y2="131.5" stroke="#CBD2D9" stroke-width="0.8"/>
+<text x="552.0" y="135.5" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" text-anchor="end" fill="#7FA3C0">40</text>
+<line x1="560.0" y1="400.0" x2="560.0" y2="405.0" stroke="#1C1C1C" stroke-width="1"/>
+<text x="560.0" y="420.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" text-anchor="middle" fill="#7FA3C0">1</text>
+<line x1="611.4" y1="400.0" x2="611.4" y2="405.0" stroke="#1C1C1C" stroke-width="1"/>
+<text x="611.4" y="420.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" text-anchor="middle" fill="#7FA3C0">2</text>
+<line x1="662.9" y1="400.0" x2="662.9" y2="405.0" stroke="#1C1C1C" stroke-width="1"/>
+<text x="662.9" y="420.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" text-anchor="middle" fill="#7FA3C0">4</text>
+<line x1="714.3" y1="400.0" x2="714.3" y2="405.0" stroke="#1C1C1C" stroke-width="1"/>
+<text x="714.3" y="420.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" text-anchor="middle" fill="#7FA3C0">8</text>
+<line x1="765.7" y1="400.0" x2="765.7" y2="405.0" stroke="#1C1C1C" stroke-width="1"/>
+<text x="765.7" y="420.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" text-anchor="middle" fill="#7FA3C0">16</text>
+<line x1="817.1" y1="400.0" x2="817.1" y2="405.0" stroke="#1C1C1C" stroke-width="1"/>
+<text x="817.1" y="420.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" text-anchor="middle" fill="#7FA3C0">32</text>
+<line x1="868.6" y1="400.0" x2="868.6" y2="405.0" stroke="#1C1C1C" stroke-width="1"/>
+<text x="868.6" y="420.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" text-anchor="middle" fill="#7FA3C0">64</text>
+<line x1="920.0" y1="400.0" x2="920.0" y2="405.0" stroke="#1C1C1C" stroke-width="1"/>
+<text x="920.0" y="420.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="400" text-anchor="middle" fill="#7FA3C0">128</text>
+<line x1="560.0" y1="400.0" x2="920.0" y2="400.0" stroke="#1C1C1C" stroke-width="1.2"/>
+<line x1="560.0" y1="110.0" x2="560.0" y2="400.0" stroke="#1C1C1C" stroke-width="1.2"/>
+<text x="740.0" y="442.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13.5" font-weight="600" text-anchor="middle" fill="#1C1C1C">seeds (log scale)</text>
+<text x="508.0" y="255.0" font-family="'Source Sans 3', Arial, sans-serif" font-size="13.5" font-weight="600" fill="#1C1C1C" text-anchor="middle" transform="rotate(-90 508.0 255.0)"></text>
+<text x="740.0" y="100.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="14.5" font-weight="700" text-anchor="middle" fill="#1C1C1C">even odds, 30 cycles</text>
+<line x1="560.0" y1="260.4" x2="920.0" y2="260.4" stroke="#1C1C1C" stroke-width="1.2" stroke-dasharray="2 4"/>
+<text x="916.0" y="253.4" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="600" text-anchor="end" fill="#1C1C1C">reachable: 28</text>
+<path d="M560.0,367.8 L611.4,346.2 L662.9,335.6 L714.3,335.6 L765.7,335.6 L817.1,324.8 L868.6,324.8 L920.0,324.8 L920.0,324.8 L868.6,324.8 L817.1,324.8 L765.7,324.8 L714.3,324.8 L662.9,319.4 L611.4,333.0 L560.0,335.6 Z" fill="#5B3E8E" fill-opacity="0.22" stroke="none"/>
+<path d="M560.0,346.3 L611.4,335.4 L662.9,335.6 L714.3,335.6 L765.7,324.8 L817.1,324.8 L868.6,324.8 L920.0,324.8" fill="none" stroke="#5B3E8E" stroke-width="2.4" stroke-linejoin="round" stroke-dasharray="6 4"/>
+<path d="M560.0,349.4 L611.4,337.7 L662.9,333.2 L714.3,330.7 L765.7,327.9 L817.1,325.9 L868.6,324.8 L920.0,324.8" fill="none" stroke="#1B4F72" stroke-width="3.0" stroke-linejoin="round"/>
+<line x1="893.9" y1="321.6" x2="893.9" y2="263.6" stroke="#B7791F" stroke-width="1.6"/>
+<text x="885.1" y="296.6" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12.5" font-weight="700" text-anchor="end" fill="#B7791F">6 bins never seen</text>
+<line x1="120" y1="470" x2="154" y2="470" stroke="#1B4F72" stroke-width="3"/>
+<text x="162.0" y="474.5" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="400" text-anchor="start" fill="#1C1C1C">bins seen (mean over resamples)</text>
+<line x1="520" y1="470" x2="554" y2="470" stroke="#5B3E8E" stroke-width="3" stroke-dasharray="6 4"/>
+<text x="562.0" y="474.5" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="400" text-anchor="start" fill="#1C1C1C">Chao2 median; band 10 to 90%</text>
+</svg>

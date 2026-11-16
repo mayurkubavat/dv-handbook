@@ -1,0 +1,633 @@
+# The Statistics of Random Testing and Coverage {#sec-ch21}
+
+> A seed is one draw; everything else follows from counting draws honestly.
+
+::: {.callout-note title="Learning objectives"}
+After this chapter you will be able to:
+
+1. State, for any coverage bin, cross cell or bug trigger, its per-seed hit probability, estimate it from a set of seeds with an interval, and compute the seeds needed to hit it with a stated confidence.
+2. Say why the seed, and not the cycle or the transaction, is the unit of independence in a stateful design, and show the error a cycle-level argument makes on the FIFO.
+3. Size a regression to close a covergroup with probability $1-\delta$ using the union bound, and name the bins that set the answer.
+4. Write the correct sentence after $N$ clean seeds, with its bound and its qualifier, and name what the bound cannot see.
+5. Test a constraint's distribution with chi-square, Kolmogorov-Smirnov, bit and serial tests, size the sample for a stated power, and correct for testing many coverpoints at once.
+6. Build or read a t-way covering array for a configuration space with constraints, and compare it with random selection of the same space.
+7. Estimate how many bins a generator will reach and how many the next seed will add, and say when those estimates are optimistic.
+8. Use entropy, KL divergence and mutual information to compare generators and to rank which knob moves which bin, and say what none of them measures.
+9. Read a reliability-growth claim about a verification project and name the assumptions it carries.
+:::
+
+## Three questions a nightly regression cannot answer {#sec-ch21-motivation}
+
+The covergroup of @sec-ch08-example was run twice. The first run, push and pop at even odds under one seed, never reached the bin for an almost-full FIFO; the second, push-biased, filled the FIFO and recorded as covered the cross cell for a push while the design reported full, which is the bug @sec-ch01 planted: the design raises `full` at fifteen entries and ignores the push. Run the even-odds test under a thousand seeds instead of one, and count the seeds in which that push happened:
+
+```{.text include="examples/ch21-statistics-random-testing/seed-unit/run.out" lines="20-22"}
+```
+
+About one seed in four reaches the bug, and the other three pass. That single line raises three questions that no earlier chapter could answer with a number. How many seeds does the regression need before every bin of the covergroup has been hit, with 99% confidence? If 250 seeds of some test all pass, what does that say about a bug like this one? And when a constraint asks for a distribution, as the `dist` forms of @sec-ch07-constraints do, is the generator delivering it, or only something that looks about right?
+
+Each question is about one object: a vector of probabilities, one for every event a test can produce, each the chance that one seeded run of a fixed generator on a fixed design produces that event. The bug line above is an estimate of one entry of that vector, with an interval, set against the same probability computed exactly from a Markov chain of the FIFO. Every answer in the chapter is a statement about this vector, and every answer holds for the generator that defined it and for no other generator. A test that cannot reach a state has probability zero of reaching it, and no number of passing seeds changes that.
+
+@sec-ch07-why found no controlled study of constrained-random effectiveness against directed testing, and this chapter does not supply one. What it supplies is different: models with stated assumptions, each checked against the simulator, so that a number in a regression report says what it means. Each formula comes three ways. It is stated, with its conditions, and derived where the derivation is short. It is checked by a Python program written on the standard library alone, against a simulation of the formula's own assumptions. And it is confronted with a Verilator run of a design the reader already knows, chosen where one of its assumptions breaks.
+
+The design is the FIFO of @sec-ch01 under the covergroup `fifo_cg` of @sec-ch08-example, with the testbench, the coverage model and the RTL read by path from their chapters and never copied. @sec-ch21-p introduces the vector. @sec-ch21-seed shows, early and on its own, that the independent draw in a stateful design is the seed and not the cycle. @sec-ch21-coupon sizes a regression to close every bin; @sec-ch21-clean says what clean seeds prove; @sec-ch21-uniform tests the constraints of @sec-ch07 against the laws they ask for; @sec-ch21-tway designs a set of configurations instead of drawing one, on the DMA of @sec-ch11; @sec-ch21-unseen estimates the bins a generator will never reach; @sec-ch21-info measures spread and knob influence with information theory; @sec-ch21-growth reads reliability-growth claims. @sec-ch21-example runs the whole loop on the FIFO.
+
+## One object: the hit-probability vector {#sec-ch21-p}
+
+Three words need fixed meanings. A *test* is one seeded run of a fixed generator on a fixed design. The generator is everything that decides the stimulus: the testbench, its constraints, its knobs and its run length. Two runs with different seeds of an unchanged generator on an unchanged design are two tests of the same kind; a change to any part of the generator or of the RTL makes a different kind of test. A *bin* is any event a test can produce: a coverage bin, a cell of a cross, the trigger of a bug, or, in @sec-ch21-tway, a combination of configuration values. A test *hits* a bin if the event happens at least once during the run.
+
+::: {.callout-note title="Definition"}
+Fix a design, a generator and a list of $k$ bins. The **hit probability** of bin $i$ is $p_i$, the probability that one test, run under a seed drawn at random, hits bin $i$. The **hit-probability vector** is $p = (p_1, \ldots, p_k)$. It is a property of the pair: *under this generator, on this design*. A different generator, or a different RTL, defines a different vector.
+:::
+
+Bins, bugs and tuples are three readings of the same vector. A bug is one bin whose hit is a failure, and the bound after clean seeds in @sec-ch21-clean is the case of one bin with an unknown and, one hopes, small $p_i$. Closing a covergroup is the question whether every $p_i$ has been realized at least once. A covering array is a set of tests designed so that every tuple bin is hit, instead of left to chance.
+
+One bin first. If tests are independent and each hits the bin with probability $p$, the number of tests until the first hit has a geometric law, and three facts follow.
+
+::: {.callout-note title="Definition"}
+**Seeds to hit one bin.** With independent tests each hitting a bin with probability $p > 0$:
+$$P(\text{bin missed by } n \text{ tests}) = (1-p)^n, \qquad E[\text{tests to the first hit}] = \frac{1}{p}.$$
+The first because each test misses with probability $1-p$, independently; the second is the mean of the geometric law. Setting $(1-p)^n \le \delta$ and taking logarithms gives the tests needed for a hit with probability at least $1-\delta$:
+$$n \;\ge\; \frac{\ln \delta}{\ln(1-p)} \;\approx\; \frac{\ln(1/\delta)}{p},$$
+where the approximation uses $-\ln(1-p) \approx p$ and is close for small $p$. Since $\ln 100 \approx 4.6$, a 99% chance of hitting a bin costs about $4.6/p$ tests.
+:::
+
+The book's statistics library implements the exact form, with a small allowance for rounding so that an exact integer answer is not pushed one higher:
+
+```{.python include="examples/ch21-statistics-random-testing/common/statlib.py" lines="173-177"}
+```
+
+and the example `hit-prob` tabulates it, with the approximation beside the exact answer:
+
+```{.text include="examples/ch21-statistics-random-testing/hit-prob/run.out" lines="1-7"}
+```
+
+A bin hit by one test in a hundred needs 299 tests for a 95% chance and 459 for 99%. The approximation is a few tests high at every row and is good enough to size a regression in one's head; the exact form is what a script should print.
+
+The FIFO's bug trigger is a bin whose probability can be computed exactly, because the FIFO under random stimulus is a small Markov chain. Its state is the occupancy the testbench's monitor counts, from 0 to 15 with the bug in place. In each sampled cycle the driver of @sec-ch08-example requests a push with probability $p_w$ and a pop with probability $p_r$, independently; a push is accepted unless the FIFO shows full, a pop unless it shows empty. The trigger is a push requested while the FIFO shows full, the event the testbench prints and the cross cell `push_x_full` (or `both_x_full`, when a pop is requested too) records. The chain's step, which absorbs the probability of a trigger as it happens:
+
+```{.python include="examples/ch21-statistics-random-testing/common/fifo_chain.py" lines="20-36"}
+```
+
+Iterating it over the cycles of a test gives the per-seed trigger probability for any run length and mix:
+
+```{.text include="examples/ch21-statistics-random-testing/hit-prob/run.out" lines="8-20"}
+```
+
+At even odds and 200 cycles, the testbench's default, the chain gives 0.242, and the thousand Verilator seeds of the opening gave 247 triggers, an estimate of 0.247 with a 95% interval from 0.2205 to 0.2750 that holds the chain's value. The chain is the formula and the simulator is the measurement, and they agree. The interval is a Clopper-Pearson interval, defined in @sec-ch21-clean; for now it is enough that it is the range of $p$ consistent with the count at 95% confidence. The same table shows how steeply the probability falls with run length: at 30 cycles a seed triggers the bug with probability $8.45 \times 10^{-5}$, and 35,462 seeds would be needed for a 95% chance of seeing it once. @sec-ch21-clean returns to that row. The push-biased generator triggers it in essentially every seed, and the repaired FIFO, whose `full` is raised at sixteen entries, is still pushed while full in about one seed in five, which on that design is correct behavior and not a bug: the bin is the same, its meaning depends on the RTL.
+
+The estimate of $p_i$ from a set of seeds is the fraction of seeds that hit bin $i$. The example `seed-unit` runs the testbench of @sec-ch08-example under seeds 1 to 1000, writes one coverage database per seed, and reads every bin of `fifo_cg` back from the thousand files. The runner is a shell loop around one build, as the coverage chapter's own runner is:
+
+```{.bash include="examples/ch21-statistics-random-testing/common/fifo_cov.sh" lines="19-31"}
+```
+
+and the bins that not every seed hits, rarest first, with each one's interval:
+
+```{.text include="examples/ch21-statistics-random-testing/seed-unit/run.out" lines="1-19"}
+```
+
+Read only the `measured` and `95% CP` columns for now; @sec-ch21-seed is about the other two. Twenty-eight of the twenty-nine bins are hit by some seed. The twenty-ninth, `occupancy.full_16`, is the bin the exclusion review of @sec-ch08-example marked unreachable on this RTL, and no seed hits it. Seventeen bins are hit by every seed. The rarest, the four cells of `op_x_full`, are hit by a fifth of the seeds each, and `full` and `almost` by about a quarter. Those six numbers, and not the other twenty-two, will decide how many seeds the regression needs.
+
+A cross cell's probability is joint, and it is not the product of its coverpoints' probabilities. The per-seed rate of `push_x_full` is 0.187. Every seed pushes at some point and about a quarter show `full` at some point, so the product of the two marginal rates is 0.271, nearly half as large again:
+
+```{.text include="examples/ch21-statistics-random-testing/seed-unit/run.out" lines="30-34"}
+```
+
+The cell needs the push and the flag *in the same cycle*, and a seed that shows `full` for a few cycles may not push in any of them. Per cycle the picture is different. The driver draws each cycle's request afresh, so the request is independent of the flag, and the per-cycle rate of the cell is close to the product of the per-cycle rates: of the 2266 cycles that showed `full` across all thousand seeds, 525 pushed, within two standard deviations of the push share. The unit at which a probability is measured changes what is independent of what, and that is the subject of the next section.
+
+The packet stream of @sec-ch07-example is a second, smaller specimen, and one where the formula needs no simulator at all. Its `kind` field is drawn with weights 6:3:1 for each packet, so the rarest kind appears with probability 0.1 per packet, and a 64-packet run misses it with probability $0.9^{64}$:
+
+```{.text include="examples/ch21-statistics-random-testing/hit-prob/run.out" lines="21-23"}
+```
+
+A 64-packet run almost always contains a packet of kind 2, and 44 packets give a 99% chance of seeing at least one. The packet's kind is drawn afresh for every packet and nothing in the generator remembers the previous one, so here each packet, not each seed, is an independent draw. That is the exception, and the next section says why.
+
+## The unit of independence is the seed, not the cycle {#sec-ch21-seed}
+
+Every formula of the previous section assumes independent draws. Seeds of an unchanged generator are independent by construction: each run starts from reset with its own seed, and nothing carries from one run to the next. Cycles inside one run are not. The FIFO's occupancy is a Markov chain, and the bins at the top of its range are reached only by runs of pushes; a seed that climbs there stays near the top for a while and hits those bins many times, and a seed that never climbs hits them not at all. Hits of a high bin come in bursts inside the seeds that reach it. A model that treats the 200 cycles of a seed as 200 independent draws spreads those bursts evenly across seeds, and is wrong by a large and measurable amount.
+
+::: {.callout-note title="Definition"}
+A **sampling unit** is the draw that an estimator treats as independent of every other draw. The unit must be one for which independence holds, or every formula built on it inherits the error. Ecology's species estimators distinguish *abundance* data, where each individual sampled counts as a draw, from *incidence* data, where each sampling unit is recorded only for which species it contains [@chao2017thirty]. Coverage from a regression is incidence data with the seed as the sampling unit: each seed is recorded by the set of bins it hit.
+:::
+
+The evidence comes three ways. The first is the two columns of the bin table that the previous section asked the reader to skip. For each bin, `seed-unit` divides its total hit count over the thousand seeds by the 200,000 cycles they ran, giving a per-cycle rate, and asks what per-seed rate a model of independent cycles predicts from it: $1 - (1 - p_{\text{cycle}})^{200}$. For `almost` the per-cycle rate is 1.13%, and the model predicts that 89.8% of seeds hit it; 27.1% do. The model over-predicts every one of the eleven bins that not every seed hits, and for the rare ones by a factor of two or more. @fig-ch21-burst draws the gap bin by bin.
+
+![Per bin of `fifo_cg`, the per-seed hit rate a model of independent cycles predicts from the bin's per-cycle rate (hollow circle) against the measured per-seed rate over 1000 seeds of the even-odds 200-cycle generator (filled circle), bins sorted by measured rate. The seventeen bins hit by every seed sit at 1 on both. Data from the `seed-unit` example.](../figures/ch21-burst.svg){#fig-ch21-burst fig-alt="A dot plot with one row per coverage bin, 28 rows, and a horizontal axis from 0 to 1 labeled per-seed hit rate. Each row has a filled blue dot at the measured rate and a hollow amber circle at the rate the independent-cycles model predicts, joined by a line. For the four op_x_full cells the filled dots are near 0.2 and the hollow ones near 0.4 to 0.45; for full and almost the filled dots are at 0.27 and the hollow ones at 0.9; for high, 0.82 against 1.0; for the four op_x_empty cells, 0.85 to 0.94 against about 0.98. The remaining seventeen rows have both dots at 1."}
+
+The same model applied to closing the whole covergroup predicts too few seeds. Fed with per-cycle rates and treated as independent draws, it says that every reachable bin is hit with 99% probability after 2126 cycles, about 11 seeds; resampling the thousand real seeds says 26 are needed:
+
+```{.text include="examples/ch21-statistics-random-testing/seed-unit/run.out" lines="42-45"}
+```
+
+The cycle model is optimistic by a factor of 2.4 on this covergroup. The factor depends on the covergroup: a finer occupancy coverpoint, with a bin for every level, would have more bins in the bursty upper range and a larger factor. The direction does not depend on it. For any bin reached by climbing, a cycle-level argument overstates how quickly random seeds cover it.
+
+The second piece of evidence is that a seed's chance of triggering the bug does not spread evenly over its cycles. The testbench prints no cycle for the trigger, so this comes from the chain, which the previous section showed agrees with the simulator on the per-seed rate:
+
+```{.text include="examples/ch21-statistics-random-testing/seed-unit/run.out" lines="24-29"}
+```
+
+Take the second block first. No trigger can happen before cycle 16, because fifteen pushes must be accepted first; of the seeds that trigger, only 0.3% do so before cycle 40, and the median first trigger is at cycle 137. The per-cycle hazard, the chance of a first trigger in a cycle given none before it, rises more than sixfold from cycle 50 to cycle 200. A per-seed rate does not divide by the run length into a per-cycle rate, and a per-seed bound in @sec-ch21-clean does not convert into a per-cycle bound. The first block is the check that seeds behave as independent draws: in seed order, the runs of clean seeds between triggers have mean length 3.04, and the geometric law for independent seeds with $p = 0.247$ predicts $(1-p)/p = 3.05$.
+
+The third piece of evidence anticipates @sec-ch21-unseen, which defines an estimator of the number of bins a generator can reach from how many bins were seen once and twice. Applied with every cycle as a draw, it sees nothing unseen, because each reached bin has been hit many times by the cycles of the seeds that reached it; applied with every seed as a draw, it sees the gap:
+
+```{.text include="examples/ch21-statistics-random-testing/unseen/run.out" lines="42-44"}
+```
+
+At four seeds of the even-odds generator, 25.7 bins have been seen on average, the estimate over cycles adds a third of a bin, and the median estimate over seeds is 28.1, against 28 reachable. The contrast on `fifo_cg` is modest, because only a few of its bins are rare and the seed-based estimate soon has nothing left to find. The second half of the line, a generator under which both estimates are blind, is @sec-ch21-unseen's subject.
+
+The rule that follows is short. Count seeds. Treat everything that happens inside one seed as one outcome: the set of bins it hit, and whether it failed. A transaction in a stateful environment is a cycle for this purpose, because what it can hit depends on the state the earlier transactions left. The rule relaxes in one case: a field that is drawn afresh for every transaction and that the bin depends on alone, such as the packet kind of @sec-ch07-example or the operation the FIFO's driver requests each cycle, is an independent draw at the transaction level, which is why the previous section could reason about packets one at a time and why @sec-ch21-example tests the driver's operation mix cycle by cycle.
+
+The comparison of the two columns is also a diagnostic a project can run on its own covergroup. Compute each bin's per-cycle rate from the merged database, predict a per-seed rate from it as if cycles were independent, and set the prediction beside the measured fraction of seeds. Where they agree, the bin behaves like a fresh draw and the cheap cycle-level arithmetic is safe for it. Where the prediction is high, the bin is reached by runs of events, the seed is the unit, and the gap says how much state stands between reset and the bin.
+
+::: {.callout-warning title="Pitfall"}
+"A million cycles of random stimulus" is not a million draws. The formulas of this chapter want the number of independent tests, which in a stateful design is the number of seeds; a long seed is one draw with a different hit-probability vector, not many draws. A coverage argument, a bug bound or a species estimate computed over cycles or transactions is optimistic for every bin that is reached by a run of events, and the size of the error is a property of the design.
+:::
+
+## Closing every bin: the coupon collector {#sec-ch21-coupon}
+
+The question "how many seeds until every bin is hit" is the coupon collector's problem: a cereal maker puts one of $k$ coupons in every box, and the collector wants to know how many boxes buy the set. In its classical form each draw produces exactly one bin, which fits the packet kind of @sec-ch07-example and every value of a constrained field. A seed of the FIFO testbench hits many bins at once, which changes the formulas but not the shape of the answer, and the section takes the classical case first.
+
+::: {.callout-note title="Definition"}
+The **coupon-collector time** $T$ is the number of independent draws until every one of $k$ bins has been hit. With **equal probabilities** $1/k$, once $j$ bins have been seen the next new bin arrives after a geometric number of draws with mean $k/(k-j)$, and summing over $j = 0, \ldots, k-1$ gives
+$$E[T] = k \left(1 + \tfrac{1}{2} + \cdots + \tfrac{1}{k}\right) = k H_k \approx k \ln k + 0.577\,k.$$
+Erdős and Rényi's limit law gives the spread: for fixed $c$, $P(T \le k \ln k + c k) \to e^{-e^{-c}}$ as $k \to \infty$ [@erdos1961coupon], so $T$ varies about $k \ln k$ on a scale of $k$. With **unequal probabilities** $p_1, \ldots, p_k$, let draws arrive as a Poisson process of rate 1. Bin $i$ then receives draws as an independent Poisson process of rate $p_i$, so every bin is hit by time $t$ with probability $\prod_i (1 - e^{-p_i t})$, exactly. The time to completion has mean $\int_0^\infty \bigl(1 - \prod_i (1 - e^{-p_i t})\bigr)\,dt$, and since the draws are spaced by independent exponential times of mean 1, unrelated to which bins they hit, that is also $E[T]$:
+$$E[T] = \int_0^\infty \Bigl(1 - \prod_{i=1}^{k} \bigl(1 - e^{-p_i t}\bigr)\Bigr)\,dt.$$
+The general expression is Flajolet, Gardy and Thimonier's [@flajolet1992coupon; @boisberranger2012weighted]. For a fixed number $n$ of draws, $\prod_i (1 - e^{-n p_i})$ is an approximation to $P(T \le n)$; the exact law, for a few bins, is the inclusion-exclusion sum $P(T \le n) = \sum_{S} (-1)^{|S|} \bigl(1 - \sum_{i \in S} p_i\bigr)^n$ over subsets $S$ of the bins.
+:::
+
+Means are not what a review asks for. A review asks for the number of draws after which every bin has been hit with probability at least $1 - \delta$, and the cleanest answer comes from a bound that needs no assumption about how the bins depend on one another.
+
+::: {.callout-note title="Definition"}
+**The union bound for every bin.** Let $A_i$ be the event that bin $i$ is missed by $n$ independent tests. Then
+$$P(\text{some bin missed}) = P\Bigl(\bigcup_i A_i\Bigr) \;\le\; \sum_i P(A_i) = \sum_{i=1}^{k} (1 - p_i)^n,$$
+because the probability of a union never exceeds the sum of the probabilities. Independence between tests is needed for $(1-p_i)^n$; **no independence between bins is needed**, so the bound holds whatever the design does to correlate them. The smallest $n$ with $\sum_i (1-p_i)^n \le \delta$ guarantees every bin with probability at least $1-\delta$. A cruder form gives each bin an equal share $\delta/k$ of the risk, $n \ge \max_i \ln(k/\delta) / (-\ln(1-p_i))$, and is never smaller.
+:::
+
+The library computes the bound in both forms:
+
+```{.python include="examples/ch21-statistics-random-testing/common/statlib.py" lines="253-271"}
+```
+
+The example `coupon` checks the formulas against simulation of their own assumptions, starting with equal probabilities:
+
+```{.text include="examples/ch21-statistics-random-testing/coupon/run.out" lines="1-11"}
+```
+
+The integral reproduces $k H_k$ for equal bins, and simulation agrees with it within its standard error at every size. For eight bins the union bound gives 51 draws for 99%; for 64 and 256 it is within a few draws of the Poisson approximation. The simulated 99th percentile is itself an estimate from one or four thousand trials, which is why at 64 and 256 bins it can sit a few percent above a bound that holds exactly. Note the growth: 64 equal bins need about 300 draws on average, five times the number of bins, and 256 need about 1570, six times. Each bin added makes the last ones harder to find.
+
+The packet kind of @sec-ch07-example is the unequal case with three bins and an exact answer:
+
+```{.text include="examples/ch21-statistics-random-testing/coupon/run.out" lines="12-21"}
+```
+
+The equal-probability formula says 5.5 packets on average; the integral says 11.0, twice as many, and simulation agrees. Inclusion-exclusion gives the exact 99% point, 44 packets. The union bound in its sum form gives 44 too, because with three bins the chance of missing two at once is negligible and the bound is nearly an equality; the split form gives 55, and the Poisson approximation 47. Forty-four is also the number of packets the rarest kind alone needs for 99% (@sec-ch21-p): the 6:3:1 mix is closed when kind 2 has been seen, and almost never later.
+
+The same arithmetic applies to every value of an 8-bit field under the two `dist` forms of @sec-ch07-constraints, weights 1, 1 and 2 on the ranges `[0:9]`, `[10:99]` and `[100:255]`:
+
+```{.text include="examples/ch21-statistics-random-testing/coupon/run.out" lines="22-30"}
+```
+
+Under `:=` each of the hundred values in the first two ranges has probability 1/412, against 1/256 for a uniform draw, and the mean number of draws to see all 256 values is 37% above $k H_k$; under `:/` the ten values of `[0:9]` are each heavily favored and the ninety of `[10:99]` share a quarter, and the mean is 29% above. The weights that made the distribution look right on a histogram of three ranges make every value of the slow range slower to reach. The formula says, before a regression runs, what a weight change buys.
+
+Now the FIFO. A seed hits many bins, so the classical $T$ does not apply directly, but the union bound does, unchanged: $(1-p_i)^n$ is still the chance that $n$ independent seeds all miss bin $i$, with $p_i$ now the per-seed rate measured in @sec-ch21-p. Two other estimates sit beside it. If the bins were independent of one another, every bin would be hit by $n$ seeds with probability $\prod_i \bigl(1 - (1-p_i)^n\bigr)$, the *independent-bins product*. And resampling the thousand real seeds in random orders and counting how many each order needs before every reachable bin has been seen gives the answer with no model at all:
+
+```{.text include="examples/ch21-statistics-random-testing/seed-unit/run.out" lines="35-41"}
+```
+
+The resampled seeds close the covergroup in a median of 5 seeds; 26 give 99%. The union bound in its sum form says 27, one more than measured, and the independent-bins product agrees with it; the split form says 39. @fig-ch21-coupon draws the four curves, with the cycle-level model of @sec-ch21-seed for comparison.
+
+![The probability that every reachable bin of `fifo_cg` has been hit within $n$ seeds, against $n$: measured by resampling 1000 seeds in 2000 random orders, the independent-bins product from the measured per-seed rates, the guarantee the union bound gives, and the model of independent cycles fed with per-cycle rates. The dotted line is 0.99. Data from the `seed-unit` example.](../figures/ch21-coupon.svg){#fig-ch21-coupon fig-alt="A line chart, seeds from 1 to 60 on the horizontal axis and probability from 0 to 1 on the vertical, with a dotted horizontal line at 0.99. The measured curve, solid blue, rises fastest at first: about 0.57 at 5 seeds, 0.97 at 20, crossing 0.99 near 26. The independent-bins product, dashed green, starts much lower, about 0.14 at 5 seeds, and joins the measured curve above 20 seeds. The union-bound guarantee, violet, is zero until about 8 seeds, then rises steeply and coincides with the product from about 20 seeds. The independent-cycles model, amber, rises fastest of all and crosses 0.99 near 11 seeds, well before the measured curve."}
+
+Three things in the figure are worth reading. The first is that the union bound is never above the measured curve: it is a guarantee, and a guarantee may only be pessimistic. On this covergroup it is barely so, 27 against 26, because the rare bins have nearly equal rates and their miss probabilities add up as the bound assumes. The second is the gap between the product and the measured curve at small $n$. The four `*_x_full` cells, `full` and `almost` are hit together or not at all: a seed that fills the FIFO usually hits all six, and one that does not hits none. Bins that are positively correlated close together, so the real covergroup closes sooner, at the median, than independent bins would. At the tail the two agree, because by then the question is whether the last seed that fills the FIFO has come, and that is one event however many bins hang on it. The third is the amber curve, which crosses 0.99 at a little under 11 seeds while the real covergroup needs 26: the cycle-level model's error, now in the units a regression is sized in.
+
+The last two lines of the block say which bins set the answer:
+
+```{.text include="examples/ch21-statistics-random-testing/seed-unit/run.out" lines="46-47"}
+```
+
+The rarest bin alone needs 23 seeds for 99%; all 28 bins together need 27. The other 27 bins add four seeds, and the 22 bins that are hit by more than four seeds in five add nothing at all. This is the quantitative form of the closure folklore that the last few bins take most of the time: the number of seeds to close a covergroup is set by its rarest bins almost alone, so the way to shorten a regression is to raise the rarest rates, with a new test or a reweighted generator, and not to add seeds. The same rule says what a new bin costs. Adding the transition bin `climb` of `fill_cg`, hit by about one seed in ten, moves the median to 9 seeds and the 99th percentile to 43.
+
+All of this presupposes that every bin in the list can be hit. An unreachable bin has $p_i = 0$, the term $(1-p_i)^n$ stays at 1, and $T$ is infinite: no number of seeds closes the group. The formulas are applied after the exclusion review of @sec-ch08-example has removed `full_16`, and the review is what makes the denominator honest.
+
+::: {.callout-tip title="In Practice"}
+Size a nightly regression from a pilot. Run a few hundred seeds of the generator as it stands, read the per-seed hit rate of every bin from the coverage databases, and compute the smallest $n$ with $\sum_i (1 - p_i)^n \le \delta$; list the four or five bins that contribute most of the sum at that $n$, because they are the ones a new test should target. Re-estimate whenever the generator or the RTL changes, since the rates belong to that pair. The result feeds the merge and closure process of @sec-ch08-closure; it does not replace the review of what the closed bins mean. @sec-ch21-example runs this recipe end to end.
+:::
+
+::: {.callout-warning title="Pitfall"}
+A bin with no hits in the pilot has no estimated rate, and the formula's answer for it is "infinite". Adding seeds does not help: either the bin is unreachable and belongs in the exclusion review, or it is reachable and this generator does not reach it, which calls for a new test or a new constraint. A rate estimated from one or two hits is not much better; read its interval, and size from the interval's lower end if the bin matters.
+:::
+
+## What N clean seeds prove {#sec-ch21-clean}
+
+A regression that has run many seeds without a failure says something about the design, and it is worth knowing exactly what. The question is the one-bin question of @sec-ch21-p run backwards. There, $p$ was known and the question was how many tests would hit it; here, a bin whose hit means failure has not been hit in $n$ tests, and the question is how large its $p$ could be.
+
+::: {.callout-note title="Definition"}
+**The zero-failure bound and the rule of three.** After $n$ independent tests with no failure, the exact one-sided $1-\alpha$ upper confidence bound on the per-test failure probability is the $p_U$ at which a clean run of $n$ would have probability $\alpha$:
+$$(1 - p_U)^n = \alpha \quad\Longrightarrow\quad p_U = 1 - \alpha^{1/n}.$$
+For any $p$ above $p_U$, $n$ clean tests had probability below $\alpha$, so a procedure that reports $p_U$ is wrong at most a fraction $\alpha$ of the times it is used. With $-\ln(1-p) \approx p$, $p_U \approx -\ln\alpha / n$; since $-\ln 0.05 = 3.00$ and $-\ln 0.01 = 4.61$, the bound is about $3/n$ at 95% and $4.6/n$ at 99%. The 95% form is the **rule of three** [@hanley1983nothing], as restated by Newman [@newman1995small]. The tests needed to claim $p \le p^*$ at $1-\alpha$ follow from the same equation: $n \ge \ln\alpha / \ln(1-p^*)$.
+:::
+
+The zero-failure bound is one case of an interval that covers any number of failures.
+
+::: {.callout-note title="Definition"}
+**The Clopper-Pearson interval.** After $x$ failures in $n$ independent tests, the two-sided $1-\alpha$ interval $[p_L, p_U]$ takes $p_L$ as the $p$ at which $P(X \ge x \mid p) = \alpha/2$ and $p_U$ as the $p$ at which $P(X \le x \mid p) = \alpha/2$, with $X$ binomial [@clopper1934binomial]. Each end is found where a binomial tail crosses $\alpha/2$, so the interval covers the true $p$ with probability at least $1-\alpha$ whatever $p$ is: it uses the binomial law itself and not an approximation to it, and it is conservative because the binomial is discrete. With $x = 0$ and the whole of $\alpha$ in one tail it reduces to the zero-failure bound.
+:::
+
+The library finds each end by bisection on the binomial distribution function, which it sums in log space:
+
+```{.python include="examples/ch21-statistics-random-testing/common/statlib.py" lines="150-170"}
+```
+
+The example `clean-seeds` tabulates the bound against $n$, beside the rule of three and two Bayesian bounds, the 95% points of the posterior after $n$ clean tests under a uniform prior and under Jeffreys' prior:
+
+```{.text include="examples/ch21-statistics-random-testing/clean-seeds/run.out" lines="1-14"}
+```
+
+The rule of three is within 1% of the exact bound from 300 tests on, and above it everywhere, so it is safe to quote. The uniform-prior bound converges to the exact one. The Jeffreys bound does not: it stays at about 0.64 of the exact bound at every $n$, because Jeffreys' prior puts more weight near zero and a clean run then leaves more belief there. A bound is a choice of method as well as of data, and the frequentist bound is the one this chapter uses, because it holds for every $p$ without a prior.
+
+Does the bound do what it claims? The second block simulates it: binomial runs at three true rates and two run lengths, two thousand trials each, scoring how often the 95% bound sits at or above the truth:
+
+```{.text include="examples/ch21-statistics-random-testing/clean-seeds/run.out" lines="15-24"}
+```
+
+The exact bound covers the truth in at least 95.9% of trials at every point. The rule-of-three column needs care. It is scored only on the trials that had no failure, the only ones it applies to, and at a true rate of 0.05 with 100 tests the few clean runs that happen are exactly the runs the 5% risk is for: in those runs the bound, 0.03, is wrong. A confidence bound is a statement about the procedure over many uses, not about the one run in hand.
+
+What a claim costs, at 95% and 99%:
+
+```{.text include="examples/ch21-statistics-random-testing/clean-seeds/run.out" lines="25-29"}
+```
+
+Two hundred and ninety-nine clean seeds bound a per-seed failure rate by 1% at 95%; 2995 bound it by 0.1%; about three million bound it by one in a million. Every factor of ten in the claim costs a factor of ten in seeds. Butler and Finelli made the same argument for life-critical software, where the failure rates that must be shown are so small that the testing needed to show them by observation is infeasible, and argued that reliability-growth models, which @sec-ch21-growth discusses, do not escape the arithmetic [@butler1993infeasibility]. For a verification project the scale is gentler, but the shape is the same: a bound below one in ten thousand per seed is a large regression, and a bound per cycle is not on offer at all, because, as @sec-ch21-seed showed, a per-seed rate does not divide into a per-cycle one.
+
+With failures, the Clopper-Pearson interval is what triage needs. A known, unfixed, intermittent bug has a per-seed rate, and its interval says how many seeds a reproduction or a fix's confirmation needs. The FIFO's bug under the even-odds 200-cycle generator was triggered by 247 of 1000 seeds, interval 0.2205 to 0.2750, with the chain's 0.242 inside (@sec-ch21-p).
+
+The sentence to write in a release note follows, and its qualifier is part of it: *after $N$ clean seeds, the per-seed failure probability under this generator is below $3/N$ at 95%.* Each phrase carries a condition. *Clean seeds* means seeds that are independent and run on the RTL being released: a count accumulated across RTL drops is not a bound on the current RTL, because each drop defines a new hit-probability vector. *Clean* means that no checker fired, so the bound inherits every hole in the checkers: a covered bin is not a checked one (@sec-ch08-where), and a bug that no checker can see has a failure probability of zero under every generator. *Per seed* means per test of this length; it is not a per-cycle rate. And *under this generator* is the condition that the next Pitfall is about.
+
+::: {.callout-warning title="Pitfall"}
+The bound describes the generator, not the design. Run the testbench of @sec-ch08-example with even odds and a run length of 30 cycles, a short-test generator that rarely fills the FIFO, under 250 seeds, on the RTL with the bug:
+
+```{.text include="examples/ch21-statistics-random-testing/clean-seeds/run.out" lines="30-38"}
+```
+
+All 250 seeds are clean, the outcome the chain gives probability 0.979. The bound, 0.0119, is correct: the per-seed trigger probability under this generator is below it. It is also 141 times the truth, $8.45 \times 10^{-5}$, and a team that read "below 1.2% per seed" as "the FIFO is probably fine" would be wrong about a bug present in every seed's RTL. A 95% chance of seeing the bug once would take 35,462 seeds of this generator. The coverage report says why, if anyone reads it: seven bins of `fifo_cg` were never hit, `full_16` and the six that need a full FIFO. A bug that the generator reaches rarely has a small $p$ under it, a bug it never reaches has $p = 0$, and no count of clean seeds speaks to either.
+:::
+
+@fig-ch21-clean draws the bound against $n$, with the true trigger rate of the 30-cycle generator as a horizontal line far below it.
+
+![The one-sided 95% upper bound on a per-seed failure probability after $n$ clean seeds, exact (points, from the `clean-seeds` table) and by the rule of three ($3/n$, the line), on logarithmic axes. The horizontal line is the true per-seed trigger probability of the even-odds 30-cycle generator, from the exact chain; the marked point is the bound after that generator's 250 clean seeds. Data from the `clean-seeds` example.](../figures/ch21-clean.svg){#fig-ch21-clean fig-alt="A log-log chart. The horizontal axis is clean seeds from 10 to 100,000; the vertical axis is the upper bound from 0.00001 to 1. A straight descending line labeled 3/n and blue points for the exact bound lie almost on top of each other, from about 0.26 at 10 seeds to 0.0003 at 10,000. A horizontal amber line at 0.0000845 is labeled true p of the 30-cycle generator. A marked point at 250 seeds and 0.0119 is labeled 250 clean seeds, 141 times the true p. The descending line meets the amber line near 35,000 seeds."}
+
+The figure is the Pitfall in one picture. The bound falls as $3/n$, and it reaches the true rate of the 30-cycle generator only near 35,000 seeds. Anywhere to the left of that, a clean regression of that generator is the expected outcome whether the bug is there or not.
+
+## Is the generator delivering the distribution? {#sec-ch21-uniform}
+
+A `dist` constraint, a range, or a joint constraint with no ordering asks for a law that is fully specified before any draw is made: so much weight on each value, or a uniform draw over every legal combination, as the standard asks [@ieee1800-2023] and the simulator's own tracker quotes it [@verilator-issue-8024]. @sec-ch07-solver measured that the solver's output is a fact about the release and not a promise, and printed the histograms. A fully specified law turns a histogram into a hypothesis test for free, and the test turns "the counts look about right" into a probability with a stated power.
+
+::: {.callout-note title="Definition"}
+A **goodness-of-fit test** asks whether $n$ independent draws are consistent with a stated law $q$. **Pearson's chi-square**: with $O_j$ draws observed in cell $j$ of $m$ and $E_j = n q_j$ expected,
+$$X^2 = \sum_{j=1}^{m} \frac{(O_j - E_j)^2}{E_j},$$
+which, when $q$ is fully specified and the draws are independent, has approximately a chi-square law with $m-1$ degrees of freedom for large $n$ [@pearson1900chisquare]; the p-value is the chi-square tail above the observed $X^2$. This book's working rule is an expected count of at least five in every cell, merging cells where needed. **Kolmogorov-Smirnov**, for a wide integer range where cells would throw away resolution: $D_n = \sup_x |F_n(x) - F(x)|$, the largest gap between the empirical and the stated distribution functions. For a continuous $F$, $P(\sqrt{n}\,D_n > \lambda) \to 2\sum_{j \ge 1} (-1)^{j-1} e^{-2 j^2 \lambda^2}$; the approach to the limit is slow, and the exact law for finite $n$ can be computed [@marsaglia2003kolmogorov]. For a discrete law the continuous p-value is conservative. A **bit test** counts how often each bit of a drawn value is set and compares the count with a binomial law; a **serial test** applies chi-square to pairs of consecutive draws, which tests independence as well as the marginal law.
+:::
+
+Which test fits which constraint follows from the shape of the law. A `dist` over a few values or ranges names its own cells, and chi-square on those cells is the test. A small joint constraint, such as an implication between a bit and a byte, has a list of legal solutions that can be enumerated, and the uniform law over that list is the hypothesis. A wide range, a 16-bit field with one bound, has too many values for cells of its own: either group the values into buckets of equal probability and use chi-square, or keep every value and use Kolmogorov-Smirnov. A defect with a known signature deserves its own test, which is why the bit test exists. And every one of these tests assumes that the draws are independent of one another. A generator with memory violates that, `randc` by design and a solver that returns neighboring models by accident, and the serial test on consecutive pairs is the check. One further caution: a test on one seed's stream says nothing directly about the mixture over seeds that a regression actually runs, which is usually better behaved; test the stream the question is about.
+
+The tests are cheapest to run on output that already exists. The example `uniformity` reads the counts @sec-ch07 printed from that chapter's `run.out` files, by path, and tests each against the law its constraint asks for:
+
+```{.text include="examples/ch21-statistics-random-testing/uniformity/run.out" lines="1-11"}
+```
+
+Every printed histogram but one is consistent with its law, and the one that is not is the result @sec-ch07-constraints already reported: with `solve s before v`, the request that $s$ be chosen first and so be true half the time, release 5.052 drew $s = 1$ in none of 2000 draws. Without the ordering the law is uniform over the 257 legal combinations, $P(s=1) = 1/257$, and the eight draws with $s = 1$ are what that law predicts. The test adds a number to @sec-ch07-constraints's observation, and the number is $10^{-602}$: this is not chance.
+
+The `forms.sv` `:=` line is worth a second look. Its 148 and 52 against a 4:1 law give $p = 0.034$, below the conventional 0.05. Taken alone it is a rejection. But it is one of six tests run on the same output, and among six tests of laws that all hold, one p-value below 0.05 is an ordinary event. The Bonferroni correction divides the threshold by the number of tests, here to 0.0083, and the line does not pass it. That is the right reading, and the fresh draws below confirm it.
+
+A larger, fresh sample settles what the printed counts leave open. The testbench `tb_draws.sv` compiles the classes of @sec-ch07-constraints and @sec-ch07-example by path, adds one class for the 16-bit range constraint of that chapter's distribution example, which lives inside a module there and cannot be compiled alone, and draws 2000 values from each, one process per class:
+
+```{.systemverilog include="examples/ch21-statistics-random-testing/uniformity/tb_draws.sv" lines="11-14"}
+```
+
+The script applies the tests above to each histogram. For the range constraint, four tests on one sample: chi-square on 64 buckets of the top bits, Kolmogorov-Smirnov against the uniform law on 32,768 values, fifteen bit tests with their smallest p-value corrected for the fifteen, and a serial test on pairs:
+
+```{.python include="examples/ch21-statistics-random-testing/uniformity/uniform.py" lines="47-63"}
+```
+
+The results, as a table the example writes:
+
+{{< include /examples/ch21-statistics-random-testing/uniformity/tbl-ch21-uniform.md >}}
+
+Of the ten tests in @tbl-ch21-uniform only the ordering is rejected, at a p-value below anything a float can hold, and every other p-value is above 0.3. On release 5.052 with Z3, every constraint shape but `solve...before` is indistinguishable from its law at 2000 draws; the two lines on $s$ say how far apart the two forms are:
+
+```{.text include="examples/ch21-statistics-random-testing/uniformity/run.out" lines="24-26"}
+```
+
+Before trusting a test that passes, check that the test can fail and does not fail too often. The example's control draws the same six laws from Python's generator, twenty samples of 2000, and runs the same ten tests on each:
+
+```{.text include="examples/ch21-statistics-random-testing/uniformity/run.out" lines="28-31"}
+```
+
+Seven of 200 p-values fall below 0.05 where ten are expected, and one falls below the Bonferroni threshold: the tests reject at about their nominal rate when the law holds.
+
+A test that does not reject has not shown that the law holds. It has shown that any departure is smaller than the test could see at this sample size, and how small that is depends on the sample. @sec-ch07 opened with a defect in which low bits were stuck or biased, and the bit test is the one aimed at it.
+
+::: {.callout-note title="Definition"}
+**Power and sample size for a bit test.** The **power** of a test is the probability that it rejects when a stated alternative is true. For a bit claimed to be set with probability $1/2$, a two-sided test at level $\alpha$ rejects when the count $X$ of draws with the bit set satisfies $|X - n/2| > z_{\alpha/2}\sqrt{n/4}$, with $z$ the normal quantile. If the bit is in fact set with probability $q$, $X$ is approximately normal with mean $nq$ and variance $nq(1-q)$, and the test rejects with probability $1-\beta$ when $n(q - \tfrac12) \ge z_{\alpha/2}\sqrt{n}/2 + z_\beta\sqrt{n q(1-q)}$, that is when
+$$n \;\ge\; \left(\frac{z_{\alpha/2}/2 + z_\beta\sqrt{q(1-q)}}{q - 1/2}\right)^{2}.$$
+With $z_{0.025} = 1.96$ and $z_{0.10} = 1.28$, this is the sample for 90% power at level 0.05.
+:::
+
+The example evaluates the formula for three biases, and computes the power at five sample sizes exactly from the binomial law:
+
+```{.text include="examples/ch21-statistics-random-testing/uniformity/run.out" lines="32-38"}
+```
+
+A bit set 65% of the time is caught with 90% power by 113 draws, so the defect @sec-ch07 opened with, bits set in 65 to 90% of draws, would not survive a hundred. A bit set 55% of the time needs 1047, and one set 51% of the time needs 26,265; at 1600 draws such a bit is found about one time in eight. Every non-rejection in this section is a statement about departures larger than the power table allows, and a near-uniform sampler whose guarantee is a tolerance, not exact uniformity, can stay inside that tolerance and below what a feasible sample can detect (@sec-ch07-solver).
+
+::: {.callout-warning title="Pitfall"}
+Testing every coverpoint and every `dist` every night at 0.05 reports about one non-uniform distribution in twenty even when every one is fine. A dashboard of uncorrected p-values is noise with a threshold. Correct for the number of tests run together, Bonferroni being the simplest correction, and answer a single small p-value with a larger second sample before filing a bug: the printed `:=` counts above gave 0.034, and 2000 fresh draws gave 0.72.
+:::
+
+::: {.callout-tip title="In Practice"}
+Put the tests in the regression. Keep one histogram per `dist` and per constrained field that matters, run one test per histogram with the correction for the number of histograms, and record the sample size so that the power of each non-rejection is known. Re-run the tests when the simulator release or the solver changes, since the distribution is a fact about the release (@sec-ch07-solver), and treat a rejection on a new release as a finding about the tool before it is a finding about the testbench.
+:::
+
+## Covering every pair: t-way combinatorial coverage {#sec-ch21-tway}
+
+Some spaces are better covered by design than by chance. A configuration space, the modes a block's registers can be programmed into, the plusargs a test accepts, the parameters an IP is built with, has a few factors with a few levels each, and a test is one choice of a level for every factor. The bins of interest are combinations of levels, a pair or a triple of factors set together, and the question is how few tests contain every combination of a given size. Random selection answers it slowly, for the coupon collector's reasons; a designed array answers it at once.
+
+::: {.callout-note title="Definition"}
+A **covering array** $\mathrm{CA}(N; t, k, v)$ is an $N \times k$ array of symbols from an alphabet of $v$, in which every choice of $t$ columns contains every one of the $v^t$ possible $t$-tuples in at least one row; its rows are tests and its columns factors. A **mixed-level** array lets column $j$ have its own number of levels $v_j$. The **covering array number** $\mathrm{CAN}(t, k, v)$ is the smallest $N$ for which an array exists [@nist-covering-arrays; @kuhn2010practical]. The **t-way coverage** of a set of tests is the fraction of the space's $t$-tuples, the legal ones when constraints forbid some, that appear in at least one test. Two bounds frame the size. Any $t$ columns need all their tuples, so $N$ is at least the product of the $t$ largest level counts. For binary factors and pairs the exact number is known: $\mathrm{CAN}(2, k, 2)$ is the least $N$ with $k \le \binom{N-1}{\lceil N/2 \rceil}$, a result of Katona and of Kleitman and Spencer [@kleitman1973kindependent], as stated by Hiess and Kampel [@hiess2025balanced].
+:::
+
+The binary construction behind that number is short enough to write and check. Row 0 is all zeros; each column, read over the other $N-1$ rows, is a different set of $\lceil N/2 \rceil$ of them. Two such sets of the same size are never nested, which gives each pair of columns a row reading 1 0 and a row reading 0 1, and two sets each larger than half of $N-1$ rows must share a row, which gives 1 1; row 0 gives 0 0.
+
+```{.python include="examples/ch21-statistics-random-testing/t-way/tway.py" lines="88-98"}
+```
+
+The example `t-way` builds it for four sizes, checks every pair of columns, and adds the orthogonal array of nine rows for four three-level factors, which meets the $v^2$ bound:
+
+```{.text include="examples/ch21-statistics-random-testing/t-way/run.out" lines="2-7"}
+```
+
+Six tests cover every pair of ten binary knobs, eight cover every pair of thirty-five, and ten cover every pair of 126. The growth is logarithmic in the number of factors; for fixed strength and levels the size of a good array grows as $v^t$ times a logarithm of $k$ [@kuhn2010practical]. That is the property that makes combinatorial testing attractive: doubling the knobs adds a test or two.
+
+For spaces without such a construction, arrays are built greedily. One widely used strategy, IPOG, grows the array one parameter at a time, extending each row with a value for the new parameter and then adding rows for the tuples still uncovered [@lei2007ipog]. The example uses the simplest greedy construction there is: from the list of legal rows, repeatedly take the row that covers the most tuples not yet covered.
+
+```{.python include="examples/ch21-statistics-random-testing/t-way/tway.py" lines="66-76"}
+```
+
+The space it is run on is the transfer coverage of @sec-ch11-coverage, the covergroup `xfer_cg` of the DMA, plus the channel. Its factors are the length bin, the outcome, the error position, the slave's ready style and the channel. For version 2 of the DMA the length bin has five levels, because the 16-bit length register cannot express a length beyond `max`; the error position has a fourth level, `none`, for transfers that succeed. Constraints come from the design and from the coverage model's own exclusions: a zero-length copy cannot fail, a position exists only on an error, and a one-word copy's only error position is `first`:
+
+```{.python include="examples/ch21-statistics-random-testing/t-way/tway.py" lines="41-49"}
+```
+
+```{.text include="examples/ch21-statistics-random-testing/t-way/run.out" lines="8-16"}
+```
+
+Without constraints and counted as `xfer_cg` counts its bins, the space has 432 rows and a pairwise lower bound of 24. With the constraints, 200 rows are legal and 115 pairs of levels can occur together. This greedy construction found 23 rows that cover every legal pair, against a lower bound of 20 from the largest pair of factors, and 68 rows that cover every legal triple, against a bound of 60. These are the sizes one deterministic construction found, not a benchmark of greedy algorithms; better arrays may exist. The array closes the cross `len_x_out` and every other pair by construction.
+
+Random selection of the same space is the alternative, and its cost can be computed exactly.
+
+::: {.callout-note title="Definition"}
+**Expected t-way coverage of random tests.** Let tuple $\tau$ appear in one random test with probability $q_\tau$. After $n$ independent tests it has been covered with probability $1 - (1-q_\tau)^n$, by the one-bin formula of @sec-ch21-p, and by linearity of expectation the expected t-way coverage is the mean over tuples,
+$$E[\text{coverage after } n] = \frac{1}{|\mathcal{T}|} \sum_{\tau \in \mathcal{T}} \bigl(1 - (1 - q_\tau)^n\bigr),$$
+exactly, whatever the dependence between tuples. For uniform draws over an unconstrained space $q_\tau = 1/m_\tau$, with $m_\tau$ the product of the level counts of the tuple's factors. The union bound of @sec-ch21-coupon over the tuples gives the $n$ for full coverage with probability $1-\delta$.
+:::
+
+The example draws random tests in three ways: uniformly over the 200 legal rows; factor by factor, the length bin first and each later factor uniform over the levels still legal, the way a solver with an ordering draws; and by the DMA's own random test of @sec-ch11, whose length is drawn by a weighted `randcase` over 0, 1, 2 to 15 and 16 to 48 words:
+
+```{.text include="examples/ch21-statistics-random-testing/t-way/run.out" lines="17-35"}
+```
+
+Uniform selection of legal rows needs a median of 200 tests to cover every legal pair, 8.7 times the greedy array, and 551 to cover every triple, 8.1 times. Drawn factor by factor it needs 89 and 378, 3.9 and 5.6 times. The formula agrees with simulation within 0.005 at every checkpoint. The ratio is set by the generator, and the constraints make it worse: uniform selection of legal rows makes rare the tuples that few legal rows contain, such as a zero-length copy, which can only succeed, and a factor-by-factor draw spreads its probability more evenly over the levels. @fig-ch21-tway draws the curves.
+
+![Fraction of the legal pairs (left) and triples (right) of the DMA transfer space covered after $n$ tests: the greedy array, and random selection drawn uniformly over legal rows, factor by factor, and by the DMA's own random test, the three random curves by the exact formula. The DMA's own test levels off below 1 because it never draws `max`. Data from the `t-way` example.](../figures/ch21-tway.svg){#fig-ch21-tway fig-alt="Two line charts side by side, pairs on the left and triples on the right, tests from 1 to 200 on the horizontal axis and fraction covered from 0 to 1 on the vertical. In each, the greedy curve, solid blue, rises steeply and reaches 1 at 23 tests for pairs and 68 for triples. The factor-by-factor curve, dashed green, and the uniform curve, violet, rise more slowly and approach 1 near the right edge for pairs and stay below it for triples. The curve for the DMA's own test, amber, rises at first like the others and then levels off, at about 0.89 for pairs and 0.83 for triples, marked with a dotted line labeled plateau, len max never drawn."}
+
+Under the DMA's own generator, thirteen legal pairs and fifty-seven legal triples have probability zero: every one with the length bin `max`. That test never draws a 65,535-word copy, and @sec-ch11 reaches `max` with a directed test instead. Its curve levels off at 0.887 of the pairs and 0.828 of the triples however many tests run, which is the zero-rate Pitfall of @sec-ch21-coupon in the t-way setting. The covering array has no such hole, because the constraints, not the generator's weights, decide which rows it may use.
+
+Does the model of the DMA's random test match the test? The testbench and RTL of @sec-ch11, read by path and built with coverage, ran its random test for ten rounds of two transfers under fifty seeds, and the example compares the per-seed hit rate of every cell of `len_x_out` with what the model predicts for twenty transfers:
+
+```{.text include="examples/ch21-statistics-random-testing/t-way/run.out" lines="36-56"}
+```
+
+Every cell the model gives a chance falls within 1.52 standard deviations of it, and every cell it rules out, every `max` and `over` cell and the impossible zero-length errors, is zero in every seed.
+
+How much should random selection's cost weigh? Kuhn, Kacker and Lei report, from their own comparisons, that random selection needed on average about 3.9, 3.8 and 3.2 times as many tests as covering arrays for full 2-, 3- and 4-way coverage of the spaces in their tables [@kuhn2010practical]. Arcuri and Briand analyze random testing's chance of detecting an interaction fault and conclude that it approaches combinatorial testing's as the number of features grows, can be preferable when building the array is costly, and can be arbitrarily worse when constraints are present [@arcuri2012interaction]. The DMA's 3.9 to 8.7 is that last clause in numbers. The case for small $t$ rests on an empirical regularity: in the software fault data Kuhn, Wallace and Gallo studied, faults were triggered by interactions of few parameters [@kuhn2004interactions], and Kuhn, Kacker and Lei restate the rule from the wider data [@kuhn2010practical]. Those are software data. No comparable study of RTL bugs by interaction strength was found in writing this chapter, so the chapter does not transfer the software percentages to hardware.
+
+A covering array makes configuration coverage small and deterministic; it does nothing for the stimulus inside each configuration, which still needs the constrained-random generator of @sec-ch07 and the coverage of @sec-ch08. The crosses of @sec-ch08-cross measure the same tuples after the fact, and an array is the way to close them by construction when the configurations are chosen up front.
+
+::: {.callout-warning title="Pitfall"}
+A covering array built for the unconstrained space contains illegal rows. Drop them afterwards and the tuples they alone covered are lost; keep them and the tests program the design into configurations it can never be in, and the array covers tuples that do not exist. The constraints must go into the construction, as the DMA's exclusions go into `legal` above, so that every row is legal and every legal tuple is covered.
+:::
+
+## How many bins will this generator ever reach? {#sec-ch21-unseen}
+
+A covergroup has a known list of bins and an unknown number of them that a given generator can reach. An open-ended coverage space, distinct instruction sequences, paths through a state machine, toggle patterns of a bus, has no list at all. Ecology has the same problem, how many species live in a forest from a sample of the ones seen, and estimators with stated assumptions. Böhme's STADS framework carries them into software testing: a generated input is an individual or a sampling unit, and a class of program behavior, a covered branch or a kind of crash, is a species [@boehme2018stads]. For a regression the seed is the sampling unit and the bin is the species, and the data are incidence data, as @sec-ch21-seed established.
+
+::: {.callout-note title="Definition"}
+The **discovery probability** is the chance that the next draw shows a class that no earlier draw has shown; its complement is the **sample coverage**. With $n$ draws of one class each and $f_1$ classes seen exactly once, the **Good-Turing estimate** of the discovery probability is $f_1/n$ [@good1953species], a formula Good credits to Turing. The reasoning, informally: take each of the $n$ draws in turn and pretend it is the next one. It shows a class unseen in the other $n-1$ exactly when its class was seen once in all $n$, and that happens for $f_1$ of the draws, so $f_1/n$ is the leave-one-out frequency of a new class. A class seen once is the best evidence of the classes seen zero times. For seeds, each hitting many bins, the same argument with $Q_1$ bins seen in exactly one of $T$ seeds gives $Q_1/T$ as the estimated number of new bins in the next seed, which is also an upper estimate of the chance that it adds any.
+:::
+
+::: {.callout-note title="Definition"}
+**Chao2.** From $T$ sampling units in which $S_{\mathrm{obs}}$ bins were seen, $Q_1$ in exactly one unit and $Q_2$ in exactly two, the estimated number of bins reachable is
+$$\hat S = S_{\mathrm{obs}} + \frac{T-1}{T}\,\frac{Q_1^2}{2 Q_2}, \qquad \text{or } S_{\mathrm{obs}} + \frac{T-1}{T}\,\frac{Q_1(Q_1-1)}{2} \text{ when } Q_2 = 0.$$
+Its conditions: units independent, and each bin detected in each unit with a probability that does not change from unit to unit. Under those conditions it is a lower bound on the expected number of bins, nearly unbiased when the rarest bins have similar detection probabilities and an under-estimate when they differ widely [@chao2017thirty]. Chao derived the abundance form, with individuals in place of units, as a lower bound for capture-recapture data [@chao1987capture]; it is called Chao1 below. With $\hat Q_0 = \hat S - S_{\mathrm{obs}}$ unseen bins estimated, $m$ more units are expected to add $\hat Q_0 \bigl[1 - \bigl(1 - Q_1/(T \hat Q_0 + Q_1)\bigr)^m\bigr]$ bins [@chao2017thirty].
+:::
+
+The library's versions, a few lines each:
+
+```{.python include="examples/ch21-statistics-random-testing/common/statlib.py" lines="311-336"}
+```
+
+The example `unseen` checks them first on a space whose truth is known: 200 bins with probabilities proportional to $1/i$, a long tail of rare ones, one bin per draw:
+
+```{.text include="examples/ch21-statistics-random-testing/unseen/run.out" lines="2-11"}
+```
+
+Over 300 repetitions Good-Turing's mean is 0.2287 where the true missing mass is 0.2319 at 200 draws, and 0.0211 against 0.0218 at 1600: on average it is right. Chao1 at 200 draws averages 154.5 against 200 bins; at 1600, 198.8. A single run is noisier, as the first block shows, and the estimate of the count is low until the sample has seen most of the tail. That is what a lower bound looks like in practice.
+
+On `fifo_cg` the example reads the seed-by-bin tables that `seed-unit` and `clean-seeds` wrote, resamples $T$ seeds 200 times for each $T$, and reports the median and the 10 to 90% band of Chao2, never a single figure, because with few bins seen once or twice a single estimate jumps:
+
+```{.text include="examples/ch21-statistics-random-testing/unseen/run.out" lines="12-22"}
+```
+
+Under the even-odds 200-cycle generator Chao2's median reaches the reachable count, 28, at four seeds, when 25.7 bins have been seen on average; the band is wide, 22.0 to 39.2, which is the instability of an estimate built on a ratio of two small counts. By sixteen seeds everything has been seen and the estimate has nothing left to add. The last three columns are the next-seed predictions beside the measurement: Good-Turing for seeds, Chao2's extrapolation, and the fraction of held-out seeds that actually added a bin. All three fall together, and at sixteen seeds all are near zero.
+
+The short generator of @sec-ch21-clean, even odds and 30 cycles, is the case that matters:
+
+```{.text include="examples/ch21-statistics-random-testing/unseen/run.out" lines="23-41"}
+```
+
+All 250 seeds together saw 22 bins. Each was seen in more than two seeds, so $Q_1 = Q_2 = 0$, Chao2 equals the seen count, and Good-Turing says the next seed adds a bin with probability zero. Six reachable bins have never been seen: `almost`, `full` and the four cells of `op_x_full`, all of which need a FIFO filled to fifteen entries, which the chain says a 30-cycle seed reaches with probability 0.00018. The estimators are not unstable here; they are blind. The six missing bins arrive together or not at all, so no seed has ever shown one of them alone, and there is no singleton to be the evidence. @fig-ch21-unseen draws the two generators side by side.
+
+![Bins of `fifo_cg` seen (line) and the Chao2 estimate (median, with its 10 to 90% band over 200 resamples) against the number of seeds, for the even-odds generator at 200 cycles (left) and at 30 cycles (right), with the reachable count, 28, as a dotted line. Data from the `unseen` example.](../figures/ch21-unseen.svg){#fig-ch21-unseen fig-alt="Two panels with seeds on a logarithmic horizontal axis from 1 to 128 and bins from 15 to 42 on the vertical, a dotted line at 28 labeled reachable. Left, 200 cycles: the seen line rises from about 23 at one seed to 28 by 16 seeds; the Chao2 median sits at 28 from four seeds on, inside a shaded band that reaches about 39 to 41 at four and eight seeds and collapses onto 28 by 16. Right, 30 cycles: the seen line rises from about 20 to 22 and stays there; the Chao2 median and its band sit on the seen line, at 22, never approaching the dotted line at 28; the gap is labeled six bins never seen."}
+
+The estimate is always about the generator's reachable set, never the design's. Under the 200-cycle generator it agrees with the exclusion review of @sec-ch08-example, 28 of 29 bins; under the 30-cycle generator it says 22, which is the truth about that generator and silence about the design. And the estimators assume a generator whose hit probabilities do not change from seed to seed. A regression steered by coverage feedback, a fuzzer that keeps the inputs that found new behavior, or a machine-learned test selector raises the probability of new bins as it runs, and breaks the assumption in the optimistic direction. Böhme, Liyanage and Wüstholz show for greybox fuzzing that estimators built for non-adaptive sampling under-estimate the residual risk that the next input finds something new [@boehme2021residual]. Liyanage and colleagues evaluated incidence-based estimators of the coverage a fuzzer can reach: on programs with a known answer the jackknife estimators had the least bias, and on real programs every estimator predicted a maximum that further fuzzing exceeded, behaving as a lower bound [@liyanage2023reachable].
+
+::: {.callout-warning title="Pitfall"}
+A small chance that the next seed adds a bin is not evidence that few bins are missing. Discovery probability is a mass, and rare bins carry little of it: under the 30-cycle generator the estimate was exactly zero while six reachable bins, a fifth of the covergroup, had never been seen. A Good-Turing figure answers "is another seed of this generator worth running?", and the answer can be no for a covergroup that is far from closed. Whether the missing bins are reachable at all is a question for a different generator or for a proof.
+:::
+
+## Information: spread, distance and which knob moves which bin {#sec-ch21-info}
+
+Information theory gives three numbers that are useful for stimulus: how evenly a generator spreads its draws, how far a measured histogram is from an intended law, and how much a knob setting says about whether a bin is hit. None of them measures checking, and the section ends by showing that the first one does not measure coverage either.
+
+::: {.callout-note title="Definition"}
+The **entropy** of a law $p$ over $k$ outcomes is $H(p) = -\sum_i p_i \log_2 p_i$ bits. It is at most $\log_2 k$, with equality exactly when every $p_i$ is $1/k$ [@shannon1948communication]. The **effective number of bins** is $2^{H(p)}$: a law with entropy $H$ spreads its draws as evenly as a uniform law over $2^H$ outcomes. The **KL divergence** of a law $p$ from a law $q$ is $D(p \,\|\, q) = \sum_i p_i \ln (p_i / q_i)$, which is never negative and is zero only when $p = q$. For counts $O_j$ from $n$ draws, with empirical law $\hat p_j = O_j/n$ and expected counts $E_j = n q_j$, the likelihood-ratio statistic is
+$$G = 2\sum_j O_j \ln\frac{O_j}{E_j} = 2n\,D(\hat p \,\|\, q).$$
+Expanding $O \ln(O/E)$ about $O = E$ gives $(O-E) + (O-E)^2/(2E) + \cdots$, and the first terms sum to zero over the cells, so $G \approx X^2$, Pearson's statistic of @sec-ch21-uniform, with the same chi-square limit. Divergence from the intended law and the goodness-of-fit test are one quantity.
+:::
+
+The example `info` computes the entropy of the laws of @sec-ch07, and $G$ beside $X^2$ on that chapter's printed counts:
+
+```{.text include="examples/ch21-statistics-random-testing/info/run.out" lines="2-11"}
+```
+
+Under `:=` with weights 1, 1 and 2, an 8-bit field behaves like a uniform draw over 243.7 values of its 256; under `:/` like one over 193.5; the 6:3:1 packet mix like one over 2.45 kinds of 3. One number per field, comparable across releases, computed from a histogram the testbench already prints. $G$ and $X^2$ agree to within 0.007 on the two 10,000-draw histograms of the distribution example, and differ by 0.12 on the 128 packets, where the expansion has fewer draws to work with; both give the same verdict everywhere.
+
+Entropy estimated from a sample is biased low, because a small sample has not yet seen the rare values:
+
+```{.text include="examples/ch21-statistics-random-testing/info/run.out" lines="12-16"}
+```
+
+From 100 draws the plug-in estimate of the `:=` law's entropy is 6.25 bits against a true 7.93. This book's working correction adds $(k-1)/(2n)$ nats, $k$ the number of values seen, and recovers most of the gap from 1000 draws on; below that, compare entropies only at equal sample sizes.
+
+Now apply entropy to the covergroup. The testbench of @sec-ch08-example has two knobs, the operation mix `+bias` and the run length `+n`, and together they make eight generators. The example runs each under 250 seeds and measures three things: the entropy of the shares of all bin hits over the 29 bins of `fifo_cg`, the mean number of bins a seed hits, and the fraction of seeds that trigger the bug:
+
+{{< include /examples/ch21-statistics-random-testing/info/tbl-ch21-knob.md >}}
+
+The three measures disagree, as @tbl-ch21-knob shows and the example checks. Entropy is nearly flat, between 13.1 and 15.6 effective bins, and it prefers the even mix at every length, highest at even odds over 400 cycles, because a push-biased generator piles its hits onto the high-occupancy bins. Reach prefers the push mix: push-biased 400-cycle seeds hit 25.04 bins on average. The bug trigger is certain under every push-biased generator and never seen at even odds over 50 cycles. A generator chosen for spread would be the even 400-cycle one; a generator chosen for reaching the hard bins and the bug would be push-biased. Spreading draws evenly is not reaching the bins that matter, and neither is checking.
+
+The reason is structural. Entropy weighs every bin by its share of the hits, so a generator can raise it by spreading over easy bins, and the bins that decide closure, by @sec-ch21-coupon, are the rare ones, which carry almost no share. KL divergence needs a target law, and for most coverpoints there is none: the goal of a covergroup is that every bin be hit at least once, which is a coupon-collector objective and not a distribution to match. A generator that matched a uniform law over the FIFO's occupancy bins perfectly would spend most of its cycles in the upper half of the FIFO, which is not what anyone wants from it. Divergence is the right measure for a `dist`, whose law is the specification; for a covergroup the right measures are the rarest per-seed rates and the union bound built on them.
+
+Which knob moves which bin can be measured without a model of the design.
+
+::: {.callout-note title="Definition"}
+The **mutual information** between a knob setting $X$ and an outcome $Y$ is
+$$I(X; Y) = H(Y) - H(Y \mid X) = \sum_{x,y} P(x,y) \log_2 \frac{P(x,y)}{P(x)\,P(y)},$$
+the reduction in uncertainty about $Y$ from knowing $X$. It is never negative and is zero exactly when the two are independent. Here a sampling unit is one seed, $X$ the generator it ran under and $Y$ whether it hit a given bin. The plug-in estimate from counts is biased upward on small samples, so it is read against a **permutation baseline**: the same estimate with the knob labels shuffled across seeds, which destroys any real dependence.
+:::
+
+```{.python include="examples/ch21-statistics-random-testing/common/statlib.py" lines="286-295"}
+```
+
+```{.text include="examples/ch21-statistics-random-testing/info/run.out" lines="32-45"}
+```
+
+The cells that need a full FIFO carry about 0.7 bits of information about the generator, a hundred times the baseline of 0.0075; bins that every generator hits carry none. Splitting the generator into its two knobs says which one matters: for `push_x_full`, 0.650 bits from `+bias` and 0.027 from `+n`. The operation mix moves the full cells, and the run length, over this range, adds little. That is the question coverage-directed test generation asks, which knob to turn to reach a hole [@fine2003cdg; @ioannides2012cdg], answered here for two knobs by counting; a later chapter, Machine Learning in Verification, takes it further.
+
+The idea that a generator's value lies in the information its inputs reveal has been taken furthest in fuzzing. Böhme, Manès and Cha define a fuzzer's efficiency through the entropy of the coverage features its inputs exercise, estimate for each seed input how much new information its mutants are likely to reveal, and schedule seed inputs by that estimate; their Entropic, built into LibFuzzer, covered more than LibFuzzer itself on about 77% of the subjects in their evaluation [@boehme2020entropic]. Fuzzing Hardware, a later chapter, applies that line of work to Verilator models of the book's designs.
+
+## Operational profiles and reliability growth {#sec-ch21-growth}
+
+Software reliability engineering asked this chapter's questions first, about programs in the field rather than designs in simulation, and two of its ideas recur in verification under other names.
+
+::: {.callout-note title="Definition"}
+An **operational profile** is the set of inputs, or operations, a system meets in use, together with how often it meets each. Musa and Ackerman tie testing to it: a failure intensity measured on tests drawn according to the profile estimates the failure intensity the system will show in the field, and the estimate is what decides when testing can stop [@musa1989quantifying].
+:::
+
+In verification the generator plays the profile's part, and the Pitfall of @sec-ch21-clean is the same point seen from the other side: a bound measured under one distribution of inputs speaks for that distribution. Silicon has no single field profile to test against, since a block is verified for every legal use and not for the average one, which is why a verification plan lists scenarios and a coverage model weights none of them. Miller and colleagues treat the same estimation problem, a failure probability from testing that revealed no failure, and address explicitly the case where the inputs used in operation are not distributed as the test inputs were [@miller1992nofailures].
+
+Reliability growth is the second idea. As bugs are found and fixed, the rate at which testing finds new ones falls, and a model of that fall predicts how many bugs remain. Goel and Okumoto modeled software failures as a non-homogeneous Poisson process whose rate of detection changes with testing time [@goel1979nhpp], and several models of the same family followed. Each assumes a stationary test process: the same kind of testing, applied at a steady rate, to a design whose only changes are the fixes. The assumptions are this chapter's, at the scale of a project, and they break in the same ways: a new generator, a new test, a new feature.
+
+::: {.callout-tip title="In Practice"}
+Malka and Ziv, at IBM in 1998, fitted reliability-growth models to the bug history of two superscalar PowerPC processor projects: bugs found by random simulation, counted against cumulative simulated cycles, with bugs found by other means left out [@malka1998bugdata]. They checked for growth with the Laplace trend test before fitting, and compared three models. For processor A, a model fitted three months before the end of the project predicted about 790 bugs in total, against 794 found. For processor B, a feature added in the middle of the project broke the trend, and only the data after it could be fitted. Their own caveats are part of the result: no one model was clearly better than the others, and the predictions describe the test environment, not the design's behavior in the field. It is the one published application of these statistics to a real hardware project found in writing this chapter, and it is dated: a regression of 1998 and one of today differ in more than size.
+:::
+
+Two limits apply to any such curve. Butler and Finelli argue that reliability-growth models do not escape the scale problem of @sec-ch21-clean: showing a very small failure rate still takes testing on the order of the reciprocal of the rate [@butler1993infeasibility]. And a falling bug rate says the current generator is running out of bugs it can reach, which is the discovery probability of @sec-ch21-unseen at the scale of a project, with the same Pitfall attached. Böhme and Paul give the quantitative case for the usual remedy, random testing first and directed tests for the holes: in their model a systematic strategy beats random testing only if each systematic test costs less than a bound set mainly by the confidence wanted, about four random tests' worth at 90% and more at higher confidence, and a strategy that starts random and switches to systematic does as well as the better of the two [@boehme2016efficiency]. A reader handed a growth curve as evidence of readiness can ask four questions of it: what generator and what checkers produced the bugs, whether either changed during the period fitted, whether the design changed in anything but fixes, and whether a trend test was run before a model was fitted. A curve that survives all four is a statement about the test process, as Malka and Ziv say of their own. Bug-rate curves as a sign-off metric belong to a later chapter, Metrics, Closure and Sign-off.
+
+## Worked example: sizing and signing off the FIFO regression {#sec-ch21-example}
+
+The sections above, run in the order an engineer would run them, make one loop: estimate the rates, size the regression, run it, check what it did not reach, check that the stimulus is what was asked for, and write down what the clean seeds prove. The example `worked` does all six on the FIFO, with the testbench of @sec-ch08-example and the RTL of @sec-ch01 read by path, and the checking testbench of @sec-ch09-example for the last step. Its runner shows the order; the size of the second run is not typed in but computed from the first:
+
+```{.bash include="examples/ch21-statistics-random-testing/worked/run_worked.sh" lines="14-22"}
+```
+
+**Step 1, the pilot.** Two hundred seeds of the even-odds 200-cycle generator, numbered from 5001 so that they share nothing with the seeds of the earlier sections, give a per-seed rate for every bin with its interval:
+
+```{.text include="examples/ch21-statistics-random-testing/worked/run.out" lines="1-16"}
+```
+
+The ranking matches the thousand-seed run of @sec-ch21-p, with wider intervals: the four full cells near a fifth, `full` and `almost` near a quarter, and `full_16` never hit, as the exclusion review of @sec-ch08-example says it cannot be.
+
+**Step 2, the size.** The union bound of @sec-ch21-coupon over every bin the pilot reached, at 99%:
+
+```{.text include="examples/ch21-statistics-random-testing/worked/run.out" lines="17-24"}
+```
+
+Thirty-two seeds, and the bound says why: the four cells of `op_x_full` contribute 94% of the remaining risk at that size. Those are the bins a better test would target, and if the regression is too slow these are where a reweighting would pay. The pilot's rates are a little lower than the thousand-seed run's, so the answer is larger than the 27 of @sec-ch21-coupon; a bound computed from a pilot inherits the pilot's sampling error, and a more cautious sizing would use the lower ends of the intervals.
+
+**Step 3, the run.** Thirty-two fresh seeds, from 6001, merged into one database with `verilator_coverage --write`:
+
+```{.text include="examples/ch21-statistics-random-testing/worked/run.out" lines="25-28"}
+```
+
+Every bin the pilot reached is hit, and the one bin at zero is the excluded one. The covergroup is closed, and the union bound said in advance that it would be with probability at least 0.99.
+
+**Step 4, the unseen.** Chao2 and Good-Turing over the 32 seeds of the run:
+
+```{.text include="examples/ch21-statistics-random-testing/worked/run.out" lines="29-31"}
+```
+
+No bin was seen in only one or two seeds, so neither estimator indicates a reachable bin left to find. That is a statement about this generator, and @sec-ch21-unseen showed that it can hold while bins are missing; here, the exclusion review and the estimate agree, and the 30-cycle counter-example is the reason to check both.
+
+**Step 5, the stimulus.** The driver draws an operation every cycle with each of the four operations at a quarter, and `op_cp` has already counted them. A chi-square test on data the covergroup collected anyway:
+
+```{.text include="examples/ch21-statistics-random-testing/worked/run.out" lines="32-34"}
+```
+
+The operation is drawn afresh each cycle and its bin depends on nothing else, so this is the case of @sec-ch21-seed in which cycles are independent draws, and the test is valid at the cycle level. The counts are consistent with the asked law, $p = 0.74$.
+
+**Step 6, the sentence.** The covergroup measures stimulus and checks nothing, so the clean-seed bound needs a checker. The temporal-properties chapter's checking testbench, with its assertions bound to the design, runs 400 cycles of random traffic that fills the FIFO for 200 cycles and drains it for 200. It runs under 1000 seeds on the repaired FIFO of @sec-ch09-example, and, as the control, under the same seeds on the original:
+
+```{.text include="examples/ch21-statistics-random-testing/worked/run.out" lines="35-44"}
+```
+
+On the repaired FIFO all 1000 seeds are clean, and the bound is 0.0030, the rule of three's $3/1000$. On the original all 1000 fail, and the chain says why: under this traffic a seed reaches fifteen entries, where the original raises `full` too early and the checker objects, with probability 1.000000. A checker that can fail, a generator that reaches the bug, and a bound on the repaired design: the three together are what make the sentence worth printing. The qualifier repeats @sec-ch21-clean: the 30-cycle generator would have produced 250 clean seeds on the original FIFO with probability 0.98. The repair also changes the meaning of the covergroup: on the repaired FIFO `full_16` becomes reachable and `almost` no longer means full, so the bin list and its exclusions are a property of the RTL, which is the "RTL unchanged" condition of @sec-ch21-clean in miniature.
+
+Every step can fail, and each failure has a different remedy. A bin with no hits in the pilot is not sized at all: it goes to the exclusion review if it cannot be reached and to a new test or a reweighted constraint if it can. A fresh run that leaves a reached bin at zero is the one outcome in a hundred the bound allows, or a sign that the pilot's rates were optimistic; rerun the pilot larger, or size from the lower ends of its intervals. A Chao2 estimate above the seen count says the generator has more to give, and Good-Turing says how much one more seed is worth. A rejected histogram is a finding about the solver or the testbench, and @sec-ch21-uniform says to confirm it with a larger sample before acting. And a checker that cannot fail on the original design makes the clean-seed bound worthless, which is why the control run on the original is part of step 6 and not an extra.
+
+::: {.callout-note title="Worked Example"}
+Sizing and signing off a random regression. (1) Run a pilot of a few hundred seeds of the generator as it will be used, and read every bin's per-seed hit rate, with its interval, from the coverage databases. (2) Compute the smallest $n$ with $\sum_i (1-p_i)^n \le \delta$ over the bins the pilot reached, and list the bins that carry most of the sum; a bin with no hits goes to the exclusion review or to a new test, not into the formula. (3) Run $n$ fresh seeds, merge their databases, and confirm that every reached bin is hit. (4) Compute Chao2 and Good-Turing over the run, and read them as statements about this generator. (5) Test every histogram the run already holds against the law its constraint asks for, corrected for the number of tests, at the unit where its draws are independent. (6) Run the checking testbench on the RTL being released, count the clean seeds, and write the bound with its qualifier: under this generator, on this RTL, with these checkers.
+:::
+
+## Future directions {#sec-ch21-future}
+
+::: {.callout-important title="Future Directions"}
+Four directions are visible from this chapter, and it claims no result for any of them. Near-uniform samplers give a guarantee within a stated tolerance of the uniform law [@chakraborty2015unigen2]; the distance between the model a solver happens to return and a draw within such a tolerance is what @sec-ch07-solver measured, and the power table of @sec-ch21-uniform says how large a sample a regression would need to tell the two apart. The estimators of @sec-ch21-unseen assume a generator that does not adapt; Böhme, Liyanage and Wüstholz's work on residual risk under adaptive fuzzing points toward estimators that hold when it does [@boehme2021residual], and a coverage-steered regression is the hardware case that needs them. Machine-learned closure flows are the case in which every estimator here loses its stationarity at once; Kwon and colleagues report such a flow for interconnect coverage, a report co-authored by the vendor of the tools it ran on and to be read as a vendor claim [@kwon-dvcon-simai]. And the `solve...before` result of @sec-ch21-uniform is a measurement of release 5.052; a later release lists a change to that feature [@verilator-changes], which this chapter has not measured.
+:::
+
+## Summary {#sec-ch21-summary}
+
+- One object carries the chapter: the hit-probability vector $p$, the chance that one seeded run of a fixed generator on a fixed design hits each bin. Bins, bug triggers, cross cells and configuration tuples are entries of it, and every answer holds only for the generator that defined it.
+- One bin needs $\ln\delta / \ln(1-p)$ tests, about $4.6/p$ for 99%. The FIFO's bug trigger, 247 of 1000 seeds, agrees with an exact Markov chain's 0.242. A cross cell's per-seed probability is joint: 0.187 for `push_x_full` against 0.271 for the product of its marginals.
+- The seed, not the cycle, is the independent draw in a stateful design. A model of independent cycles predicted that 89.8% of seeds hit `almost`, where 27.1% did, and that 11 seeds close `fifo_cg`, where 26 are needed.
+- The union bound $\sum_i (1-p_i)^n \le \delta$ needs no independence between bins and never under-states: 27 seeds for `fifo_cg` at 99%, against 26 measured. The rarest bins set the answer almost alone, and an unreachable bin makes it infinite.
+- After $N$ clean seeds, the per-seed failure probability under this generator is below $3/N$ at 95%. The bound describes the generator, not the design: 250 clean seeds of a 30-cycle generator bounded the FIFO bug's rate by 0.0119 when the truth was $8.45 \times 10^{-5}$.
+- A `dist` is a testable hypothesis. On release 5.052 every constraint shape tested held its law except `solve...before`, rejected at $p$ below $10^{-300}$. A non-rejection is a statement at a stated power, and many tests at once need a correction.
+- A covering array makes configuration coverage small and deterministic: 23 rows for every legal pair of the DMA's transfer space, where uniform random selection needed a median of 200, and the DMA's own generator never reaches `max` at all. The stimulus inside each configuration is still random.
+- Species estimators give lower bounds on the bins a generator will reach. Under the 30-cycle generator Chao2 and Good-Turing saw nothing missing while six reachable bins were unseen: a small discovery probability is not few missing bins.
+- Entropy measures spread, KL divergence and $G$ measure distance from a law, and mutual information ranks which knob moves which bin; on the FIFO the most even generator was neither the one that reached most bins nor the one that found the bug. None of them measures checking.
+- Reliability-growth models assume a stationary test process; a new generator, a new feature or a new RTL drop restarts the fit.
+
+## Exercises {#sec-ch21-exercises}
+
+::: {.callout-note title="Exercise"}
+1. A bin is hit by 1% of seeds. How many seeds give a 95% chance of hitting it at least once?
+2. A regression ran 600 seeds, all clean. Give the exact one-sided 95% upper bound on the per-seed failure probability under that generator, and the value the rule of three gives.
+3. Treat a fair six-sided die as a generator of six equally likely bins. What is the expected number of throws until every face has been seen?
+4. A covergroup has 28 reachable bins, and the rarest is hit by 18.7% of seeds. Taking every one of the 28 bins at that rarest rate, and using the union bound with the risk split equally among the bins, how many seeds guarantee that every bin is hit with probability at least 0.99?
+5. The packet stream of @sec-ch07-example draws kind 2 with weight 1 in 10 for every packet. What is the probability that a 64-packet run contains no packet of kind 2?
+6. A bin is hit in 1.13% of the cycles of 200-cycle seeds. (a) What fraction of seeds does a model of independent cycles predict will hit it? (b) The measured fraction is 0.27. Using the measured fraction, how many seeds give a 99% chance of a hit?
+7. After ten seeds, 60 bins have been seen; 4 of them were seen in exactly one seed and 2 in exactly two. Compute Chao2.
+8. After 200 seeds, three bins have been seen in exactly one seed each. What is the Good-Turing estimate of the number of new bins the next seed will show, which is also an upper estimate of the chance that it shows any?
+9. A histogram of 10,000 draws has counts 6076, 2940 and 984 against a 6:3:1 law. Compute Pearson's $X^2$, and decide at level 0.05, given that the critical value for 2 degrees of freedom is 5.99.
+10. Give the entropy of the 6:3:1 law in bits, and its effective number of values.
+11. A configuration space has factors with 6, 4, 3, 3 and 2 levels. By the trivial bound, what is the smallest number of tests any pairwise covering array of it can have?
+12. Twenty binary configuration knobs are to be covered pairwise. By the formula of Katona and of Kleitman and Spencer, what is the smallest covering array?
+:::
+
+## Further reading {#sec-ch21-reading}
+
+- D. Richard Kuhn, Raghu N. Kacker and Yu Lei, *Practical Combinatorial Testing*, NIST Special Publication 800-142, 2010 [@kuhn2010practical].
+- D. M. Cohen, S. R. Dalal, M. L. Fredman and G. C. Patton, *The AETG System: An Approach to Testing Based on Combinatorial Design*, IEEE Transactions on Software Engineering, 1997 [@cohen1997aetg].
+- Marcel Böhme, *STADS: Software Testing as Species Discovery*, ACM Transactions on Software Engineering and Methodology, 2018 [@boehme2018stads], and *Assurance in Software Testing: A Roadmap*, 2018 [@boehme2018roadmap].
+- Anne Chao and Robert K. Colwell, *Thirty Years of Progeny from Chao's Inequality: Estimating and Comparing Richness with Incidence Data and Incomplete Sampling*, SORT, 2017 [@chao2017thirty].
+- Yossi Malka and Avi Ziv, *Design Reliability -- Estimation through Statistical Analysis of Bug Discovery Data*, DAC 1998 [@malka1998bugdata].
+- Oded Lachish, Eitan Marcus, Shmuel Ur and Avi Ziv, *Hole Analysis for Functional Coverage Data*, DAC 2002 [@lachish2002holes].
