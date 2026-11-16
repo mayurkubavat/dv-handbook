@@ -196,7 +196,7 @@ All per outline section 9 unless noted.
    `a_read` proven), and block D proves the contract on the real
    storage with the helper.
 3. INV holds at reset, and INV is inductive: the two `INV_A proven`
-   rows, `init-value/run.out` lines 32 and 36. The depth-0 trace of
+   rows, `init-value/run.out` lines 34 and 38. The depth-0 trace of
    block D starts in a state (empty with the pointers apart) that the
    weaker start set allows and no trace from reset reaches.
 4. The tool did not accept `$anyconst` and dropped every RTL property
@@ -204,16 +204,16 @@ All per outline section 9 unless noted.
    0"). It accepts a free input to the wrapper held by an assumption,
    `assume {$stable(sa)}` (lines 6-10).
 5. The rotation i -> i+1 mod 4. It maps the transitions to themselves
-   (the rotation check of block A, `a_rot` proven, line 11) and the
+   (the rotation check of block A, `a_rot` proven, line 12) and the
    property for port 0 to that for port 1, but not the initial state:
    `last` reset to 3 is not mapped to itself, and `a_rot` with both
-   copies reset fails at depth 2 (line 32). With a free start for
-   `last`, port 0 proven covers all four: lines 6, 11, and 16-17 (the
+   copies reset fails at depth 2 (line 37). With a free start for
+   `last`, port 0 proven covers all four: lines 6, 12, and 17-18 (the
    reset state is one of the free starts).
-6. Ports 1, 2 and 3, each at depth 5 (`symmetry/run.out` lines 39, 41,
-   43). Port 0 requesting in every cycle starves port 3 (as it does
+6. Ports 1, 2 and 3, each at depth 5 (`symmetry/run.out` lines 45, 48,
+   51). Port 0 requesting in every cycle starves port 3 (as it does
    ports 1 and 2).
-7. `c_in_drop cover unreachable` (`protocol/run.out` line 32). The
+7. `c_in_drop cover unreachable` (`protocol/run.out` line 35). The
    assertion is about the stage's input, which the environment drives;
    it is proven only because the wrongly assumed sender rules on the
    output reach back through the wire stage and constrain the input,
@@ -226,7 +226,7 @@ All per outline section 9 unless noted.
    depends on the neighbor's only up to cycle t, so neither can fail
    first. A liveness assumption has no first violation, so the
    induction has nothing to start from; the ring is refuted at depth 3
-   with a lasso in which both outputs stay 0 (`ag/run.out` line 25).
+   with a lasso in which both outputs stay 0 (`ag/run.out` line 29).
 10. The completeness check `A_cover3` fails at depth 0
     (`case-split/run.out` line 38); the missing case is
     `a[7:6] == 3`.
@@ -471,3 +471,128 @@ Non-blocking, left:
   the limits; `check-structure.sh`, `check-citations.sh` pass; the
   chapter with includes expanded converts with pandoc 3.1.3 to HTML,
   LaTeX and plain text with only cross-reference warnings.
+
+## Round 4 fixes (2026-11-16)
+
+Fixes for `docs/reviews/ch19-gate2g-2026-11-16.md` (G, text) and
+`docs/reviews/ch19-gate2h-2026-11-16.md` (H, code). G-B1 and H-B1 were
+fixed by the reviewers' preferred option, shipping the covers, so the
+claims at the opening of the entries and in the witness-cover entry are
+true of the shipped scripts. Changed examples: `cut-timer`,
+`symmetry`, `symconst`, `protocol`, `two-word`, `ag`, `hier`. Each was
+run twice from clean (`make clean`, then `scripts/check-examples.sh
+ch19-formal-techniques/<name>`) with InFormal `5114330` and rIC3 on
+the PATH: all pass, and both runs are byte-identical to each other and
+to a scratch run made before the repository files were written.
+Changed `run.out` files: `cut-timer`, `symmetry`, `symconst`,
+`protocol`, `two-word`, `ag`, `hier`.
+
+Blocking:
+- G-B1 / H-B1 (covers short of the consequent's cycle). Shipped, with
+  `expect covered`:
+  - `cut-timer` A-D: `c_gnt1 {gnt ##1 1}` in `handshake`, beside
+    `c_gnt`, the witness of `a_gnt_once` (depths 203, 4, 4, 5; in the
+    error run of block B it is unprocessed, like every other row).
+  - `cut-timer` F, real timer: `c_req` replaced by `c_win2` and
+    `c_win199`, `req && !busy ##N 1`, one per window (depths 3 and
+    200, informal-kind, about 0.3 s for the deeper one).
+  - `cut-timer` G, real timer: `c_req` replaced by `c_gnt {gnt}`, the
+    grant that satisfies the ranged consequent (depth 202); that run's
+    limit raised from 10 s to 20 s as G-B1 asked (`c_gnt` alone took
+    6.3 s here). Makefile comment: about thirty seconds (measured 27 s).
+  - `symmetry` A-C: `c_wait<i>` is now `req[i] && !gnt[i] ##4 1`
+    (depth 5 for all nine; row count unchanged, so the four splice
+    ranges did not move). Header comment of `arb` says so.
+  - `symconst` B: `c_slot1 {u.do_write && u.wr_ptr == sa ##1 1}`
+    (depth 2) beside `c_slot`.
+  - `protocol` D: `c_in_wait1 {i_valid && !i_ready ##1 1}` (depth 2)
+    beside `c_in_wait`.
+  - `two-word` C: `c_inside {in1 && !out1 && in2 && !out2}` (depth 3),
+    the witness of `p_ahead` that `c_both` was not (H-B1).
+  Timing note: in block A, `c_gnt1` alone took 6.1 s of its 10 s
+  limit, the same margin as the existing `c_gnt` (6.3 s); the limit was
+  left at 10 s, as the reviewers did not ask to raise it.
+  Text: the opening paragraph (:62) now says a witness is a cover of
+  the case the assertion exists to check (@sec-ch18-cover), states the
+  cycle rule as a minimum, says what "last cycle judged" means for a
+  ranged consequent (G-N7: the cycle that satisfies it, or the end of
+  the range), cites @sec-ch19-witness and @sec-ch19-timer, says every
+  proved implication of the examples has a reached witness meeting the
+  minimum (exceptions: the vacuous demonstrations, and the timed
+  reruns of `seconds-ric3`, whose sessions carry one assertion and no
+  cover; their witnesses are in the examples they time), and that the
+  minimum is necessary and not sufficient, pointing at
+  @sec-ch19-sanity. The witness-cover entry (:772) says the same, with
+  the arbiter's `##4 1` and the grant as examples. The protocol,
+  symconst, two-word and hier prose name the new witnesses and depths;
+  block F's text says each window's proof has a witness to its end.
+- G-B2 (sanity Pitfall recipe). Pitfall rewritten with the reviewer's
+  sentence ("reaches the case the assertion exists to check, here mode
+  1 with the counter about to reach 9, and at least runs to ..."),
+  preceded by why the antecedent cover is not enough there. Measured in
+  scratch (informal-kind, 5 s, part C's `M_dead1`): `A_mode` proven,
+  `Ante_C {mode && chosen}` covered at depth 2, `Witness_C`
+  unreachable, as G-B2 reported. The text gives no depth for `Ante_C`
+  (it is not shipped); it argues from the design that mode 1 is chosen
+  a cycle or two after reset, before the dead end at 5.
+
+Non-blocking, taken:
+- G-N1 / H-N1: :701 now "so an assumed lemma can remove the very
+  traces on which the lemma it helps would fail" (G's clause).
+- G-N2: :605 rewritten in the reviewer's words (input assumptions
+  narrow the engine's choices; a state assumption can contradict a
+  forced state; here both lemmas fail in the same cycle), and a new
+  paragraph starts at "Block E is the warning".
+- G-N3 / H-N2: `ag` block E adds `cover -name C_any {1'b1}`: covered
+  at depth 1 alone, unreachable in both assumed runs, so "no trace at
+  all" now rests on `run.out`; the text names `C_any`. The optional
+  shared-input ring (G-N3 b) was not added; "the cover can still be
+  reached" stays a sentence from the semantics, measured by both
+  reviewers.
+- G-N4: :907 replaced with the reviewer's exact sentence ("step 6
+  gives its bounded search two minutes, four times the first look's
+  limit"; `pipe-256/run.out` lines 2 and 55).
+- G-N5: Summary bullet now "on one ring with both resets at 1, the two
+  lemmas, each assumed in the other's proof, were both proven and both
+  false".
+- G-N6: exercise 9 now "is sound only if ... Which registers must it
+  also have".
+- G-N7: see G-B1.
+- G-N8: section 6 answers updated to the current `run.out` lines:
+  exercise 3 lines 34, 38; exercise 5 lines 12, 37 and 6, 12, 17-18;
+  exercise 6 lines 45, 48, 51; exercise 7 line 35 (34 in the review,
+  one more after `c_in_wait1`); exercise 9 line 29 (`ag` block E's new
+  rows come after it).
+- G-N9: one sentence added to the sanity Pitfall: `Witness_C` stops at
+  8, so a dead end placed at 9 itself would leave it reached; a cover
+  run on into the cycle the counter could be 9 catches it. Measured in
+  scratch: with `mode && chosen |-> cnt != 4'd9` assumed, `A_mode`
+  proven, `Witness_C` covered at depth 9, `mode && chosen && cnt ==
+  4'd8 ##1 1` unreachable; with no assumption that cover is reached at
+  depth 10. Not shipped.
+- H-N3: `hier` block C (assumed) adds `Drain_C {G == 6'd1 ##1 G ==
+  '0}`, `P1_A`'s witness as in `pipe-256`, covered at depth 4; the hier
+  prose names it.
+
+Non-blocking, left:
+- G-N10 (`refs.bib` case bracing): `refs.bib` is shared by every
+  chapter and this pass was scoped to the chapter, its examples, log
+  and figures, with another chapter being edited at the same time; the
+  bracing is left for a pass that owns `refs.bib`.
+
+Splices: every include of a changed file was re-read, first and last
+line of each range. New ranges: `cut-timer/run.out` 12-12, 1-19,
+20-32, 33-43, 44-59, 60-86, 87-94, 95-104; `cut-timer/cut.tcl` 23-38,
+63-71, 73-89; `symconst/run.out` 1-12, 13-20; `protocol/run.out`
+26-35. `symmetry/run.out` ranges unchanged (rows replaced, not
+added); `two-word`, `ag`, `hier` `run.out` are spliced whole;
+`two.tcl` 12-45 and `hier.tcl` 9-27 unchanged. No other chapter or
+appendix splices these files.
+
+Checks: `python3 figures/gen_ch19_figures.py` rewrites all eight SVGs
+byte for byte (no input it reads changed meaning; no pin changed);
+`scripts/check-structure.sh` passes; the chapter with includes
+expanded (code splices with their ranges, and `tbl-seconds.md`)
+converts with pandoc to HTML and LaTeX, exit 0, and every warning is
+an unresolved `sec-`/`fig-`/`tbl-` cross-reference, which plain pandoc
+does not resolve. Sources stay within 80 columns.

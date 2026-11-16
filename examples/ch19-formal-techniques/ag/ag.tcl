@@ -51,14 +51,15 @@ foreach {m g} {{} x y x x y} {
   if {$m ne ""} {assume -name L_M "$m == 1'b0"}
   assert -name L_A "$g == 1'b0"
   cover  -name C_run {rst_n && $past(rst_n)}
+  cover  -name C_any {1'b1}
   one informal-kind 5s -all
   if {$m eq ""} {
     expect cex         L_A
-    expect covered     C_run
+    expect covered     C_run C_any
     expect_depth 1     L_A
   } else {
     expect proven      L_A
-    expect unreachable C_run
+    expect unreachable C_run C_any
   }
 }
 puts "verdict: the circular argument holds for safety, block by block,\

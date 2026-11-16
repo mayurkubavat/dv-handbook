@@ -9,6 +9,7 @@ property                     type    status        engine     detail
 sc_free.Slot_A               assert  proven        informal-kind
 m_sa                         assume  unprocessed
 c_slot                       cover   covered       informal-kind depth 1
+c_slot1                      cover   covered       informal-kind depth 2
 === C: the reset cycle
 --- informal-kind, limit 5s for each property
 property                     type    status        engine     detail

@@ -2,7 +2,7 @@
 # handshake, read by path: what each keeps, the spurious trace each
 # allows, the gap assumption that removes it and its proof on the
 # real timer, and an assumption whose window ends too late. About
-# fifteen seconds.
+# thirty seconds.
 C18           := ../../ch18-formal-property-verification
 EXAMPLE_LANG  := informal
 REQUIRES      := informal

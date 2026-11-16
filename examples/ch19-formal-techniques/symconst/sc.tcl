@@ -19,10 +19,11 @@ puts "=== B: a free input, held by an assumption"
 design [list $fifo $here/sc_free.sv] sc_free
 assume -name m_sa {$stable(sa)}
 puts "properties listed: [llength [get_property_list]]"
-cover  -name c_slot {u.do_write && u.wr_ptr == sa}
+cover  -name c_slot  {u.do_write && u.wr_ptr == sa}
+cover  -name c_slot1 {u.do_write && u.wr_ptr == sa ##1 1}
 one informal-kind 5s -all
 expect proven  Slot_A
-expect covered c_slot
+expect covered c_slot c_slot1
 
 puts "=== C: the reset cycle"
 # sa0 holds sa as it was in the reset cycle when first is 1.

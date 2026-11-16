@@ -6,6 +6,7 @@ a_hold_q                     assert  proven        informal-kind
 a_gnt_once                   assert  proven        informal-kind
 a_no_early                   assert  proven        informal-kind
 c_gnt                        cover   covered       informal-kind depth 202
+c_gnt1                       cover   covered       informal-kind depth 203
 === B: the timer black-boxed
 --- informal-kind, limit 10s for each property
 informal: black boxes in this model (outputs free, contents not modelled): timer. A proof holds for the design; a counterexample may use output values the boxed logic cannot produce
@@ -15,6 +16,7 @@ a_hold_q                     assert  proven        informal-kind
 a_gnt_once                   assert  proven        informal-kind
 a_no_early                   assert  cex           informal-kind depth 3
 c_gnt                        cover   covered       informal-kind depth 3
+c_gnt1                       cover   covered       informal-kind depth 4
 --- a name inside the box: accepted by assert, an error at prove
 assert -name a_inside: accepted
 --- informal-kind, limit 10s for each property
@@ -26,6 +28,7 @@ a_hold_q                     assert  unprocessed
 a_gnt_once                   assert  unprocessed
 a_no_early                   assert  unprocessed
 c_gnt                        cover   unprocessed
+c_gnt1                       cover   unprocessed
 a_inside                     assert  error                    not supported yet: internal: missing signal slot for symbol SymbolId(13)
 === C: u_timer.expired as a cut point
 stopat -list: u_timer.expired
@@ -37,6 +40,7 @@ a_hold_q                     assert  proven        informal-kind
 a_gnt_once                   assert  proven        informal-kind
 a_no_early                   assert  cex           informal-kind depth 3
 c_gnt                        cover   covered       informal-kind depth 3
+c_gnt1                       cover   covered       informal-kind depth 4
 === D: the cut, with the gap the property needs assumed
 --- informal-kind, limit 10s for each property
 informal: 1 cut point(s) (stopat) are free in this model: u_timer.expired. A proof holds for the design; a counterexample may use values the design cannot produce there
@@ -46,6 +50,7 @@ a_hold_q                     assert  proven        informal-kind
 a_gnt_once                   assert  proven        informal-kind
 a_no_early                   assert  proven        informal-kind
 c_gnt                        cover   covered       informal-kind depth 4
+c_gnt1                       cover   covered       informal-kind depth 5
 m_gap                        assume  unprocessed
 === E: the gap, proved on the real timer (no cut)
 --- informal-kind, limit 10s for each property
@@ -57,8 +62,9 @@ c_rose                       cover   covered       informal-kind depth 2
 --- informal-kind, limit 20s for each property
 property                     type    status        engine     detail
 a_gap2                       assert  proven        informal-kind
+c_win2                       cover   covered       informal-kind depth 3
 a_gap199                     assert  proven        informal-kind
-c_req                        cover   covered       informal-kind depth 1
+c_win199                     cover   covered       informal-kind depth 200
 --- window 2, under the cut
 --- informal-kind, limit 10s for each property
 informal: 1 cut point(s) (stopat) are free in this model: u_timer.expired. A proof holds for the design; a counterexample may use values the design cannot produce there
@@ -87,11 +93,11 @@ a_resp                       assert  proven        informal-kind
 c_rose                       cover   covered       informal-kind depth 2
 c_win                        cover   unreachable   informal-kind
 === G: the delay itself, with the real timer and under the cut
---- informal-kind, limit 10s for each property
+--- informal-kind, limit 20s for each property
 property                     type    status        engine     detail
 a_201                        assert  proven        informal-kind
 a_200                        assert  cex           informal-kind depth 201
-c_req                        cover   covered       informal-kind depth 1
+c_gnt                        cover   covered       informal-kind depth 202
 --- informal-kind, limit 10s for each property
 informal: 1 cut point(s) (stopat) are free in this model: u_timer.expired. A proof holds for the design; a counterexample may use values the design cannot produce there
 property                     type    status        engine     detail

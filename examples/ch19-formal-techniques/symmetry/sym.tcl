@@ -9,14 +9,15 @@ set f $here/rr_arb.sv
 
 # arb ROUND FREE PORTS -- a new session on the arbiter; for each port
 # in PORTS, a request held until granted (assumed) is granted within
-# four cycles (asserted), and the witness cover of a waiting request.
+# four cycles (asserted), and a witness cover: a waiting request, and
+# the trace run to the end of the four cycles the assertion judges.
 proc arb {round free ports} {
   design $::f rr_arb -parameter ROUND $round -parameter FREE_LAST $free
   foreach i $ports {
     assume -name m_hold$i "req\[$i\] && !gnt\[$i\] |=> req\[$i\]"
     assert -name a_wait$i \
         "req\[$i\] && !gnt\[$i\] |-> ##\[1:4\] gnt\[$i\]"
-    cover  -name c_wait$i "req\[$i\] && !gnt\[$i\]"
+    cover  -name c_wait$i "req\[$i\] && !gnt\[$i\] ##4 1"
   }
 }
 set rot {gnt1 == {gnt0[2:0], gnt0[3]}}

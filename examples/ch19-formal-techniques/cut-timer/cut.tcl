@@ -21,8 +21,8 @@ proc bare {args} {
 }
 
 # handshake ARGS -- the same with the timer's own assertion bound in,
-# and the three properties and the cover of the previous chapter's
-# cut-point run.
+# the three properties and the cover of the previous chapter's
+# cut-point run, and a witness that runs one cycle past the grant.
 proc handshake {args} {
   clear -all
   analyze -sv12 $::hs $::chk
@@ -33,6 +33,7 @@ proc handshake {args} {
   assert -name a_gnt_once {gnt |=> !gnt}
   assert -name a_no_early {$rose(busy) |=> !gnt}
   cover  -name c_gnt      {gnt}
+  cover  -name c_gnt1     {gnt ##1 1}
 }
 set props {a_hold_q a_gnt_once a_no_early}
 
@@ -40,7 +41,7 @@ puts "=== A: the whole design"
 handshake
 one informal-kind 10s -all
 expect proven  {*}$props *Range_A
-expect covered c_gnt
+expect covered c_gnt c_gnt1
 expect_depth 202 c_gnt
 
 puts "=== B: the timer black-boxed"
@@ -48,7 +49,7 @@ handshake -bbox_m {timer}
 one informal-kind 10s -all
 expect proven  a_hold_q a_gnt_once
 expect cex     a_no_early
-expect covered c_gnt
+expect covered c_gnt c_gnt1
 expect_depth 3 a_no_early c_gnt
 # The assertion written in the timer stays in the table, as an error.
 expect error   Range_A
@@ -66,7 +67,7 @@ puts "stopat -list: [stopat -list]"
 one informal-kind 10s -all
 expect proven  a_hold_q a_gnt_once *Range_A
 expect cex     a_no_early
-expect covered c_gnt
+expect covered c_gnt c_gnt1
 expect_depth 3 a_no_early c_gnt
 
 puts "=== D: the cut, with the gap the property needs assumed"
@@ -77,7 +78,7 @@ stopat u_timer.expired
 assume -name m_gap $gap
 one informal-kind 10s -all
 expect proven  {*}$props *Range_A
-expect covered c_gnt
+expect covered c_gnt c_gnt1
 
 puts "=== E: the gap, proved on the real timer (no cut)"
 bare
@@ -98,11 +99,13 @@ puts "=== F: a gap over a window of N cycles, assumed under the cut"
 set win {req && !busy |=> !u_timer.expired [*%d]}
 puts "--- both windows, on the real timer (no cut)"
 bare
-foreach n {2 199} {assert -name a_gap$n [format $win $n]}
-cover  -name c_req {req && !busy}
+foreach n {2 199} {
+  assert -name a_gap$n [format $win $n]
+  cover  -name c_win$n [format {req && !busy ##%d 1} $n]
+}
 one informal-kind 20s -all
 expect proven  a_gap2 a_gap199
-expect covered c_req
+expect covered c_win2 c_win199
 foreach n {2 199} {
   puts "--- window $n, under the cut"
   bare
@@ -144,14 +147,14 @@ foreach cut {0 1} {
   if {$cut} {stopat u_timer.expired}
   assert -name a_201 {req && !busy |-> ##[1:201] gnt}
   if {!$cut} {assert -name a_200 {req && !busy |-> ##[1:200] gnt}}
-  if {!$cut} {cover  -name c_req {req && !busy}}
-  one informal-kind 10s -all
+  if {!$cut} {cover  -name c_gnt {gnt}}
+  one informal-kind [expr {$cut ? "10s" : "20s"}] -all
   if {$cut} {
     expect cex a_201
   } else {
     expect proven  a_201
     expect cex     a_200
-    expect covered c_req
+    expect covered c_gnt
     expect_depth 201 a_200
   }
 }

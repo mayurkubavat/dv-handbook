@@ -51,9 +51,10 @@ puts "--- assumed"
 boxed full
 assume -name HP_M $HP
 p1; p2; both
+cover -name Drain_C {G == 6'd1 ##1 G == '0}
 one informal-kind 5s -all
 expect proven   P1_A P2_A
-expect covered  Both_C
+expect covered  Both_C Drain_C
 expect_depth 33 Both_C
 puts "verdict: the boxed pipe proven with its children's contracts and\
  one parent helper"

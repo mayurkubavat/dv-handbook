@@ -70,11 +70,12 @@ assume -name m_slots $helper
 position
 flags
 cover -name c_both {pop2 && out1}
+cover -name c_inside {in1 && !out1 && in2 && !out2}
 one informal-kind 5s -all
 expect proven       p_head1 p_head2 p_ahead a_order
 expect undetermined a_once1 a_once2
-expect covered      c_both
-expect_depth 3      c_both
+expect covered      c_both c_inside
+expect_depth 3      c_both c_inside
 
 puts "=== D: the mutant that reads a word twice"
 words $dup

@@ -38,4 +38,5 @@ HP_M                         assume  unprocessed
 P1_A                         assert  proven        informal-kind
 P2_A                         assert  proven        informal-kind
 Both_C                       cover   covered       informal-kind depth 33
+Drain_C                      cover   covered       informal-kind depth 4
 verdict: the boxed pipe proven with its children's contracts and one parent helper

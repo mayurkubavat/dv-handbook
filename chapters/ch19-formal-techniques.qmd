@@ -48,7 +48,7 @@ The first rule has a classical form. Clarke, Grumberg and Long showed that when 
 
 The tool states the first rule itself. Whenever a model has a black box in it, it prints one line before the report, and the line says what the rule says:
 
-```{.text include="examples/ch19-formal-techniques/cut-timer/run.out" lines="11-11"}
+```{.text include="examples/ch19-formal-techniques/cut-timer/run.out" lines="12-12"}
 ```
 
 The line is spliced here from a real run, and every abstracted run in this chapter prints it or its twin for cut points. It is worth reading every time. A proof under it is a proof of the design. A counterexample under it is a question, and the question is whether the boxed logic could have produced the values the trace uses.
@@ -59,7 +59,7 @@ Some changes create a second problem as they solve the first. The memory abstrac
 A **side condition** is an obligation that a technique creates and that must be discharged elsewhere for the technique's result to count: a contract assumed of a black box and proved on the real block, an invariant assumed at the start and proved from reset, a case list assumed complete and proved to be so. A result whose side conditions are not all discharged is a conditional result, and the verification plan records it as one.
 :::
 
-Three checks stand behind the entries of this chapter, and the chapter does not restate them each time. First, every implication proved in an example has a witness cover run under the same assumptions as the proof (@sec-ch18-cover), because an over-constrained proof and a sound one print the same word. The cover is the implication's antecedent, or a scenario whose trace passes through it, and it runs to the last cycle in which the consequent is judged and to the end of any multi-cycle assumption's window (@sec-ch19-timer says why); an invariant or a miter's equality has no antecedent to cover, and the examples that exist to show a vacuous proof leave their cover unreachable on purpose. Second, the entries that plant a bug, a mutant of the design, show that some property catches it, because a property set that cannot fail proves nothing (@sec-ch19-mutation); the other entries owe the same check in a real project. Third, every side condition is a line in the proof record of @sec-ch18-example, with the row of a report that discharges it.
+Three checks stand behind the entries of this chapter, and the chapter does not restate them each time. First, every implication proved in an example has a witness cover run under the same assumptions as the proof, because an over-constrained proof and a sound one print the same word. A witness is a cover of the case the assertion exists to check (@sec-ch18-cover). At the least, its trace passes through the implication's antecedent and runs to the last cycle in which the consequent is judged and to the end of any multi-cycle assumption's window; for a ranged consequent such as `##[1:4] gnt[i]`, the last cycle judged is the one in which the consequent is satisfied, or the end of the range (@sec-ch19-witness and @sec-ch19-timer say why). Every proved implication in the examples has a reached witness that meets this minimum, in its own session or, for the timed reruns of @tbl-ch19-seconds, in the example the rerun times; the examples that exist to show a vacuous proof leave their witness unreachable on purpose, and an invariant or a miter's equality has no antecedent to cover. The minimum is necessary and not sufficient: @sec-ch19-sanity shows a cover that meets it reached beside a vacuous proof. Second, the entries that plant a bug, a mutant of the design, show that some property catches it, because a property set that cannot fail proves nothing (@sec-ch19-mutation); the other entries owe the same check in a real project. Third, every side condition is a line in the proof record of @sec-ch18-example, with the row of a report that discharges it.
 
 ::: {.callout-warning title="Pitfall"}
 A cover is existential, so the preservation rule runs backwards for it. Reached on an abstracted model, a cover says nothing about the design. Under a black box the handshake's grant is covered at depth 3, against 202 in the design (@sec-ch19-bbox): the box can expire its timer at once, the real timer cannot. Run the covers that measure the design's time scale on the design, not on an abstraction of it.
@@ -83,14 +83,14 @@ A **black box** is a module instance whose contents are removed from the model: 
 
 **How to write it.** InFormal takes the module name at elaboration, `elaborate -bbox_m {timer}`, and an instance name with `-bbox_i` [@informal-tool]. The script builds the handshake of the previous chapter, read where it stands, with three properties and a cover, and a separate file binds one assertion into the timer itself:
 
-```{.tcl include="examples/ch19-formal-techniques/cut-timer/cut.tcl" lines="23-37"}
+```{.tcl include="examples/ch19-formal-techniques/cut-timer/cut.tcl" lines="23-38"}
 ```
 
 **What it preserves.** Proofs. Freeing the outputs adds behaviors and removes none, so the boxed model is an over-approximation in the sense of @sec-ch19-preserve. A counterexample may be spurious.
 
 **Example.** `cut-timer/`, in-house engines. The first block is the whole design, the second the same with the timer boxed:
 
-```{.text include="examples/ch19-formal-techniques/cut-timer/run.out" lines="1-17"}
+```{.text include="examples/ch19-formal-techniques/cut-timer/run.out" lines="1-19"}
 ```
 
 Three things changed. The two properties that do not depend on the timer's timing, that `q` holds while busy and that a grant lasts one cycle, are still proven, now on a model without the timer's sixteen-bit counter. The property that the grant does not come in the cycle after busy rises is refuted at depth 3. The design never does that: its timer counts 200 cycles. The boxed timer's `expired` output is free, so it can rise in the first cycle of the wait, and the trace uses exactly that. This is a spurious counterexample, and the note line above the report says that it may be one. The cover tells the same story from the other side: the grant is covered at depth 3, against 202 for the design.
@@ -103,7 +103,7 @@ Under a black box, read no counterexample until the box's contract is assumed. M
 
 **Pitfalls.** A boxed module's own assertions stay in the report as errors and are not checked. A name inside the box is accepted by `assert`, and the run then fails on that property with an internal "not supported yet" error, which is a limit of the tool at the pinned commit rather than a designed refusal, and leaves every other property of the session unprocessed:
 
-```{.text include="examples/ch19-formal-techniques/cut-timer/run.out" lines="18-29"}
+```{.text include="examples/ch19-formal-techniques/cut-timer/run.out" lines="20-32"}
 ```
 
 And covers become shallow, by the Pitfall of @sec-ch19-preserve: a depth measured under a box is not a depth of the design.
@@ -116,14 +116,14 @@ And covers become shallow, by the Pitfall of @sec-ch19-preserve: a depth measure
 
 **How to write it.** `stopat u_timer.expired`, after elaboration; `stopat -list` shows the cut points in force and `stopat -clear` removes them [@informal-tool]:
 
-```{.tcl include="examples/ch19-formal-techniques/cut-timer/cut.tcl" lines="62-70"}
+```{.tcl include="examples/ch19-formal-techniques/cut-timer/cut.tcl" lines="63-71"}
 ```
 
 **What it preserves.** Proofs, for the same reason as the black box, restricted to the cone behind the cut.
 
 **Example.** `cut-timer/`, third block. The tool prints its note for cut points, the twin of the black-box note, and the verdicts match the boxed run:
 
-```{.text include="examples/ch19-formal-techniques/cut-timer/run.out" lines="30-39"}
+```{.text include="examples/ch19-formal-techniques/cut-timer/run.out" lines="33-43"}
 ```
 
 `Range_A` is proven here, because the timer's counter is still in the model: only its comparator output was cut. The same spurious trace refutes `a_no_early` at depth 3.
@@ -140,28 +140,28 @@ This is the technique hardware engineers call counter abstraction. The model-che
 
 **How to write it.** The cut of the last entry, plus an assumption on the cut signal, typed once in a Tcl variable and used twice: assumed under the cut, asserted on the real timer.
 
-```{.tcl include="examples/ch19-formal-techniques/cut-timer/cut.tcl" lines="72-88"}
+```{.tcl include="examples/ch19-formal-techniques/cut-timer/cut.tcl" lines="73-89"}
 ```
 
 **What it preserves.** Proofs, as a cut, provided the assumption holds of the real timer. The assumption is a side condition.
 
 **Example.** `cut-timer/`, fourth and fifth blocks:
 
-```{.text include="examples/ch19-formal-techniques/cut-timer/run.out" lines="40-54"}
+```{.text include="examples/ch19-formal-techniques/cut-timer/run.out" lines="44-59"}
 ```
 
 The property needs one fact about the timer: it does not expire in the cycle busy rises. With that fact assumed, `a_no_early` is proven under the cut and the grant is covered at depth 4, still far from the design's 202 but no longer the impossible 3. In block E the same expression, as an assertion on the uncut timer, is proven. The proof under the cut and the proof of the gap together prove `a_no_early` of the design.
 
-**Pitfalls.** The assumption has to bind the traces that matter, and on this tool an assumption whose window spans several cycles may not. Block F assumes a stronger gap, no expiry for a window of cycles after a request, once with a window of 2 cycles and once with 199. Both are true of the real timer, and the block's first run proves them there. Under the cut, the depth-3 trace survives the second:
+**Pitfalls.** The assumption has to bind the traces that matter, and on this tool an assumption whose window spans several cycles may not. Block F assumes a stronger gap, no expiry for a window of cycles after a request, once with a window of 2 cycles and once with 199. Both are true of the real timer, and the block's first run proves them there, each beside a witness that runs to the end of its window. Under the cut, the depth-3 trace survives the second:
 
-```{.text include="examples/ch19-formal-techniques/cut-timer/run.out" lines="55-80"}
+```{.text include="examples/ch19-formal-techniques/cut-timer/run.out" lines="60-86"}
 ```
 
 The trace has the antecedent in cycle 1 and raises `expired` in cycle 2, the first cycle of either window, so it breaks both assumptions inside the trace, one cycle before it ends. The language's semantics excludes such a trace whatever the window's length: once `expired` has risen, no continuation can satisfy the assumption [@ieee1800-2023]. InFormal excludes it only when the whole window lies inside the trace: as block F measures, it judges a multi-cycle implication only once its window has closed. The window of 2 ends in cycle 3, the last cycle of the trace, so the trace is excluded and `a_no_early` is proven; the window of 199 ends long after the trace, so the trace survives. That is this tool's measured behavior, not a property of safety checking, and another tool may prune the trace. On this one, write a gap assumption one cycle at a time, as block D does, or expect a spurious trace shorter than the window.
 
 The same rule applies to covers, and there it weakens the witness cover. A cover is reached by a trace that breaks an assumption inside it, as long as the assumption's window is still open when the trace ends, so a vacuous multi-cycle assumption can give a `proven` assertion beside a `covered` witness. The last run of block F shows it:
 
-```{.text include="examples/ch19-formal-techniques/cut-timer/run.out" lines="81-88"}
+```{.text include="examples/ch19-formal-techniques/cut-timer/run.out" lines="87-94"}
 ```
 
 Its assumption ends the window in `1'b0`, so it excludes every trace that runs two cycles past a request: a response assertion that is false under the cut, a grant within three cycles of a request, is proven, and the cover of the request's effect, `$rose(busy)`, is still reached at depth 2. Only the cover that runs to the end of the window, `req && !busy ##2 1`, is unreachable. On this tool a witness cover is evidence against an assumption only if its trace runs to the end of that assumption's longest window, which is why block F's witnesses `c_win` are the request followed by the whole window, reached at depths 3 and 200.
@@ -315,12 +315,12 @@ A **symbolic constant** is a free input that an assumption holds constant over t
 
 **Example.** `symconst/`, in-house engines. The first block is the same assertion in a wrapper that writes the address as `assign sa = $anyconst;`, the second the wrapper above, and the script prints how many properties the tool lists before it runs:
 
-```{.text include="examples/ch19-formal-techniques/symconst/run.out" lines="1-11"}
+```{.text include="examples/ch19-formal-techniques/symconst/run.out" lines="1-12"}
 ```
 
-With `$anyconst`, the tool lists no property at all, prints an empty table and says nothing. With the free input, the slot assertion is listed and proven. The third block answers a question the reset cycle raises, since this tool leaves registers free in the reset cycle (@sec-ch09-axi): does the assumption bind the value in that cycle too? A register `sa0` holds the value `sa` had in the reset cycle, and `first` marks the cycle after it:
+With `$anyconst`, the tool lists no property at all, prints an empty table and says nothing. With the free input, the slot assertion is listed and proven, and its witness, a write to the slot run on into the cycle the stored word is checked in, is reached at depth 2. The third block answers a question the reset cycle raises, since this tool leaves registers free in the reset cycle (@sec-ch09-axi): does the assumption bind the value in that cycle too? A register `sa0` holds the value `sa` had in the reset cycle, and `first` marks the cycle after it:
 
-```{.text include="examples/ch19-formal-techniques/symconst/run.out" lines="12-19"}
+```{.text include="examples/ch19-formal-techniques/symconst/run.out" lines="13-20"}
 ```
 
 It does: the value in the first cycle after reset equals the value in the reset cycle, and the cover of the opposite is unreachable.
@@ -394,7 +394,7 @@ For any design that stores and forwards data, a FIFO, a buffer, a crossbar, a pa
 ```{.text include="examples/ch19-formal-techniques/two-word/run.out"}
 ```
 
-The position form alone has no verdict in five seconds. The helper, a conjunction of a slot helper for each word, the pointer helper and the ordering of the two counts, is proven alone by induction. With it assumed, the three position properties are proven, and so is the flag form's ordering assertion `a_order`; the flag form's once-only assertions, `a_once1` and `a_once2`, still have no verdict. A mutant that reads a word twice when a push and a pop meet is caught by all six properties, at depths 3 to 6.
+The position form alone has no verdict in five seconds. The helper, a conjunction of a slot helper for each word, the pointer helper and the ordering of the two counts, is proven alone by induction. With it assumed, the three position properties are proven, with `c_inside`, both words inside at once, as the witness of `p_ahead`, and so is the flag form's ordering assertion `a_order`; the flag form's once-only assertions, `a_once1` and `a_once2`, still have no verdict. A mutant that reads a word twice when a push and a pop meet is caught by all six properties, at depths 3 to 6.
 
 Why one form proves and the other does not is the lesson of the entry. The position form carries its own bookkeeping: a count per word says where that word is, and the slot helper says the word is in that slot. Every fact the proof needs is about one slot at a time. The flag form carries none. To show that `d1` cannot come out twice, a proof must know that once `d1` has come out, no occupied slot holds `d1` any more, and that is a statement about every slot at once: a quantified invariant over the memory's contents. No engine here learned one, and none of the helpers states it. @fig-ch19-track draws the difference.
 
@@ -510,10 +510,10 @@ Put ghost logic in a module with inputs only and attach it with `bind`, or in a 
 
 The wire stage with a free input fails both output rules at depth 2: it passes on whatever its input does. With the input's rules assumed by the receiver-role checker, the output rules are proven, and the receiver's own rule `Answer_A` on the input, which the stage obeys because its output neighbor's `Answer_M` is assumed, is proven too; its witness, `c_ready`, is the input's `ready` high. The register stage keeps the rules with a free input, because it holds its output itself. Part D binds the output's checker in the wrong role:
 
-```{.text include="examples/ch19-formal-techniques/protocol/run.out" lines="26-34"}
+```{.text include="examples/ch19-formal-techniques/protocol/run.out" lines="26-35"}
 ```
 
-`Answer_A` fails, as it should: the output's `ready` is a free input of the stage, and nothing makes it answer `valid`. The serious row is the next one. With the output's sender rules now *assumed*, an assertion that the stage's input holds `valid` while not ready is proven. Its witness cover, the input waiting, is reached at depth 1, so the proof is not vacuous in the usual sense: the antecedent happens, and the assumption forces the consequent. The cover of the input dropping `valid` is unreachable. The assumption on the output reached back through the wire and constrained the input, which nobody is obliged to keep. The proof is correct and worthless.
+`Answer_A` fails, as it should: the output's `ready` is a free input of the stage, and nothing makes it answer `valid`. The serious row is the next one. With the output's sender rules now *assumed*, an assertion that the stage's input holds `valid` while not ready is proven. Its witness covers, the input waiting and the same wait run on into the cycle the consequent is judged in, are reached at depths 1 and 2, so the proof is not vacuous in the usual sense: the antecedent happens, and the assumption forces the consequent. The cover of the input dropping `valid` is unreachable. The assumption on the output reached back through the wire and constrained the input, which nobody is obliged to keep. The proof is correct and worthless.
 
 ::: {.callout-warning title="Pitfall"}
 An assumption about signals a block drives is an over-constraint, and through combinational paths it constrains that block's inputs. Bound in the wrong role, a protocol checker proves rules about the environment that nothing enforces, and prints `proven`. Of the rows about the input, only a cover shows the mistake. For every protocol checker, write a cover of each assumed rule being broken by the environment, and expect it to be reachable on the block's inputs and unreachable only where the rule is enforced.
@@ -602,7 +602,9 @@ A **case split** proves a property separately under each of several conditions, 
 ```{.text include="examples/ch19-formal-techniques/ag/run.out"}
 ```
 
-Block A proves one block's guarantee, its output is always 0, under the assumption that its input is always 0, and refutes it at depth 1 on a mutant whose reset value is 1. Block B checks the composition, flat: the ring keeps both guarantees. The circular argument and the flat proof agree, because the register in each block breaks the loop and each block was proved alone. Blocks C and D repeat the exercise for liveness. One block, under the assumption that its input is eventually 1, eventually outputs 1: proven. Beside it, an assertion that can never hold, `s_eventually 1'b0`, is refuted at depth 4, which shows that the fairness assumption leaves the block a fair infinite run (@sec-ch19-fairness). The ring, flat, is refuted at depth 3 with a lasso. Both outputs reset to 0 and pass 0 to each other for ever, and each block's assumption, that its input eventually rises, is exactly what the other block's guarantee would have supplied. @fig-ch19-ag draws the two rings. Block E is the warning that each block must be proved alone, and @sec-ch19-decomp returns to it: both resets at 1, the ring itself in one session, and each output's "always 0" asserted with the other's assumed. Alone, `x == 0` fails at depth 1. With `y == 0` assumed, it is proven, and so is `y == 0` with `x == 0` assumed, although both are false. The assumption names state of the design under proof, not an input from outside it, so it removes every trace in the cycle where the other lemma would fail, and the two lemmas fail together. Here that leaves no trace at all, because both registers hold 1 from reset, and the witness cover is unreachable in both runs; nothing guarantees that, since on a design whose other traces survive the assumption the cover can still be reached. The check that always works is the proof graph, not the cover: no proof may assume a property about the same design that its own conclusion is needed for.
+Block A proves one block's guarantee, its output is always 0, under the assumption that its input is always 0, and refutes it at depth 1 on a mutant whose reset value is 1. Block B checks the composition, flat: the ring keeps both guarantees. The circular argument and the flat proof agree, because the register in each block breaks the loop and each block was proved alone. Blocks C and D repeat the exercise for liveness. One block, under the assumption that its input is eventually 1, eventually outputs 1: proven. Beside it, an assertion that can never hold, `s_eventually 1'b0`, is refuted at depth 4, which shows that the fairness assumption leaves the block a fair infinite run (@sec-ch19-fairness). The ring, flat, is refuted at depth 3 with a lasso. Both outputs reset to 0 and pass 0 to each other for ever, and each block's assumption, that its input eventually rises, is exactly what the other block's guarantee would have supplied. @fig-ch19-ag draws the two rings.
+
+Block E is the warning that each block must be proved alone, and @sec-ch19-decomp returns to it: both resets at 1, the ring itself in one session, and each output's "always 0" asserted with the other's assumed. Alone, `x == 0` fails at depth 1. With `y == 0` assumed, it is proven, and so is `y == 0` with `x == 0` assumed, although both are false. The assumption names state of the design under proof. An assumption on an input only narrows what the engine may choose; one on state can contradict a state the design is forced into, and it then removes the trace in that cycle. Here the assumed lemma fails in the same cycle as the asserted one, so every counterexample is removed with it. In this ring that leaves no trace at all, because both registers hold 1 from reset: in both runs the witness cover is unreachable, and so is `C_any`, a cover of `1'b1`, which any trace at all would reach. Nothing guarantees that, since on a design whose other traces survive the assumption the cover can still be reached. The check that always works is the proof graph, not the cover: no proof may assume a property about the same design that its own conclusion is needed for.
 
 ![Two rings of the `ag` example. Left: the safety ring; each block is proved alone, and the register in each block means a guarantee at cycle t + 1 needs the other's only up to cycle t, so the circular argument is sound, and the flat proof agrees. Right: the liveness ring; each block is proved live under the other's eventually, and the composition is refuted by a lasso in which both outputs stay 0.](../figures/ch19-ag.svg){#fig-ch19-ag fig-alt="Two diagrams. On the left, two blocks ua and ub in a ring, each drawn with a register, the wire x from ua to ub and y from ub to ua; labels: assume in == 0, guarantee out == 0; under them the verdicts: each block proven, ring proven flat. On the right, the same ring with labels assume eventually in, guarantee eventually out; under it: each block proven, ring refuted at depth 3, and a small lasso of cycles in which x and y are 0 throughout, the loop closing on itself."}
 
@@ -656,7 +658,7 @@ The whole miter is proven; so is each of the four cases on the top two bits of `
 ```{.text include="examples/ch19-formal-techniques/hier/run.out"}
 ```
 
-With both children boxed under the full contract, neither parent property gets a verdict from induction in five seconds; the cover of both children full is reached at depth 33. With half the contract, only "empty exactly when `g` is zero", `P2_A` fails at depth 1: the boxed FIFO raises `full` while its `g` is below `DEPTH`, which the missing half would have forbidden. Block C is the step that makes the proof go. The parent's own helper says that `G` is the sum of the two ghost counts, each at most `DEPTH`. It is proven, and with it assumed both parent properties are proven. The contracts are proved in `contract/` (@sec-ch19-ghost) at 16 and at 64 entries. The comparison is the example `hier-ric3/`, which needs rIC3:
+With both children boxed under the full contract, neither parent property gets a verdict from induction in five seconds; the cover of both children full is reached at depth 33. With half the contract, only "empty exactly when `g` is zero", `P2_A` fails at depth 1: the boxed FIFO raises `full` while its `g` is below `DEPTH`, which the missing half would have forbidden. Block C is the step that makes the proof go. The parent's own helper says that `G` is the sum of the two ghost counts, each at most `DEPTH`. It is proven, and with it assumed both parent properties are proven; `Drain_C`, a word in and out again, is `P1_A`'s witness, reached at depth 4. The contracts are proved in `contract/` (@sec-ch19-ghost) at 16 and at 64 entries. The comparison is the example `hier-ric3/`, which needs rIC3:
 
 ```{.text include="examples/ch19-formal-techniques/hier-ric3/run.out"}
 ```
@@ -698,7 +700,7 @@ So the chain is sound and its last link is easy. The first links are where the w
 Decomposition pays when each local property is inductive, or nearly so: a fact one step of the design shows, or one helper away from it. Before splitting a property, write the lemmas and run induction on each with a short limit. A lemma that is true and not inductive has not removed the difficulty; it has moved it, and the decomposition is only as far along as its least inductive lemma.
 :::
 
-**Pitfalls.** Lemmas that are not inductive move the difficulty without reducing it; the DMA's two are unproved, as above. And a chain is circular when a lemma's proof assumes the end-to-end property, or another lemma whose proof assumed it: draw which proof assumed which property and check that the graph has no cycle. The circular form of @sec-ch19-ag is not an exception here, even when the loop passes through registers. It is sound because each block is proved alone and assumes only what arrives at its inputs, while lemmas about one design are proved on the same state, so an assumed lemma removes exactly the traces on which the other would fail. Block E of `ag/` is the warning: two false lemmas about a ring of two registers, each reset to 1, are each proven with the other assumed. Their witness covers happen to be unreachable there, but a cover is not a reliable guard against this mistake; the acyclic proof graph is.
+**Pitfalls.** Lemmas that are not inductive move the difficulty without reducing it; the DMA's two are unproved, as above. And a chain is circular when a lemma's proof assumes the end-to-end property, or another lemma whose proof assumed it: draw which proof assumed which property and check that the graph has no cycle. The circular form of @sec-ch19-ag is not an exception here, even when the loop passes through registers. It is sound because each block is proved alone and assumes only what arrives at its inputs, while lemmas about one design are proved on the same state, so an assumed lemma can remove the very traces on which the lemma it helps would fail. Block E of `ag/` is the warning: two false lemmas about a ring of two registers, each reset to 1, are each proven with the other assumed. Their witness covers happen to be unreachable there, but a cover is not a reliable guard against this mistake; the acyclic proof graph is.
 
 ## Constraining and bug hunting {#sec-ch19-constrain}
 
@@ -744,7 +746,7 @@ The fifth family changes the assumptions or the question to reach an answer soon
 
 **Where it is taught.** @sec-ch18-liveness. On the handshake, the last block of `cut-timer/` proves that a request taken while idle is granted within 201 cycles, refutes the 200-cycle version at depth 201, and shows the bounded form failing under the timer abstraction, because the free `expired` need never rise:
 
-```{.text include="examples/ch19-formal-techniques/cut-timer/run.out" lines="89-98"}
+```{.text include="examples/ch19-formal-techniques/cut-timer/run.out" lines="95-104"}
 ```
 
 A property that names a delay needs the logic that makes the delay.
@@ -767,7 +769,7 @@ The last family changes nothing about the problem. It asks of a finished proof w
 
 **What it preserves.** Not applicable; it is a check on the setup.
 
-**Where it is taught.** @sec-ch18-cover. Wherever an example of this chapter proves an implication, a witness cover runs beside it, under the same assumptions: the antecedent itself, or a scenario whose trace passes through the antecedent, as the grant at depth 202 passes through the rise of `busy` in @sec-ch19-bbox. An invariant or a miter's equality has no antecedent to cover, and the examples that exist to show a vacuous proof leave their cover unreachable on purpose. A cover of the antecedent alone is not always enough: the cover must run to the last cycle in which the assertion's consequent is judged, since an assumption can let the antecedent happen and then leave no trace that reaches the consequent's cycle, and on this tool it must also run to the end of any multi-cycle assumption's window (@sec-ch19-timer). The tool flags no vacuity on its own: a proved assertion whose antecedent can never occur reads `proven` like any other. The witness covers of this chapter's examples are the evidence that each proved implication had something to say, and the next entry shows that the choice of cover matters.
+**Where it is taught.** @sec-ch18-cover, which defines a witness as a cover of the case the assertion is about. Wherever an example of this chapter proves an implication, a witness cover runs beside it, under the same assumptions, and its trace passes through the antecedent, as the grant at depth 202 passes through the rise of `busy` in @sec-ch19-bbox. A cover of the antecedent alone is not always enough. The witness must run at least to the last cycle in which the assertion's consequent is judged, since an assumption can let the antecedent happen and then leave no trace that reaches the consequent's cycle. For a ranged consequent that is the cycle in which the consequent is satisfied, or the end of the range: the arbiter's witnesses in @sec-ch19-symmetry run to the end of the four cycles, `req[i] && !gnt[i] ##4 1`, and the handshake's grant within 201 cycles has the grant itself as its witness. On this tool the witness must also run to the end of any multi-cycle assumption's window (@sec-ch19-timer). Every proved implication in the examples has a reached witness that meets this minimum (@sec-ch19-preserve lists the exceptions: the vacuous demonstrations and the timed reruns). The minimum is necessary, not sufficient: the witness must also reach the case the assertion exists to check, and the next entry shows a cover that meets the minimum reached beside a vacuous proof. The tool flags no vacuity on its own: a proved assertion whose antecedent can never occur reads `proven` like any other. The witness covers of this chapter's examples are the evidence that each proved implication had something to say.
 
 ### Assumption sanity {#sec-ch19-sanity}
 
@@ -790,7 +792,7 @@ The last family changes nothing about the problem. It asks of a finished proof w
 With no assumption, the false assertion is refuted at depth 10 and both covers are reached. Under an assumption that every trace runs into, the counter must never reach 5, the assertion is proven and both covers are unreachable: the generic check works. Under an assumption that only mode-1 traces run into, the assertion is proven, the deep cover is reached at depth 51, because mode-0 traces run on, and only the witness cover is unreachable. The assertion is about mode 1, and in mode 1 no trace survives long enough to test it.
 
 ::: {.callout-warning title="Pitfall"}
-A generic deep cover, "time keeps passing", does not detect a dead end that only some traces meet. In part C above it is reached at depth 51 while the proved assertion is vacuous. Only the assertion's own witness cover, under the final assumptions, shows the problem. Write witness covers per assertion, running to the last cycle the consequent is judged in (@sec-ch19-witness), and read an unreachable one as a failure of the proof, not as a curiosity.
+A generic deep cover, "time keeps passing", does not detect a dead end that only some traces meet. In part C above it is reached at depth 51 while the proved assertion is vacuous. Only the assertion's own witness cover, under the final assumptions, shows the problem, and only if it is chosen for the case the assertion checks. The consequent of `A_mode` is judged in its antecedent's cycle, so a cover of the antecedent alone, `mode && chosen`, already runs to the last cycle judged; it is reached, since mode 1 is chosen a cycle or two after reset and the dead end comes only at 5, and it would have passed this vacuous proof. Write a witness cover for each assertion that reaches the case the assertion exists to check, here mode 1 with the counter about to reach 9, and at least runs to the last cycle the consequent is judged in (@sec-ch19-witness); read an unreachable one as a failure of the proof, not as a curiosity. The boundary matters too: `Witness_C` stops at 8, so an assumption that ended mode-1 traces at 9 itself would leave it reached, and only a cover that runs on into the cycle in which the counter could be 9, `mode && chosen && cnt == 4'd8 ##1 1`, would catch that.
 :::
 
 **Pitfalls.** The middle case above, where the generic check passes and the per-assertion check is the only one that fails. And contradictory assumptions, which the tool accepts without a message (@sec-ch18-assume): every assertion is then proven and every cover unreachable, so a regression with no covers reports a perfect result.
@@ -904,7 +906,7 @@ Before reading on, predict each step's verdict: the covers by bounded search on 
 ```{.text include="examples/ch19-formal-techniques/pipe-256/run.out" lines="1-12"}
 ```
 
-`Full_C`, the pipe full, is `P2`'s antecedent and its natural witness. It is 513 cycles deep, and bounded search reaches it only with a far larger time limit than the first look's, as step 6 shows; so the first look uses shallow witnesses, chosen for the budget, and the deep one runs once, under the final assumptions. `Drain_C`, a word in and out again, is `P1`'s witness and is reached at depth 4; `Both1_C`, a word in each child, exercises both terms of the helper to come, at depth 3; `U1Full_C`, the second child full, shows that the boxed model can reach a full child under the contract, at depth 258. Together they show that the contracts leave the pipe room to move, fill and drain. On the 16-entry pipe of @sec-ch19-hier, `Both_C`, both children full and so the first child's `full` high by its contract, is reached at depth 33, and 33 is twice 16 plus one, which predicts the 513 of step 6.
+`Full_C`, the pipe full, is `P2`'s antecedent and its natural witness. It is 513 cycles deep, and step 6 gives its bounded search two minutes, four times the first look's limit; so the first look uses shallow witnesses, chosen for the budget, and the deep one runs once, under the final assumptions. `Drain_C`, a word in and out again, is `P1`'s witness and is reached at depth 4; `Both1_C`, a word in each child, exercises both terms of the helper to come, at depth 3; `U1Full_C`, the second child full, shows that the boxed model can reach a full child under the contract, at depth 258. Together they show that the contracts leave the pipe room to move, fill and drain. On the 16-entry pipe of @sec-ch19-hier, `Both_C`, both children full and so the first child's `full` high by its contract, is reached at depth 33, and 33 is twice 16 plus one, which predicts the 513 of step 6.
 
 **Step 2, the child's contract.** At 256 entries, on one FIFO with its ghost count, the contract of @sec-ch19-ghost is proven with the ghost helper assumed, and the helper is proven alone:
 
@@ -972,7 +974,7 @@ Four directions are visible from this chapter's examples, and the chapter claims
 - The spelling `$anyconst` left no RTL property in the report and printed nothing; a free input held by `$stable` works, and binds the reset cycle too. One tracked word, with a slot helper, proved the FIFO's data integrity; two tracked words proved order only in the position form with slot helpers, and the flag form's once-only checks need a quantified invariant no engine learned.
 - A rotation proved to be a symmetry of the arbiter, with a free start that covers reset, let one port's proof stand for four; with `last` reset to 3 the same check failed at depth 2, and fixed priority failed ports 1 to 3 outright.
 - Ghost state and history variables add logic that only reads the design, and keep both answers. A protocol checker with a role parameter serves both sides of a link; bound in the wrong role it proved a false rule about the input, shown only by an unreachable cover. A prophecy asserted before it is checked failed at depth 1 on a correct FIFO.
-- Assume-guarantee is sound for safety when a register breaks every loop and each block is proved alone, with its neighbor removed, and the flat ring agreed; the same two lemmas assumed of one shared ring of registers were both proven and both false; for liveness the ring was refuted by a lasso in which neither block ever starts. A case split needs its completeness check, which alone caught a forgotten case. A hierarchical contract must be stated on ports.
+- Assume-guarantee is sound for safety when a register breaks every loop and each block is proved alone, with its neighbor removed, and the flat ring agreed; on one ring with both resets at 1, the two lemmas, each assumed in the other's proof, were both proven and both false; for liveness the ring was refuted by a lasso in which neither block ever starts. A case split needs its completeness check, which alone caught a forgotten case. A hierarchical contract must be stated on ports.
 - On the DMA, an end-to-end property followed from two lemmas at once, and the lemmas had no verdict from any engine: the chain was sound, and the work was in its first links.
 - A generic deep cover passed a dead end that only some traces met; the assertion's own witness cover caught it. Three mutants were each killed, by different properties, and the FIFO's occupancy checker alone missed both data mutants.
 - Two control properties of a pipe of two 256-entry FIFOs were proven by induction through boxes, contracts and one parent helper, each assumption discharged in the record. @fig-ch19-map is the catalog to return to.
@@ -988,7 +990,7 @@ Four directions are visible from this chapter's examples, and the chapter claims
 6. From the output of `symmetry`, which ports of the fixed-priority arbiter fail, and at what depth? Give a request pattern that starves port 3.
 7. In part D of `protocol`, which row about the input shows that the checker was bound in the wrong role, and why is the proven assertion about the input worthless?
 8. From the two-row trace of part C of `history`, explain why the assumption that checks the prophecy does not remove the counterexample.
-9. In `ag`, the safety ring's circular argument is sound only because each block is proved alone, with its neighbor removed. Which registers does it also need, and why does the same argument not prove the liveness ring?
+9. In `ag`, the safety ring's circular argument is sound only if each block is proved alone, with its neighbor removed. Which registers must it also have, and why does the same argument not prove the liveness ring?
 10. The case list on `a[7:6]` that omits one case proves every case it has. Which assertion fails, at what depth, and which case is missing?
 11. With only "empty exactly when `g` is zero" assumed for each boxed FIFO in `hier`, `P2_A` fails at depth 1. Give the free behavior of a boxed FIFO that the trace must use.
 12. In part C of `sanity`, which cover is reached and which is not, and which of the two exposes the assumption?

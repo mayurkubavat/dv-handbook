@@ -29,6 +29,7 @@ a_order                      assert  proven        informal-kind
 a_once1                      assert  undetermined             no engine reached a verdict
 a_once2                      assert  undetermined             no engine reached a verdict
 c_both                       cover   covered       informal-kind depth 3
+c_inside                     cover   covered       informal-kind depth 3
 === D: the mutant that reads a word twice
 --- informal-bmc, limit 5s for each property
 property                     type    status        engine     detail
