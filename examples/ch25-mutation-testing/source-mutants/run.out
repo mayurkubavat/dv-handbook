@@ -1,0 +1,79 @@
+tools: Verilator 5.052; Yosys 0.68 (git 38e001a6f)
+design: examples/ch09-temporal-properties/rtl/fifo_fixed.sv
+1. source mutants: 44, one change each, made when the run started
+  m01 LCR  33  wire do_write = wr_en || !full;
+  m02 LNR  33  wire do_write = wr_en && full;
+  m03 LCR  34  wire do_read = rd_en || !empty;
+  m04 LNR  34  wire do_read = rd_en && empty;
+  m05 ARS  36  always_ff @(posedge clk) begin
+  m06 LNR  37  if (rst_n) begin
+  m07 CNG  37  if (!(!rst_n)) begin
+  m08 CRP  38  wr_ptr <= '1;
+  m09 SDL  38  deleted: wr_ptr <= '0;
+  m10 CRP  39  rd_ptr <= '1;
+  m11 SDL  39  deleted: rd_ptr <= '0;
+  m12 CRP  40  count <= '1;
+  m13 SDL  40  deleted: count <= '0;
+  m14 CNG  42  if (!(do_write)) begin
+  m15 SDL  43  deleted: mem[wr_ptr] <= wr_data;
+  m16 VSW  43  mem[rd_ptr] <= wr_data;
+  m17 AOR  44  wr_ptr <= wr_ptr - 1'b1;
+  m18 CRP  44  wr_ptr <= wr_ptr + 2'd2;
+  m19 SDL  44  deleted: wr_ptr <= wr_ptr + 1'b1;
+  m20 VSW  44  wr_ptr <= rd_ptr + 1'b1;
+  m21 CNG  46  if (!(do_read)) begin
+  m22 AOR  47  rd_ptr <= rd_ptr - 1'b1;
+  m23 CRP  47  rd_ptr <= rd_ptr + 2'd2;
+  m24 SDL  47  deleted: rd_ptr <= rd_ptr + 1'b1;
+  m25 VSW  47  rd_ptr <= wr_ptr + 1'b1;
+  m26 AOR  50  2'b10: count <= count - 1'b1;
+  m27 CRP  50  2'b10: count <= count + 2'd2;
+  m28 SDL  50  deleted: 2'b10: count <= count + 1'b1;
+  m29 AOR  51  2'b01: count <= count + 1'b1;
+  m30 CRP  51  2'b01: count <= count - 2'd2;
+  m31 SDL  51  deleted: 2'b01: count <= count - 1'b1;
+  m32 SDL  52  deleted: default: count <= count;
+  m33 VSW  57  assign rd_data = mem[wr_ptr];
+  m34 ROR  58  assign empty = (count != '0);
+  m35 ROR  58  assign empty = (count < '0);
+  m36 ROR  58  assign empty = (count <= '0);
+  m37 ROR  58  assign empty = (count > '0);
+  m38 ROR  58  assign empty = (count >= '0);
+  m39 ROR  59  assign full = (count != (PTR_W+1)'(DEPTH));
+  m40 ROR  59  assign full = (count < (PTR_W+1)'(DEPTH));
+  m41 ROR  59  assign full = (count <= (PTR_W+1)'(DEPTH));
+  m42 ROR  59  assign full = (count > (PTR_W+1)'(DEPTH));
+  m43 ROR  59  assign full = (count >= (PTR_W+1)'(DEPTH));
+  m44 CSW  50  case labels 2'b10 and 2'b01 exchanged
+2. mutants by operator
+  LCR  2  logical connector replacement
+  LNR  3  negation removal
+  ARS  1  asynchronous reset made synchronous (HDL)
+  CNG  3  condition negation
+  CRP  7  constant replacement
+  SDL  9  statement deletion
+  VSW  4  variable replacement
+  AOR  4  arithmetic operator replacement
+  ROR 10  relational operator replacement
+  CSW  1  case item exchange (HDL)
+3. lint: verilator --lint-only with the book's -Wall flags
+  original: clean
+  m15 rejected UNDRIVEN
+  m18 rejected WIDTHEXPAND
+  m23 rejected WIDTHEXPAND
+  m27 rejected WIDTHEXPAND
+  m30 rejected WIDTHEXPAND
+  m35 rejected UNSIGNED
+  m38 rejected UNSIGNED
+  lint kills 7 of 44 before any simulation
+4. trivial compiler equivalence: one Yosys script, netlists
+   compared up to the names of internal wires and cells
+  m06 refused by Yosys's front end:
+    Async reset \rst_n yields non-constant value 4'mmmm for signal \wr_ptr.
+  m07 refused by Yosys's front end:
+    Async reset \rst_n yields non-constant value 4'mmmm for signal \wr_ptr.
+  identical to the original: m32
+  duplicate groups among the rest: none
+  distinct netlists: 41 mutants, plus the original's
+checks: 8 of 8 hold
+verdict: 44 mutants; lint kills 7; synthesis finds 1 identical to the original

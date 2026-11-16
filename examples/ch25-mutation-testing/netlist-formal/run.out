@@ -1,0 +1,24 @@
+tools: Yosys 0.68 (git 38e001a6f); informal 0.1.0 (pinned at 5114330), rIC3
+  as ric3-ic3
+from the committed measure.out (100 rows) and netlist-population/pop.tsv:
+sample: 100 of 9281 netlist mutations, uniform, seed 25
+equivalent: 6, undecided: 0; equivalent fraction 6/100 = 0.060 [0.022, 0.126]
+  equivalent: 252 264 1188 3618 5877 7345
+score: kills among the 94 non-equivalent mutations
+  ch01-directed  26/94 = 0.277 [0.189, 0.378]
+  ch01-random    93/94 = 0.989 [0.942, 1.000]
+  ch08-coverage  0/94 = 0.000 [0.000, 0.038]
+  ch09-sva       7/94 = 0.074 [0.030, 0.147]
+  union          93/94 = 0.989 [0.942, 1.000]
+  property set   80/94 = 0.851 [0.763, 0.916]
+  sim + formal   94/94
+equivalent mutations killed by some check: 0
+rerun now by rIC3: two equivalents, and the two deepest
+  differences (beyond what 10 s of bounded search reached)
+  mutation 252 (inv - auto): ric3-ic3: proved equivalent
+  mutation 264 (const1 - auto): ric3-ic3: proved equivalent
+  mutation 8394 (const1 42 procmux): ric3-ic3: differs at depth 31
+  mutation 7759 (const1 43 procmux): ric3-ic3: differs at depth 31
+checks: 6 of 6 hold
+verdict: the formal sample's summary is reproduced,
+  and four of its rows rerun as recorded

@@ -1,0 +1,51 @@
+tools: Yosys 0.68 (git 38e001a6f)
+design: examples/ch09-temporal-properties/rtl/fifo_fixed.sv,
+  after prep -top fifo
+mutate -list 100000 -seed 1 -none:
+  Warning: 100000 mutations requested but only 9281 could be created!
+population: 9281 mutations, numbered 1-9281 (0 is the unmutated design)
+list SHA-256: 0b86bd5f77bef60c...
+by mode
+  const0                                    2046   22.0%
+  const1                                    2046   22.0%
+  inv                                       2046   22.0%
+  cnot0                                     1573   16.9%
+  cnot1                                     1570   16.9%
+by cell type
+  $procmux                                  5742   61.9%
+  (no cell name: memory mapping)            1868   20.1%
+  $procdff                                  1394   15.0%
+  $add                                       130    1.4%
+  $eq                                         65    0.7%
+  $sub                                        52    0.6%
+  $logic_and                                  18    0.2%
+  $logic_not                                  12    0.1%
+by source line of the cell
+   43 mem[wr_ptr] <= wr_data;               2362   25.4%
+   42 if (do_write) begin                   1928   20.8%
+  (no source tag)                           1868   20.1%
+   57 assign rd_data = mem[rd_ptr];         1224   13.2%
+   36 always_ff @(posedge clk or negedge     734    7.9%
+   29 logic [WIDTH-1:0] mem [DEPTH];         601    6.5%
+   50 2'b10:   count <= count + 1'b1;        164    1.8%
+   46 if (do_read) begin                      58    0.6%
+   51 2'b01:   count <= count - 1'b1;         52    0.6%
+   23 output logic [WIDTH-1:0] rd_data,       40    0.4%
+   44 wr_ptr      <= wr_ptr + 1'b1;           40    0.4%
+   47 rd_ptr <= rd_ptr + 1'b1;                39    0.4%
+   30 logic [PTR_W-1:0] wr_ptr, rd_ptr;       36    0.4%
+   59 assign full    = (count == (PTR_W+      36    0.4%
+   31 logic [PTR_W:0]   count;                23    0.2%
+   58 assign empty   = (count == '0);         23    0.2%
+   49 case ({do_write, do_read})              17    0.2%
+   33 wire do_write = wr_en && !full;          9    0.1%
+   34 wire do_read  = rd_en && !empty;         9    0.1%
+   24 output logic             full,           6    0.1%
+   25 output logic             empty           6    0.1%
+   20 input  logic             wr_en,          3    0.0%
+   22 input  logic             rd_en,          3    0.0%
+on the memory (lines 29, 36, 42, 43, 57): 6849 of 9281 (73.8%); with no
+  source tag: 1868
+numbering: 9281 of 9281 mutations match the committed population file
+checks: 5 of 5 hold
+verdict: 9281 mutations, 73.8% on the memory

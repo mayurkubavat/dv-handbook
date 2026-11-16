@@ -1,0 +1,24 @@
+tools: Verilator 5.052; Yosys 0.68 (git 38e001a6f)
+fifth testbench: the traffic of tb_fifo_sva.sv, the checker of
+  fifo_sva.sv, and the data check of fifo_data_sva.sv
+1. control
+  repaired FIFO: passes
+  original FIFO: fails (FullBackward_A)
+2. source mutants (44); default and randomized initial values
+  ch09-sva  default    22/44; survivors:
+    m05 m08 m09 m10 m11 m13 m14 m15 m16 m17 m18 m19 m20 m21 m22 m23 m24
+    m25 m32 m33 m36 m43
+  ch09-sva  randomized 23/44; survivors:
+    m05 m08 m09 m10 m11 m14 m15 m16 m17 m18 m19 m20 m21 m22 m23 m24 m25
+    m32 m33 m36 m43
+  fifth     default    37/44; survivors:
+    m05 m09 m11 m13 m32 m36 m43
+  fifth     randomized 40/44; survivors:
+    m05 m32 m36 m43
+  killed by the fifth and not by the checker as shipped:
+    m08 m10 m14 m15 m16 m17 m18 m19 m20 m21 m22 m23 m24 m25 m33
+3. netlist sample: 1,000 mutations, uniform, seed 1
+  ch09-sva  39/1000 = 0.039 [0.028, 0.053]
+  fifth     899/1000 = 0.899 [0.879, 0.917]
+checks: 5 of 5 hold
+verdict: the data check raises the source kills from 22 to 37 of 44

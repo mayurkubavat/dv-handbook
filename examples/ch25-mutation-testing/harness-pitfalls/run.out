@@ -1,0 +1,17 @@
+tools: Yosys 0.68 (git 38e001a6f); Verilator 5.052
+(a) select-bit mutations of the counter's $pmux (const1, port S): 7572 7576
+  default flags    mutation    0 under ch08-coverage: survived
+  default flags    mutation 7572 under ch08-coverage: killed
+    synthesis parallel_case, but multiple matches found for '2'h3'
+  default flags    mutation 7576 under ch08-coverage: killed
+    synthesis parallel_case, but multiple matches found for '2'h3'
+  --no-assert-case mutation    0 under ch08-coverage: survived
+  --no-assert-case mutation 7572 under ch08-coverage: survived
+  --no-assert-case mutation 7576 under ch08-coverage: survived
+(b) a plusarg given twice
+  +seed=1 +seed=7: $value$plusargs("seed=%d") returned 1
+  ch01-random on m35 with +seed=2        : killed
+  ch01-random on m35 with +seed=1 +seed=2: survived
+checks: 5 of 5 hold
+verdict: the pragma assertion kills in a checkless testbench,
+  and a second +seed= is ignored

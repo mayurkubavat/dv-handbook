@@ -1,0 +1,34 @@
+tools: informal 0.1.0 (pinned at 5114330), rIC3 as ric3-ic3; Verilator 5.052
+m44 CSW  50  case labels 2'b10 and 2'b01 exchanged
+1. miter compares: full_a == full_b && empty_a == empty_b
+                   && (empty_a || rd_a == rd_b)
+  informal-bmc: no verdict in 3s
+  ric3-ic3: proved equivalent
+miter: m44 proved equivalent (ric3-ic3) at the ports
+2. the property set on m44, informal-bmc, 2s for each
+  EmptyExact_A    no counterexample
+  Sync_A          counterexample at depth 2
+  a_integrity     no counterexample
+  EmptyPtrs_A     no counterexample
+  FullBackward_A  no counterexample
+  NoOverflow_A    no counterexample
+  FullForward_A   no counterexample
+  PushFull_A      no counterexample
+  PopEmpty_A      no counterexample
+3. count, full and empty after each clock edge
+  repaired FIFO:
+  reset  count=0 full=0 empty=1
+  push   count=1 full=0 empty=0
+  push   count=2 full=0 empty=0
+  push   count=3 full=0 empty=0
+  pop    count=2 full=0 empty=0
+  idle   count=2 full=0 empty=0
+  m44:
+  reset  count=0 full=0 empty=1
+  push   count=31 full=0 empty=0
+  push   count=30 full=0 empty=0
+  push   count=29 full=0 empty=0
+  pop    count=30 full=0 empty=0
+  idle   count=30 full=0 empty=0
+checks: 8 of 8 hold
+verdict: m44 is equivalent at the ports and killed by Sync_A

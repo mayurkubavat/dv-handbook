@@ -1,0 +1,13 @@
+tools: informal 0.1.0 (pinned at 5114330), rIC3 as ric3-ic3
+miter compares: full_a == full_b && empty_a == empty_b
+                && (empty_a || rd_a == rd_b)
+m32 SDL  52  deleted: default: count <= count;
+  informal-bmc: no verdict in 3s
+  ric3-ic3: proved equivalent
+miter: m32 proved equivalent (ric3-ic3)
+m36 ROR  58  assign empty = (count <= '0);
+  informal-bmc: no verdict in 3s
+  ric3-ic3: proved equivalent
+miter: m36 proved equivalent (ric3-ic3)
+checks: 2 of 2 hold
+verdict: m32 and m36 are equivalent outright

@@ -1,0 +1,57 @@
+tools: informal 0.1.0 (pinned at 5114330)
+property set, in the order tried: EmptyExact_A Sync_A a_integrity EmptyPtrs_A
+  FullBackward_A NoOverflow_A FullForward_A PushFull_A PopEmpty_A
+each by informal-bmc, 2s for each property; stop at the first counterexample
+control (the repaired FIFO): no counterexample
+  m01 LCR  killed by EmptyExact_A at depth 2
+  m02 LNR  killed by EmptyExact_A at depth 2
+  m03 LCR  killed by EmptyExact_A at depth 2
+  m04 LNR  killed by EmptyExact_A at depth 2
+  m05 ARS  no counterexample in 2s for any property
+  m06 LNR  refused by the front end, line 38: asynchronous reset 'if'
+    condition does not match sensitivity list signal or edge polarity
+  m07 CNG  refused by the front end, line 38: asynchronous reset 'if'
+    condition does not match sensitivity list signal or edge polarity
+  m08 CRP  killed by a_integrity at depth 2
+  m09 SDL  killed by a_integrity at depth 2
+  m10 CRP  killed by a_integrity at depth 2
+  m11 SDL  killed by a_integrity at depth 2
+  m12 CRP  killed by EmptyExact_A at depth 1
+  m13 SDL  killed by EmptyExact_A at depth 1
+  m14 CNG  killed by a_integrity at depth 2
+  m15 SDL  killed by a_integrity at depth 2
+  m16 VSW  killed by a_integrity at depth 3
+  m17 AOR  killed by a_integrity at depth 3
+  m18 CRP  killed by a_integrity at depth 3
+  m19 SDL  killed by a_integrity at depth 3
+  m20 VSW  killed by a_integrity at depth 4
+  m21 CNG  killed by a_integrity at depth 2
+  m22 AOR  killed by a_integrity at depth 3
+  m23 CRP  killed by a_integrity at depth 3
+  m24 SDL  killed by a_integrity at depth 3
+  m25 VSW  killed by a_integrity at depth 3
+  m26 AOR  killed by EmptyExact_A at depth 3
+  m27 CRP  killed by EmptyExact_A at depth 3
+  m28 SDL  killed by EmptyExact_A at depth 2
+  m29 AOR  killed by EmptyExact_A at depth 3
+  m30 CRP  killed by EmptyExact_A at depth 3
+  m31 SDL  killed by EmptyExact_A at depth 3
+  m32 SDL  no counterexample in 2s for any property
+  m33 VSW  killed by a_integrity at depth 2
+  m34 ROR  killed by EmptyExact_A at depth 1
+  m35 ROR  killed by EmptyExact_A at depth 1
+  m36 ROR  no counterexample in 2s for any property
+  m37 ROR  killed by EmptyExact_A at depth 1
+  m38 ROR  killed by EmptyExact_A at depth 2
+  m39 ROR  killed by FullBackward_A at depth 1
+  m40 ROR  killed by FullBackward_A at depth 1
+  m41 ROR  killed by FullBackward_A at depth 1
+  m42 ROR  killed by FullBackward_A at depth 18
+  m43 ROR  no counterexample in 2s for any property
+  m44 CSW  killed by Sync_A at depth 2
+counterexamples: 38 of 44; refused by the front end: 2 (m06 m07)
+no counterexample: 4 (m05 m32 m36 m43)
+killed first by Sync_A: m44
+the full run (committed measure.out) agrees on 44 of 44 mutants
+checks: 6 of 6 hold
+verdict: the property set kills every non-equivalent mutant

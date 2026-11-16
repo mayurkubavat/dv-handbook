@@ -1,0 +1,14 @@
+tools: informal 0.1.0 (pinned at 5114330), rIC3 as ric3-ic3
+m43 ROR  59  assign full = (count >= (PTR_W+1)'(DEPTH));
+miter compares: full_a == full_b && empty_a == empty_b
+                && (empty_a || rd_a == rd_b)
+helper: a.count <= 5'd16 && b.count <= 5'd16
+  1. bounded search, whole miter (informal-bmc): no verdict in 3s
+  2. k-induction, whole miter (informal-kind): no verdict in 10s
+  3. k-induction, the helper count <= 16 on both copies (informal-kind): proven
+  4. k-induction, whole miter, helper assumed (informal-kind): no verdict in 10s
+  5. k-induction, flag half only, no helper (informal-kind): proven
+  6. rIC3's IC3, whole miter (ric3-ic3): proven
+miter: m43 proved equivalent (ric3-ic3)
+checks: 6 of 6 hold
+verdict: m43 is equivalent on the reachable states; rIC3 proves it

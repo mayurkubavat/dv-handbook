@@ -1,0 +1,66 @@
+tools: Verilator 5.052
+design: examples/ch09-temporal-properties/rtl/fifo_fixed.sv, 44 source mutants
+testbenches: ch01-directed, ch01-random, ch08-coverage, ch09-sva
+  (ch01-random at +seed=1, 400 cycles, as shipped)
+schema: one build for each testbench; warnings it draws: UNSIGNED, WIDTHEXPAND
+control (+mut=0, the repaired FIFO): ch01-directed survived, ch01-random
+  survived, ch08-coverage survived, ch09-sva survived
+kill matrix (K killed, . survived); columns
+  ch01-directed ch01-random ch08-coverage ch09-sva
+  m01 LCR  K K . K
+  m02 LNR  K K . K
+  m03 LCR  K K . K
+  m04 LNR  K K . K
+  m05 ARS  . . . .
+  m06 LNR  K K . K
+  m07 CNG  K K . K
+  m08 CRP  K K . .
+  m09 SDL  . . . .
+  m10 CRP  K K . .
+  m11 SDL  . . . .
+  m12 CRP  . K . K
+  m13 SDL  . . . .
+  m14 CNG  K K . .
+  m15 SDL  K K . .
+  m16 VSW  K K . .
+  m17 AOR  K K . .
+  m18 CRP  K K . .
+  m19 SDL  K K . .
+  m20 VSW  K K . .
+  m21 CNG  K K . .
+  m22 AOR  K K . .
+  m23 CRP  K K . .
+  m24 SDL  K K . .
+  m25 VSW  K K . .
+  m26 AOR  K K . K
+  m27 CRP  K K . K
+  m28 SDL  K K . K
+  m29 AOR  K K . K
+  m30 CRP  K K . K
+  m31 SDL  K K . K
+  m32 SDL  . . . .
+  m33 VSW  K K . .
+  m34 ROR  K K . K
+  m35 ROR  K . . K
+  m36 ROR  . . . .
+  m37 ROR  K K . K
+  m38 ROR  K K . K
+  m39 ROR  K K . K
+  m40 ROR  K K . K
+  m41 ROR  K K . K
+  m42 ROR  . K . K
+  m43 ROR  . . . .
+  m44 CSW  . . . K
+schema kills:
+  ch01-directed  killed 34 of 44 ( 77.3%)
+  ch01-random    killed 35 of 44 ( 79.5%)
+  ch08-coverage  killed  0 of 44 (  0.0%)
+  ch09-sva       killed 22 of 44 ( 50.0%)
+  union          killed 37 of 44 ( 84.1%)
+  killed by no testbench: m05 m09 m11 m13 m32 m36 m43
+m35 under ch01-random, seeds 1-100: first killing seed 2;
+  killed by 53 of 100 seeds
+per-mutant builds (committed measure.out) agree with the schema on
+  44 of 44 mutants
+checks: 6 of 6 hold
+verdict: the schema reproduces the per-mutant kill matrix

@@ -1,0 +1,77 @@
+population: 9281 netlist mutations of fifo_fixed.sv (Yosys 0.68, after prep),
+  from the committed pop.tsv
+1. population kill rates
+  ch01-directed   2725/9281 = 0.2936
+  ch01-random     8265/9281 = 0.8905
+  ch08-coverage      0/9281 = 0.0000
+  ch09-sva         351/9281 = 0.0378
+  union           8300/9281 = 0.8943
+  ch01-random, seeds 1..1: killed 8265 (89.1%)
+  ch01-random, seeds 1..2: killed 8343 (89.9%)
+  ch01-random, seeds 1..3: killed 8355 (90.0%)
+  ch01-random, seeds 1..4: killed 8355 (90.0%)
+  ch01-random, seeds 1..5: killed 8355 (90.0%)
+  ch01-random, seeds 1..6: killed 8355 (90.0%)
+  ch01-random, seeds 1..7: killed 8355 (90.0%)
+  ch01-random, seeds 1..8: killed 8355 (90.0%)
+2. one uniform sample (seed 1), nested, 95% Clopper-Pearson
+  n = 30
+    ch01-directed    13/30 [0.255, 0.626]
+    ch01-random      25/30 [0.653, 0.944]
+    ch08-coverage     0/30 [0.000, 0.116]
+    ch09-sva          1/30 [0.001, 0.172]
+    union            25/30 [0.653, 0.944]
+  n = 100
+    ch01-directed    30/100 [0.212, 0.400]
+    ch01-random      89/100 [0.812, 0.944]
+    ch08-coverage     0/100 [0.000, 0.036]
+    ch09-sva          4/100 [0.011, 0.099]
+    union            89/100 [0.812, 0.944]
+  n = 300
+    ch01-directed    88/300 [0.242, 0.348]
+    ch01-random     266/300 [0.845, 0.920]
+    ch08-coverage     0/300 [0.000, 0.012]
+    ch09-sva         15/300 [0.028, 0.081]
+    union           267/300 [0.849, 0.923]
+  n = 1000
+    ch01-directed   302/1000 [0.274, 0.332]
+    ch01-random     896/1000 [0.875, 0.914]
+    ch08-coverage     0/1000 [0.000, 0.004]
+    ch09-sva         39/1000 [0.028, 0.053]
+    union           900/1000 [0.880, 0.918]
+3. 2,000 samples at each n: how often the 95% interval holds
+   the population rate, and its mean width
+  n = 30: worst-case half-width Chebyshev 0.408, normal 0.179
+    ch01-directed  coverage 0.983  mean width 0.339
+    ch01-random    coverage 0.983  mean width 0.246
+    ch08-coverage  coverage 1.000  mean width 0.116
+    ch09-sva       coverage 0.998  mean width 0.170
+    union          coverage 0.985  mean width 0.243
+  n = 100: worst-case half-width Chebyshev 0.224, normal 0.098
+    ch01-directed  coverage 0.945  mean width 0.185
+    ch01-random    coverage 0.970  mean width 0.130
+    ch08-coverage  coverage 1.000  mean width 0.036
+    ch09-sva       coverage 0.969  mean width 0.084
+    union          coverage 0.972  mean width 0.128
+  n = 300: worst-case half-width Chebyshev 0.129, normal 0.057
+    ch01-directed  coverage 0.964  mean width 0.106
+    ch01-random    coverage 0.964  mean width 0.074
+    ch08-coverage  coverage 1.000  mean width 0.012
+    ch09-sva       coverage 0.972  mean width 0.046
+    union          coverage 0.959  mean width 0.073
+  n = 1000: worst-case half-width Chebyshev 0.071, normal 0.031
+    ch01-directed  coverage 0.958  mean width 0.057
+    ch01-random    coverage 0.970  mean width 0.040
+    ch08-coverage  coverage 1.000  mean width 0.004
+    ch09-sva       coverage 0.973  mean width 0.025
+    union          coverage 0.971  mean width 0.039
+  lowest coverage over every n and testbench: 0.945
+4. population kill rate by mode
+  mode        n  directed    random  coverage       sva     union
+  cnot0    1573     0.257     0.869     0.000     0.034     0.880
+  cnot1    1570     0.166     0.871     0.000     0.025     0.876
+  const0   2046     0.261     0.894     0.000     0.039     0.895
+  const1   2046     0.320     0.883     0.000     0.042     0.888
+  inv      2046     0.426     0.925     0.000     0.045     0.925
+checks: 5 of 5 hold
+verdict: the population rates are known, and the sampled intervals cover them

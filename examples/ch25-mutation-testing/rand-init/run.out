@@ -1,0 +1,27 @@
+tools: Verilator 5.052
+schema built with the book's flags; no --x-initial option
+seeds (of 1-5) whose randomized run kills; 'default' is the
+book's run, K killed, . survived
+                  ch01-directed    ch01-random  ch08-coverage       ch09-sva
+  orig default                .              .              .              .
+       random                 -              -              -              -
+  m05  default                .              .              .              .
+       random                 -              -              -              -
+  m09  default                .              .              .              .
+       random               1-5            1-5              -              -
+  m11  default                .              .              .              .
+       random               1-5            1-5              -              -
+  m13  default                .              .              .              .
+       random               1-5            1-5              -            1-5
+  m32  default                .              .              .              .
+       random                 -              -              -              -
+  m36  default                .              .              .              .
+       random                 -              -              -              -
+  m43  default                .              .              .              .
+       random                 -              -              -              -
+  m44  default                .              .              .              K
+       random                 -              -              -            1-5
+killed only with randomized initial values: m09 m11 m13
+miter verdicts read from the committed run.out files: 8 of 8
+checks: 12 of 12 hold
+verdict: m09, m11 and m13 die with randomized initial values

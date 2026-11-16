@@ -1,0 +1,55 @@
+tools: informal 0.1.0 (pinned at 5114330)
+miter compares: full_a == full_b && empty_a == empty_b
+                && (empty_a || rd_a == rd_b)
+engine: informal-bmc, limit 10s for each mutant
+miter: m01 differs at depth 2
+miter: m02 differs at depth 2
+miter: m03 differs at depth 2
+miter: m04 differs at depth 2
+  m05 no difference found in 10s: bounded search cannot decide it
+front end refuses m06, line 38: asynchronous reset 'if' condition does not
+  match sensitivity list signal or edge polarity
+front end refuses m07, line 38: asynchronous reset 'if' condition does not
+  match sensitivity list signal or edge polarity
+miter: m08 differs at depth 2
+miter: m09 differs at depth 2
+miter: m10 differs at depth 2
+miter: m11 differs at depth 2
+miter: m12 differs at depth 1
+miter: m13 differs at depth 1
+miter: m14 differs at depth 2
+miter: m15 differs at depth 2
+miter: m16 differs at depth 3
+miter: m17 differs at depth 3
+miter: m18 differs at depth 3
+miter: m19 differs at depth 3
+miter: m20 differs at depth 4
+miter: m21 differs at depth 2
+miter: m22 differs at depth 3
+miter: m23 differs at depth 3
+miter: m24 differs at depth 3
+miter: m25 differs at depth 3
+miter: m26 differs at depth 3
+miter: m27 differs at depth 3
+miter: m28 differs at depth 2
+miter: m29 differs at depth 3
+miter: m30 differs at depth 3
+miter: m31 differs at depth 3
+  m32 no difference found in 10s: bounded search cannot decide it
+miter: m33 differs at depth 2
+miter: m34 differs at depth 1
+miter: m35 differs at depth 1
+  m36 no difference found in 10s: bounded search cannot decide it
+miter: m37 differs at depth 1
+miter: m38 differs at depth 2
+miter: m39 differs at depth 1
+miter: m40 differs at depth 1
+miter: m41 differs at depth 1
+miter: m42 differs at depth 17
+  m43 no difference found in 10s: bounded search cannot decide it
+  m44 no difference found in 10s: bounded search cannot decide it
+differ: 37, depths 1 to 17 (deepest m42); refused: m06 m07; undecided: m05
+  m32 m36 m43 m44
+rd_data compared on every cycle, the original against itself: differs at depth 1
+checks: 4 of 4 hold
+verdict: 37 mutants differ; bounded search decides none of the other five

@@ -1,0 +1,12 @@
+tools: informal 0.1.0 (pinned at 5114330), rIC3 as ric3-ic3; Verilator 5.052
+m05 ARS  36  always_ff @(posedge clk) begin
+1. miter compares: full_a == full_b && empty_a == empty_b
+                   && (empty_a || rd_a == rd_b)
+  informal-bmc: no verdict in 3s
+  ric3-ic3: proved equivalent
+miter: m05 proved equivalent (ric3-ic3) under the tool's reset model
+2. simulation: rst_n dropped and raised between two edges
+  repaired FIFO after a reset pulse between edges: empty=1: survived
+  m05           after a reset pulse between edges: empty=0: killed
+checks: 3 of 3 hold
+verdict: m05 is equivalent to the tool, and a reset pulse kills it

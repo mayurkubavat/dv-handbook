@@ -1,0 +1,35 @@
+tools: Yosys 0.68 (git 38e001a6f); Verilator 5.052
+population 9281; uniform sample of 1000 without replacement,
+  Python's random.Random(1).sample
+  first ten drawn: 2202 1034 4180 1932 8118 7365 7738 6220 3440 1538
+netlist with the 1000 sampled mutations behind mutsel: 5620 lines
+control (mutation 0): ch01-directed survived, ch01-random survived,
+  ch08-coverage survived, ch09-sva survived
+n = 30 (95% Clopper-Pearson)
+  ch01-directed  13/30 = 0.433 [0.255, 0.626]
+  ch01-random    25/30 = 0.833 [0.653, 0.944]
+  ch08-coverage  0/30 = 0.000 [0.000, 0.116]
+  ch09-sva       1/30 = 0.033 [0.001, 0.172]
+  union          25/30 = 0.833 [0.653, 0.944]
+n = 100 (95% Clopper-Pearson)
+  ch01-directed  30/100 = 0.300 [0.212, 0.400]
+  ch01-random    89/100 = 0.890 [0.812, 0.944]
+  ch08-coverage  0/100 = 0.000 [0.000, 0.036]
+  ch09-sva       4/100 = 0.040 [0.011, 0.099]
+  union          89/100 = 0.890 [0.812, 0.944]
+n = 300 (95% Clopper-Pearson)
+  ch01-directed  88/300 = 0.293 [0.242, 0.348]
+  ch01-random    266/300 = 0.887 [0.845, 0.920]
+  ch08-coverage  0/300 = 0.000 [0.000, 0.012]
+  ch09-sva       15/300 = 0.050 [0.028, 0.081]
+  union          267/300 = 0.890 [0.849, 0.923]
+n = 1000 (95% Clopper-Pearson)
+  ch01-directed  302/1000 = 0.302 [0.274, 0.332]
+  ch01-random    896/1000 = 0.896 [0.875, 0.914]
+  ch08-coverage  0/1000 = 0.000 [0.000, 0.004]
+  ch09-sva       39/1000 = 0.039 [0.028, 0.053]
+  union          900/1000 = 0.900 [0.880, 0.918]
+cross-check: 1000 of 1000 sampled mutations have the verdicts
+  of the committed population file
+checks: 4 of 4 hold
+verdict: the sample of 1000 reproduces the population run

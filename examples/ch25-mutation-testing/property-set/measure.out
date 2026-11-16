@@ -1,0 +1,64 @@
+measure.out -- written by MEASURE=1 make run on 2026-11-16
+tools: informal 0.1.0 (pinned at 5114330)
+every property of the set on every mutant, informal-bmc, 5 s each;
+wall 357 s on 4 workers
+mutant: the properties refuted, at their depths
+  orig -
+  m01 NoOverflow_A@3, FullForward_A@18, FullBackward_A@17,
+       EmptyExact_A@2, PushFull_A@18, PopEmpty_A@2, Sync_A@2,
+       a_integrity@18
+  m02 NoOverflow_A@18, FullForward_A@17, EmptyExact_A@2, Sync_A@2
+  m03 NoOverflow_A@3, FullForward_A@17, FullBackward_A@17,
+       EmptyExact_A@2, PushFull_A@18, PopEmpty_A@2, Sync_A@2
+  m04 NoOverflow_A@3, FullForward_A@17, FullBackward_A@17,
+       EmptyExact_A@2, PopEmpty_A@2, Sync_A@2
+  m05 -
+  m06 refused line 38: asynchronous reset 'if' condition does not match
+       sensitivity list signal or edge polarity
+  m07 refused line 38: asynchronous reset 'if' condition does not match
+       sensitivity list signal or edge polarity
+  m08 a_integrity@2, EmptyPtrs_A@1
+  m09 a_integrity@2, EmptyPtrs_A@1
+  m10 a_integrity@2, EmptyPtrs_A@1
+  m11 a_integrity@2, EmptyPtrs_A@1
+  m12 NoOverflow_A@2, FullForward_A@17, FullBackward_A@16,
+       EmptyExact_A@1, Sync_A@1, a_integrity@3, EmptyPtrs_A@2
+  m13 NoOverflow_A@2, FullForward_A@17, FullBackward_A@1,
+       EmptyExact_A@1, Sync_A@1, a_integrity@2, EmptyPtrs_A@2
+  m14 a_integrity@2, EmptyPtrs_A@2
+  m15 a_integrity@2
+  m16 a_integrity@3
+  m17 a_integrity@3, EmptyPtrs_A@3
+  m18 a_integrity@3, EmptyPtrs_A@3
+  m19 a_integrity@3, EmptyPtrs_A@3
+  m20 a_integrity@4, EmptyPtrs_A@4
+  m21 a_integrity@2, EmptyPtrs_A@2
+  m22 a_integrity@3, EmptyPtrs_A@3
+  m23 a_integrity@3, EmptyPtrs_A@3
+  m24 a_integrity@3, EmptyPtrs_A@3
+  m25 a_integrity@3, EmptyPtrs_A@3
+  m26 NoOverflow_A@4, FullForward_A@19, FullBackward_A@17,
+       EmptyExact_A@3, Sync_A@2, a_integrity@33, EmptyPtrs_A@33
+  m27 NoOverflow_A@4, FullForward_A@19, FullBackward_A@9,
+       EmptyExact_A@3, Sync_A@2, a_integrity@4, EmptyPtrs_A@4
+  m28 NoOverflow_A@18, FullForward_A@17, EmptyExact_A@2, Sync_A@2,
+       a_integrity@3, EmptyPtrs_A@2
+  m29 NoOverflow_A@4, FullForward_A@19, FullBackward_A@17,
+       EmptyExact_A@3, Sync_A@3, a_integrity@5, EmptyPtrs_A@33
+  m30 NoOverflow_A@4, FullForward_A@19, FullBackward_A@12,
+       EmptyExact_A@3, Sync_A@3, a_integrity@5, EmptyPtrs_A@4
+  m31 NoOverflow_A@4, FullForward_A@19, FullBackward_A@18,
+       EmptyExact_A@3, Sync_A@3, a_integrity@4
+  m32 -
+  m33 a_integrity@2
+  m34 NoOverflow_A@2, EmptyExact_A@1, EmptyPtrs_A@2
+  m35 NoOverflow_A@2, EmptyExact_A@1
+  m36 -
+  m37 NoOverflow_A@2, EmptyExact_A@1, EmptyPtrs_A@2
+  m38 EmptyExact_A@2, EmptyPtrs_A@2
+  m39 FullBackward_A@1
+  m40 FullBackward_A@1
+  m41 FullBackward_A@1
+  m42 NoOverflow_A@18, FullForward_A@17, FullBackward_A@18
+  m43 -
+  m44 Sync_A@2

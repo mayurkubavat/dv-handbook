@@ -1,0 +1,20 @@
+measure.out -- written by MEASURE=1 make run on 2026-11-16
+tools: Yosys 0.68 (git 38e001a6f); Verilator 5.052
+netlist: 9281 mutations behind mutsel, 48016 lines
+list, netlist and 4 builds: 54 s
+runs: 37128 plus the seed sweep, 100 s wall on 4 workers
+control (mutation 0): survived, survived, survived, survived
+1. population kill rates
+  ch01-directed   2725/9281 = 0.2936
+  ch01-random     8265/9281 = 0.8905
+  ch08-coverage      0/9281 = 0.0000
+  ch09-sva         351/9281 = 0.0378
+  union           8300/9281 = 0.8943
+  ch01-random, seeds 1..1: killed 8265 (89.1%)
+  ch01-random, seeds 1..2: killed 8343 (89.9%)
+  ch01-random, seeds 1..3: killed 8355 (90.0%)
+  ch01-random, seeds 1..4: killed 8355 (90.0%)
+  ch01-random, seeds 1..5: killed 8355 (90.0%)
+  ch01-random, seeds 1..6: killed 8355 (90.0%)
+  ch01-random, seeds 1..7: killed 8355 (90.0%)
+  ch01-random, seeds 1..8: killed 8355 (90.0%)

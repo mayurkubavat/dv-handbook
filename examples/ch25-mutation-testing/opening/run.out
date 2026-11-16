@@ -1,0 +1,26 @@
+tools: Verilator 5.052
+design: examples/ch09-temporal-properties/rtl/fifo_fixed.sv
+1. each testbench's own report
+  ch01-directed: PASS: 8 entries written and read back
+  ch01-random: coverage: 16 of 17 occupancy levels reached, max 16
+  ch01-random: PASS: 400 cycles, 193 writes
+  ch08-coverage: +bias=even +n=200: fifo_cg get_inst_coverage = 75.86
+  ch08-coverage: +bias=push +n=200: fifo_cg get_inst_coverage = 89.66
+  ch09-sva: PASS: 400 cycles, no assertion failed
+  ch09-sva: cover FullReached_C = 113
+  ch09-sva: cover PushFull_C = 69
+  ch09-sva: cover PopEmpty_C = 51
+  ch09-sva: cover Drained_C = 96
+2. coverage of fifo_fixed.sv (Verilator points hit / points)
+   and kills of the 44 source mutants
+  testbench              line       branch         expr       toggle  kills
+  ch01-directed      4/4 100%     6/6 100%      7/8 88%   80/330 24%  34/44
+  ch01-random        4/4 100%     6/6 100%     8/8 100% 329/330 100%  35/44
+  ch08-coverage      4/4 100%     6/6 100%     8/8 100%  326/330 99%   0/44
+  ch09-sva           4/4 100%     6/6 100%     8/8 100%  327/330 99%  22/44
+  ch01-directed  toggle 80/330 = 24.2%
+  ch01-random    toggle 329/330 = 99.7%
+  ch08-coverage  toggle 326/330 = 98.8%
+  ch09-sva       toggle 327/330 = 99.1%
+checks: 3 of 3 hold
+verdict: equal code coverage, kills from 0 to 35 of 44

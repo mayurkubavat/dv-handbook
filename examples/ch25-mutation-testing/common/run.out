@@ -1,0 +1,10 @@
+tools: Verilator 5.052
+1. srcmut: 44 mutants of examples/ch09-temporal-properties/rtl/fifo_fixed.sv
+  schema +mut=0 under ch01-directed: survived
+  schema +mut=0 under ch01-random: survived
+  schema +mut=0 under ch08-coverage: survived
+  schema +mut=0 under ch09-sva: survived
+2. Clopper-Pearson 95%, 30 of 100: [0.212, 0.400]
+3. yosysmut.parse: ('const0', '44', 'add')
+checks: 6 of 6 hold
+self-test: the shared library holds
