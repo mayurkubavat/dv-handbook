@@ -1,0 +1,49 @@
+python seed 2026
+
+space                           t  tuples  lower  known greedy rand med rand q90  union99
+binary k=10                     2     180      4      6      9       18       24       35
+binary k=10                     3     960      8      -     16       52       65       86
+3-level k=4                     2      54      9      9      9       38       56       73
+3-level k=4                     3     108     27      -     29      128      173      247
+3-level k=13                    2     702      9     15     19       63       72       95
+DMA config (mixed, 10 params)   2     350     16      -     18       65       90      120
+DMA config (mixed, 10 params)   3    2572     48      -     72      294      360      473
+
+== coverage curve, DMA config, t=2 and t=3 ==
+ t=2 greedy size 21
+    tests   greedy   random  E[rand]
+        1    0.129    0.129    0.129
+        2    0.257    0.214    0.238
+        4    0.489    0.386    0.414
+        8    0.783    0.600    0.642
+       16    0.980    0.820    0.855
+       24    1.000    0.923    0.936
+       32    1.000    0.969    0.970
+       48    1.000    0.997    0.993
+       64    1.000    0.997    0.998
+      100    1.000    1.000    1.000
+      150    1.000    1.000    1.000
+      200    1.000    1.000    1.000
+      300    1.000    1.000    1.000
+ t=3 greedy size 72
+    tests   greedy   random  E[rand]
+        1    0.047    0.047    0.047
+        2    0.093    0.092    0.091
+        4    0.186    0.164    0.172
+        8    0.357    0.288    0.310
+       16    0.622    0.484    0.512
+       24    0.784    0.652    0.649
+       32    0.881    0.724    0.743
+       48    0.968    0.844    0.857
+       64    0.995    0.917    0.917
+      100    1.000    0.976    0.973
+      150    1.000    0.996    0.993
+      200    1.000    0.998    0.998
+      300    1.000    1.000    1.000
+
+== constructions that beat the greedy ==
+  binary k= 10: 6 rows, covers every pair: True
+  binary k= 15: 7 rows, covers every pair: True
+  binary k= 35: 8 rows, covers every pair: True
+  binary k=126: 10 rows, covers every pair: True
+  3-level k=4: 9 rows (a, b, a+b, a+2b mod 3), covers every pair: True

@@ -1,0 +1,45 @@
+python seed 2026, 4000 trials per simulated row
+
+== 1. equal probabilities: E[T] = k H_k ==
+equal, k=8                         k=   8 E[T]=     21.7 sim=     22.0 (se   0.1) equal-p=    21.7
+                                          n99 Poisson=     54 sim q99=     53 union=     51 exact=51
+equal, k=64                        k=  64 E[T]=    303.6 sim=    305.4 (se   1.3) equal-p=   303.6
+                                          n99 Poisson=    561 sim q99=    574 union=    557
+equal, k=256                       k= 256 E[T]=   1567.8 sim=   1566.9 (se   5.1) equal-p=  1567.8
+                                          n99 Poisson=   2598 sim q99=   2621 union=   2594
+
+== 2. the packet kind dist {0:/6, 1:/3, 2:/1} ==
+kind 0/1/2                         k=   3 E[T]=     11.0 sim=     10.9 (se   0.1) equal-p=     5.5
+                                          n99 Poisson=     47 sim q99=     44 union=     55 exact=44
+   P(all three kinds within 10 packets): exact 0.6290  Poisson 0.5992
+   P(all three kinds within 20 packets): exact 0.8777  Poisson 0.8625
+   P(all three kinds within 30 packets): exact 0.9576  Poisson 0.9501
+   P(all three kinds within 44 packets): exact 0.9903  Poisson 0.9877
+   P(all three kinds within 50 packets): exact 0.9948  Poisson 0.9933
+   the Ch 7 run is 64 packets: P(kind 2 never) = 0.9^64 = 0.00118
+
+== 3. every value of an 8-bit v under the Ch 7 dist forms ==
+v dist := {1,1,2}                  k= 256 E[T]=   2143.2 sim=   2136.0 (se   8.1) equal-p=  1567.8
+                                          n99 Poisson=   3793 sim q99=   3754 union=   4177
+v dist :/ {1,1,2}                  k= 256 E[T]=   2027.1 sim=   2022.6 (se   6.7) equal-p=  1567.8
+                                          n99 Poisson=   3399 sim q99=   3336 union=   3650
+v uniform 0..255                   k= 256 E[T]=   1567.8 sim=   1566.4 (se   5.1) equal-p=  1567.8
+                                          n99 Poisson=   2598 sim q99=   2545 union=   2594
+
+== 4. the FIFO grid (occupancy x op), Verilator 5.052 ==
+seeds 1000, 200 cycles each; bins hit in some seed: 64 of 68
+long run: 20000 cycles; bins hit: 64
+bin              p/cycle P(run) iid P(run) meas
+occ15_idle       0.00620     0.7117     0.1820
+occ15_push       0.00620     0.7117     0.1840
+occ15_pop        0.00775     0.7890     0.2060
+occ15_both       0.00790     0.7953     0.2200
+occ14_both       0.01700     0.9676     0.2450
+occ14_idle       0.01745     0.9704     0.2570
+occ14_push       0.01565     0.9574     0.2590
+occ14_pop        0.01650     0.9641     0.3000
+bins where the iid model over-predicts the run hit rate: 56 of 64
+seeds to hit all 64 reachable bins: resampled median 6, q99 27
+seed-level model (bins independent): median 11, n99 29
+seed-level union bound: n = 44 seeds
+cycle-level iid model: n99 = 903 cycles = 4.5 seeds of 200

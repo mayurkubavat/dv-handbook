@@ -1,0 +1,38 @@
+python seed 2026
+
+== 1. synthetic: 200 bins, p_i proportional to 1/i (Zipf) ==
+     n S_obs   Chao1    f1/f2   GT miss true miss new next n     actual
+    50    33    94.2     25/5    0.5000    0.3946       20.5         15
+   100    48    86.8    28/10    0.2800    0.3230       19.9         23
+   200    71   108.9    36/17    0.1800    0.2511       23.2         42
+   400   113   146.0    46/32    0.1150    0.1432       24.8         44
+   800   157   213.3    61/33    0.0762    0.0682       37.2         25
+  1600   182   193.4    31/42    0.0194    0.0221       10.7         14
+  3200   196   196.7     6/27    0.0019    0.0038        0.7          3
+  6400   199   199.0      0/2    0.0000    0.0009        0.0          1
+  mean over 300 replications at n=200: GT 0.2305, true missing mass 0.2309, Chao1 156.3 (truth 200)
+  mean over 300 replications at n=1600: GT 0.0212, true missing mass 0.0218, Chao1 199.0 (truth 200)
+
+== 2. FIFO grid, pw=50 pr=50, Verilator 5.052: 1000 seeds of 200 cycles; reachable bins 64 ==
+seeds  S_obs  Chao2   med   Q1/Q2 Chao1cy  f1/f2 pred new meas new P(new)
+    1   42.3   42.3  43.0    42/0    48.6    7/6    0.000    9.865  0.905
+    2   53.0   58.6  60.7   21/32    55.9    4/5    3.325    4.640  0.550
+    4   58.5   68.2  64.3    9/11    60.7    3/2    1.562    1.945  0.275
+    8   62.8   67.3  64.0     4/4    63.6    1/1    0.369    0.400  0.105
+   16   63.8   64.6  64.0     1/2    64.0    0/0    0.047    0.120  0.040
+   32   64.0   64.0  64.0     0/0    64.0    0/0    0.001    0.000  0.000
+   64   64.0   64.0  64.0     0/0    64.0    0/0    0.000    0.000  0.000
+  128   64.0   64.0  64.0     0/0    64.0    0/0    0.000    0.000  0.000
+
+== 3. FIFO grid, pw=30 pr=50 (high occupancy almost unreachable): 250 seeds of 200 cycles; reachable bins 64 ==
+seeds  S_obs  Chao2   med   Q1/Q2 Chao1cy  f1/f2 pred new meas new P(new)
+    1   19.1   19.1  18.0    19/0    22.5    3/2    0.000    3.130  0.645
+    2   21.1   21.8  21.1    5/16    24.4    2/1    0.523    1.685  0.440
+    4   24.8   32.5  26.2     5/3    27.4    2/2    0.919    1.025  0.235
+    8   27.0   37.8  28.6     5/2    30.6    3/2    0.507    0.635  0.125
+   16   31.1   43.2  32.8     6/2    34.8    3/2    0.327    0.430  0.105
+   32   33.6   51.3  34.0     6/2    38.2    4/2    0.176    0.025  0.015
+   64   38.6   62.5  45.8     7/2    43.6    5/3    0.111    0.205  0.035
+  128   44.6   68.7  59.0     9/4    49.5    6/4    0.070    0.070  0.005
+  bins seen in all 250 pw=30 seeds: 50 (the plan lists 68, the design can reach 64)
+  (Chao1cy treats every cycle as an independent draw; Chao2 treats the seed as the sampling unit; Chao2 is the mean and med the median over the resamples. pred new is the expected number of new bins in one more seed; meas new and P(new) are measured on a held-out seed.)

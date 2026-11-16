@@ -1,0 +1,46 @@
+python seed 2026
+
+== 1. upper 95% bounds on p after n clean tests ==
+      n        3/n   CP exact    Bayes U   Jeffreys
+     10    0.30000    0.25887    0.23840    0.17077
+     30    0.10000    0.09503    0.09211    0.06152
+    100    0.03000    0.02951    0.02923    0.01898
+    300    0.01000    0.00994    0.00990    0.00638
+   1000    0.00300    0.00299    0.00299    0.00192
+   3000    0.00100    0.00100    0.00100    0.00064
+  10000    0.00030    0.00030    0.00030    0.00019
+
+== 2. does the bound cover the truth? (one-sided 95%) ==
+  true p      n  cover CP cover 3/n    P(x=0)
+   0.001    100     1.000     1.000     0.904
+   0.001   1000     1.000     1.000     0.372
+   0.010    100     1.000     1.000     0.379
+   0.010   1000     0.968         -     0.000
+   0.050    100     0.964     0.000     0.006
+   0.050   1000     1.000         -     0.000
+(cover 3/n is over the runs that saw zero failures, the only runs it applies to)
+
+== 3. tests needed for a target bound with zero failures ==
+  p <= 0.01    at 95%: n = 299
+  p <= 0.01    at 99%: n = 459
+  p <= 0.001   at 95%: n = 2995
+  p <= 0.001   at 99%: n = 4603
+  p <= 0.0001  at 95%: n = 29956
+  p <= 0.0001  at 99%: n = 46050
+  p <= 1e-06   at 95%: n = 2995731
+  p <= 1e-06   at 99%: n = 4605168
+
+== 4. the FIFO bug, Verilator 5.052, 200 cycles per seed ==
+  pw=50 pr=50:  236 of 1000 seeds expose it; p = 0.2360, 95% CP [0.2100, 0.2636]
+  pw=30 pr=50:    0 of  250 seeds expose it; p = 0.0000, 95% CP [0.0000, 0.0146]
+      zero failures: the 95% upper bound is 0.0119, and the bug is there
+  pw=70 pr=50:  250 of  250 seeds expose it; p = 1.0000, 95% CP [0.9854, 1.0000]
+  even mix: seeds for a 99% chance of one exposure: 18
+  clean streaks before an exposure: 236 streaks, longest 19, mean 3.23 (geometric mean (1-p)/p = 3.24)
+  cycle of first exposure: min 40, median 135, max 199
+  first exposures by window [0,50) [50,100) [100,150) [150,200): [3, 56, 84, 93]
+
+== 5. the same probabilities from a Markov chain of the FIFO ==
+  pw=30 pr=50: exact P(exposed in 200 cycles) = 0.000040; clean seeds for a 95% detection chance: 74143
+  pw=50 pr=50: exact P(exposed in 200 cycles) = 0.242060; clean seeds for a 95% detection chance: 11
+  pw=70 pr=50: exact P(exposed in 200 cycles) = 0.998940; clean seeds for a 95% detection chance: 1

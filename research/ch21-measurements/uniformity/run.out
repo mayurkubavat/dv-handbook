@@ -1,0 +1,94 @@
+== 1. seed 1, 10000 draws per class, randomize() failures: 0 ==
+  ranged: chi2, 64 buckets                       X2=77.7 df=63    p=0.1008
+  ranged: KS vs U{0..32767}                      D=0.0159         p=0.0129
+  ranged: 15 bit tests, Bonferroni min p         raw min 0.0308   p=0.4616
+  ranged: serial pairs, 8x8                      X2=83.6 df=63    p=0.04252
+  w_values: chi2 per value                       X2=293.6 df=255  p=0.04858
+  w_values: chi2 per range [236, 2211, 7553]     X2=0.6 df=2      p=0.7557
+  w_ranges: chi2 per value                       X2=284.8 df=255  p=0.09643
+  w_ranges: chi2 per range [2489, 2559, 4952]    X2=1.9 df=2      p=0.3864
+  kind 6:3:1: chi2 [6076, 2940, 984]             X2=2.4 df=2      p=0.2984
+  kind: consecutive pairs vs product             X2=3.8 df=4      p=0.439
+  impl: joint-uniform chi2, s=1 x38              X2=288.2 df=256  p=0.08144
+  impl_sb: s=1 asked 1/2, got 0/10000            X2=10000.0 df=1  p=0
+
+== 2. twenty seeds, 500 draws each: p-values per test ==
+  ranged: chi2                                 below 0.05:  0 of 20; min 0.178
+  ranged: KS vs U{0..32767}                    below 0.05:  0 of 20; min 0.0665
+  ranged: 15 bit tests                         below 0.05:  1 of 20; min 0.0354
+  ranged: serial pairs                         below 0.05:  3 of 20; min 0.00558
+  w_values: chi2 per value                     below 0.05:  0 of 20; min 0.0776
+  w_values: chi2 per range                     below 0.05:  0 of 20; min 0.0954
+  w_ranges: chi2 per value                     below 0.05:  1 of 20; min 0.0217
+  w_ranges: chi2 per range                     below 0.05:  1 of 20; min 0.00177
+  kind 6:3                                     below 0.05:  1 of 20; min 0.0476
+  kind: consecutive pairs vs product           below 0.05:  0 of 20; min 0.118
+  impl: joint-uniform chi2                     below 0.05:  1 of 20; min 0.00847
+  impl_sb: s=1 asked 1/2                       below 0.05: 20 of 20; min 9.51e-111
+  all tests together: 28 of 240 below 0.05 (12.0 expected if every null held); Bonferroni threshold 0.05/240 = 0.00021, below it: 20
+
+== 2b. control: Python's generator, the asked-for law ==
+  ranged: chi2, 64 buckets                       X2=44.1 df=63    p=0.9665
+  ranged: KS vs U{0..32767}                      D=0.0065         p=0.7857
+  ranged: 15 bit tests, Bonferroni min p         raw min 0.119    p=1
+  ranged: serial pairs, 8x8                      X2=47.0 df=63    p=0.9343
+  w_values: chi2 per value                       X2=224.6 df=255  p=0.9152
+  w_values: chi2 per range [244, 2216, 7540]     X2=0.6 df=2      p=0.7393
+  w_ranges: chi2 per value                       X2=257.6 df=255  p=0.4425
+  w_ranges: chi2 per range [2476, 2510, 5014]    X2=0.3 df=2      p=0.8566
+  kind 6:3:1: chi2 [6013, 2982, 1005]            X2=0.2 df=2      p=0.9226
+  kind: consecutive pairs vs product             X2=1.3 df=4      p=0.8627
+  impl: joint-uniform chi2, s=1 x32              X2=275.6 df=256  p=0.1912
+  impl_sb: s=1 asked 1/2, got 5023/10000         X2=0.2 df=1      p=0.6455
+  twenty control samples of 500, all tests but impl_sb: 18 of 220 below 0.05
+  the Verilator samples, same tests: 8 of 220 below 0.05
+
+== 2c. v < 16'h8000 alone, 50000 draws, seed 2 ==
+  chi2, 64 buckets: X2=50.6 df=63 p=0.8699
+  chi2, 256 buckets: X2=274.0 df=255 p=0.198
+  KS: D=0.0035 p=0.5643
+  bit  0 set in 0.5008, p=0.707
+  bit  1 set in 0.4985, p=0.491
+  bit  2 set in 0.4977, p=0.304
+  bit  3 set in 0.4998, p=0.929
+  bit  4 set in 0.4971, p=0.195
+  bit  5 set in 0.4975, p=0.256
+  bit  6 set in 0.5001, p=0.95
+  bit  7 set in 0.5004, p=0.872
+  bit  8 set in 0.5006, p=0.788
+  bit  9 set in 0.4995, p=0.83
+  bit 10 set in 0.4986, p=0.537
+  bit 11 set in 0.4976, p=0.275
+  bit 12 set in 0.5014, p=0.525
+  bit 13 set in 0.4968, p=0.147
+  bit 14 set in 0.5025, p=0.264
+  [    0, 4096):  6225  (6250 expected)
+  [ 4096, 8192):  6272  (6250 expected)
+  [ 8192,12288):  6188  (6250 expected)
+  [12288,16384):  6190  (6250 expected)
+  [16384,20480):  6295  (6250 expected)
+  [20480,24576):  6370  (6250 expected)
+  [24576,28672):  6221  (6250 expected)
+  [28672,32768):  6239  (6250 expected)
+  control, Python generator, same n: KS D=0.0032 p=0.6729
+
+== 3. power: draws needed to see a biased bit (Python model) ==
+  a bit that is set with probability q instead of 1/2; test: two-sided binomial z at 0.05; power from 2000 replications
+  q=0.65 n=   25 power=0.317
+  q=0.65 n=  100 power=0.882
+  q=0.65 n=  400 power=1.000
+  q=0.65 n= 1600 power=1.000
+  q=0.65 n= 6400 power=1.000
+  q=0.65: n for 90% power by formula = 113
+  q=0.55 n=   25 power=0.067
+  q=0.55 n=  100 power=0.179
+  q=0.55 n=  400 power=0.511
+  q=0.55 n= 1600 power=0.975
+  q=0.55 n= 6400 power=1.000
+  q=0.55: n for 90% power by formula = 1047
+  q=0.51 n=   25 power=0.050
+  q=0.51 n=  100 power=0.077
+  q=0.51 n=  400 power=0.079
+  q=0.51 n= 1600 power=0.128
+  q=0.51 n= 6400 power=0.352
+  q=0.51: n for 90% power by formula = 26265

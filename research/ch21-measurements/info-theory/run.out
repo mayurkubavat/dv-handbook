@@ -1,0 +1,39 @@
+== 1. entropy of the Chapter 7 distributions (bits) ==
+  v uniform 0..255     H= 8.000  max= 8.000  2^H=  256.0  KL to uniform=0.0000
+  v dist := {1,1,2}    H= 7.929  max= 8.000  2^H=  243.7  KL to uniform=0.0708
+  v dist :/ {1,1,2}    H= 7.596  max= 8.000  2^H=  193.5  KL to uniform=0.4039
+  kind 6:3:1           H= 1.295  max= 1.585  2^H=    2.5  KL to uniform=0.2895
+  kind uniform 0..2    H= 1.585  max= 1.585  2^H=    3.0  KL to uniform=0.0000
+
+== 2. KL divergence is the G-test: G = 2 n KL (nats) ~ chi2 ==
+  counts [6076, 2940, 984]: KL=0.000175 bits, G=2.424 p=0.298; Pearson X2=2.419 p=0.298
+
+== 3. plug-in entropy is biased low on small samples ==
+  n=  100 plug-in 6.253  Miller-Madow 6.833  true 7.929
+  n=  300 plug-in 7.234  Miller-Madow 7.644  true 7.929
+  n= 1000 plug-in 7.732  Miller-Madow 7.908  true 7.929
+  n= 3000 plug-in 7.866  Miller-Madow 7.927  true 7.929
+  n=10000 plug-in 7.911  Miller-Madow 7.929  true 7.929
+
+== 4. the push-rate knob and the FIFO bins (Verilator 5.052) ==
+  knob pw in [30, 50, 70, 90], pop 50, 250 seeds each, 200 cycles
+    pw   H(bins)       2^H bins/run   exposed
+    30     3.831      14.2     18.7     0.000
+    50     5.719      52.7     42.1     0.220
+    70     5.165      35.9     45.8     1.000
+    90     3.792      13.8     33.1     1.000
+  I(knob; bin hit in a run), bits, max possible 1.0 for a binary outcome:
+    occ15_both   0.815   hit rate by pw 0.00 0.20 1.00 1.00
+    occ15_push   0.813   hit rate by pw 0.00 0.18 1.00 1.00
+    occ14_both   0.795   hit rate by pw 0.00 0.23 1.00 1.00
+    occ14_push   0.789   hit rate by pw 0.00 0.24 1.00 1.00
+    occ14_idle   0.768   hit rate by pw 0.00 0.24 1.00 0.99
+    occ15_pop    0.763   hit rate by pw 0.00 0.18 1.00 0.97
+    occ02_push   0.010   hit rate by pw 0.98 1.00 1.00 1.00
+    occ16_push   0.000   hit rate by pw 0.00 0.00 0.00 0.00
+    occ16_pop    0.000   hit rate by pw 0.00 0.00 0.00 0.00
+    occ16_idle   0.000   hit rate by pw 0.00 0.00 0.00 0.00
+    occ16_both   0.000   hit rate by pw 0.00 0.00 0.00 0.00
+    occ01_push   0.000   hit rate by pw 1.00 1.00 1.00 1.00
+  I(knob; exposed) = 0.801 bits
+  permutation baseline (knob shuffled), 95th pct of max over 8 bins: 0.0077 bits
