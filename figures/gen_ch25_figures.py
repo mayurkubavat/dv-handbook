@@ -5,7 +5,8 @@ ch25-axes.svg      kill rate against toggle coverage, four testbenches:
                    the 44 source mutants, and a uniform sample of 1000
                    netlist mutations with 95% intervals
 ch25-rip.svg       one mutant (m16) through reach, infect, propagate and
-                   reveal, and where each testbench's chain stops
+                   reveal, and where each of the four testbenches' chains
+                   stops
 ch25-matrix.svg    the kill matrix of the 44 source mutants: lint, four
                    testbenches, the property set, and the miter's class
 ch25-sampling.svg  95% intervals at n = 30, 100, 300, 1000 from one
@@ -13,7 +14,7 @@ ch25-sampling.svg  95% intervals at n = 30, 100, 300, 1000 from one
 
 Every figure is drawn from the run.out files of the examples under
 examples/ch25-mutation-testing/. Each file read is pinned by its
-SHA-256, and the values the captions and the prose quote are asserted
+SHA-256, and the values the captions and the prose quote are checked
 against it, so a changed run fails this script instead of silently
 redrawing a figure the text no longer describes.
 
@@ -33,20 +34,20 @@ HERE = pathlib.Path(__file__).resolve().parent
 EX = HERE.parent / "examples" / "ch25-mutation-testing"
 PIN = {
     "opening/run.out":
-        ("0a4fda868bb0bd762b3fbf15bc8cff6c"
-         "12ace5235eead4a90aeb7bbd90f388d2"),
+        ("e250ed6b3fe0c990cc01c278a4f1d90f"
+         "9d35fa2fcd7a36cf569ed9b9b49256ff"),
     "source-mutants/run.out":
         ("5aa8aaa1aebceb5edb6dc860236d5c53"
          "367f123eb92c23d512aeb64be2a3fb40"),
     "source-sim/run.out":
-        ("5e0b147e91502233a84b25f37e5bfeef"
-         "ff6e01e1956049121ab793102b13926d"),
+        ("5dc71d4e224523ee9cf004aba9b7cc2d"
+         "86de217049612ac332ef7cb171b99156"),
     "property-set/run.out":
-        ("9490531afba3e4ac52505ce5af45007e"
-         "52c3136d60e7ca255418c75d73f21250"),
+        ("78652a22859395ba71d2ca787747e2ea"
+         "93693117efdc14fafdd7e72203aeb267"),
     "miter-differ/run.out":
-        ("0ba603f83ac040e1bb7b1ea9b2ee70d8"
-         "f3f8a098257b39fbba57237f79f39eba"),
+        ("c1ad82eb709b20670367d3c612ef71cd"
+         "b617824afee783d8fe690bb2c3b18a3e"),
     "equiv-outright/run.out":
         ("dc99b75a1890b8c2c31b8647fb21e36a"
          "7381fd6d6b4c0783e61154f1d2323fc0"),
@@ -54,8 +55,8 @@ PIN = {
         ("8ec7a500bbb03799f7461989fdedda59"
          "233a84b747b81e8de4a186ff8016dc38"),
     "equiv-reset/run.out":
-        ("f3d9047819ed1bf06905e6f83046b595"
-         "c9076a57d4fff42ffac83ba9a932b494"),
+        ("6ca3150b6a39a8881fa135df2286623e"
+         "d42a788eb23fc2e6d5a5e82160f51e98"),
     "white-box/run.out":
         ("a08cf63c10539df228d6fe8079b9dbb8"
          "7c7e7b3a2ac0dfe25ed9ac580a5f5beb"),
@@ -63,8 +64,8 @@ PIN = {
         ("6798cee4575743d5a8385a9831275a9a"
          "ded2f6ef744fe1c16077b36e785a5fdd"),
     "netlist-population/run.out":
-        ("54572b2f99992bf457dc6023f167550c"
-         "07d2743eb3d4a7f55521a1eb0ac98882"),
+        ("f01f8e1d01fd527881317019fda15b8e"
+         "2df21c563bba8592d5cc4b0a6213f4b5"),
 }
 TB = ["ch01-directed", "ch01-random", "ch08-coverage", "ch09-sva"]
 NICE = {"ch01-directed": "directed test", "ch01-random": "random test",
@@ -72,12 +73,19 @@ NICE = {"ch01-directed": "directed test", "ch01-random": "random test",
         "ch09-sva": "checking testbench"}
 
 
+def check(ok, what):
+    """Stop with a message unless OK. Not `assert`, which python -O
+    strips, after which a changed run.out would silently redraw."""
+    if not ok:
+        raise SystemExit("gen_ch25_figures: check failed: %s" % (what,))
+
+
 def data(rel):
     """Text of a pinned run.out; fails if it has changed."""
     raw = (EX / rel).read_bytes()
     got = hashlib.sha256(raw).hexdigest()
-    assert got == PIN[rel], "%s changed (sha256 %s): re-check the " \
-        "chapter's text and captions, then re-pin" % (rel, got)
+    check(got == PIN[rel], "%s changed (sha256 %s): re-check the " \
+        "chapter's text and captions, then re-pin" % (rel, got))
     return raw.decode()
 
 
@@ -146,11 +154,12 @@ def opening():
         r"^  (ch\S+)\s+4/4 100%.*\s(\d+)/44$", t, re.M))
     tog = dict((m.group(1), float(m.group(2))) for m in re.finditer(
         r"^  (ch\S+)\s+toggle \d+/330 = ([\d.]+)%$", t, re.M))
-    assert kills == {"ch01-directed": 34, "ch01-random": 35,
-                     "ch08-coverage": 0, "ch09-sva": 22}, kills
-    assert tog == {"ch01-directed": 24.2, "ch01-random": 99.7,
-                   "ch08-coverage": 98.8, "ch09-sva": 99.1}, tog
-    assert "equal code coverage, kills from 0 to 35 of 44" in t
+    check(kills == {"ch01-directed": 34, "ch01-random": 35,
+                     "ch08-coverage": 0, "ch09-sva": 22}, kills)
+    check(tog == {"ch01-directed": 24.2, "ch01-random": 99.7,
+                   "ch08-coverage": 98.8, "ch09-sva": 99.1}, tog)
+    check("same line, branch and expression coverage, kills" in t,
+          "opening summary line")
     return {k: (tog[k], kills[k]) for k in TB}
 
 
@@ -164,20 +173,28 @@ def sample():
                                float(m.group(4)))
                   for m in re.finditer(r"^  (ch\S+)\s+(\d+)/\d+ = [\d.]+ "
                                        r"\[([\d.]+), ([\d.]+)\]", blk, re.M)}
-    assert sorted(out) == [30, 100, 300, 1000], sorted(out)
-    assert [out[1000][k][0] for k in TB] == [302, 896, 0, 39]
-    assert out[100]["ch01-directed"] == (30, 0.212, 0.400)
-    assert "1000 of 1000 sampled mutations have the verdicts" in t
+    check(sorted(out) == [30, 100, 300, 1000], sorted(out))
+    check([out[1000][k][0] for k in TB] == [302, 896, 0, 39],
+          "kills at n = 1000")
+    check(out[100]["ch01-directed"] == (30, 0.212, 0.400),
+          "directed at n = 100")
+    check("1000 of 1000 sampled mutations have the verdicts" in t,
+          "sample agrees with pop.tsv")
     return out
 
 
 def population():
     t = data("netlist-population/run.out")
-    pop = {m.group(1): float(m.group(2)) for m in re.finditer(
-        r"^  (ch\S+)\s+\d+/9281 = ([\d.]+)$", t, re.M)}
-    assert pop == {"ch01-directed": 0.2936, "ch01-random": 0.8905,
-                   "ch08-coverage": 0.0, "ch09-sva": 0.0378}, pop
-    assert "lowest coverage over every n and testbench: 0.945" in t
+    # The rate from the count, not the printed four decimals, so that
+    # a label rounds 8265/9281 = 0.89053 to 0.891 and not 0.8905 to
+    # 0.890.
+    kills = {m.group(1): int(m.group(2)) for m in re.finditer(
+        r"^  (ch\S+)\s+(\d+)/9281 = [\d.]+$", t, re.M)}
+    check(kills == {"ch01-directed": 2725, "ch01-random": 8265,
+                    "ch08-coverage": 0, "ch09-sva": 351}, kills)
+    pop = {k: v / 9281 for k, v in kills.items()}
+    check("lowest coverage over every n and testbench: 0.945" in t,
+          "lowest coverage")
     return pop
 
 
@@ -186,8 +203,9 @@ def source_rows():
     t = data("source-mutants/run.out")
     rows = re.findall(r"^  (m\d\d) ([A-Z]{3})\s+\d+  ", t, re.M)
     lint = set(re.findall(r"^  (m\d\d) rejected [A-Z]+$", t, re.M))
-    assert len(rows) == 44 and len(lint) == 7, (len(rows), lint)
-    assert "lint kills 7 of 44 before any simulation" in t
+    check(len(rows) == 44 and len(lint) == 7, (len(rows), lint))
+    check("lint kills 7 of 44 before any simulation" in t,
+          "lint summary line")
     return rows, lint
 
 
@@ -195,10 +213,11 @@ def sim_matrix():
     t = data("source-sim/run.out")
     mat = {m.group(1): m.group(2).split() for m in re.finditer(
         r"^  (m\d\d) [A-Z]{3}  ([K.] [K.] [K.] [K.])$", t, re.M)}
-    assert len(mat) == 44
+    check(len(mat) == 44, "44 matrix rows")
     for i, (tb, k) in enumerate(zip(TB, (34, 35, 0, 22))):
-        assert sum(v[i] == "K" for v in mat.values()) == k, tb
-    assert "killed by no testbench: m05 m09 m11 m13 m32 m36 m43" in t
+        check(sum(v[i] == "K" for v in mat.values()) == k, tb)
+    check("killed by no testbench: m05 m09 m11 m13 m32 m36 m43" in t,
+          "survivors of every testbench")
     return mat
 
 
@@ -209,9 +228,11 @@ def prop_set():
                          r"example|refused)", t, re.M):
         res[m.group(1)] = {"killed by": "K", "no counterexample": ".",
                            "refused": "R"}[m.group(2)]
-    assert len(res) == 44
-    assert sum(v == "K" for v in res.values()) == 38   # 37 and m44
-    assert "counterexamples: 38 of 44; refused by the front end: 2" in t
+    check(len(res) == 44, "44 property-set rows")
+    check(sum(v == "K" for v in res.values()) == 38,   # 37 and m44
+          "38 property-set kills")
+    check("counterexamples: 38 of 44; refused by the front end: 2" in t,
+          "property-set summary line")
     return res
 
 
@@ -222,7 +243,8 @@ def miter_class():
                                             re.M)}
     for m in re.findall(r"^front end refuses (m\d\d)", t, re.M):
         cls[m] = "refused"
-    assert len(cls) == 39 and "differ: 37, depths 1 to 17" in t
+    check(len(cls) == 39 and "differ: 37, depths 1 to 17" in t,
+          "miter-differ classes")
     for rel, want in (("equiv-outright/run.out",
                        {"m32": "outright", "m36": "outright"}),
                       ("equiv-invariant/run.out", {"m43": "invariant"}),
@@ -230,9 +252,9 @@ def miter_class():
                       ("white-box/run.out", {"m44": "at the ports"})):
         t = data(rel)
         for m, c in want.items():
-            assert re.search(r"^miter: %s proved equivalent" % m, t, re.M), m
+            check(re.search(r"^miter: %s proved equivalent" % m, t, re.M), m)
             cls[m] = c
-    assert len(cls) == 44
+    check(len(cls) == 44, "a class for every mutant")
     return cls
 
 
@@ -284,9 +306,10 @@ def fig_rip():
     rows, _ = source_rows()
     mat = sim_matrix()
     t = data("source-mutants/run.out")
-    assert re.search(r"^  m16 VSW  43  mem\[rd_ptr\] <= wr_data;$", t, re.M)
-    assert mat["m16"] == ["K", "K", ".", "."], mat["m16"]
-    W, H = 980, 640
+    check(re.search(r"^  m16 VSW  43  mem\[rd_ptr\] <= wr_data;$", t,
+                    re.M), "m16 is the write-address swap")
+    check(mat["m16"] == ["K", "K", ".", "."], mat["m16"])
+    W, H = 980, 700
     d = HW(W, H, "One mutant through reach, infect, propagate, reveal",
            "m16: mem[rd_ptr] <= wr_data, where the design writes "
            "mem[wr_ptr] <= wr_data")
@@ -333,14 +356,17 @@ def fig_rip():
             d.wire([(x - gap + 2, by + bh / 2), (x - 2, by + bh / 2)],
                    "plain")
     # -- where each testbench's chain stops -------------------------------
-    stop = {"ch08-coverage": 3, "ch09-sva": 3, "ch01-random": 4}
+    stop = {"ch08-coverage": 3, "ch09-sva": 3, "ch01-directed": 4,
+            "ch01-random": 4}
     why = {"ch08-coverage": "no check at all: survived",
            "ch09-sva": "checks occupancy and flags, not data: survived",
+           "ch01-directed": "compares each word it reads back: killed",
            "ch01-random": "compares rd_data with its queue: killed"}
-    for r, tb in enumerate(("ch08-coverage", "ch09-sva", "ch01-random")):
+    for r, tb in enumerate(("ch08-coverage", "ch09-sva", "ch01-directed",
+                            "ch01-random")):
         y = 420 + r * 64
         verdict = mat["m16"][TB.index(tb)]
-        assert (verdict == "K") == (stop[tb] == 4), tb
+        check((verdict == "K") == (stop[tb] == 4), tb)
         d.text(bx - 12, y + 5, NICE[tb], 13.5, INK, "600", "end")
         x1 = bx + stop[tb] * (bw + gap) - gap
         col = GREEN if stop[tb] == 4 else AMBER
@@ -365,7 +391,7 @@ def fig_matrix():
     order = ["LCR", "LNR", "ARS", "CNG", "CRP", "SDL", "VSW", "AOR", "ROR",
              "CSW"]
     groups = [(o, [m for m, op in rows if op == o]) for o in order]
-    assert sum(len(g) for _, g in groups) == 44
+    check(sum(len(g) for _, g in groups) == 44, "44 mutants grouped")
     CW, RH, GAP, X0 = 16, 24, 8, 165
     W = X0 + 44 * CW + GAP * (len(groups) - 1) + 30
     labels = ["lint", NICE["ch01-directed"], NICE["ch01-random"],
@@ -411,8 +437,9 @@ def fig_matrix():
              ("outright", "equivalent outright"),
              ("invariant", "under an invariant"),
              ("reset model", "under the tool's reset model"),
-             ("at the ports", "at the ports only")]
-    assert sum(c == "differs" for c in cls.values()) == 37
+             ("at the ports", "invariant across copies; Sync_A kills")]
+    check(sum(c == "differs" for c in cls.values()) == 37,
+          "37 mutants differ")
     lx = X0
     for i, (c, lab) in enumerate(items):
         if i == 3:
@@ -448,7 +475,7 @@ def fig_sampling():
                DIM, "600", "middle")
         for n in ns:
             kk, lo, hi = smp[n][tb]
-            assert lo <= p <= hi, (tb, n)     # "every bar crosses its line"
+            check(lo <= p <= hi, (tb, n))     # "every bar crosses its line"
             ax.bar(n, lo, hi, COL[tb])
             ax.dot(n, kk / n, COL[tb], 4.5)
     d.text(100, H - 22, "The coverage testbench, at zero in every sample, "

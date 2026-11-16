@@ -62,5 +62,5 @@ m35 under ch01-random, seeds 1-100: first killing seed 2;
   killed by 53 of 100 seeds
 per-mutant builds (committed measure.out) agree with the schema on
   44 of 44 mutants
-checks: 6 of 6 hold
+checks: 7 of 7 hold
 verdict: the schema reproduces the per-mutant kill matrix

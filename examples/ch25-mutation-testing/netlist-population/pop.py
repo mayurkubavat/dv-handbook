@@ -19,7 +19,9 @@ From it:
      with the 95% Clopper-Pearson interval of the statistics chapter;
   3. 2,000 samples at each n: how often the interval holds the
      population rate, and its mean width, beside the worst-case
-     half-widths by Chebyshev and by the normal approximation;
+     half-widths by Chebyshev and by the normal approximation, and
+     the exact coverage under the draw the samples make (without
+     replacement, so hypergeometric), which the 2,000 estimate;
   4. the population kill rate by mutation mode.
 """
 import datetime
@@ -40,12 +42,32 @@ POP = HERE / "pop.tsv"
 SEEDS = range(1, 9)
 NS = (30, 100, 300, 1000)
 _CP = {}
+# SHA-256 of the committed measured files: an edit to any line fails
+# the default run. A MEASURE=1 run prints the new digests to put here.
+MEASURE_SHA = "e7e602b0d9f9f590a949476476e526c93b635511eac8d90ce13b23e54e5677a4"
+POP_SHA = "4cf0247fe0c8965ca6cd46a102e9802c90e452e661c6f68df65a2ebd5c8f8677"
 
 
 def cp(k, n):
     if (k, n) not in _CP:
         _CP[(k, n)] = mutlib.cp(k, n)
     return _CP[(k, n)]
+
+
+def exact_coverage(K, N, n):
+    """The probability that the 95% interval of a uniform draw of n
+    without replacement from N, K of them killed, holds K/N: the sum of
+    the hypergeometric probabilities of the counts whose interval
+    holds it."""
+    def lc(a, b):
+        return (math.lgamma(a + 1) - math.lgamma(b + 1)
+                - math.lgamma(a - b + 1))
+    total = 0.0
+    for x in range(max(0, n - (N - K)), min(n, K) + 1):
+        lo, hi = cp(x, n)
+        if lo <= K / N <= hi:
+            total += math.exp(lc(K, x) + lc(N - K, n - x) - lc(N, n))
+    return total
 
 
 def regenerate():
@@ -156,7 +178,7 @@ def main():
     print("3. 2,000 samples at each n: how often the 95% interval holds")
     print("   the population rate, and its mean width")
     R = 2000
-    cov = {}
+    cov, ex = {}, {}
     for n in NS:
         rng = random.Random(n)
         hit = {tb: 0 for tb in names}
@@ -174,11 +196,18 @@ def main():
               f" normal {norm:.3f}")
         for tb in names:
             cov[(n, tb)] = hit[tb] / R
+            ex[(n, tb)] = exact_coverage(k[tb], N, n)
             print(f"    {tb:14s} coverage {hit[tb] / R:.3f}  mean width "
-                  f"{width[tb] / R:.3f}")
+                  f"{width[tb] / R:.3f}  exact {ex[(n, tb)]:.3f}")
     worst = min(cov.values())
-    print(f"  lowest coverage over every n and testbench: {worst:.3f}")
+    se = math.sqrt(0.95 * 0.05 / R)
+    print(f"  lowest coverage over every n and testbench: {worst:.3f};")
+    print(f"  lowest exact coverage: {min(ex.values()):.3f}; standard "
+          f"error of {R:,} draws: {se:.3f}")
     C.holds("every coverage at least 0.94", worst >= 0.94)
+    C.holds("every exact coverage at least 0.95", min(ex.values()) >= 0.95)
+    C.holds("every estimate within 2.5 standard errors of the exact",
+            all(abs(cov[j] - ex[j]) <= 2.5 * se for j in cov))
     print("4. population kill rate by mode")
     print(f"  {'mode':7s} {'n':>5s}" + "".join(f"{tb.split('-')[-1]:>10s}"
                                              for tb in names))
@@ -191,6 +220,8 @@ def main():
         print("\n".join(measured))
     C.pin("measure.out agrees with pop.tsv", (HERE / "measure.out")
           .read_text().splitlines()[6:], sec1)
+    mutlib.pin_measured(C, HERE / "measure.out", MEASURE_SHA)
+    mutlib.pin_measured(C, POP, POP_SHA)
     C.report()
     print("verdict: the population rates are known, and the sampled "
           "intervals cover them")

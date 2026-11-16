@@ -7,9 +7,9 @@ miter: m02 differs at depth 2
 miter: m03 differs at depth 2
 miter: m04 differs at depth 2
   m05 no difference found in 10s: bounded search cannot decide it
-front end refuses m06, line 38: asynchronous reset 'if' condition does not
+front end refuses m06, line 37: asynchronous reset 'if' condition does not
   match sensitivity list signal or edge polarity
-front end refuses m07, line 38: asynchronous reset 'if' condition does not
+front end refuses m07, line 37: asynchronous reset 'if' condition does not
   match sensitivity list signal or edge polarity
 miter: m08 differs at depth 2
 miter: m09 differs at depth 2

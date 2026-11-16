@@ -6,7 +6,7 @@ FIFO: every mutation Yosys's `mutate -list` makes after `prep`.
 Asks for 100,000 mutations, more than exist, so that Yosys lists every
 one and says how many it could make. Prints the list's SHA-256, then
 the counts by mutation mode, by cell type and by the source line each
-mutation's cell came from, and the share that falls on the memory.
+mutation's cell came from, and the share on the memory's lines.
 Last, a check of the numbering every netlist example relies on: the
 mode, line and cell of each listed mutation equal the columns of the
 committed population file, netlist-population/pop.tsv, row for row.
@@ -26,6 +26,9 @@ B = HERE / "build"
 POP = HERE.parent / "netlist-population" / "pop.tsv"
 # The memory's lines of fifo_fixed.sv: its declaration, the clocked
 # block that writes it, the write enable, the write and the read.
+# Counted by line, not by cell, so the count is approximate: line 36
+# also holds the pointer and count registers, and line 42 the write
+# pointer's enable.
 MEMORY = {"29", "36", "42", "43", "57"}
 
 
@@ -66,9 +69,11 @@ def main():
                  lambda k: "(no source tag)" if k == "-" else
                  f"{k:>3s} {src[int(k) - 1].strip()[:34]}")
     mem = sum(n for k, n in lines.items() if k in MEMORY)
-    print(mutlib.wrap(f"on the memory (lines {', '.join(sorted(MEMORY))}): "
-                      f"{mem} of {N} ({100.0 * mem / N:.1f}%); with no "
-                      f"source tag: {lines['-']}"))
+    print(mutlib.wrap(f"on the memory's lines ({', '.join(sorted(MEMORY))}"
+                      f"; 36 and 42 also hold the pointer and count "
+                      f"registers and the write pointer's enable): {mem} "
+                      f"of {N} ({100.0 * mem / N:.1f}%); with no source "
+                      f"tag: {lines['-']}"))
     C.pin("memory mutations", mem, 6849)
     C.pin("untagged", lines["-"], 1868)
 
@@ -79,7 +84,8 @@ def main():
           "population file")
     C.pin("numbering agrees with pop.tsv", (same, len(pop)), (N, N))
     C.report()
-    print(f"verdict: {N} mutations, {100.0 * mem / N:.1f}% on the memory")
+    print(f"verdict: {N} mutations, {100.0 * mem / N:.1f}% on the "
+          "memory's lines")
 
 
 if __name__ == "__main__":

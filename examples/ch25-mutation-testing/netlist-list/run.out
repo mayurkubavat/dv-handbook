@@ -44,8 +44,9 @@ by source line of the cell
    25 output logic             empty           6    0.1%
    20 input  logic             wr_en,          3    0.0%
    22 input  logic             rd_en,          3    0.0%
-on the memory (lines 29, 36, 42, 43, 57): 6849 of 9281 (73.8%); with no
-  source tag: 1868
+on the memory's lines (29, 36, 42, 43, 57; 36 and 42 also hold the pointer
+  and count registers and the write pointer's enable): 6849 of 9281 (73.8%);
+  with no source tag: 1868
 numbering: 9281 of 9281 mutations match the committed population file
 checks: 5 of 5 hold
-verdict: 9281 mutations, 73.8% on the memory
+verdict: 9281 mutations, 73.8% on the memory's lines

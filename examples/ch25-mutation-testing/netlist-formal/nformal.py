@@ -20,10 +20,13 @@ numbers of a sampled population: the kill rate of each testbench over
 the sample's non-equivalent mutations, the equivalent fraction, and
 the property set's kill rate, each with its 95% Clopper-Pearson
 interval; it checks them against the summary measure.out printed;
+it lists the non-equivalent mutations the property set missed, with
+the depth of the miter's difference and the random test's verdict;
 and it reruns four rows by rIC3: two equivalents proved again, and the
-two deepest differences found again at the same depth (31, past what
-bounded search reaches in its 10 s, so it was rIC3 that found them in
-the full run too). Selects ric3-ic3, so it needs rIC3.
+two deepest differences found again at the depth recorded. That depth
+(31) is the length of rIC3's trace, past what bounded search reached
+in its 10 s; an IC3 trace is not always the shortest, so it bounds the
+shortest difference from above. Selects ric3-ic3, so it needs rIC3.
 """
 import datetime
 import os
@@ -41,6 +44,11 @@ B = HERE / "build"
 POP = HERE.parent / "netlist-population" / "pop.tsv"
 MEASURE = HERE / "measure.out"
 N_SAMPLE, SEED = 100, 25
+# SHA-256 of the committed measure.out and population file: an edit to
+# any row, depth or cost line fails the default run. A MEASURE=1 run
+# prints the new digest of measure.out to put here.
+MEASURE_SHA = "3912e3080c76403a115f18b36d47bf89b1101eb118fd864bd948f2dc43dcd61a"
+POP_SHA = "4cf0247fe0c8965ca6cd46a102e9802c90e452e661c6f68df65a2ebd5c8f8677"
 
 
 def one(arg):
@@ -100,6 +108,35 @@ def summary(rows, pop):
     return out
 
 
+def misses(rows, pop, cmds, C):
+    """The non-equivalent mutations no property refuted, one line each,
+    and where the property set's kills end and its misses begin."""
+    rnd = mutlib.NAMES.index("ch01-random")
+    miss = [(k, int(v.split("@")[1])) for k, c, v in rows
+            if c == "-" and v.startswith("differs")]
+    hit = [int(v.split("@")[1]) for k, c, v in rows
+           if c != "-" and v.startswith("differs")]
+    data = [int(v.split("@")[1]) for k, c, v in rows
+            if "a_integrity@" in c and v.startswith("differs")]
+    print(f"missed by the property set: {len(miss)} non-equivalent "
+          "mutations")
+    print("  mutation  mode    line  cell     miter depth  ch01-random")
+    for k, d in miss:
+        mode, line, cell = yosysmut.parse(cmds[k])
+        print(f"  {k:<8d}  {mode:6s}  {line:4s}  {cell:7s}  {d:11d}  "
+              f"{pop[k][rnd]}")
+    lo, hi = min(d for _, d in miss), max(d for _, d in miss)
+    print(f"  the mutations a_integrity kills differ at depth {max(data)} "
+          f"or less (all")
+    print(f"  its kills: {max(hit)} or less); the misses only at depth "
+          f"{lo} to {hi}")
+    C.pin("property-set misses", len(miss), 14)
+    C.pin("kill and miss depths", (max(data), max(hit), lo, hi),
+          (15, 18, 16, 31))
+    C.pin("the random test kills every miss",
+          sum(pop[k][rnd] in mutlib.DEAD for k, _ in miss), len(miss))
+
+
 def read_measure():
     rows, summ, inside = [], [], False
     for line in MEASURE.read_text().splitlines():
@@ -146,6 +183,9 @@ def main():
     again = summary(rows, pop)
     print("\n".join(again))
     C.pin("summary recomputed equals measure.out's", again, summ)
+    misses(rows, pop, cmds, C)
+    mutlib.pin_measured(C, MEASURE, MEASURE_SHA)
+    mutlib.pin_measured(C, POP, POP_SHA)
 
     eq = [k for k, _, v in rows if v == "equivalent"][:2]
     deep = sorted(((int(v.split("@")[1]), k) for k, _, v in rows
@@ -168,6 +208,10 @@ def main():
         want = dict((kk, ("cex", d)) for d, kk in deep)
         C.pin(f"rerun {k}", (st, dep) if k in want else st,
               want.get(k, "proven"))
+    head = MEASURE.read_text().splitlines()[2:4]
+    print("the measured run's settings and cost (committed measure.out):")
+    for part in "; ".join(head).split("; "):
+        print(mutlib.wrap("  " + part, indent="    "))
     C.report()
     print("verdict: the formal sample's summary is reproduced,")
     print("  and four of its rows rerun as recorded")

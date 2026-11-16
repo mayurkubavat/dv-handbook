@@ -109,7 +109,8 @@ def main():
         "ch09-sva": [(4, 4), (6, 6), (8, 8), (327, 330)]})
     C.pin("kills", [kills[tb] for tb in mutlib.NAMES], [34, 35, 0, 22])
     C.report()
-    print("verdict: equal code coverage, kills from 0 to 35 of 44")
+    print("verdict: same line, branch and expression coverage, kills "
+          "from 0 to 35 of 44")
 
 
 if __name__ == "__main__":

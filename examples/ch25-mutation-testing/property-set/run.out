@@ -8,9 +8,9 @@ control (the repaired FIFO): no counterexample
   m03 LCR  killed by EmptyExact_A at depth 2
   m04 LNR  killed by EmptyExact_A at depth 2
   m05 ARS  no counterexample in 2s for any property
-  m06 LNR  refused by the front end, line 38: asynchronous reset 'if'
+  m06 LNR  refused by the front end, line 37: asynchronous reset 'if'
     condition does not match sensitivity list signal or edge polarity
-  m07 CNG  refused by the front end, line 38: asynchronous reset 'if'
+  m07 CNG  refused by the front end, line 37: asynchronous reset 'if'
     condition does not match sensitivity list signal or edge polarity
   m08 CRP  killed by a_integrity at depth 2
   m09 SDL  killed by a_integrity at depth 2
@@ -53,5 +53,5 @@ counterexamples: 38 of 44; refused by the front end: 2 (m06 m07)
 no counterexample: 4 (m05 m32 m36 m43)
 killed first by Sync_A: m44
 the full run (committed measure.out) agrees on 44 of 44 mutants
-checks: 6 of 6 hold
+checks: 7 of 7 hold
 verdict: the property set kills every non-equivalent mutant

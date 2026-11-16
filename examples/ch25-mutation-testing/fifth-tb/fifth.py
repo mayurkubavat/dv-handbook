@@ -12,8 +12,12 @@ plus a data check (fifo_data_sva.sv, bound by fifo_data_bind.sv).
    when some seed kills it).
 3. The uniform sample of 1,000 netlist mutations of netlist-sample/
    (seed 1), the same two testbenches.
-4. tbl-ch25-report.md, the before-and-after table.
-About 45 seconds.
+4. The kills at the ports: the fifth testbench again, with the checker
+   bound by fifo_port_bind.sv, which ties Sync_A's count to the
+   checker's own, so that the white-box Sync_A cannot fail. With the
+   five equivalent mutants of the miter examples, the score.
+5. tbl-ch25-report.md, the before-and-after table.
+About a minute.
 """
 import pathlib
 import sys
@@ -38,6 +42,12 @@ TBS = {
 }
 NAMES = list(TBS)
 SEEDS = range(1, 6)
+# The fifth testbench with Sync_A made vacuous: the kills at the ports.
+PORTS = {"ports": ([f"{FIFTH}/fifo_port_bind.sv" if x.endswith(
+    "/fifo_bind.sv") else x for x in TBS["fifth"][0]],) + TBS["fifth"][1:]}
+# Proved equivalent by the miter examples (equiv-outright,
+# equiv-invariant, equiv-reset, white-box).
+EQUIV = ["m05", "m32", "m36", "m43", "m44"]
 
 
 def rnd(s):
@@ -122,6 +132,35 @@ def main():
         net_k[tb] = k
         print(f"  {tb:9s} {mutlib.fmt_cp(k, 1000)}")
     C.pin("netlist kills", net_k, {"ch09-sva": 39, "fifth": 899})
+
+    print("4. kills at the ports: the fifth testbench with Sync_A tied to")
+    print("   the checker's own count (fifo_port_bind.sv)")
+    pd, _ = srcmut.build_schema(B / "ports", ["ports"], tbs=PORTS)
+    pj = [(k, s) for k in range(n + 1) for s in [0] + list(SEEDS)]
+    pr = dict(zip(pj, mutlib.pmap(lambda j: mutlib.run(
+        "ports", pd["ports"], [f"+mut={j[0]}"],
+        runs=None if j[1] == 0 else rnd(j[1]), tbs=PORTS)[0], pj)))
+    C.pin("ports control", [pr[(0, s)] for s in [0] + list(SEEDS)],
+          ["survived"] * 6)
+    ne = len(ms) - len(EQUIV)
+    port = {}
+    for tag, seeds in (("default", [0]), ("randomized", SEEDS)):
+        k = [m.id for i, m in enumerate(ms, 1)
+             if any(pr[(i, s)] in mutlib.DEAD for s in seeds)]
+        alive = [m.id for m in ms if m.id not in k]
+        kne = len([x for x in k if x not in EQUIV])
+        port[tag] = (len(k), kne)
+        print(f"  {tag:10s} {len(k)}/{n} at the ports; non-equivalent "
+              f"killed {kne}/{ne}")
+        print(textwrap.fill("survivors: " + " ".join(alive), 72,
+                            initial_indent="    ",
+                            subsequent_indent="      "))
+    wb = [m.id for i, m in enumerate(ms, 1)
+          if dead(i, "fifth", 0) and pr[(i, 0)] not in mutlib.DEAD]
+    print(f"  killed only by the white-box Sync_A: {' '.join(wb)}")
+    C.pin("port kills", port, {"default": (36, 36),
+                               "randomized": (39, 39)})
+    C.pin("white-box only", wb, ["m44"])
 
     rows = []
     for tb, label in (("ch09-sva", "the checker as shipped"),

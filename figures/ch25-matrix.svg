@@ -395,5 +395,5 @@
 <rect x="415.0" y="376.0" width="16.0" height="16.0" rx="0" fill="#B7791F" stroke="#CBD2D9" stroke-width="0.8"/>
 <text x="439.0" y="389.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12.5" font-weight="400" text-anchor="start" fill="#1C1C1C">under the tool&#x27;s reset model</text>
 <rect x="665.0" y="376.0" width="16.0" height="16.0" rx="0" fill="#123A56" stroke="#CBD2D9" stroke-width="0.8"/>
-<text x="689.0" y="389.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12.5" font-weight="400" text-anchor="start" fill="#1C1C1C">at the ports only</text>
+<text x="689.0" y="389.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12.5" font-weight="400" text-anchor="start" fill="#1C1C1C">invariant across copies; Sync_A kills</text>
 </svg>

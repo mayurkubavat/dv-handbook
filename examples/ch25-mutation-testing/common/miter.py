@@ -141,11 +141,15 @@ def first(out):
     return (m.group(1), int(m.group(2))) if m else ("error", -1)
 
 
-def refusal(out):
-    """The front end's message when it refuses a design, else None."""
+def refusal(out, header=1):
+    """The front end's message when it refuses a design, else None.
+    The line is given in fifo_fixed.sv's numbering: HEADER is the
+    number of lines srcmut.single puts above the file's text."""
     m = re.search(r"svlang: \S*?:(\d+):\d+: ([^\n]*)", out) or \
         re.search(r"svlang: \S*?(\d+): ([^\n]*)", out)
-    return f"line {m.group(1)}: {m.group(2)}" if m else None
+    if not m:
+        return None
+    return f"line {int(m.group(1)) - header}: {m.group(2)}"
 
 
 def bmc_then_ric3(mutant, work, bmc="3s", ric3="120s"):

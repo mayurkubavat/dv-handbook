@@ -32,6 +32,9 @@ CODE = {"killed": "K", "timeout": "T", "survived": ".",
 # The matrix the research runs measured with one build per mutant;
 # K killed, . survived; columns ch01-directed, ch01-random,
 # ch08-coverage, ch09-sva.
+# The SHA-256 of the committed measure.out; a MEASURE=1 run prints the
+# new one to put here.
+MEASURE_SHA = "7d94b540d0c3dd33afb9732948f2bd832dd866da6e505eb6a3e9ba0c8868f0d4"
 WANT = ("KK.K KK.K KK.K KK.K .... KK.K KK.K KK.. .... KK.. .... .K.K "
         "....  " + "KK.. " * 12 + "KK.K " * 6 + ".... KK.. KK.K K..K "
         ".... " + "KK.K " * 5 + ".K.K .... ...K").split()
@@ -91,11 +94,11 @@ def measure(ms, C):
     lines = [f"measure.out -- written by MEASURE=1 make run on "
              f"{datetime.date.today().isoformat()}",
              f"tools: {mutlib.version('verilator')}",
-             f"builds: {len(jobs)}, one for each mutant and testbench;"
-             f" build time {btime:.0f} s summed over 4 workers,"
-             f" wall {time.time() - t0:.0f} s",
-             "control: " + ", ".join(f"{tb} {v[(0, tb)]}"
-                                     for tb in mutlib.NAMES),
+             mutlib.wrap(f"builds: {len(jobs)}, one for each mutant and"
+                         f" testbench; build time {btime:.0f} s summed"
+                         f" over 4 workers, wall {time.time() - t0:.0f} s"),
+             mutlib.wrap("control: " + ", ".join(
+                 f"{tb} {v[(0, tb)]}" for tb in mutlib.NAMES)),
              "per-mutant matrix (K killed, . survived):"]
     lines += matrix_lines(ms, v)
     (HERE / "measure.out").write_text("\n".join(lines) + "\n")
@@ -161,6 +164,9 @@ def main():
           f"schema on")
     print(f"  {same} of {len(ms)} mutants")
     C.pin("per-mutant agreement", same, len(ms))
+    # The cost lines and the control cannot be re-derived from a
+    # default run, so the whole committed file is pinned.
+    mutlib.pin_measured(C, HERE / "measure.out", MEASURE_SHA)
     C.report()
     print("verdict: the schema reproduces the per-mutant kill matrix")
 

@@ -210,7 +210,7 @@ Equivalent fraction
 : The fraction of a mutant population equivalent to the original, estimated from a uniform sample classified by miters with an unbounded engine and reported with its interval. See @sec-ch25-sampling.
 
 Equivalent mutant
-: A mutant that no test can kill, because it changes the text and not the behavior at the observed ports. This book decides it with a miter whose comparison is part of the definition. See @sec-ch25-equiv.
+: A mutant that no test can kill, because it changes the text and not the behavior at the observed ports. This book decides it with a miter whose comparison, and whose formal tool's reset model, are part of the definition. See @sec-ch25-equiv.
 
 Event
 : Something that wakes a process or updates a value in a simulation. See @sec-ch04-model.
@@ -338,7 +338,7 @@ Metastability
 : Indecision in a flip-flop about whether its output should be zero or one, caused by a data change too close to the sampling edge. The chance that it persists falls exponentially with time but never reaches zero. See @sec-ch03-metastability.
 
 Miter
-: A circuit that feeds two circuits the same inputs and ORs together the XORs of their corresponding outputs. The two are equivalent exactly when the miter's output can never be 1. See @sec-ch17-dpll.
+: A circuit that feeds two circuits the same inputs and ORs together the XORs of their corresponding outputs. The two are equivalent exactly when the miter's output can never be 1. See @sec-ch17-dpll. For two sequential designs, such as a design and its mutant, the miter is the two side by side with their registers, started from reset on the same inputs, and an assertion that the observed outputs agree in every reachable state; see @sec-ch25-equiv.
 
 Modport
 : A view of an interface: a list of which of its signals a module connected through that view may drive and which it may only read. See @sec-ch05-interfaces.

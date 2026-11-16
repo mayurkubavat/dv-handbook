@@ -1,7 +1,9 @@
 measure.out -- written by MEASURE=1 make run on 2026-11-16
 tools: Verilator 5.052
-builds: 180, one for each mutant and testbench; build time 1685 s summed over 4 workers, wall 427 s
-control: ch01-directed survived, ch01-random survived, ch08-coverage survived, ch09-sva survived
+builds: 180, one for each mutant and testbench; build time 2855 s summed
+  over 4 workers, wall 721 s
+control: ch01-directed survived, ch01-random survived, ch08-coverage
+  survived, ch09-sva survived
 per-mutant matrix (K killed, . survived):
   m01 LCR  K K . K
   m02 LNR  K K . K

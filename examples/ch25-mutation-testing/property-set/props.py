@@ -34,6 +34,11 @@ import miter  # noqa: E402
 
 B = HERE / "build"
 LIMIT = "2s"
+# SHA-256 of the committed measure.out: the chapter prints which
+# properties kill which mutants from it, and the default run re-derives
+# only the first kill, so an edit to any other line fails here. A
+# MEASURE=1 run prints the new digest to put here.
+MEASURE_SHA = "f746f3a14e5f39ad08810eacbd0761121e4894523c9b9df98330bf0f5fbbfebd"
 
 
 def design(name, text):
@@ -152,6 +157,7 @@ def main():
     print(f"the full run (committed measure.out) agrees on {agree} of "
           f"{len(ms)} mutants")
     C.pin("agreement with measure.out", agree, len(ms))
+    mutlib.pin_measured(C, HERE / "measure.out", MEASURE_SHA)
     C.report()
     print("verdict: the property set kills every non-equivalent mutant")
 

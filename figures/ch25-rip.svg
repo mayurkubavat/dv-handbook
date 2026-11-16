@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 640" width="980" height="640" role="img" aria-label="One mutant through reach, infect, propagate, reveal">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 700" width="980" height="700" role="img" aria-label="One mutant through reach, infect, propagate, reveal">
 <defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#7FA3C0"/></marker><marker id="ahj" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#5B3E8E"/></marker><marker id="ahd" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#1B4F72"/></marker><marker id="ahc" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#B7791F"/></marker><marker id="ahg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#1C1C1C"/></marker><pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="6" stroke="#CBD2D9" stroke-width="2"/></pattern></defs>
-<rect width="980" height="640" fill="white"/>
+<rect width="980" height="700" fill="white"/>
 <text x="30" y="40.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="21" font-weight="700" text-anchor="start" fill="#1B4F72">One mutant through reach, infect, propagate, reveal</text>
 <text x="30" y="64.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="400" text-anchor="start" fill="#1C1C1C">m16: mem[rd_ptr] &lt;= wr_data, where the design writes mem[wr_ptr] &lt;= wr_data</text>
 <rect x="120.0" y="96.0" width="104.0" height="40.0" rx="3" fill="white" stroke="#123A56" stroke-width="2"/>
@@ -79,8 +79,12 @@
 <line x1="743.0" y1="475.0" x2="761.0" y2="493.0" stroke="#B7791F" stroke-width="4"/>
 <line x1="743.0" y1="493.0" x2="761.0" y2="475.0" stroke="#B7791F" stroke-width="4"/>
 <text x="154.0" y="514.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12.5" font-weight="400" text-anchor="start" fill="#7FA3C0">checks occupancy and flags, not data: survived</text>
-<text x="138.0" y="553.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13.5" font-weight="600" text-anchor="end" fill="#1C1C1C">random test</text>
+<text x="138.0" y="553.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13.5" font-weight="600" text-anchor="end" fill="#1C1C1C">directed test</text>
 <rect x="150" y="541" width="780" height="14" rx="7" fill="#DCE9F3" stroke="#123A56" stroke-width="1.2"/>
 <path d="M942,548 L949,556 L963,539" fill="none" stroke="#2E7D32" stroke-width="4" stroke-linecap="round"/>
-<text x="154.0" y="578.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12.5" font-weight="400" text-anchor="start" fill="#7FA3C0">compares rd_data with its queue: killed</text>
+<text x="154.0" y="578.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12.5" font-weight="400" text-anchor="start" fill="#7FA3C0">compares each word it reads back: killed</text>
+<text x="138.0" y="617.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="13.5" font-weight="600" text-anchor="end" fill="#1C1C1C">random test</text>
+<rect x="150" y="605" width="780" height="14" rx="7" fill="#DCE9F3" stroke="#123A56" stroke-width="1.2"/>
+<path d="M942,612 L949,620 L963,603" fill="none" stroke="#2E7D32" stroke-width="4" stroke-linecap="round"/>
+<text x="154.0" y="642.0" font-family="'Source Sans 3', 'Helvetica Neue', Arial, sans-serif" font-size="12.5" font-weight="400" text-anchor="start" fill="#7FA3C0">compares rd_data with its queue: killed</text>
 </svg>

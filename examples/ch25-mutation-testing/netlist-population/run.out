@@ -42,30 +42,31 @@ population: 9281 netlist mutations of fifo_fixed.sv (Yosys 0.68, after prep),
 3. 2,000 samples at each n: how often the 95% interval holds
    the population rate, and its mean width
   n = 30: worst-case half-width Chebyshev 0.408, normal 0.179
-    ch01-directed  coverage 0.983  mean width 0.339
-    ch01-random    coverage 0.983  mean width 0.246
-    ch08-coverage  coverage 1.000  mean width 0.116
-    ch09-sva       coverage 0.998  mean width 0.170
-    union          coverage 0.985  mean width 0.243
+    ch01-directed  coverage 0.983  mean width 0.339  exact 0.975
+    ch01-random    coverage 0.983  mean width 0.246  exact 0.987
+    ch08-coverage  coverage 1.000  mean width 0.116  exact 1.000
+    ch09-sva       coverage 0.998  mean width 0.170  exact 0.995
+    union          coverage 0.985  mean width 0.243  exact 0.989
   n = 100: worst-case half-width Chebyshev 0.224, normal 0.098
-    ch01-directed  coverage 0.945  mean width 0.185
-    ch01-random    coverage 0.970  mean width 0.130
-    ch08-coverage  coverage 1.000  mean width 0.036
-    ch09-sva       coverage 0.969  mean width 0.084
-    union          coverage 0.972  mean width 0.128
+    ch01-directed  coverage 0.945  mean width 0.185  exact 0.954
+    ch01-random    coverage 0.970  mean width 0.130  exact 0.966
+    ch08-coverage  coverage 1.000  mean width 0.036  exact 1.000
+    ch09-sva       coverage 0.969  mean width 0.084  exact 0.966
+    union          coverage 0.972  mean width 0.128  exact 0.968
   n = 300: worst-case half-width Chebyshev 0.129, normal 0.057
-    ch01-directed  coverage 0.964  mean width 0.106
-    ch01-random    coverage 0.964  mean width 0.074
-    ch08-coverage  coverage 1.000  mean width 0.012
-    ch09-sva       coverage 0.972  mean width 0.046
-    union          coverage 0.959  mean width 0.073
+    ch01-directed  coverage 0.964  mean width 0.106  exact 0.961
+    ch01-random    coverage 0.964  mean width 0.074  exact 0.961
+    ch08-coverage  coverage 1.000  mean width 0.012  exact 1.000
+    ch09-sva       coverage 0.972  mean width 0.046  exact 0.971
+    union          coverage 0.959  mean width 0.073  exact 0.956
   n = 1000: worst-case half-width Chebyshev 0.071, normal 0.031
-    ch01-directed  coverage 0.958  mean width 0.057
-    ch01-random    coverage 0.970  mean width 0.040
-    ch08-coverage  coverage 1.000  mean width 0.004
-    ch09-sva       coverage 0.973  mean width 0.025
-    union          coverage 0.971  mean width 0.039
-  lowest coverage over every n and testbench: 0.945
+    ch01-directed  coverage 0.958  mean width 0.057  exact 0.964
+    ch01-random    coverage 0.970  mean width 0.040  exact 0.963
+    ch08-coverage  coverage 1.000  mean width 0.004  exact 1.000
+    ch09-sva       coverage 0.973  mean width 0.025  exact 0.972
+    union          coverage 0.971  mean width 0.039  exact 0.966
+  lowest coverage over every n and testbench: 0.945;
+  lowest exact coverage: 0.954; standard error of 2,000 draws: 0.005
 4. population kill rate by mode
   mode        n  directed    random  coverage       sva     union
   cnot0    1573     0.257     0.869     0.000     0.034     0.880
@@ -73,5 +74,5 @@ population: 9281 netlist mutations of fifo_fixed.sv (Yosys 0.68, after prep),
   const0   2046     0.261     0.894     0.000     0.039     0.895
   const1   2046     0.320     0.883     0.000     0.042     0.888
   inv      2046     0.426     0.925     0.000     0.045     0.925
-checks: 5 of 5 hold
+checks: 9 of 9 hold
 verdict: the population rates are known, and the sampled intervals cover them

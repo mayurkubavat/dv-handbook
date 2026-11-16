@@ -20,5 +20,12 @@ fifth testbench: the traffic of tb_fifo_sva.sv, the checker of
 3. netlist sample: 1,000 mutations, uniform, seed 1
   ch09-sva  39/1000 = 0.039 [0.028, 0.053]
   fifth     899/1000 = 0.899 [0.879, 0.917]
-checks: 5 of 5 hold
+4. kills at the ports: the fifth testbench with Sync_A tied to
+   the checker's own count (fifo_port_bind.sv)
+  default    36/44 at the ports; non-equivalent killed 36/39
+    survivors: m05 m09 m11 m13 m32 m36 m43 m44
+  randomized 39/44 at the ports; non-equivalent killed 39/39
+    survivors: m05 m32 m36 m43 m44
+  killed only by the white-box Sync_A: m44
+checks: 8 of 8 hold
 verdict: the data check raises the source kills from 22 to 37 of 44

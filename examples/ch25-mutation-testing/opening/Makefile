@@ -7,5 +7,5 @@ EXAMPLE_LANG  := python
 TOP           := opening.py
 SOURCES       := opening.py
 PYTHON        := python3 -I -B
-EXPECT_OUTPUT := verdict: equal code coverage, kills from 0 to 35 of 44
+EXPECT_OUTPUT := verdict: same line, branch and expression coverage, kills
 include ../../common.mk

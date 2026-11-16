@@ -13,12 +13,34 @@ score: kills among the 94 non-equivalent mutations
   property set   80/94 = 0.851 [0.763, 0.916]
   sim + formal   94/94
 equivalent mutations killed by some check: 0
+missed by the property set: 14 non-equivalent mutations
+  mutation  mode    line  cell     miter depth  ch01-random
+  1815      const0  -     auto              16  killed
+  3453      cnot1   29    procdff           17  killed
+  5944      cnot1   57    procmux           16  killed
+  7033      const0  57    procmux           16  killed
+  7648      const1  43    procmux           18  killed
+  7691      const0  43    procmux           17  killed
+  7759      const1  43    procmux           31  killed
+  7832      const0  42    procmux           17  killed
+  7910      const0  43    procmux           17  killed
+  8096      const1  42    procmux           16  killed
+  8105      const0  42    procmux           16  killed
+  8108      cnot1   42    procmux           16  killed
+  8130      cnot0   42    procmux           16  killed
+  8394      const1  42    procmux           31  killed
+  the mutations a_integrity kills differ at depth 15 or less (all
+  its kills: 18 or less); the misses only at depth 16 to 31
 rerun now by rIC3: two equivalents, and the two deepest
   differences (beyond what 10 s of bounded search reached)
   mutation 252 (inv - auto): ric3-ic3: proved equivalent
   mutation 264 (const1 - auto): ric3-ic3: proved equivalent
   mutation 8394 (const1 42 procmux): ric3-ic3: differs at depth 31
   mutation 7759 (const1 43 procmux): ric3-ic3: differs at depth 31
-checks: 6 of 6 hold
+the measured run's settings and cost (committed measure.out):
+  property set: informal-bmc 3 s for each property
+  miter: informal-bmc 10 s, then ric3-ic3 120 s
+  wall 715 s on 4 workers
+checks: 11 of 11 hold
 verdict: the formal sample's summary is reproduced,
   and four of its rows rerun as recorded

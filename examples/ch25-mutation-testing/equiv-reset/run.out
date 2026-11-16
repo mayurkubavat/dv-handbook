@@ -5,8 +5,11 @@ m05 ARS  36  always_ff @(posedge clk) begin
   informal-bmc: no verdict in 3s
   ric3-ic3: proved equivalent
 miter: m05 proved equivalent (ric3-ic3) under the tool's reset model
+   the reset model, on the same miter after its reset:
+  cover {!rst_n}: unreachable (ric3-ic3)
+  assert {rst_n}: proven (ric3-ic3)
 2. simulation: rst_n dropped and raised between two edges
   repaired FIFO after a reset pulse between edges: empty=1: survived
   m05           after a reset pulse between edges: empty=0: killed
-checks: 3 of 3 hold
+checks: 4 of 4 hold
 verdict: m05 is equivalent to the tool, and a reset pulse kills it

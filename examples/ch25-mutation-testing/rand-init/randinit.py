@@ -42,7 +42,8 @@ CLASS = {"m05": "equivalent only under the tool's reset model",
          "m32": "equivalent outright",
          "m36": "equivalent outright",
          "m43": "equivalent under a reachable-state invariant",
-         "m44": "equivalent at the ports; killed by Sync_A"}
+         "m44": "equivalent under a reachable-state invariant "
+                "relating the copies; killed by Sync_A"}
 
 
 def seeded(tb, s):

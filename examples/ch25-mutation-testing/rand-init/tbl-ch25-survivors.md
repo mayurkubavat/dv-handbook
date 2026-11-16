@@ -27,9 +27,11 @@
 |        | (ric3-ic3)             |                |                | reachable-state        |
 |        |                        |                |                | invariant              |
 +--------+------------------------+----------------+----------------+------------------------+
-| `m44`  | proved equivalent      | ch09-sva       | ch09-sva       | equivalent at the      |
-|        | (ric3-ic3) at the      |                |                | ports; killed by       |
-|        | ports                  |                |                | Sync_A                 |
+| `m44`  | proved equivalent      | ch09-sva       | ch09-sva       | equivalent under a     |
+|        | (ric3-ic3) at the      |                |                | reachable-state        |
+|        | ports                  |                |                | invariant relating the |
+|        |                        |                |                | copies; killed by      |
+|        |                        |                |                | Sync_A                 |
 +--------+------------------------+----------------+----------------+------------------------+
 
 : The seven source mutants no testbench killed, and m44: the miter's verdict and the simulation verdicts {#tbl-ch25-survivors}

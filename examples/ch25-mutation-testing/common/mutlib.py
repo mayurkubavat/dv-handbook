@@ -181,3 +181,17 @@ def need(*programs):
         if not shutil.which(p):
             print(f"skipped: {p} is not on the PATH")
             sys.exit(0)
+
+
+def pin_measured(C, path, want):
+    """Pin a committed measured file (measure.out, pop.tsv) by its
+    SHA-256, so that an edit to any line, spliced or not, fails the
+    default run. Under MEASURE=1 the file has just been rewritten:
+    print its new digest, to be pinned in the script, instead."""
+    import hashlib
+    got = hashlib.sha256(pathlib.Path(path).read_bytes()).hexdigest()
+    name = rel(path)
+    if os.environ.get("MEASURE") == "1":
+        print(f"{name} rewritten: pin sha256 {got}")
+    else:
+        C.pin(f"{name} sha256", got, want)
